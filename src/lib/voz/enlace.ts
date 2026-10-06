@@ -1,7 +1,7 @@
 // Enlace inverso con el puente de voz. El puente corre en css-llamada (otra red, sin entrada): pregunta por comandos con
 // long-poll y contesta por id. Todo en memoria del proceso de Next, en globalThis (cada route.ts se empaqueta aparte).
 import { randomUUID } from "crypto";
-import { abrirLlamada, existeLlamada } from "./registro";
+import { abandonada, abrirLlamada, cerrarLlamada, existeLlamada } from "./registro";
 
 export type Comando = { tipo: "offer"; id: string; sdp: string; persona: string } | { tipo: "colgar"; hilo: string; motivo: string };
 export type RespuestaOferta = { ok: true; sdp: string; hilo: string } | { ok: false; status: number; error: string };
@@ -45,6 +45,7 @@ export function esperarComando(estado: { ocupada: boolean; seg_hora: number; act
   en.visto = Date.now();
   en.estado = estado;
   if (estado.activa && !existeLlamada(estado.activa) && !ofertaPendiente()) return Promise.resolve({ tipo: "colgar", hilo: estado.activa, motivo: "Next no reconoce la llamada" });
+  if (estado.activa && abandonada(estado.activa)) { cerrarLlamada(estado.activa); return Promise.resolve({ tipo: "colgar", hilo: estado.activa, motivo: "la página dejó de responder" }); }
   const c = en.cola.shift();
   if (c) return Promise.resolve(c);
   return new Promise((resolve) => {

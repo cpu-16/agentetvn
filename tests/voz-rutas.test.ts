@@ -80,6 +80,15 @@ describe("rutas de la página", () => {
     const r2 = await (await ruta("puente/espera")).GET(new Request("http://x/api/voz/puente/espera?ocupada=1&seg_hora=10&activa=hilo-conocido&ms=100", { headers: { "x-voz-token": TOKEN } }));
     expect(await r2.json()).toMatchObject({ tipo: "nada" });
   });
+  test("llamada abandonada (la página dejó de consultar más de 15 s) → el puente recibe colgar", async () => {
+    abrirLlamada("hilo-viejo", ANA.nombre, ANA.desde);
+    const real = Date.now;
+    Date.now = () => real() + 16_000; // pasan 16 s sin que la página consulte acciones
+    try {
+      const r = await (await ruta("puente/espera")).GET(new Request("http://x/api/voz/puente/espera?ocupada=1&seg_hora=10&activa=hilo-viejo&ms=100", { headers: { "x-voz-token": TOKEN } }));
+      expect(await r.json()).toMatchObject({ tipo: "colgar", hilo: "hilo-viejo", motivo: "la página dejó de responder" });
+    } finally { Date.now = real; }
+  });
   test("puente vivo que no contesta → 503 tras el plazo", async () => {
     await pedirEspera();
     const r = await ofertar(ANA);
