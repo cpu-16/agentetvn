@@ -184,8 +184,8 @@ export function ChatAgente() {
               onPointerDown={(e) => { if (arrastrable && !(e.target as HTMLElement).closest("button,select,label")) controles.start(e); }}
             >
               <div>
-                <p id="chat-titulo" className="titular text-base font-semibold leading-none">Jarvis · agente de la mesa</p>
-                <p className="mt-1 text-[11px] text-muted-foreground">{modoConsulta === "embeddings" ? "Búsqueda por sentido (semántica)" : "Búsqueda por palabras (BM25)"}</p>
+                <p id="chat-titulo" className="titular text-base font-semibold leading-none">Jarvis</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">Agente de la mesa</p>
               </div>
               <div className="flex items-center gap-2">
                 <label className="sr-only" htmlFor="chat-modo">Tipo de búsqueda</label>
@@ -213,7 +213,7 @@ export function ChatAgente() {
             )}
             <div className="flex flex-wrap items-center gap-2 border-b border-border/60 px-4 py-2 text-xs">
               <button type="button" className="presionable min-h-9 rounded-full border border-tinta/30 bg-white px-3 py-1 font-medium text-tinta hover:border-tinta" onClick={() => turnoVoz("jarvis", explicacionFija(contextoDesdeMesa(useMesa.getState())))}>Explícame esta pantalla</button>
-              <span className="text-muted-foreground">{voz.estado === "no_disponible" ? "Voz no disponible ahora; el chat funciona igual." : voz.estado === "inactiva" ? "Mantén presionado el orbe (o la barra espaciadora) para hablarle." : `Voz: ${ETIQUETA_ORBE[orbe].toLowerCase()}.`}</span>
+              <span className="text-muted-foreground">{voz.estado === "no_disponible" ? "Voz no disponible ahora; el chat funciona igual." : voz.estado === "inactiva" ? (celular ? "Mantén presionado el botón de voz para hablarle." : "Mantén presionado el botón de voz (o la barra espaciadora) para hablarle.") : `Voz: ${ETIQUETA_ORBE[orbe].toLowerCase()}.`}</span>
               {voz.estado !== "inactiva" && voz.estado !== "no_disponible" && <button type="button" className="presionable ml-auto rounded-sm px-2 py-1 text-acero underline" onClick={() => voz.colgar("colgó")}>Colgar</button>}
             </div>
             <div className="fino flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3 text-sm">
@@ -290,6 +290,19 @@ export function ChatAgente() {
             </div>
             <form className="flex items-end gap-2 border-t border-border/60 p-3" onSubmit={(e) => { e.preventDefault(); preguntar(q); }}>
               <textarea ref={entrada} autoFocus value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); preguntar(q); } }} rows={2} placeholder="Escribe tu pregunta" className="min-h-[44px] flex-1 resize-none rounded-sm border border-border bg-white px-3 py-2 text-base sm:text-sm" aria-label="Pregunta para el agente" />
+              <button
+                type="button"
+                className="jarvis-hablar presionable flex h-11 min-w-11 items-center gap-1.5 rounded-sm border border-tinta/30 bg-white px-2 text-xs font-medium text-tinta"
+                aria-label={`Mantén presionado para hablarle a Jarvis. ${ETIQUETA_ORBE[orbe]}`}
+                onContextMenu={(e) => e.preventDefault()}
+                onPointerDown={(e) => { (e.currentTarget as HTMLButtonElement).setPointerCapture(e.pointerId); voz.prepararAudio(); inicioPulsacion.current = Date.now(); temporizador.current = window.setTimeout(() => void voz.pulsar(), 150); }}
+                onPointerUp={() => { clearTimeout(temporizador.current); if (Date.now() - inicioPulsacion.current < 150) setAnuncio("Mantén presionado el botón de voz mientras hablas."); else voz.soltar(); }}
+                onPointerCancel={() => { clearTimeout(temporizador.current); voz.soltar(); }}
+                onLostPointerCapture={() => { clearTimeout(temporizador.current); voz.soltar(); }}
+              >
+                <Orbe estado={orbe} nivel={voz.nivel} />
+                <span className={cn(celular && "sr-only")}>{voz.estado === "escuchando" ? "Te escucho" : "Mantén para hablar"}</span>
+              </button>
               <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-10 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
             </form>
           </motion.div>
