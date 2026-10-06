@@ -1,6 +1,6 @@
 // Agregados del Tablero: las publicaciones por día suman lo publicado; los indicadores conservan los nulos.
 import { describe, expect, test } from "bun:test";
-import { agregarTablero } from "../src/lib/motor/tablero";
+import { agregarTablero, resumenCorte } from "../src/lib/motor/tablero";
 import type { Snapshot } from "../src/lib/motor/cargar";
 import type { Evento } from "../src/lib/motor/contrato";
 import { n } from "./fixtures/noticias";
@@ -57,7 +57,27 @@ describe("tablero", () => {
     expect(t.procedencias.find((p) => p.tipo === "medio")?.n).toBe(2);
     expect(t.evidencia.find((e) => e.tema === "turismo")?.insuficiente).toBe(1);
     expect(t.sismosPorMes).toEqual([{ mes: "2024-03", n: 1, magMax: 4.2 }]);
-    expect(t.calidad).toMatchObject({ noticias: 4, tvn: 3, sinFechaPublicacion: 2 });
+    expect(t.calidad).toMatchObject({ noticias: 4, tablero: 4, tvn: 3, sinFechaPublicacion: 2 });
     expect(t.eventos[0]).toMatchObject({ id: "e1", publicaciones: 2, medio: "TVN" });
+  });
+  test("casos sintéticos y fuentes no confiables quedan fuera del tablero y de las cifras de la portada", () => {
+    const s3 = {
+      ...snap,
+      noticias: [
+        ...noticias,
+        n({ id_noticia: "s1", titulo: "S1", url: "https://x.com/s1", medio: "medio-a.test", sintetica: true }),
+        n({ id_noticia: "s2", titulo: "S2", url: "https://x.com/s2", medio: "medio-b.test", sintetica: true, no_confiable: true }),
+        n({ id_noticia: "r1", titulo: "R1", url: "https://x.com/r1", medio: "critica.com.pa", no_confiable: true }),
+      ],
+      eventos: [...snap.eventos, ev("es", ["s1", "s2"], "economia"), ev("e1b", ["r1"], "turismo")],
+    } as unknown as Snapshot;
+    const t3 = agregarTablero(s3);
+    expect(t3.eventos.map((e) => e.id).sort()).toEqual(["e1", "e2"]); // el evento sintético y el de la fuente no confiable salen
+    expect(t3.publicaciones).toBe(4);
+    expect(t3.medios.map((m) => m.medio)).not.toContain("medio-a.test");
+    expect(t3.calidad).toMatchObject({ noticias: 7, tablero: 4, sinteticas: 2, noConfiables: 2, noConfiablesReales: 1 });
+    // la portada usa el mismo resumen que el tablero sin filtros
+    expect(resumenCorte(s3)).toEqual({ publicaciones: 4, eventos: 2, medios: t3.mediosDistintos, agencias: t3.agenciasDistintas, sinteticas: 2, noConfiablesReales: 1 });
+    expect(resumenCorte(s3).medios).toBe(2); // TVN y prensa.com
   });
 });

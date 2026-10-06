@@ -2,7 +2,7 @@
 // Tablero: gráficas enlazadas sobre los agregados de /api/tablero. Un filtro compartido (temas, rango, período, medio)
 // se aplica a nivel de publicación con `filtrarDatos`; todas las gráficas y tarjetas leen de ese único resultado.
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useMesa, horaPanama } from "@/store/mesa";
+import { useMesa, horaPanama, fetchMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 import { SenalesPorDia } from "./graficas/SenalesPorDia";
 import { MapaTemas } from "./graficas/MapaTemas";
@@ -35,7 +35,7 @@ export function Tablero() {
   const setFiltroTablero = useMesa((s) => s.setFiltroTablero);
 
   useEffect(() => {
-    fetch("/api/tablero").then(async (r) => { if (!r.ok) throw new Error(`${r.status}`); setDatos(await r.json()); }).catch((e) => setError(e.message));
+    fetchMesa("/api/tablero").then(async (r) => { if (!r.ok) throw new Error(`${r.status}`); setDatos(await r.json()); }).catch((e) => setError(e.message));
   }, []);
 
   const onFiltro = useCallback((f: Partial<Filtro>) => setFiltro((prev) => ({ ...prev, ...f })), []);
@@ -83,11 +83,15 @@ export function Tablero() {
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-label="Cifras del corte">
         <Cifra valor={agg.publicaciones} etiqueta="publicaciones" detalle={hayFiltro(filtro) ? `de ${fmt(datos.publicaciones)}` : "en el corte"} />
         <Cifra valor={agg.eventos.length} etiqueta="eventos agrupados" detalle={hayFiltro(filtro) ? `de ${fmt(datos.eventos.length)}` : "un hecho, varias publicaciones"} />
-        <Cifra valor={agg.mediosDistintos} etiqueta="medios y agencias distintos" detalle={hayFiltro(filtro) ? "en las publicaciones filtradas" : "una agencia replicada cuenta una vez"} />
+        <Cifra valor={agg.mediosDistintos} etiqueta="medios distintos" detalle={`${fmt(agg.agenciasDistintas)} agencia${agg.agenciasDistintas === 1 ? "" : "s"} identificada${agg.agenciasDistintas === 1 ? "" : "s"} en los textos${hayFiltro(filtro) ? ", en lo filtrado" : ""}`} />
         <Cifra valor={suficientes} etiqueta="con evidencia suficiente" detalle={`${agg.eventos.length ? Math.round((suficientes / agg.eventos.length) * 100) : 0} % de los eventos`} />
       </section>
 
-      <SenalesPorDia datos={aggSinTema.porDiaTema} filtro={filtro} onFiltro={onFiltro} />
+      <p className="text-xs text-muted-foreground">
+        Fuera del tablero: {fmt(datos.calidad.sinteticas)} publicaciones de casos de prueba sintéticos{datos.calidad.noConfiablesReales ? ` y ${fmt(datos.calidad.noConfiablesReales)} reales marcadas como no confiables` : ""}. En la agenda aparecen marcadas.
+      </p>
+
+      <SenalesPorDia datos={aggSinTema.porDiaTema} filtro={filtro} onFiltro={onFiltro} porDeteccion={datos.calidad.sinFechaPublicacion} total={datos.calidad.tablero} />
 
       <div className="grid min-w-0 gap-3 lg:grid-cols-2">
         <MapaTemas temas={agg.temas} eventos={agg.eventos} filtro={filtro} onFiltro={onFiltro} abrirFicha={abrirFicha} />
@@ -101,10 +105,10 @@ export function Tablero() {
       </div>
 
       <section aria-label="Calidad del corte" className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        <Cifra valor={datos.calidad.noticias} etiqueta="noticias válidas" detalle={`${fmt(datos.calidad.tvn)} de TVN`} />
-        <Cifra valor={datos.calidad.sinFechaPublicacion} etiqueta="sin fecha de publicación" detalle="solo fecha de detección; urgencia baja" />
-        <Cifra valor={datos.calidad.sinteticas} etiqueta="casos sintéticos" detalle="marcados; nunca se mezclan con reales" />
-        <Cifra valor={datos.calidad.noConfiables} etiqueta="no confiables" detalle="excluidos de respuestas y paquetes" />
+        <Cifra valor={datos.calidad.tablero} etiqueta="noticias reales en el tablero" detalle={`${fmt(datos.calidad.tvn)} de TVN; ${fmt(datos.calidad.noticias)} válidas en el corte`} />
+        <Cifra valor={datos.calidad.sinFechaPublicacion} etiqueta="sin fecha de publicación" detalle="ubicadas por fecha de detección; urgencia baja" />
+        <Cifra valor={datos.calidad.sinteticas} etiqueta="casos sintéticos" detalle="fuera del tablero; en la agenda, marcados" />
+        <Cifra valor={datos.calidad.noConfiables} etiqueta="no confiables" detalle="fuera del tablero, de respuestas y de paquetes" />
         <Cifra valor={datos.calidad.errores} etiqueta="errores separados" detalle="prueba T01: la carga no se bloquea" />
       </section>
     </div>

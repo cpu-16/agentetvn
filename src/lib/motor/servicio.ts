@@ -3,6 +3,7 @@ import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
 import { cincoTemas, consultar } from "./consulta";
 import { generarPaquete } from "./paquete";
+import { resumenCorte } from "./tablero";
 import { fuentesDe, redactarOExtractivo, redactarRespuesta } from "./llm";
 import { validarTransicion } from "./revision";
 import { leerScoring } from "./config";
@@ -26,7 +27,7 @@ export async function agenda() {
     const rep = porId.get(e.representante);
     return { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica), estado_revision: ultimo.get(e.id) ?? ("nuevo" as EstadoRevision), publicaciones: e.ids_noticia.length };
   };
-  return { corteUTC: snap.manifest.fecha_corte_UTC, version: snap.manifest.version, eventos: snap.eventos.map(resumen), cinco: cincoTemas(snap).map((c) => ({ ...c, evento: resumen(c.evento) })) };
+  return { corteUTC: snap.manifest.fecha_corte_UTC, version: snap.manifest.version, resumen: resumenCorte(snap), eventos: snap.eventos.map(resumen), cinco: cincoTemas(snap).map((c) => ({ ...c, evento: resumen(c.evento) })) };
 }
 
 export async function evento(id: string) {

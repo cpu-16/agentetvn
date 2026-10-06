@@ -57,8 +57,7 @@ export function Portada() {
   useEffect(() => { void cargarAgenda(); }, [cargarAgenda]);
 
   const cargando = !data;
-  const publicaciones = data?.eventos.reduce((s, e) => s + e.publicaciones, 0) ?? 0;
-  const procedencias = data ? new Set(data.eventos.flatMap((e) => e.procedencias.filter((p) => p.tipo !== "no_verificada").map((p) => p.nombre))).size : 0;
+  const resumen = data?.resumen; // misma definición que el tablero (resumenCorte): sin casos sintéticos ni fuentes no confiables
   const top = data ? data.eventos.filter((e) => !e.sintetica && !e.no_confiable).slice(0, 10) : [];
   const item = (e: (typeof top)[number], decorativo = false) => (
     <button key={`${e.id}-${decorativo ? "copia" : "lista"}`} className="ticker-item presionable" onClick={() => irA("ficha", e.id)} aria-hidden={decorativo || undefined} tabIndex={decorativo ? -1 : 0}>
@@ -86,9 +85,10 @@ export function Portada() {
             </div>
           ) : (
             <div className="mt-8 grid grid-cols-3 gap-4 border-t border-white/15 pt-6">
-              <Cifra n={publicaciones} etiqueta="publicaciones" cargando={cargando} />
-              <Cifra n={data?.eventos.length ?? 0} etiqueta="temas agrupados" cargando={cargando} />
-              <Cifra n={procedencias} etiqueta="medios y agencias distintos" cargando={cargando} />
+              <Cifra n={resumen?.publicaciones ?? 0} etiqueta="publicaciones" cargando={cargando} />
+              <Cifra n={resumen?.eventos ?? 0} etiqueta="temas agrupados" cargando={cargando} />
+              <Cifra n={resumen?.medios ?? 0} etiqueta="medios distintos" cargando={cargando} />
+              {resumen && <p className="col-span-3 text-xs text-white/70">Sin contar {resumen.sinteticas} publicaciones de casos de prueba{resumen.noConfiablesReales ? ` ni ${resumen.noConfiablesReales} no confiables` : ""}; {resumen.agencias} agencia{resumen.agencias === 1 ? "" : "s"} identificada{resumen.agencias === 1 ? "" : "s"} en los textos.</p>}
             </div>
           )}
         </div>
