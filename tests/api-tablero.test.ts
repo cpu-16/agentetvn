@@ -41,6 +41,17 @@ describe("tablero", () => {
     expect(pan.puntos.find((p) => p[0] === 2024)?.[1]).toBeNull();
     expect(pan.puntos.find((p) => p[0] === 2010)?.[1]).toBeNull();
   });
+  test("un titular con HTML llega intacto al agregado (la UI lo escapa con esc)", async () => {
+    const malo = "Titular <img src=x onerror=alert(1)> & «comillas»";
+    const s2 = { ...snap, noticias: [n({ id_noticia: "z", titulo: malo, url: "https://x.com/z" })], eventos: [ev("ez", ["z"], "economia")] } as unknown as Snapshot;
+    expect(agregarTablero(s2).eventos[0].titulo).toBe(malo);
+    const { esc } = await import("../src/components/mesa/graficas/paleta");
+    const e = esc(malo);
+    expect(e).not.toContain("<");
+    expect(e).not.toContain(">");
+    expect(e).toContain("&lt;img");
+    expect(e).toContain("&amp;");
+  });
   test("medios, procedencias, evidencia, sismos y calidad", () => {
     expect(t.medios.find((m) => m.medio === "TVN")?.publicaciones).toBe(3);
     expect(t.procedencias.find((p) => p.tipo === "medio")?.n).toBe(2);

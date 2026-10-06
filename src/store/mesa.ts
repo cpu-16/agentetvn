@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Vista = "portada" | "agenda" | "ficha" | "control";
+export type Vista = "portada" | "agenda" | "tablero" | "ficha" | "control";
 export type Rol = "editor" | "periodista" | "productor";
 export const ROLES: { id: Rol; label: string }[] = [
   { id: "editor", label: "Editor/a" },
@@ -17,7 +17,9 @@ interface Mesa {
   sesion: Sesion | null;
   modoConsulta: "embeddings" | "bm25";
   chatAbierto: boolean;
+  filtroTablero: { temas: string[] } | null; // filtro que el Tablero pasa a la Agenda
   irA: (v: Vista, eventoId?: string) => void;
+  setFiltroTablero: (f: { temas: string[] } | null) => void;
   setSesion: (s: Sesion | null) => void;
   setModoConsulta: (m: "embeddings" | "bm25") => void;
   setChatAbierto: (a: boolean) => void;
@@ -31,6 +33,8 @@ export const useMesa = create<Mesa>()(
       sesion: null,
       modoConsulta: "embeddings",
       chatAbierto: false,
+      filtroTablero: null,
+      setFiltroTablero: (filtroTablero) => set({ filtroTablero }),
       irA: (vista, eventoId) => set((s) => ({ vista, eventoId: eventoId ?? (vista === "ficha" ? s.eventoId : null) })),
       setSesion: (sesion) => set({ sesion }),
       setModoConsulta: (modoConsulta) => set({ modoConsulta }),

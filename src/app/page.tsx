@@ -7,6 +7,7 @@ import { Portada } from "@/components/mesa/portada";
 import { Agenda } from "@/components/mesa/agenda";
 import { Ficha } from "@/components/mesa/ficha";
 import { Control } from "@/components/mesa/control";
+import { Tablero } from "@/components/mesa/tablero";
 import { ChatAgente } from "@/components/mesa/chat";
 import { useTransicionVista } from "@/components/mesa/motion";
 import { useMesa } from "@/store/mesa";
@@ -30,7 +31,7 @@ export default function Page() {
     <Shell corteUTC={meta?.corteUTC} version={meta?.version}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={clave} {...transicion}>
-          {vista === "ficha" && eventoId ? <Ficha id={eventoId} /> : vista === "control" ? <Control /> : vista === "agenda" ? <Agenda onCargada={onCargada} /> : <Portada onCargada={onCargada} />}
+          {vista === "ficha" && eventoId ? <Ficha id={eventoId} /> : vista === "control" ? <Control /> : vista === "tablero" ? <Tablero /> : vista === "agenda" ? <Agenda onCargada={onCargada} /> : <Portada onCargada={onCargada} />}
         </motion.div>
       </AnimatePresence>
       <ChatAgente />

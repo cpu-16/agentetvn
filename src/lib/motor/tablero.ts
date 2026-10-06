@@ -6,7 +6,7 @@ import { INDICADORES, PAISES } from "../ingesta/bancomundial";
 export interface EventoTablero {
   id: string; titulo: string; tema: string; P: number; rango: "bajo" | "medio" | "alto";
   R: number; I: number; U: number; N: number; E: number;
-  estado_evidencia: string; publicaciones: number; procedencias: number; fecha: string | null; medio: string; sintetica: boolean; no_confiable: boolean;
+  estado_evidencia: string; publicaciones: number; procedencias: number; fecha: string | null; medio: string; sintetica: boolean; no_confiable: boolean; por_revisar: boolean;
 }
 export interface Tablero {
   corteUTC: string; version: string;
@@ -37,7 +37,7 @@ export function agregarTablero(snap: Snapshot): Tablero {
       id: e.id, titulo: rep?.titulo ?? e.id, tema: e.tema, P: e.P, rango: e.rango,
       R: e.componentes.R, I: e.componentes.I, U: e.componentes.U, N: e.componentes.N, E: e.componentes.E,
       estado_evidencia: e.estado_evidencia, publicaciones: e.ids_noticia.length, procedencias: e.procedencias.length,
-      fecha: e.fecha_original ?? rep?.fecha_deteccion ?? null, medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica === true), no_confiable: e.no_confiable,
+      fecha: e.fecha_original ?? rep?.fecha_deteccion ?? null, medio: rep?.medio ?? "", por_revisar: e.por_revisar, sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica === true), no_confiable: e.no_confiable,
     };
   });
 
