@@ -2,6 +2,7 @@
 import { coseno, DIM, embeber, MODELO, modeloDisponible } from "./embeddings";
 import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
 import { CONCEPTO_INDICADOR, idIndicador } from "./contexto";
+import { temaDesconocido } from "./intencion";
 import { leerScoring } from "./config";
 import { INDICADORES, PAISES } from "../ingesta/bancomundial";
 import type { Afirmacion, Contradiccion, Evento, Indicador, MetaLLM, Noticia } from "./contrato";
@@ -142,6 +143,11 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
     return { abstener: true, motivo: "Fuera del alcance del reto: no hay datos de clientes, crédito, solvencia, audiencia ni expedientes en el corpus, y el agente no maneja secretos.", faltante: "nada: esta consulta no se responde desde este sistema", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA, traza: porRegla(modo, k, "Fuera del alcance del reto: no se busca.") };
   const cifra = responderCifra(q, snap, t0, modo);
   if (cifra) return { ...cifra, traza: porRegla(modo, k, "Pide una cifra oficial: la leí directo de la serie del Banco Mundial, sin búsqueda por sentido.") };
+  // Después de las reglas y de los indicadores («desempleo» no sale en las noticias, pero sí en las series): si el tema no
+  // aparece en ninguna publicación, abstenerse diciéndolo (T06), en vez de devolver lo que «suena parecido» por sentido.
+  const desconocido = temaDesconocido(tokenizar(q), (t) => enCorpus(snap, t));
+  if (desconocido !== null)
+    return { abstener: true, motivo: desconocido ? `No encontré «${desconocido}» en las noticias del corte.` : "No entendí sobre qué tema es la pregunta.", faltante: desconocido ? `publicaciones del corte que mencionen «${desconocido}» (si es un nombre, prueba escribirlo de otra forma)` : "un tema, una persona, un lugar o un indicador", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA, traza: porRegla(modo, k, desconocido ? `«${desconocido}» no aparece en ninguna publicación del corte: me abstengo antes de buscar por sentido.` : "Sin tema: me abstengo antes de buscar.") };
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const pideCantidad = /(?<![\p{L}])(cu[aá]nt[oa]s?|cifra|monto|tasa|porcentaje|cu[aá]l fue el (valor|n[uú]mero|total)|cu[aá]ntos?)/iu.test(q);
   const generico = idsGenericos(snap);

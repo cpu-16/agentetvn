@@ -308,7 +308,7 @@ main, .contenido-principal { padding-bottom: 6rem; }
 .jarvis-escribir { display: flex; align-items: center; gap: .4rem; min-height: 48px; min-width: 48px; justify-content: center; padding: 0 14px; border-radius: 999px; background: #fff; color: #00466f; font-weight: 500; border: 1px solid rgba(0,70,111,.25); box-shadow: 0 10px 28px -16px rgba(0,70,111,.6); }
 .jarvis-boton:focus-visible { outline: 3px solid #7ee0ff; outline-offset: 3px; }
 .jarvis-escribir:focus-visible { outline: 3px solid #00466f; outline-offset: 3px; }
-@media (max-width: 640px) { .jarvis-dock { flex-direction: column-reverse; align-items: flex-end; } .jarvis-boton { padding: 4px 16px 4px 4px; min-height: 60px; } .jarvis-escribir { padding: 0; } .jarvis-escribir .jarvis-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
+@media (max-width: 640px) { .jarvis-dock { flex-direction: column-reverse; align-items: flex-end; } .jarvis-boton { padding: 4px 16px 4px 4px; min-height: 60px; } main, .contenido-principal { padding-bottom: 9rem; } }
 .orbe { --nivel: 0; position: relative; display: block; flex: none; width: 56px; height: 56px; }
 /* halo detrás de la esfera: crece con el volumen de la voz */
 .orbe::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; background: radial-gradient(circle, rgba(0,153,230,.55), transparent 66%); filter: blur(6px); opacity: .7; transform: scale(calc(1 + var(--nivel) * .6)); transition: transform 80ms linear, opacity .3s ease-out; }

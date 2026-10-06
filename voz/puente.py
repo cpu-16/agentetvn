@@ -115,10 +115,15 @@ def leer(proc):
             with lock: app.stdin.write(json.dumps({"jsonrpc": "2.0", "id": m["id"], "error": {"code": -32601, "message": "no soportado"}}) + "\n"); app.stdin.flush()
         elif "id" in m: pendientes.pop(m["id"], queue.Queue()).put(m)
         elif metodo == "thread/realtime/sdp": respuestas.get(p.get("threadId"), queue.Queue()).put(p["sdp"])
-        elif metodo in ("thread/realtime/closed", "thread/realtime/error") and (a := estado["activa"]) and a["hilo"] == p.get("threadId") and a.get("conectada"):
-            # la voz se cayó a mitad de la llamada (p. ej. «Connection reset» con OpenAI): colgar ya y avisar, sin esperar el silencio
+        elif metodo in ("thread/realtime/closed", "thread/realtime/error") and (a := estado["activa"]) and a["hilo"] == p.get("threadId") and a["hilo"]:
+            # la voz se cayó (p. ej. «Connection reset» con OpenAI). Conectada: colgar ya y avisar, sin esperar el silencio.
+            # En la negociación: se anota y atender_oferta cuelga al terminarla (revisión de Codex).
             print(f"[{a['hilo'][-6:]}] realtime {metodo.rsplit('/', 1)[1]}: {p.get('message', '')}", flush=True)
-            threading.Thread(target=cortar, args=(a["hilo"], "se cortó la conexión de voz"), kwargs={"ya_cerrado": True}, daemon=True).start()
+            with lock:
+                conectada = a.get("conectada")
+                if not conectada: a["cerrada_temprano"] = True
+            if conectada: threading.Thread(target=cortar, args=(a["hilo"], "se cortó la conexión de voz"), kwargs={"ya_cerrado": True}, daemon=True).start()
+            else: respuestas.get(a["hilo"], queue.Queue()).put(None)  # si todavía espera el SDP, la oferta falla al instante
         elif metodo == "thread/realtime/error": respuestas.get(p.get("threadId"), queue.Queue()).put(None); print("error realtime:", p.get("message"), flush=True)
         elif metodo == "thread/tokenUsage/updated":
             a = estado["activa"]
@@ -229,7 +234,12 @@ def atender_oferta(cmd):
     codigo, r = a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": True, "sdp": sdp, "hilo": hilo}, timeout=10)
     if codigo != 200 or not r.get("aceptada"):
         cortar(hilo, "nadie esperaba la llamada", avisar_next=False); return
-    if estado["activa"] and estado["activa"]["hilo"] == hilo: estado["activa"]["conectada"] = True
+    with lock:
+        a = estado["activa"]
+        cerrada = bool(a and a["hilo"] == hilo and a.get("cerrada_temprano"))
+        if a and a["hilo"] == hilo and not cerrada: a["conectada"] = True
+    if cerrada:
+        cortar(hilo, "se cortó la conexión de voz", ya_cerrado=True); return
     print(f"[{hilo[-6:]}] llamada conectada para {estado['activa']['persona'] if estado['activa'] else '?'}, voz {VOZ}, límite {estado['activa']['limite'] if estado['activa'] else '?'} s", flush=True)
 
 

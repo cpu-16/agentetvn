@@ -52,6 +52,9 @@ describe("rutas de la página", () => {
     expect((await turno("persona", ANA)).status).toBe(200);
     expect((await turno("sistema", ANA)).status).toBe(400);
     expect((await turno("persona", BETO)).status).toBe(403);
+    const crudo = async (body: string) => (await ruta("turno")).POST(new Request("http://x/api/voz/turno?hilo=hilo-1", { method: "POST", headers: { ...cookie(ANA), "content-type": "application/json" }, body }));
+    expect((await crudo("null")).status).toBe(400);
+    expect((await crudo(JSON.stringify({ quien: "persona", texto: "x".repeat(5000) }))).status).toBe(413);
   });
   test("puente ocupado → 429 con mensaje claro", async () => {
     await pedirEspera();

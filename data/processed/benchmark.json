@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-10-06T23:20:52.692Z",
+  "fecha": "2026-10-06T23:39:27.185Z",
   "split": "dev",
   "snapshot": "v1",
   "reglas": "v1",
@@ -30,8 +30,8 @@
         "n": 38
       },
       "ms": {
-        "mediana": 5,
-        "p95": 13
+        "mediana": 7,
+        "p95": 21
       },
       "filas": [
         {
@@ -42,7 +42,7 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 484,
+          "ms": 488,
           "evidencias": [
             "n_e333c6659516",
             "n_bccc42f8aa3f",
@@ -59,7 +59,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 13,
+          "ms": 21,
           "evidencias": [
             "n_518c000d4992"
           ]
@@ -72,7 +72,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 8,
           "evidencias": [
             "n_ce443344c63b"
           ]
@@ -85,7 +85,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 7,
           "evidencias": [
             "n_4dbc153b7bf1"
           ]
@@ -137,7 +137,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 7,
           "evidencias": [
             "n_16d955b607c3"
           ]
@@ -150,7 +150,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 7,
+          "ms": 8,
           "evidencias": [
             "n_e3f159403e0f"
           ]
@@ -163,7 +163,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 6,
           "evidencias": [
             "n_ff171edb4c0b"
           ]
@@ -176,7 +176,7 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 4,
+          "ms": 6,
           "evidencias": [
             "n_72020673e6ca",
             "n_b71d677a670e"
@@ -190,7 +190,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 7,
+          "ms": 11,
           "evidencias": [
             "n_9d68e6ea53ee",
             "n_034d4875076c"
@@ -204,7 +204,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 4,
+          "ms": 6,
           "evidencias": [
             "n_8aae506a2abe",
             "n_91972ce9cbe1",
@@ -220,7 +220,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 6,
           "evidencias": [
             "n_b53e79eee74d"
           ]
@@ -233,7 +233,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 6,
           "evidencias": [
             "n_e4244def9c5a"
           ]
@@ -259,7 +259,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 6,
+          "ms": 8,
           "evidencias": [
             "n_79658a38c016"
           ]
@@ -272,7 +272,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 4,
+          "ms": 6,
           "evidencias": [
             "n_a6c8c51fa207"
           ]
@@ -285,7 +285,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 6,
+          "ms": 5,
           "evidencias": [
             "n_5ee43004dedb",
             "n_617919f9dcab"
@@ -299,7 +299,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 8,
           "evidencias": [
             "n_ff61f9adc7ea"
           ]
@@ -312,7 +312,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 12,
+          "ms": 7,
           "evidencias": [
             "n_691ced7c04b3"
           ]
@@ -325,7 +325,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 11,
+          "ms": 8,
           "evidencias": [
             "n_9f17006804cb"
           ]
@@ -338,7 +338,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 7,
+          "ms": 9,
           "evidencias": [
             "n_60ea9f71e6b4"
           ]
@@ -410,7 +410,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": false,
-          "ms": 5,
+          "ms": 9,
           "evidencias": [
             "n_b03996f63626",
             "n_024a175d5e83",
@@ -459,7 +459,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 7,
           "evidencias": [
             "n_37ac3d1cee3c",
             "n_6d38ea05607a",
@@ -487,7 +487,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 15,
           "evidencias": [
             "n_51e9329f1407",
             "n_7b6ea82c3429",
@@ -504,7 +504,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 9,
           "evidencias": [
             "n_1a1ccc1b7058",
             "n_c592ad1ac4c1",
@@ -521,7 +521,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 0,
           "evidencias": []
         },
         {
@@ -532,7 +532,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 15,
           "evidencias": [
             "n_37ac3d1cee3c",
             "n_c7d1cf481fb2",
@@ -570,7 +570,7 @@
       },
       "ms": {
         "mediana": 2,
-        "p95": 3
+        "p95": 4
       },
       "filas": [
         {
@@ -581,7 +581,7 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 8,
+          "ms": 4,
           "evidencias": []
         },
         {
@@ -592,7 +592,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 4,
           "evidencias": [
             "n_518c000d4992",
             "n_b22dfba08fe9"
@@ -606,7 +606,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 3,
           "evidencias": [
             "n_ce443344c63b"
           ]
@@ -619,7 +619,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 4,
           "evidencias": [
             "n_4dbc153b7bf1"
           ]
@@ -632,7 +632,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 3,
           "evidencias": [
             "n_f9d24d4be1b1"
           ]
@@ -672,7 +672,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 4,
           "evidencias": [
             "n_16d955b607c3",
             "n_82d60280e511",
@@ -689,7 +689,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_e3f159403e0f"
           ]
@@ -702,7 +702,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_ff171edb4c0b"
           ]
@@ -715,7 +715,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_72020673e6ca",
             "n_1791cd5a1bcf"
@@ -729,7 +729,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_9d68e6ea53ee",
             "n_5bc4b3f1672f"
@@ -743,7 +743,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_91972ce9cbe1",
             "n_ccfb30161637"
@@ -757,7 +757,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_b53e79eee74d"
           ]
@@ -796,7 +796,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 3,
           "evidencias": [
             "n_79658a38c016"
           ]
@@ -846,7 +846,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 3,
+          "ms": 2,
           "evidencias": [
             "n_691ced7c04b3",
             "n_f3f2246adb4f"
@@ -873,7 +873,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 1,
           "evidencias": [
             "n_60ea9f71e6b4"
           ]
@@ -886,7 +886,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_f958ec7d4930"
           ]
@@ -1011,7 +1011,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": []
         },
         {
@@ -1022,7 +1022,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 2,
           "evidencias": []
         },
         {

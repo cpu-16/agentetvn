@@ -65,3 +65,17 @@ test("cada consulta deja su traza en el registro (origen, pasos, evidencias), si
     expect(linea).not.toHaveProperty("persona");
   } finally { delete process.env.AGENTETVN_REGISTRO; rmSync(archivo, { force: true }); }
 });
+
+test("tema que no aparece en ninguna noticia → abstención con qué falta; un indicador sin noticias sí responde (revisión de Codex)", async () => {
+  const { consultar } = await import("../src/lib/motor/consulta");
+  const { snapshot } = await import("../src/lib/motor/servicio");
+  const r = await consultar("¿Qué pasó con el Nickelau?", snapshot(), { modo: "bm25" });
+  expect(r.abstener).toBe(true);
+  expect(r.motivo).toContain("nickelau");
+  expect(r.faltante).toBeTruthy();
+  const d = await consultar("desempleo", snapshot(), { modo: "bm25" });
+  expect(d.abstener).toBe(false);
+  expect(d.evidencias[0]?.tipo).toBe("indicador");
+  const c = await consultar("contraseña", snapshot(), { modo: "bm25" });
+  expect(c.abstener && c.motivo).toContain("alcance");
+});

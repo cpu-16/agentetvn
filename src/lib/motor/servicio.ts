@@ -1,9 +1,8 @@
 // Capa de servicio usada por las rutas API (y por las pruebas sin HTTP).
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
-import { cincoTemas, consultar, enCorpus, LEYENDA } from "./consulta";
+import { cincoTemas, consultar, LEYENDA } from "./consulta";
 import { intencion } from "./intencion";
-import { tokenizar } from "./bm25";
 import type { ContextoPantalla } from "../voz/catalogo";
 import { generarPaquete } from "./paquete";
 import { resumenCorte } from "./tablero";
@@ -117,8 +116,7 @@ function registrar(origen: "texto" | "voz", q: string, r: Awaited<ReturnType<typ
 
 export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
   const t0 = Date.now();
-  const snap = snapshot();
-  const i = intencion(q, { tokens: tokenizar(q), enCorpus: (t) => enCorpus(snap, t), contexto });
+  const i = intencion(q, { contexto });
   const r = i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
     : await consultaSinRegistro(q, modo, eventoId);

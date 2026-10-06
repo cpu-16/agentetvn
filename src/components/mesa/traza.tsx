@@ -41,8 +41,8 @@ export function TrazaBusqueda({ traza, llmMs, abierta }: { traza: Traza; llmMs?:
   const max = h ? Math.max(...h.cuentas, 1) : 1;
   const x = (s: number) => (h ? Math.min(100, Math.max(0, ((s - h.desde) / (h.hasta - h.desde || 1)) * 100)) : 0);
   const resumen = emb
-    ? `Por sentido: ${traza.comparadas.toLocaleString("es-PA")} publicaciones comparadas, ${traza.sobreUmbral} sobre el umbral, ${usadas} usada${usadas === 1 ? "" : "s"}`
-    : `Por palabras: ${traza.comparadas.toLocaleString("es-PA")} publicaciones revisadas, ${usadas} usadas`;
+    ? `Busqué por sentido en ${traza.comparadas.toLocaleString("es-PA")} publicaciones · ${traza.sobreUmbral} parecidas · usé ${usadas}`
+    : `Busqué por palabras en ${traza.comparadas.toLocaleString("es-PA")} publicaciones · usé ${usadas}`;
   const entra = (i: number) => (reducir ? {} : { initial: { opacity: 0, transform: "translateY(4px)" }, animate: { opacity: 1, transform: "translateY(0px)" }, transition: { duration: 0.22, delay: i * 0.12, ease: [0.23, 1, 0.32, 1] as const } });
   return (
     <details className="traza group rounded-md border border-azul/25 bg-[#f2f8fd] text-xs" open={abierta}>

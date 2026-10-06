@@ -10,8 +10,11 @@ export async function POST(req: Request) {
   if (!s) return sinSesion();
   const hilo = new URL(req.url).searchParams.get("hilo") ?? "";
   if (!esDueno(hilo, s.nombre, s.desde)) return NextResponse.json({ error: "no es tu llamada" }, { status: 403 });
-  const b = (await req.json().catch(() => ({}))) as { quien?: unknown; texto?: unknown };
-  if ((b.quien !== "persona" && b.quien !== "jarvis") || typeof b.texto !== "string") return NextResponse.json({ error: "turno inválido" }, { status: 400 });
+  const crudo = await req.text();
+  if (crudo.length > 4000) return NextResponse.json({ error: "turno demasiado largo" }, { status: 413 });
+  let b: { quien?: unknown; texto?: unknown } | null = null;
+  try { b = JSON.parse(crudo); } catch { /* inválido abajo */ }
+  if (!b || typeof b !== "object" || (b.quien !== "persona" && b.quien !== "jarvis") || typeof b.texto !== "string") return NextResponse.json({ error: "turno inválido" }, { status: 400 });
   try {
     appendFileSync(process.env.AGENTETVN_REGISTRO_VOZ ?? (process.env.NODE_ENV === "test" ? "/dev/null" : "db/voz-turnos.jsonl"), JSON.stringify({ fecha: new Date().toISOString(), hilo: hilo.slice(-6), quien: b.quien, texto: b.texto.slice(0, 1000), vista: contextoDe(hilo)?.vista ?? null }) + "\n");
   } catch { /* el registro nunca tumba la llamada */ }

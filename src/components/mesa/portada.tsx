@@ -109,7 +109,7 @@ export function Portada() {
       <section aria-labelledby="cinco-titulo">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="rotulo rotulo-tinta mb-2 inline-block">Cinco temas para la agenda de Panamá <span className="font-normal opacity-80">(CU-01)</span></p>
+            <p className="rotulo rotulo-tinta mb-2 inline-block">Cinco temas para la agenda de Panamá</p>
             <h2 id="cinco-titulo" className="titular text-2xl font-semibold">Cinco para hoy</h2>
             <p className="text-sm text-muted-foreground">Qué cinco temas merecen revisión para la agenda de Panamá, y por qué. El puntaje ordena; la evidencia decide si se puede escribir.</p>
           </div>
