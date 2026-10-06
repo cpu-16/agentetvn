@@ -21,10 +21,11 @@ const sinTildes = (t: string) => t.normalize("NFD").replace(/\p{M}/gu, "").toLow
 // Nombres propios y siglas: palabras con mayúscula que no abren la oración, más la sigla o el medio que abre la frase atribuyendo
 // («Reuters reporta…», «EFE informó…»). ponytail: heurística léxica; un nombre en minúscula o tras un adverbio no se detecta.
 const ATRIBUYE = /^((?:[A-ZÁÉÍÓÚÑ][\p{L}.]*\s+)+)(reporta|reportó|informa|informó|publica|publicó|dice|dijo|señala|señaló|indica|indicó|asegura|aseguró|afirma|afirmó|confirma|confirmó|titula|tituló|cita|citó)(?=[\s,]|$)/u;
-const FUNCIONALES = new Set(["se", "el", "la", "los", "las", "lo", "un", "una", "ya", "hoy", "ayer", "tambien", "ademas", "esto", "este", "esta"]);
+const FUNCIONALES = new Set(["se", "el", "la", "los", "las", "lo", "un", "una", "ya", "hoy", "ayer", "tambien", "tampoco", "ademas", "esto", "este", "esta", "eso", "ese", "esa", "ello", "no", "ni", "solo", "aun", "aunque", "pero", "sin", "nadie", "nada", "ninguno", "ninguna", "ambos", "ambas", "otro", "otra", "dicho", "dicha", "todavia"]);
 const nombres = (t: string) => {
   const s = t.trim(), atribuye = ATRIBUYE.exec(s), primera = /^[A-ZÁÉÍÓÚÑ]{2,}(?=[\s,:;.]|$)/u.exec(s);
-  const sujeto = atribuye ? atribuye[1].trim().split(/\s+/).filter((w) => !FUNCIONALES.has(sinTildes(w))) : primera ? [primera[0]] : [];
+  // «Panamaamerica.com.pa reporta» → panamaamerica, com, pa: se compara por palabras, como la fuente
+  const sujeto = atribuye ? atribuye[1].split(/[^\p{L}]+/u).filter((w) => w && !FUNCIONALES.has(sinTildes(w))) : primera ? [primera[0]] : [];
   return [...sujeto, ...[...s.matchAll(/(?<![.!?¿¡:]\s|^)(?<=\s|\(|«|“)([A-ZÁÉÍÓÚÑ][\p{L}]+)/gu)].map((m) => m[1])];
 };
 const CAUSA = /(debido a|a causa de|por culpa de|provoc[óoa]|ocasion[óoa]|gracias a|como consecuencia|a ra[ií]z de)/i;
