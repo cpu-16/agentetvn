@@ -21,6 +21,7 @@ cp /tmp/agentetvn.service /etc/systemd/system/agentetvn.service
 systemctl daemon-reload && systemctl enable -q agentetvn && systemctl restart agentetvn
 sleep 4
 bun run doctor 2>/dev/null | tail -n 1
-curl -s -o /dev/null -w \"HTTP %{http_code}\\n\" http://127.0.0.1:3000/api/agenda
+curl -s -o /dev/null -w \"HTTP %{http_code} (página)\\n\" http://127.0.0.1:3000/
+curl -s -o /dev/null -w \"HTTP %{http_code} (api/agenda sin sesión: debe ser 401)\\n\" http://127.0.0.1:3000/api/agenda
 '"
 echo "desplegado $REF en CT $CT"
