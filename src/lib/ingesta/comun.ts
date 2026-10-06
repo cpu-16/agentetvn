@@ -39,6 +39,12 @@ export function nuevaNoticia(p: Omit<Noticia, "id_noticia" | "alcance_texto" | "
   };
 }
 
+/** Un «titular» que es la portada de un sitio o tiene menos de 4 palabras no es una noticia. */
+export function esTitularBasura(t: string): boolean {
+  const s = t.trim();
+  return /^(inicio|home|portada|noticias|news|p[aá]gina principal)\s*[|:–-]/i.test(s) || /\|\s*(peri[oó]dico|diario|noticias)\s*[\wÀ-ÿ ]*$/i.test(s) && s.split(/\s+/).length <= 4 || s.split(/\s+/).length < 4;
+}
+
 /** Deduplica por URL normalizada; conserva la primera (y registra cuántas se excluyeron). */
 export function dedup(noticias: Noticia[]): { unicas: Noticia[]; excluidas: number } {
   const vistas = new Map<string, Noticia>();

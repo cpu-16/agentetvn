@@ -25,6 +25,13 @@ describe("T08 prioridad alta", () => {
     expect(r.U).toBe(0.2);
     expect(r.explicacion.U).toContain("detección");
   });
+  test("CU-01: cinco temas con máximo dos por tema, sin sintéticos ni deportes", async () => {
+    const { cincoTemas } = await import("../src/lib/motor/consulta");
+    const mk = (id: string, tema: string, P: number): import("../src/lib/motor/contrato").Evento => ({ id, representante: id, ids_noticia: [id], procedencias: [], tema, tema_confianza: 1, por_revisar: false, fecha_original: null, contexto: { indicadores: [], sismos: [] }, contradicciones: [], componentes: { R: 1, I: 1, U: 1, N: 1, E: 1, explicacion: { R: "", I: "", U: "", N: "", E: "" } }, P, rango: "alto", estado_evidencia: "parcial", no_confiable: false });
+    const eventos = [mk("a", "economia", 90), mk("b", "economia", 89), mk("c", "economia", 88), mk("d", "deportes", 87), mk("e", "turismo", 86), mk("f", "regulacion", 85), mk("g", "turismo", 84), mk("h", "economia", 83)];
+    const snap = { eventos, noticias: eventos.map((e) => n({ id_noticia: e.id, url: `https://x.com/${e.id}` })) } as unknown as import("../src/lib/motor/cargar").Snapshot;
+    expect(cincoTemas(snap).map((c) => c.evento.id)).toEqual(["a", "b", "e", "f", "g"]);
+  });
   test("orden: P desc, U desc, id asc", () => {
     const o = ordenar([{ id: "b", P: 50, componentes: { U: 1 } }, { id: "a", P: 50, componentes: { U: 1 } }, { id: "c", P: 80, componentes: { U: 0 } }, { id: "d", P: 50, componentes: { U: 0.4 } }]);
     expect(o.map((x) => x.id)).toEqual(["c", "a", "b", "d"]);

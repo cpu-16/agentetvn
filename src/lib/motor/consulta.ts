@@ -140,9 +140,17 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
 /** CU-01 · los cinco temas que merecen revisión, con razones y vacíos. */
 export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[]; vacios: string[] }[] {
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
-  return snap.eventos
-    .filter((e) => !e.no_confiable && e.tema !== "deportes" && e.tema !== "otro" && !e.ids_noticia.some((i) => porId.get(i)?.sintetica))
-    .slice(0, 5)
+  // cinco temas distintos para una agenda: máximo dos eventos del mismo tema (el orden sigue siendo por P)
+  const porTema = new Map<string, number>();
+  const elegidos: Evento[] = [];
+  for (const e of snap.eventos) {
+    if (e.no_confiable || e.tema === "deportes" || e.tema === "otro" || e.ids_noticia.some((i) => porId.get(i)?.sintetica)) continue;
+    if ((porTema.get(e.tema) ?? 0) >= 2) continue;
+    porTema.set(e.tema, (porTema.get(e.tema) ?? 0) + 1);
+    elegidos.push(e);
+    if (elegidos.length === 5) break;
+  }
+  return elegidos
     .map((e) => {
       const ex = e.componentes.explicacion;
       const razones = [`P ${e.P} (${e.rango}): ${ex.R}`, ex.I, ex.U, ex.N, ex.E];

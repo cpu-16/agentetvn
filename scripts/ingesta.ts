@@ -5,7 +5,7 @@
 // Sale 2 si no se alcanza el mínimo del reto (100 noticias únicas, 20 de TVN).
 // ─────────────────────────────────────────────────────────────
 import { mkdirSync, existsSync } from "fs";
-import { dedup } from "../src/lib/ingesta/comun";
+import { dedup, esTitularBasura } from "../src/lib/ingesta/comun";
 import { ingestarTvn } from "../src/lib/ingesta/tvn";
 import { ingestarGdelt } from "../src/lib/ingesta/gdelt";
 import { ingestarOtrosRss } from "../src/lib/ingesta/otros_rss";
@@ -47,8 +47,10 @@ const enVentana = (n: Noticia) => {
 const otros = await ingestarOtrosRss(fechaExtraccion, log);
 escribirJson(`${RAW}/${dia}/otros_rss.json`, otros.noticias);
 consultas.push(...otros.consultas);
-const { unicas, excluidas } = dedup([...tvn.noticias, ...gdeltNoticias, ...otros.noticias].filter(enVentana));
-const fueraVentana = tvn.noticias.length + gdeltNoticias.length + otros.noticias.length - excluidas - unicas.length;
+const todasCrudas = [...tvn.noticias, ...gdeltNoticias, ...otros.noticias];
+const basura = todasCrudas.filter((n) => esTitularBasura(n.titulo)).length;
+const { unicas, excluidas } = dedup(todasCrudas.filter((n) => enVentana(n) && !esTitularBasura(n.titulo)));
+const fueraVentana = todasCrudas.length - basura - excluidas - unicas.length;
 const deTvn = unicas.filter((n) => n.medio === "TVN").length;
 log(`noticias únicas: ${unicas.length} (TVN ${deTvn}) · duplicadas por URL: ${excluidas} · fuera de 90 días: ${fueraVentana}`);
 escribirCsv(`${OUT}/noticias.csv`, unicas as unknown as Record<string, unknown>[], COLUMNAS_NOTICIAS);
@@ -89,7 +91,7 @@ const manifest: Manifest = {
     "ventana de noticias: 90 días previos al corte y nunca posteriores al corte (§6 del reto); la ventana [2024-01-01, 2025-10-01) de la §7 no se aplica a noticias porque contradice la §6 y la fecha de consulta; política configurable en scripts/ingesta.ts",
     "indicadores: grilla completa país × indicador × año con valor nulo cuando el Banco Mundial no publica; nunca 0 por ausencia",
     "agencia detectada por patrones (config/agencias.json) sobre titular + descripción",
-    `excluidas ${excluidas} noticias duplicadas por URL y ${fueraVentana} fuera de ventana`,
+    `excluidas ${excluidas} noticias duplicadas por URL, ${fueraVentana} fuera de ventana y ${basura} registros cuyo titular es la portada de un sitio o tiene menos de 4 palabras (no son noticias)`,
   ],
   discrepancias_pdf: ["§6: 6 países × 6 indicadores × 15 años = 540 combinaciones, no 1.350", "§7: intervalo [2024-01-01, 2025-10-01) incompatible con «30–90 días previos» de la §6 y con la fecha de consulta 5-oct-2026; se aplica la §6 por familia"],
 };
