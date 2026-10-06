@@ -109,3 +109,14 @@ Leer el guion al aire, manos libres, memoria entre llamadas, editar o aprobar po
 3. Herramientas: `preguntar_corpus`, `explicar_pantalla` (catálogo + resumen), `navegar` (cola + resolución por título).
 4. Interfaz, **desde el principio para escritorio y celular**: orbe con estados, pulsar para hablar con mouse, teclado y dedo, panel arrastrable con tamaños y hoja inferior en celular, «Explícame esta pantalla», hilo con transcripciones y citas.
 5. Pruebas, controles positivos, revisión de Codex y Cursor, despliegue, ensayo en campo y decisión D12 en Notion.
+
+## Revisión 6-oct, 4:35 p. m. · el puente reusa el login de la voz de la CSS (decisión de Gilberto)
+
+Gilberto eligió **no hacer un login nuevo** y reusar el Codex ya logueado de la voz de la CSS, con la condición de **no tumbar lo que hay allá**. Esto reemplaza las secciones «Dónde corre» y el login propio de arriba:
+
+- **Dónde corre el puente:** CT `css-llamada` (CT 130 de **prox3**, 192.168.40.230), como servicio aparte `agentetvn-voz` en `/opt/agentetvn-voz`. Usa el mismo `/usr/local/bin/codex` 0.160.0 y el mismo `/root/.codex/auth.json` que `css-codex` (root, `HOME=/root`), pero lanza **su propio** `codex app-server`, con las mismas banderas que la CSS: `-c web_search="disabled"` y `--disable shell_tool unified_exec apps plugins computer_use image_generation multi_agent goals`.
+- **Qué NO se toca:** `css-codex`, `css-llamada.service`, `/opt/llamada`, su túnel, su puerto 8795 y la versión de Codex (no se actualiza).
+- **Puente inverso, solo salida:** el CT de la CSS no tiene ruta hacia el CT 130 de prox (otra red, sin Tailscale), pero sí sale a internet. El puente no abre ningún puerto: hace long-poll a `https://agentetvn.ciberpty.com/api/voz/puente/espera` (token, ≤ 25 s) para recibir comandos (`offer` con el SDP y la persona, o `colgar`), y responde por `POST /api/voz/puente/respuesta`. Las herramientas y el aviso de fin van a `/api/voz/herramienta` y `/api/voz/fin`, también con el token. Esas rutas llegan por Cloudflare, así que se protegen solo con el token interno de 32 hex, sin el filtro de `cf-connecting-ip`.
+- **Disponibilidad:** Next considera la voz disponible si el puente consultó en los últimos 40 s y no está ocupado.
+- **Cuidado con la CSS:** dos `app-server` comparten el `auth.json` en la misma máquina, que es el uso normal de varias sesiones de Codex (el riesgo de rotación era al copiarlo a otra máquina). Después de cada despliegue se verifica que `css-codex` siga activo, que su `/estado` responda y que en los dos journals no aparezca «refresh token». **Reversión:** `systemctl disable --now agentetvn-voz && rm -r /opt/agentetvn-voz`. Si aparece cualquier error de login en `css-codex`, se apaga `agentetvn-voz` primero y se investiga después.
+- **Consumo:** misma cuenta y misma cuota que la voz de la CSS. Los topes de Jarvis (1 llamada, 3 min, 10 por hora, 20 min por hora) protegen esa cuota.
