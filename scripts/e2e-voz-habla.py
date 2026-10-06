@@ -17,14 +17,14 @@ with sync_playwright() as p:
     pg.get_by_role("button", name="Entrar a la mesa").click(); pg.wait_for_timeout(3000)
     pg.locator(".jarvis-boton").click()
     vio_tablero, max_scroll = False, 0
-    for s in range(130):
+    for s in range(int(__import__("os").environ.get("SEG", "130"))):
         pg.wait_for_timeout(1000)
         vio_tablero = vio_tablero or pg.get_by_text("Tablero de señales").count() > 0
         max_scroll = max(max_scroll, pg.evaluate("scrollY"))
         if s in (40, 90): pg.screenshot(path=f"{OUT}/habla-{s}s.png")
     turnos = pg.locator("#chat-agente p.rounded-md").all_inner_texts()
     pg.locator("#chat-agente").screenshot(path=f"{OUT}/habla-panel.png")
-    pg.locator(".jarvis-boton").click(); pg.wait_for_timeout(800)
+    if pg.locator('.jarvis-boton[aria-pressed="true"]').count(): pg.locator(".jarvis-boton").click(); pg.wait_for_timeout(800)  # colgar solo si sigue la llamada
     ctx.close(); b.close()
 
 print("\n".join(t.replace("\n", ": ", 1) for t in turnos))

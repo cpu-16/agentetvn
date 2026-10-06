@@ -20,4 +20,6 @@ for linea in sys.stdin:
     elif metodo == "thread/realtime/stop":
         open(log, "a").write(json.dumps({"stop": p.get("threadId")}) + "\n")
         if not os.environ.get("FALSO_SIN_STOP"): enviar({"jsonrpc": "2.0", "id": m["id"], "result": {}})  # sin respuesta: cierre no confirmado
+    elif metodo == "falso/cerrar":  # simula que la conexión de voz con OpenAI se cae a mitad de la llamada
+        enviar({"jsonrpc": "2.0", "method": "thread/realtime/closed", "params": {"threadId": p["threadId"]}})
     elif "id" in m: enviar({"jsonrpc": "2.0", "id": m["id"], "result": {}})

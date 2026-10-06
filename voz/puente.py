@@ -115,6 +115,10 @@ def leer(proc):
             with lock: app.stdin.write(json.dumps({"jsonrpc": "2.0", "id": m["id"], "error": {"code": -32601, "message": "no soportado"}}) + "\n"); app.stdin.flush()
         elif "id" in m: pendientes.pop(m["id"], queue.Queue()).put(m)
         elif metodo == "thread/realtime/sdp": respuestas.get(p.get("threadId"), queue.Queue()).put(p["sdp"])
+        elif metodo in ("thread/realtime/closed", "thread/realtime/error") and (a := estado["activa"]) and a["hilo"] == p.get("threadId") and a.get("conectada"):
+            # la voz se cayó a mitad de la llamada (p. ej. «Connection reset» con OpenAI): colgar ya y avisar, sin esperar el silencio
+            print(f"[{a['hilo'][-6:]}] realtime {metodo.rsplit('/', 1)[1]}: {p.get('message', '')}", flush=True)
+            threading.Thread(target=cortar, args=(a["hilo"], "se cortó la conexión de voz"), kwargs={"ya_cerrado": True}, daemon=True).start()
         elif metodo == "thread/realtime/error": respuestas.get(p.get("threadId"), queue.Queue()).put(None); print("error realtime:", p.get("message"), flush=True)
         elif metodo == "thread/tokenUsage/updated":
             a = estado["activa"]
@@ -165,12 +169,12 @@ def detener(hilo):
         guardar_uso(); os._exit(1)
 
 
-def cortar(hilo, motivo, avisar_next=True):
+def cortar(hilo, motivo, avisar_next=True, ya_cerrado=False):
     with lock:
         a = estado["activa"]
         if not a or a["hilo"] != hilo or a.get("cerrando"): return
         a["cerrando"] = True  # sigue ocupada hasta confirmar el cierre: no entra otra llamada mientras tanto
-    detener(hilo)
+    if not ya_cerrado: detener(hilo)  # si Codex ya avisó que el realtime se cerró, no hay nada que detener
     with lock: estado["activa"] = None
     respuestas.pop(hilo, None)  # (si detener no confirmó, el proceso ya salió)
     seg = time.time() - a["inicio"]; estado["uso"].append((a["inicio"], seg)); guardar_uso()
@@ -225,6 +229,7 @@ def atender_oferta(cmd):
     codigo, r = a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": True, "sdp": sdp, "hilo": hilo}, timeout=10)
     if codigo != 200 or not r.get("aceptada"):
         cortar(hilo, "nadie esperaba la llamada", avisar_next=False); return
+    if estado["activa"] and estado["activa"]["hilo"] == hilo: estado["activa"]["conectada"] = True
     print(f"[{hilo[-6:]}] llamada conectada para {estado['activa']['persona'] if estado['activa'] else '?'}, voz {VOZ}, límite {estado['activa']['limite'] if estado['activa'] else '?'} s", flush=True)
 
 
@@ -328,13 +333,20 @@ def revisar():
     assert json.load(open(ESTADO_ARCHIVO))["en_curso"], "la llamada en curso queda guardada por si el puente se reinicia"
     comandos.put({"tipo": "colgar", "hilo": estado["activa"]["hilo"], "motivo": "prueba"})
     assert esperar(lambda: estado["activa"] is None)
+    MAX_SEG_HORA = 100_000  # la voz se cae a mitad de la llamada: el puente cuelga solo y avisa a Next, sin pedir stop
+    comandos.put({"tipo": "offer", "id": "o7", "sdp": "v=0 oferta", "persona": "Ana"})
+    assert esperar(lambda: resp("o7") and estado["activa"] and estado["activa"].get("conectada")), "o7 conectada"
+    h7 = estado["activa"]["hilo"]
+    rpc("falso/cerrar", {"threadId": h7}, wait=False)
+    assert esperar(lambda: estado["activa"] is None and any(p == "/api/voz/fin" and b["hilo"] == h7 and "cortó" in b["motivo"] for p, b, _ in recibidos)), "realtime cerrado → colgar y avisar"
+    assert not paro(h7), "con el realtime ya cerrado no se pide stop"
     MAX_SEG_HORA = seg_ultima_hora(time.time()) + 10  # quedan < 15 s de cupo
     comandos.put({"tipo": "offer", "id": "o5", "sdp": "v=0 oferta", "persona": "Ana"})
     assert esperar(lambda: resp("o5")) and resp("o5")[0]["status"] == 429, "sin cupo en la hora → 429"
     guardado = json.load(open(ESTADO_ARCHIVO))
-    assert len(guardado["uso"]) == 4 and len(guardado["inicios"]) == 4, guardado  # 4 llamadas cerradas, 4 inicios
+    assert len(guardado["uso"]) == 5 and len(guardado["inicios"]) == 5, guardado  # 5 llamadas cerradas, 5 inicios
     estado["uso"].clear(); cargar_uso()
-    assert len(estado["uso"]) == 4, "el consumo de la hora sobrevive a un reinicio"
+    assert len(estado["uso"]) == 5, "el consumo de la hora sobrevive a un reinicio"
     open(ESTADO_ARCHIVO, "w").write('{"uso": [[1, ')  # archivo cortado a la mitad
     MAX_SEG_HORA = 1200; estado["uso"].clear(); cargar_uso()
     assert seg_ultima_hora(time.time()) >= MAX_SEG_HORA, "un archivo de consumo dañado bloquea la voz una hora"
@@ -345,7 +357,7 @@ def revisar():
     assert r.returncode == 1 and "stop no confirmado" in r.stdout, (r.returncode, r.stdout[-300:], r.stderr[-300:])
     assert time.time() - t0 < 30
     parar.set()
-    print("puente --check: OK (respuesta por id, 1 llamada a la vez, lista cerrada, token, cierre confirmado, respuesta tardía, cupo por hora, consumo persistido, colgar)", flush=True)
+    print("puente --check: OK (respuesta por id, 1 llamada a la vez, lista cerrada, token, cierre confirmado, respuesta tardía, cupo por hora, consumo persistido, colgar, voz caída a mitad)", flush=True)
 
 
 def revisar_cierre():
