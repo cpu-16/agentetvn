@@ -225,7 +225,7 @@ def atender_oferta(cmd):
         if sdp is None: raise RuntimeError("Codex rechazó la llamada")
     except Exception as e:
         print("oferta falló:", e, flush=True)
-        if hilo: detener(hilo)  # pudo haber arrancado el realtime: se cierra
+        if hilo and not (estado["activa"] or {}).get("cerrada_temprano"): detener(hilo)  # pudo haber arrancado el realtime: se cierra (si no se cerró ya)
         with lock: estado["activa"] = None
         if hilo: respuestas.pop(hilo, None)
         estado["uso"].append((ahora, time.time() - ahora)); guardar_uso()
