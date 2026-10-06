@@ -12,6 +12,7 @@ Asistente de voz y texto de la mesa de AgenteTVN. El chat flotante pasa a ser un
 | Micrófono | **Pulsar para hablar**: mantener presionado el orbe (o la barra espaciadora con el panel abierto) |
 | Orbe | Azul TVN: núcleo cian claro → `#0077c8` → `#00466f`, halo azul y filo cian girando |
 | Panel | Arrastrable por el título (escritorio); tamaños compacto, lateral y amplio; hoja inferior en celular |
+| Celular | **Responsivo y usable desde el celular** (pedido de Gilberto): orbe, pulsar para hablar, panel y voz tienen que funcionar con el dedo en Android y en iPhone |
 
 Insumos: `hackiathon/encargos/codex-jarvis-voz.out.md` (arquitectura, Codex) y `cursor-jarvis-ux.out.md` (interfaz, Cursor). Base reutilizada: `~/datos/CSS/voz-lab/llamada-web/codex_puente.py` (Hasta Ti, solo lectura) y la demo mínima `~/datos/CODEX-LLAMADA/`.
 
@@ -57,6 +58,11 @@ Reglas de la voz (la del acento va AL PRINCIPIO): español de Panamá; de las no
 - **Panel:** dos nodos. El exterior lleva el arrastre (`drag`, `dragControls` desde la barra del título, `dragMomentum={false}`, límites en la ventana); el interior lleva la animación de entrada. Botones Compacto, Lateral y Amplio con `aria-pressed`; en lateral y amplio, `aria-modal=false` y el panel no se cierra con un clic afuera. La posición se guarda en `sessionStorage`. En celular (≤ 640 px): hoja inferior sin arrastre.
 - **«Explícame esta pantalla»:** botón en el panel. Inserta el texto fijo de la sección en el hilo sin ninguna llamada (0 tokens). En voz, `explicar_pantalla` usa el mismo catálogo.
 - **Contexto de sección:** la página manda `{vista, eventoId, pestaña, filtrosAgenda, filtroTablero}` a `/api/voz/contexto` al abrir la llamada y en cada cambio. La pestaña de la ficha y los filtros de agenda y tablero suben a `src/store/mesa.ts`, que hoy son `useState` locales.
+- **Celular (≤ 640 px; requisito, no adorno):**
+  - **Orbe:** 56 px de área táctil, abajo a la derecha, respetando `env(safe-area-inset-bottom)` y `-right`. Mantener presionado funciona con el dedo gracias a pointer events con `touch-action: none`, `user-select: none`, `-webkit-touch-callout: none` y sin menú contextual. Vibra corto al empezar a escuchar, donde `navigator.vibrate` exista. Si el dedo se sale del orbe sin soltar, el turno se cierra igual.
+  - **Panel:** hoja inferior a 72 `dvh` que se expande a 100 `dvh` con un botón, sin arrastre libre. El campo de texto usa ≥ 16 px para que iOS no haga zoom, y el teclado no tapa el campo (`visualViewport`). Los botones miden ≥ 44 px y el hilo hace scroll sin pelear con la hoja.
+  - **Voz en el teléfono:** `getUserMedia` y el audio de salida arrancan dentro del gesto de presionar el orbe, que es lo que exige iOS para reproducir sonido. Si la pestaña pasa a segundo plano o se bloquea la pantalla, se cuelga (como en Hasta Ti) y se avisa al volver. Se usan el micrófono y el altavoz del sistema, sin opciones avanzadas.
+  - **Resto de la mesa:** las piezas nuevas (orbe, «Explícame esta pantalla», acciones de navegar) se prueban a 360 y 390 px de ancho. Una navegación por voz que abre el tablero o la ficha deja la hoja minimizada, para que se vea la pantalla.
 - **Hilo:** lo que dice la persona y la voz (transcripciones de `oai-events`) y las acciones `mostrar` con citas quedan en el mismo hilo del chat. El chat de texto sigue igual (`/api/consulta`).
 
 ## Consumo y límites (en el puente, no en la página)
@@ -80,24 +86,26 @@ Reglas de la voz (la del acento va AL PRINCIPIO): español de Panamá; de las no
 - **Next (bun test):** las rutas `/api/voz/*` exigen sesión; un `hilo` de otra sesión → 403; `/api/voz/herramienta` sin token interno → 401; `navegar` rechaza destinos fuera de la lista; `explicar_pantalla` con cada vista devuelve su texto fijo; `preguntar_corpus` con un `eventoId` inexistente no amplía la búsqueda.
 - **Puente (`--check` sin red, con un app-server falso):** topes (segunda llamada simultánea rechazada, corte a los 3 min), dispatcher con lista cerrada de herramientas y token interno obligatorio.
 - **Control positivo** en sesión, límites y lista cerrada (desactivar → falla → restaurar).
+- **Celular:** Playwright a 360×800 y 390×844 (orbe, hoja, teclado, sin desborde) y **dispositivos reales** por USB con adb + CDP: HONOR (Brave) y Samsung A22 (Chrome), con mantener presionado, voz de ida y vuelta, navegar por voz y pantalla bloqueada. iPhone: lo prueba Gilberto o Jeff si tienen uno a mano; si no, se declara como no probado.
 - **En campo (Gilberto, en su laptop y en su celular):** pregunta con evidencia, pregunta sin evidencia (abstención hablada), «explícame esta pantalla» en ficha y tablero, «abre el tablero», «llévame a la ficha de Enrique Lau», micrófono denegado, puente apagado (cae al chat), corte a los 3 min.
 - Revisión de Codex (código) y Cursor (interfaz) sobre el diff, como en D11.
 
 ## Fuera de este corte
 
-Leer el guion al aire, manos libres, memoria entre llamadas, editar o aprobar por voz, voces personalizadas, varias llamadas simultáneas, soporte exhaustivo en móvil y garantía literal del audio.
+Leer el guion al aire, manos libres, memoria entre llamadas, editar o aprobar por voz, voces personalizadas, varias llamadas simultáneas, navegadores sin WebRTC o sin `getUserMedia` (se avisa y queda el chat) y garantía literal del audio.
 
 ## Riesgos
 
 1. **Fidelidad del audio:** la voz puede reformular. El hilo con citas es la referencia, y se ensaya antes del pitch.
 2. **Latencia acumulada** (realtime → Luna → Claude): medirla. Si pasa de ~15 s, `preguntar_corpus` usa las afirmaciones extractivas para la voz y deja la redacción de Claude en el hilo.
 3. **API experimental del app-server:** fijar la versión de Codex y no actualizarla antes de la entrega.
-4. **Tiempo:** ~6 h la voz y ~3 h la interfaz. Si el ensayo falla el miércoles a las 18:00, la voz queda apagada por configuración (`AGENTETVN_VOZ=off`) y se entrega el orbe con el chat.
+4. **Celular:** las reglas de audio de iOS y el permiso del micrófono varían por navegador. Se prueba en dispositivos reales antes de dar la voz por lista.
+5. **Tiempo:** ~6 h la voz y ~3,5 h la interfaz responsiva. Si el ensayo falla el miércoles a las 18:00, la voz queda apagada por configuración (`AGENTETVN_VOZ=off`) y se entrega el orbe con el chat.
 
 ## Orden de construcción
 
 1. Instalar Codex en el CT 130 + login (Gilberto autoriza el código) + prueba de voz v3 con la demo mínima.
 2. Puente `agentetvn-voz` (límites, dispatcher, token) + rutas `/api/voz/*` en Next (sesión, dueño, proxy).
 3. Herramientas: `preguntar_corpus`, `explicar_pantalla` (catálogo + resumen), `navegar` (cola + resolución por título).
-4. Interfaz: orbe con estados, pulsar para hablar, panel arrastrable con tamaños, «Explícame esta pantalla», hilo con transcripciones y citas.
+4. Interfaz, **desde el principio para escritorio y celular**: orbe con estados, pulsar para hablar con mouse, teclado y dedo, panel arrastrable con tamaños y hoja inferior en celular, «Explícame esta pantalla», hilo con transcripciones y citas.
 5. Pruebas, controles positivos, revisión de Codex y Cursor, despliegue, ensayo en campo y decisión D12 en Notion.
