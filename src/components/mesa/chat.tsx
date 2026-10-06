@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useDragControls, useReducedMotion } from "framer-motion";
 import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "./citas";
 import { SPRING_PANEL, fetchMesa, useMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
@@ -8,11 +8,13 @@ import { ETIQUETA_ORBE, Orbe } from "./jarvis/orbe";
 import { clasificarPulsacion } from "./jarvis/pulsacion";
 import { estadoOrbe } from "./jarvis/maquina";
 import { useVoz } from "./jarvis/useVoz";
+import { clasesPanel, type TamanoPanel } from "./jarvis/panel";
+import { contextoDesdeMesa, explicacionFija } from "@/lib/voz/catalogo";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
 interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } } }
 const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
-interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null }
+interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
 const SUGERIDAS: { q: string; etiqueta?: string }[] = [
   { q: "¿Qué cinco temas merecen revisión para la agenda de Panamá?" },
@@ -41,7 +43,23 @@ export function ChatAgente() {
   const entrada = useRef<HTMLTextAreaElement>(null);
   const fin = useRef<HTMLDivElement>(null);
   const reducir = useReducedMotion();
-  const voz = useVoz(); // en la tarea 7 se le pasan los callbacks del hilo
+  const [tamano, setTamano] = useState<TamanoPanel>("compacto");
+  const [celular, setCelular] = useState(false);
+  const controles = useDragControls();
+  const turnoVoz = (quien: "persona" | "jarvis" | "sistema", texto: string) => setTurnos((t) => [...t, { id: Date.now() + Math.random(), pregunta: "", ambito: null, respuesta: null, error: null, voz: { quien, texto } }]);
+  const voz = useVoz({
+    onTranscripcion: (quien, texto) => turnoVoz(quien, texto),
+    onMostrar: (pregunta, respuesta) => setTurnos((t) => [...t, { id: Date.now() + Math.random(), pregunta: `🎙 ${pregunta}`, ambito: null, respuesta: respuesta as Respuesta, error: null }]),
+    onAviso: (texto) => { setAnuncio(texto); turnoVoz("sistema", texto); },
+  });
+  const arrastrable = !celular && tamano !== "amplio";
+  // ponytail: la posición arrastrada vuelve al rincón al cambiar de tamaño o recargar; guardarla en sessionStorage si se pide
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const cambiar = () => setCelular(mq.matches);
+    cambiar(); mq.addEventListener("change", cambiar);
+    return () => mq.removeEventListener("change", cambiar);
+  }, []);
   const orbe = estadoOrbe(voz.estado);
   const inicioPulsacion = useRef(0);
   const temporizador = useRef<number | undefined>(undefined);
@@ -52,15 +70,22 @@ export function ChatAgente() {
   useEffect(() => {
     if (!chatAbierto) return;
     const t = setTimeout(() => entrada.current?.focus(), 60); // respaldo del autoFocus (el panel se monta animado)
-    const tecla = (e: KeyboardEvent) => { if (e.key === "Escape") { setChatAbierto(false); } };
+    const enCampo = (e: KeyboardEvent) => !!(e.target as HTMLElement).closest?.("textarea,input,select,button");
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setChatAbierto(false); return; }
+      if (e.code === "Space" && !e.repeat && !enCampo(e)) { e.preventDefault(); voz.prepararAudio(); void voz.pulsar(); } // barra espaciadora = hablar
+    };
+    const suelta = (e: KeyboardEvent) => { if (e.code === "Space" && !enCampo(e)) voz.soltar(); };
     const fuera = (e: PointerEvent) => {
+      if (tamano !== "compacto") return; // en lateral y amplio el panel acompaña la pantalla: un clic afuera no lo cierra
       const t = e.target as Node;
       if (panel.current && !panel.current.contains(t) && boton.current && !boton.current.contains(t) && !(t as HTMLElement).closest?.("[role=dialog]")) setChatAbierto(false);
     };
     window.addEventListener("keydown", tecla);
+    window.addEventListener("keyup", suelta);
     window.addEventListener("pointerdown", fuera);
-    return () => { clearTimeout(t); window.removeEventListener("keydown", tecla); window.removeEventListener("pointerdown", fuera); boton.current?.focus({ preventScroll: true }); };
-  }, [chatAbierto, setChatAbierto]);
+    return () => { clearTimeout(t); window.removeEventListener("keydown", tecla); window.removeEventListener("keyup", suelta); window.removeEventListener("pointerdown", fuera); boton.current?.focus({ preventScroll: true }); };
+  }, [chatAbierto, setChatAbierto, tamano, voz]);
 
   useEffect(() => { fin.current?.scrollIntoView({ block: "end", behavior: reducir ? "auto" : "smooth" }); }, [turnos, reducir]);
 
@@ -132,21 +157,34 @@ export function ChatAgente() {
       <AnimatePresence>
         {chatAbierto && (
           <motion.div
+            key={`capa-${tamano}-${celular}`}
+            className="pointer-events-none fixed inset-0 z-50"
+            drag={arrastrable ? (tamano === "lateral" ? "x" : true) : false}
+            dragControls={controles}
+            dragListener={false}
+            dragMomentum={false}
+            dragElastic={0}
+            dragConstraints={{ left: -(typeof window !== "undefined" ? window.innerWidth - 140 : 800), right: 0, top: -(typeof window !== "undefined" ? window.innerHeight - 140 : 500), bottom: 0 }}
+          >
+          <motion.div
             id="chat-agente"
             ref={panel}
             role="dialog"
-            aria-modal="true"
+            aria-modal={tamano === "compacto"}
             aria-labelledby="chat-titulo"
-            className="chat-panel fixed bottom-20 right-4 z-50 flex max-h-[min(72vh,640px)] w-[min(420px,calc(100vw-32px))] flex-col rounded-md"
+            className={cn("chat-panel pointer-events-auto flex flex-col", clasesPanel(tamano, celular), celular && "pb-[env(safe-area-inset-bottom)]")}
             style={{ transformOrigin: "calc(100% - 28px) calc(100% + 24px)" }}
             initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "scale(0.94) translateY(8px)" }}
             animate={{ opacity: 1, transform: "scale(1) translateY(0px)" }}
             exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "scale(0.96) translateY(6px)", transition: { duration: 0.14 } }}
             transition={SPRING_PANEL}
           >
-            <div className="flex items-center justify-between gap-2 border-b border-border/60 px-4 py-3">
+            <div
+              className={cn("flex items-center justify-between gap-2 border-b border-border/60 px-4 py-3", arrastrable && "cursor-grab select-none touch-none active:cursor-grabbing")}
+              onPointerDown={(e) => { if (arrastrable && !(e.target as HTMLElement).closest("button,select,label")) controles.start(e); }}
+            >
               <div>
-                <p id="chat-titulo" className="titular text-base font-semibold leading-none">Agente de la mesa</p>
+                <p id="chat-titulo" className="titular text-base font-semibold leading-none">Jarvis · agente de la mesa</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">{modoConsulta === "embeddings" ? "Búsqueda por sentido (semántica)" : "Búsqueda por palabras (BM25)"}</p>
               </div>
               <div className="flex items-center gap-2">
@@ -155,7 +193,16 @@ export function ChatAgente() {
                   <option value="embeddings">Por sentido</option>
                   <option value="bm25">Por palabras</option>
                 </select>
-                <button type="button" className="presionable rounded-sm px-1.5 py-1 text-xs text-muted-foreground hover:bg-papel" onClick={() => setChatAbierto(false)} aria-label="Cerrar el agente">✕</button>
+                {celular ? (
+                  <button type="button" className="presionable h-11 min-w-11 rounded-sm px-2 text-xs hover:bg-papel" aria-pressed={tamano === "amplio"} onClick={() => setTamano(tamano === "amplio" ? "compacto" : "amplio")}>{tamano === "amplio" ? "Reducir" : "Ampliar"}</button>
+                ) : (
+                  <div className="flex rounded-sm border border-border text-[11px]" role="group" aria-label="Tamaño del panel">
+                    {(["compacto", "lateral", "amplio"] as const).map((t) => (
+                      <button key={t} type="button" className={cn("presionable px-1.5 py-1 capitalize", tamano === t ? "bg-tinta text-white" : "hover:bg-papel")} aria-pressed={tamano === t} onClick={() => setTamano(t)}>{t}</button>
+                    ))}
+                  </div>
+                )}
+                <button type="button" className={cn("presionable rounded-sm px-1.5 py-1 text-xs text-muted-foreground hover:bg-papel", celular && "h-11 min-w-11")} onClick={() => setChatAbierto(false)} aria-label="Cerrar el agente">✕</button>
               </div>
             </div>
             {enFicha && (
@@ -164,7 +211,12 @@ export function ChatAgente() {
                 <button className="presionable text-acero underline" onClick={() => setSoloTema((v) => !v)}>{soloTema ? "Ampliar a todas las noticias" : "Volver a este tema"}</button>
               </div>
             )}
-            <div className="fino flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm">
+            <div className="flex flex-wrap items-center gap-2 border-b border-border/60 px-4 py-2 text-xs">
+              <button type="button" className="presionable min-h-9 rounded-full border border-tinta/30 bg-white px-3 py-1 font-medium text-tinta hover:border-tinta" onClick={() => turnoVoz("jarvis", explicacionFija(contextoDesdeMesa(useMesa.getState())))}>Explícame esta pantalla</button>
+              <span className="text-muted-foreground">{voz.estado === "no_disponible" ? "Voz no disponible ahora; el chat funciona igual." : voz.estado === "inactiva" ? "Mantén presionado el orbe (o la barra espaciadora) para hablarle." : `Voz: ${ETIQUETA_ORBE[orbe].toLowerCase()}.`}</span>
+              {voz.estado !== "inactiva" && voz.estado !== "no_disponible" && <button type="button" className="presionable ml-auto rounded-sm px-2 py-1 text-acero underline" onClick={() => voz.colgar("colgó")}>Colgar</button>}
+            </div>
+            <div className="fino flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3 text-sm">
               {turnos.length === 0 && (
                 <div>
                   <p className="text-muted-foreground">Pregunta en español sobre las noticias y los indicadores del corte. Responde con citas o se abstiene y dice qué falta.</p>
@@ -177,7 +229,12 @@ export function ChatAgente() {
                   </div>
                 </div>
               )}
-              {turnos.map((t) => (
+              {turnos.map((t) => t.voz ? (
+                <p key={t.id} className={cn("rounded-md px-3 py-2", t.voz.quien === "persona" ? "ml-8 bg-tinta/10" : t.voz.quien === "sistema" ? "bg-[#fff8e1] text-xs text-[#7a5600]" : "mr-8 border border-border bg-white")}>
+                  <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">{t.voz.quien === "persona" ? "Tú (voz)" : t.voz.quien === "sistema" ? "Aviso" : "Jarvis"}</span>
+                  {t.voz.texto}
+                </p>
+              ) : (
                 <div key={t.id} className="space-y-2">
                   <p className="ml-8 rounded-md bg-tinta px-3 py-2 text-white">{t.pregunta}{t.ambito && <span className="block text-[10px] text-white/60">sobre este tema</span>}</p>
                   {t.error ? (
@@ -232,9 +289,10 @@ export function ChatAgente() {
               <div ref={fin} />
             </div>
             <form className="flex items-end gap-2 border-t border-border/60 p-3" onSubmit={(e) => { e.preventDefault(); preguntar(q); }}>
-              <textarea ref={entrada} autoFocus value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); preguntar(q); } }} rows={2} placeholder="Escribe tu pregunta" className="min-h-[40px] flex-1 resize-none rounded-sm border border-border bg-white px-3 py-2 text-sm" aria-label="Pregunta para el agente" />
+              <textarea ref={entrada} autoFocus value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); preguntar(q); } }} rows={2} placeholder="Escribe tu pregunta" className="min-h-[44px] flex-1 resize-none rounded-sm border border-border bg-white px-3 py-2 text-base sm:text-sm" aria-label="Pregunta para el agente" />
               <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-10 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
             </form>
+          </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

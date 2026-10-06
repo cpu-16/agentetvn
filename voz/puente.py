@@ -121,9 +121,16 @@ def seg_ultima_hora(ahora):
 
 
 def guardar_uso():
+    """Escritura atómica (temporal + os.replace): un corte a mitad no deja el archivo a medias. False si no se pudo."""
     a = estado["activa"]
-    try: json.dump({"uso": list(estado["uso"]), "inicios": list(estado["inicios"]), "en_curso": [a["inicio"], a["limite"]] if a else None}, open(ESTADO_ARCHIVO, "w"))
-    except Exception: pass
+    try:
+        tmp = ESTADO_ARCHIVO + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump({"uso": list(estado["uso"]), "inicios": list(estado["inicios"]), "en_curso": [a["inicio"], a["limite"]] if a else None}, f)
+            f.flush(); os.fsync(f.fileno())
+        os.replace(tmp, ESTADO_ARCHIVO); return True
+    except Exception as e:
+        print("no pude guardar el consumo:", e, flush=True); return False
 
 
 def cargar_uso():
@@ -133,7 +140,10 @@ def cargar_uso():
         estado["inicios"] = deque(i for i in d.get("inicios", []) if ahora - i <= 3600)
         if d.get("en_curso") and ahora - d["en_curso"][0] <= 3600:  # una llamada cortada por un reinicio cuenta completa
             estado["uso"].append((d["en_curso"][0], d["en_curso"][1]))
-    except Exception: pass
+    except FileNotFoundError: pass  # primera vez
+    except Exception as e:  # archivo dañado: por precaución, el cupo de esta hora se da por gastado (protege la cuota de la CSS)
+        print("consumo ilegible; bloqueo la voz una hora por precaución:", e, flush=True)
+        estado["uso"] = deque([(time.time(), MAX_SEG_HORA)])
 
 
 def detener(hilo):
@@ -180,7 +190,10 @@ def atender_oferta(cmd):
             estado["activa"] = {"hilo": "", "inicio": ahora, "limite": min(MAX_SEG, restante), "persona": str(cmd.get("persona", ""))[:60], "tokens": 0, "herramientas": []}
     if ocupado:  # la respuesta HTTP va FUERA del candado
         a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": False, "status": 429, "error": "ocupada"}); return
-    estado["inicios"].append(ahora); guardar_uso()  # incluye la llamada en curso por si el puente se reinicia
+    estado["inicios"].append(ahora)
+    if not guardar_uso():  # sin poder registrar el consumo no se abre la llamada
+        with lock: estado["activa"] = None
+        a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": False, "status": 503, "error": "no se pudo registrar el consumo"}); return
     hilo = None
     try:
         hilo = rpc("thread/start", {"cwd": VACIA, "ephemeral": True, "approvalPolicy": "never", "sandbox": "read-only",
@@ -312,6 +325,9 @@ def revisar():
     assert len(guardado["uso"]) == 4 and len(guardado["inicios"]) == 4, guardado  # 4 llamadas cerradas, 4 inicios
     estado["uso"].clear(); cargar_uso()
     assert len(estado["uso"]) == 4, "el consumo de la hora sobrevive a un reinicio"
+    open(ESTADO_ARCHIVO, "w").write('{"uso": [[1, ')  # archivo cortado a la mitad
+    MAX_SEG_HORA = 1200; estado["uso"].clear(); cargar_uso()
+    assert seg_ultima_hora(time.time()) >= MAX_SEG_HORA, "un archivo de consumo dañado bloquea la voz una hora"
     # Cierre no confirmado: un puente cuyo app-server ignora el stop debe SALIR (código 1) para que systemd cierre todo.
     env = dict(os.environ, FALSO_SIN_STOP="1")
     t0 = time.time()
