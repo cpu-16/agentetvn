@@ -1,0 +1,1 @@
+Logos de TVN (tvn-2.com) y TVN Media (tvnmedia.com), propiedad de TVN Media. Se usan únicamente para identificar al patrocinador del reto en este prototipo del hackIAthon Panamá 2026 («Mesa editorial para TVN Media»); no implican aval ni licencia de redistribución. Colores de marca tomados del sitio público: azul oscuro #00466f, azul #0077c8.
