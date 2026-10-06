@@ -23,7 +23,7 @@ export interface Respuesta {
 export const LEYENDA = "Basado únicamente en titular/metadatos del snapshot; no se leyó el artículo completo.";
 const PAIS_NOMBRE: Record<string, RegExp> = { PAN: /panam/i, CRI: /costa rica/i, COL: /colombia/i, DOM: /dominican/i, MEX: /m[eé]xico/i, GTM: /guatemala/i };
 const nombreIndicador = (id: string) => INDICADORES[id]?.nombre ?? id;
-const hora = (iso: string | null) => (iso ? new Date(iso).toLocaleString("es-PA", { timeZone: "America/Panama", dateStyle: "medium", timeStyle: "short" }) : "fecha no disponible");
+export const hora = (iso: string | null) => (iso ? new Date(iso).toLocaleString("es-PA", { timeZone: "America/Panama", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }).replace(/\.\s*,/, ",") : "fecha no disponible");
 
 let bm25: { idx: BM25; n: number } | null = null;
 function indice(snap: Snapshot): BM25 {
@@ -62,6 +62,14 @@ function responderCifra(q: string, snap: Snapshot, t0: number, modo: Respuesta["
 export const afirmacionIndicador = (i: Indicador): Afirmacion => ({ texto: `${nombreIndicador(i.indicador_id)} de ${i.pais_iso3} en ${i.anio}: ${i.valor} ${i.unidad} (Banco Mundial; contexto histórico).`, tipo: "hecho_reportado", evidence_id: idIndicador(i), campo: "valor", alcance: "fila_indicador" });
 export const evidenciaIndicador = (i: Indicador): Evidencia => ({ id: idIndicador(i), tipo: "indicador", resumen: `${i.pais_iso3} · ${i.indicador_id} · ${i.anio} · ${i.valor ?? "nulo"} ${i.unidad} · ${i.licencia}`, score: 1 });
 export const afirmacionNoticia = (n: Noticia): Afirmacion => ({ texto: `El titular de ${n.medio} (${hora(n.fecha_publicacion ?? n.fecha_deteccion)}${n.fecha_publicacion ? "" : ", fecha de detección"}) reporta: «${n.titulo}».`, tipo: "hecho_reportado", evidence_id: n.id_noticia, campo: "titulo", alcance: "titular_metadatos" });
+/** Oraciones del extracto del RSS como hechos reportados (campo descripcion); una declaración atribuida («X dijo/explicó») se marca como declaración. */
+export const afirmacionesExtracto = (n: Noticia, max = 3): Afirmacion[] =>
+  (n.descripcion || "")
+    .split(/(?<=[.!?])\s+/)
+    .map((o) => o.trim())
+    .filter((o) => o.length > 25)
+    .slice(0, max)
+    .map((o) => ({ texto: `Según el extracto de ${n.medio}: ${o.endsWith(".") ? o : o + "."}`, tipo: /\b(dijo|explicó|aseguró|afirmó|señaló|indicó|sostuvo|según)\b/i.test(o) ? ("declaracion" as const) : ("hecho_reportado" as const), evidence_id: n.id_noticia, campo: "descripcion", alcance: "titular_metadatos" as const }));
 
 export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embeddings" | "bm25"; k?: number; soloIds?: string[] } = {}): Promise<Respuesta> {
   const t0 = Date.now();
@@ -100,7 +108,7 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
 export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[]; vacios: string[] }[] {
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   return snap.eventos
-    .filter((e) => !e.no_confiable && e.tema !== "deportes" && e.tema !== "otro")
+    .filter((e) => !e.no_confiable && e.tema !== "deportes" && e.tema !== "otro" && !e.ids_noticia.some((i) => porId.get(i)?.sintetica))
     .slice(0, 5)
     .map((e) => {
       const ex = e.componentes.explicacion;

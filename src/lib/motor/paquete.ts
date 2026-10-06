@@ -1,7 +1,7 @@
 // Paquete editorial TVN (T09) · composición extractiva: cada frase sale de una afirmación con cita. Sin LLM no hay invención posible.
 import type { Afirmacion, Evento, Indicador, Noticia, Paquete } from "./contrato";
 import { leerTemas } from "./config";
-import { afirmacionIndicador, afirmacionNoticia, LEYENDA } from "./consulta";
+import { afirmacionesExtracto, afirmacionIndicador, afirmacionNoticia, LEYENDA } from "./consulta";
 import { INDICADORES } from "../ingesta/bancomundial";
 
 const palabras = (afs: Afirmacion[]) => afs.reduce((s, a) => s + a.texto.split(/\s+/).length, 0);
@@ -28,7 +28,7 @@ export function generarPaquete(ev: Evento, noticias: Noticia[], indicadores: Ind
   const pubs = ev.ids_noticia.map((i) => porId.get(i)!).filter((n) => n && !n.no_confiable);
   const rep = porId.get(ev.representante)!;
   const tema = leerTemas().find((t) => t.id === ev.tema);
-  const hechos: Afirmacion[] = pubs.slice(0, 3).map(afirmacionNoticia);
+  const hechos: Afirmacion[] = [...pubs.slice(0, 3).map(afirmacionNoticia), ...pubs.slice(0, 2).flatMap((p) => afirmacionesExtracto(p))];
   const contexto: Afirmacion[] = ev.contexto.indicadores
     .map((id) => {
       const [pais, ind, anio] = id.split(":");
@@ -52,7 +52,13 @@ export function generarPaquete(ev: Evento, noticias: Noticia[], indicadores: Ind
     ...ev.contradicciones.map((c) => `Contradicción: ${c.detalle}.`),
     "Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos.",
   ];
-  const guion: Afirmacion[] = [...hechos.slice(0, 2), ...contexto.slice(0, 1), ...(hipotesis[0] ? [hipotesis[0]] : [])];
+  // guion de 45–60 s ≈ 110–150 palabras leídas: se llena con hechos citados hasta el tope, nunca con relleno
+  let guion: Afirmacion[] = [];
+  for (const a of [...hechos, ...contexto.slice(0, 1), ...(hipotesis[0] ? [hipotesis[0]] : []), procedencia]) {
+    if (palabras([...guion, a]) > 150) break;
+    guion.push(a);
+  }
+  if (!guion.length) guion = hechos.slice(0, 1);
   const copy: Afirmacion[] = [{ ...hechos[0], texto: `${rep.titulo}. ${ev.contexto.indicadores.length ? "Con el dato oficial, en la nota." : "Qué se sabe y qué falta confirmar, en la nota."}` }];
   return {
     titulo: rep.titulo,
