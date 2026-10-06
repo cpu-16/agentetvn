@@ -1,12 +1,12 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Medidor, type Componentes } from "./medidor";
 import { Chips, type EventoResumen } from "./agenda";
 import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "./citas";
 import { PaqueteYRevision, type Afirmacion, type Paquete, type Revision, type RevisionHist } from "./paquete";
-import { ESTADO_LABEL, SPRING, horaPanama, useMesa, useRol } from "@/store/mesa";
+import { ESTADO_LABEL, SPRING, fetchMesa, horaPanama, useMesa, useRol } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 
 interface Evento extends Omit<EventoResumen, "titulo" | "medio" | "publicaciones" | "estado_revision"> {
@@ -28,20 +28,33 @@ export function Ficha({ id }: { id: string }) {
   const [cita, setCita] = useState<string | null>(null);
   const irA = useMesa((s) => s.irA);
   const setChatAbierto = useMesa((s) => s.setChatAbierto);
+  const actualizarEstadoEvento = useMesa((s) => s.actualizarEstadoEvento);
   const rol = useRol();
   const reducir = useReducedMotion();
   const [tab, setTab] = useState<"evidencia" | "paquete">(rol === "productor" ? "paquete" : "evidencia");
+  const tabs = useRef<HTMLButtonElement[]>([]);
 
   const cargar = useCallback(() => {
-    fetch(`/api/eventos/${id}`).then(async (r) => {
-      if (!r.ok) throw new Error(r.status === 404 ? "Ese tema no existe en el snapshot." : `No cargó la ficha (${r.status}).`);
-      setD(await r.json());
-    }).catch((e) => setError(e.message));
-  }, [id]);
+    fetchMesa(`/api/eventos/${id}`).then(async (r) => {
+      if (!r.ok) throw new Error(r.status === 404 ? "Ese tema no está en el corte de hoy." : "No se pudo cargar la ficha. Avisa al equipo técnico.");
+      const detalle = (await r.json()) as Detalle;
+      setD(detalle);
+      actualizarEstadoEvento(id, detalle.revision.estado);
+    }).catch((e) => setError(e instanceof TypeError ? "No hubo conexión. Revisa la red e intenta otra vez." : e.message));
+  }, [id, actualizarEstadoEvento]);
   useEffect(cargar, [cargar]);
+  const teclaTab = (e: React.KeyboardEvent, i: number) => {
+    const orden = ["evidencia", "paquete"] as const;
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      const j = (i + (e.key === "ArrowRight" ? 1 : orden.length - 1)) % orden.length;
+      setTab(orden[j]);
+      tabs.current[j]?.focus();
+    }
+  };
 
-  if (error) return <div><Button variant="ghost" onClick={() => irA("agenda")}>Volver a la agenda</Button><p className="mt-3 text-sm">{error}</p></div>;
-  if (!d) return <p className="p-4 text-sm text-muted-foreground">Cargando la ficha…</p>;
+  if (error) return <div role="alert"><Button variant="ghost" onClick={() => irA("agenda")}>Volver a la agenda</Button><p className="mt-3 text-sm">{error}</p><Button size="sm" variant="outline" className="mt-2" onClick={() => { setError(null); cargar(); }}>Reintentar</Button></div>;
+  if (!d) return <p className="p-4 text-sm text-muted-foreground" aria-live="polite">Cargando la ficha…</p>;
   const { evento: e, publicaciones: pubs } = d;
   const rep = pubs.find((p) => p.id_noticia === e.representante) ?? pubs[0];
   const porId = new Map(pubs.map((p) => [p.id_noticia, p]));
@@ -57,7 +70,7 @@ export function Ficha({ id }: { id: string }) {
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
         <Button variant="ghost" size="sm" onClick={() => irA("agenda")}>Agenda</Button>
-        <span className="text-muted-foreground">/ Ficha {e.id}</span>
+        <span className="text-muted-foreground">/ Ficha <span className="font-mono text-xs">{e.id}</span></span>
         <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">Revisión:
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span key={d.revision.estado} className="chip" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} transition={SPRING}>{ESTADO_LABEL[d.revision.estado]}</motion.span>
@@ -70,8 +83,8 @@ export function Ficha({ id }: { id: string }) {
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <div role="tablist" aria-label="Secciones de la ficha" className="relative inline-flex h-9 rounded-sm border border-border bg-white p-0.5">
-          {(["evidencia", "paquete"] as const).map((t) => (
-            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("presionable relative rounded-sm px-3 text-sm", tab === t ? "font-medium text-white" : "text-muted-foreground")}>
+          {(["evidencia", "paquete"] as const).map((t, i) => (
+            <button key={t} ref={(el) => { if (el) tabs.current[i] = el; }} id={`tab-${t}`} role="tab" aria-selected={tab === t} aria-controls={`panel-${t}`} tabIndex={tab === t ? 0 : -1} onKeyDown={(e) => teclaTab(e, i)} onClick={() => setTab(t)} className={cn("presionable relative rounded-sm px-3 text-sm", tab === t ? "font-medium text-white" : "text-muted-foreground")}>
               {tab === t && <motion.span layoutId="tab-ficha" className="absolute inset-0 rounded-sm bg-tinta" transition={SPRING} aria-hidden />}
               <span className="relative">{t === "evidencia" ? "Evidencia" : "Paquete y revisión"}</span>
             </button>
@@ -80,7 +93,7 @@ export function Ficha({ id }: { id: string }) {
         <Button size="sm" variant={rol === "periodista" ? "default" : "outline"} className="presionable" onClick={() => setChatAbierto(true)}>Preguntar sobre este tema</Button>
       </div>
       <AnimatePresence mode="wait" initial={false}>
-      <motion.div key={tab} className="mt-4" initial={reducir ? { opacity: 0 } : { opacity: 0, filter: "blur(2px)" }} animate={{ opacity: 1, filter: "blur(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, filter: "blur(2px)" }} transition={{ duration: 0.18 }}>
+      <motion.div key={tab} id={`panel-${tab}`} role="tabpanel" aria-labelledby={`tab-${tab}`} className="mt-4" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-2px)" }} transition={{ duration: 0.18 }}>
         {tab === "evidencia" ? (
           <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
             <section className="space-y-6">
@@ -115,7 +128,7 @@ export function Ficha({ id }: { id: string }) {
               <Bloque titulo="Qué está respaldado">
                 {!d.indicadores.length && !d.sismos.length && <p className="text-sm text-muted-foreground">Sin relación sustentada con datos oficiales. No se fuerza un vínculo.</p>}
                 {d.indicadores.map((i) => (
-                  <p key={`${i.indicador_id}${i.anio}`} className="text-sm">{i.pais_iso3}, {i.indicador_id}, {i.anio}: <span className="font-medium">{i.valor} {i.unidad}</span> (Banco Mundial, {i.licencia}). <span className="text-[#7a5600]">Contexto histórico, no dato de hoy.</span><BotonCita id={`${i.pais_iso3}:${i.indicador_id}:${i.anio}`} campo="valor" onAbrir={setCita} /></p>
+                  <p key={`${i.indicador_id}${i.anio}`} className="text-sm">{i.pais_iso3}, {i.indicador_id}, {i.anio}: <span className="font-medium">{i.valor === null ? "nulo" : i.unidad === "personas" ? Math.round(i.valor).toLocaleString("es-PA") : (Math.round(i.valor * 100) / 100).toLocaleString("es-PA")} {i.unidad}</span> (Banco Mundial, {i.licencia}). <span className="text-[#7a5600]">Contexto histórico, no dato de hoy.</span><BotonCita id={`${i.pais_iso3}:${i.indicador_id}:${i.anio}`} campo="valor" onAbrir={setCita} /></p>
                 ))}
                 {d.sismos.map((s) => (
                   <p key={s.id} className="text-sm">Sismo M{s.magnitude}, {horaPanama(s.time)}, {s.place} (USGS). Solo prueba el hecho sísmico.<BotonCita id={s.id} campo="magnitude" onAbrir={setCita} /></p>

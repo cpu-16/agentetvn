@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { conCookie, leerSesion, pinMesa, ROLES, type Rol } from "@/lib/sesion";
+import { conCookie, leerSesion, pinCoincide, ROLES, type Rol } from "@/lib/sesion";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
@@ -14,11 +14,11 @@ export async function POST(req: Request) {
   const pin = String(body.pin ?? "");
   if (!nombre) return NextResponse.json({ error: "Escribe tu nombre: cada decisión lleva responsable." }, { status: 400 });
   if (!ROLES.includes(rol)) return NextResponse.json({ error: "Elige un rol de la mesa." }, { status: 400 });
-  if (pin !== pinMesa()) return NextResponse.json({ error: "El PIN de la mesa no coincide." }, { status: 401 });
+  if (!pinCoincide(pin)) return NextResponse.json({ error: "El PIN de la mesa no coincide." }, { status: 401 });
   const sesion = { nombre, rol, desde: new Date().toISOString() };
-  return conCookie(NextResponse.json({ sesion: { nombre, rol } }), sesion);
+  return conCookie(NextResponse.json({ sesion: { nombre, rol } }), sesion, req);
 }
 
-export async function DELETE() {
-  return conCookie(NextResponse.json({ sesion: null }), null);
+export async function DELETE(req: Request) {
+  return conCookie(NextResponse.json({ sesion: null }), null, req);
 }

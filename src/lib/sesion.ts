@@ -7,7 +7,23 @@ export interface Sesion { nombre: string; rol: Rol; desde: string }
 export const ROLES: Rol[] = ["editor", "periodista", "productor"];
 const COOKIE = "mesa";
 const DOCE_HORAS = 12 * 3600;
-export const pinMesa = () => process.env.AGENTETVN_PIN ?? "tvn2026";
+const PIN_RESPALDO = "tvn2026";
+let avisado = false;
+export const pinMesa = () => {
+  const pin = process.env.AGENTETVN_PIN;
+  if (!pin && !avisado) {
+    avisado = true;
+    console.warn("[agentetvn] AGENTETVN_PIN no está definido: se usa el PIN de respaldo de la demo. Define uno en .env para una mesa real.");
+  }
+  return pin || PIN_RESPALDO;
+};
+
+/** Comparación en tiempo constante (buffers del mismo largo: se rellena para no filtrar la longitud). */
+export function pinCoincide(candidato: string): boolean {
+  const a = Buffer.from(candidato.padEnd(64, "\0").slice(0, 64));
+  const b = Buffer.from(pinMesa().padEnd(64, "\0").slice(0, 64));
+  return candidato.length === pinMesa().length && timingSafeEqual(a, b);
+}
 
 const firmar = (payload: string) => createHmac("sha256", `agentetvn:${pinMesa()}`).update(payload).digest("base64url");
 
@@ -34,8 +50,14 @@ export function leerSesion(req: Request): Sesion | null {
   }
 }
 
-export function conCookie(res: NextResponse, s: Sesion | null): NextResponse {
-  if (s) res.cookies.set(COOKIE, serializar(s), { httpOnly: true, sameSite: "lax", path: "/", maxAge: DOCE_HORAS, secure: process.env.NODE_ENV === "production" });
+/** `secure` cuando la petición es HTTPS (directo o detrás del proxy de Cloudflare) o en producción. */
+export function esHttps(req: Request): boolean {
+  const proto = req.headers.get("x-forwarded-proto") ?? "";
+  return proto.split(",")[0].trim() === "https" || req.url.startsWith("https://") || process.env.NODE_ENV === "production";
+}
+
+export function conCookie(res: NextResponse, s: Sesion | null, req: Request): NextResponse {
+  if (s) res.cookies.set(COOKIE, serializar(s), { httpOnly: true, sameSite: "lax", path: "/", maxAge: DOCE_HORAS, secure: esHttps(req) });
   else res.cookies.set(COOKIE, "", { httpOnly: true, sameSite: "lax", path: "/", maxAge: 0 });
   return res;
 }

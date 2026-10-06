@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ESTADO_LABEL, SPRING, TIPO_LABEL, horaPanama, usePersona, useRol } from "@/store/mesa";
+import { ESTADO_LABEL, SPRING, TIPO_LABEL, fetchMesa, horaPanama, useMesa, usePersona, useRol } from "@/store/mesa";
 import { BotonCita } from "./citas";
 import { cn } from "@/lib/utils";
 
@@ -46,30 +46,35 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
   const [msg, setMsg] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
   const nombre = persona.trim();
+  const actualizarEstadoEvento = useMesa((s) => s.actualizarEstadoEvento);
+  const sinRed = "No hubo conexión. Revisa la red e intenta otra vez.";
 
   const generar = async (regenerar = false) => {
     setOcupado(true); setMsg(null);
-    const r = await fetch(`/api/eventos/${eventoId}/paquete`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ regenerar }) });
-    setOcupado(false);
-    if (!r.ok) return setMsg(r.status === 401 ? "Tu sesión venció: vuelve a entrar a la mesa." : `No se pudo generar el paquete (${r.status}).`);
-    setP(await r.json()); setEditando(false); onCambio();
+    try {
+      const r = await fetchMesa(`/api/eventos/${eventoId}/paquete`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ regenerar }) });
+      if (!r.ok) return setMsg(r.status === 401 ? "Pasaron las 12 horas de la sesión; entra de nuevo." : "No se pudo generar el paquete. Avisa al equipo técnico.");
+      setP(await r.json()); setEditando(false); onCambio();
+    } catch { setMsg(sinRed); } finally { setOcupado(false); }
   };
   const guardar = async () => {
     if (!p) return;
     setOcupado(true);
-    const r = await fetch(`/api/eventos/${eventoId}/paquete`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ paquete: p }) });
-    setOcupado(false);
-    setMsg(r.ok ? "Edición guardada." : `No se guardó (${r.status}).`);
-    if (r.ok) { setEditando(false); onCambio(); }
+    try {
+      const r = await fetchMesa(`/api/eventos/${eventoId}/paquete`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ paquete: p }) });
+      setMsg(r.ok ? "Edición guardada." : "No se guardó la edición. Avisa al equipo técnico.");
+      if (r.ok) { setEditando(false); onCambio(); }
+    } catch { setMsg(sinRed); } finally { setOcupado(false); }
   };
   const revisar = async (estado: string, exigeMotivo?: boolean) => {
     if (exigeMotivo && !motivo.trim()) return setMsg(`${ESTADO_LABEL[estado]} necesita un motivo.`);
     setOcupado(true);
-    const r = await fetch(`/api/eventos/${eventoId}/revision`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ estado, motivo: motivo.trim() || null }) });
-    const j = await r.json();
-    setOcupado(false);
-    if (!r.ok) return setMsg(j.error ?? `Error ${r.status}`);
-    setMotivo(""); setMsg(`Estado guardado: ${ESTADO_LABEL[estado]}. ${j.nota ?? ""}`); onCambio();
+    try {
+      const r = await fetchMesa(`/api/eventos/${eventoId}/revision`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ estado, motivo: motivo.trim() || null }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) return setMsg(j.error ?? "No se pudo guardar el estado. Avisa al equipo técnico.");
+      setMotivo(""); setMsg(`Estado guardado: ${ESTADO_LABEL[estado]}. ${j.nota ?? ""}`); actualizarEstadoEvento(eventoId, estado); onCambio();
+    } catch { setMsg(sinRed); } finally { setOcupado(false); }
   };
   const cambiarLista = (clave: "brief" | "guion" | "copy") => (i: number, texto: string) => setP((q) => q && { ...q, [clave]: q[clave].map((a, j) => (j === i ? { ...a, texto } : a)) });
 
@@ -78,13 +83,13 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
       <section>
         {!p ? (
           <div className="rounded-sm border border-dashed border-border bg-white p-6 text-sm">
-            <p className="mb-3">Todavía no hay paquete para este tema. Se compone solo con afirmaciones citadas del snapshot.</p>
+            <p className="mb-3">Todavía no hay paquete para este tema. Se compone solo con afirmaciones citadas de las noticias del corte.</p>
             <Button onClick={() => generar()} disabled={ocupado} variant={rol === "productor" ? "default" : "outline"}>Generar paquete</Button>
           </div>
         ) : (
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>Modo {p.modo}</span>
+              <span>{p.modo === "extractivo" ? "Compuesto solo con afirmaciones citadas" : `Modo ${p.modo}`}</span>
               {p.updatedAt && <span>guardado {horaPanama(p.updatedAt)}{p.persona ? ` por ${p.persona}` : ""}</span>}
               <span className="ml-auto flex gap-2">
                 {editando ? <Button size="sm" onClick={guardar} disabled={ocupado}>Guardar edición</Button> : <Button size="sm" variant="outline" onClick={() => setEditando(true)}>Editar</Button>}
@@ -116,7 +121,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
               <Afirmaciones lista={p.guion} onCita={onCita} editable={editando} onCambio={cambiarLista("guion")} />
             </div>
             <div>
-              <h3 className="mb-1 text-sm text-muted-foreground">Copy digital ({palabras(p.copy)} de 80 palabras)</h3>
+              <h3 className="mb-1 text-sm text-muted-foreground">Texto para redes ({palabras(p.copy)} de 80 palabras)</h3>
               <Afirmaciones lista={p.copy} onCita={onCita} editable={editando} onCambio={cambiarLista("copy")} />
             </div>
             <p className="rounded-sm bg-[#fff8e1] px-3 py-2 text-xs text-[#7a5600]">{p.leyenda}</p>
@@ -142,7 +147,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
             ))}
           </div>
           <p className="mt-3 text-xs font-medium text-senal">Aprobar como borrador no publica nada.</p>
-          {msg && <p className="mt-2 text-xs">{msg}</p>}
+          {msg && <p className="mt-2 text-xs" role="status">{msg}</p>}
         </div>
         {historial.length > 0 && (
           <div className="rounded-sm border border-border bg-white p-4 text-sm">

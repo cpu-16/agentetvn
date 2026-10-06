@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { horaPanama, TEMA_LABEL } from "@/store/mesa";
+import { fetchMesa, horaPanama, TEMA_LABEL } from "@/store/mesa";
+import { Button } from "@/components/ui/button";
 
 const PRUEBAS = ["T01 Archivo con fechas inválidas y nulos", "T02 Tres registros del mismo evento", "T03 Noticia antigua recirculada", "T04 Cifra anual del Banco Mundial", "T05 Dos afirmaciones incompatibles", "T06 Consulta sin respuesta en el corpus", "T07 Fuente que exige ignorar instrucciones", "T08 Caso de prioridad alta", "T09 Brief editorial", "T10 Sin internet durante la demo"];
 
@@ -26,21 +27,21 @@ function Barra({ etiqueta, ia, base, n, formato = (x: number) => `${Math.round(x
 }
 
 function SeccionIA({ b }: { b: Benchmark | null }) {
-  if (!b) return <div className="rounded-sm border border-dashed border-border bg-white p-4 text-sm text-muted-foreground">Todavía no hay benchmark. Corre <code className="rounded-sm bg-papel px-1">bun run benchmark --split dev</code> (y <code className="rounded-sm bg-papel px-1">--etiquetas</code> con las etiquetas humanas) y vuelve a cargar.</div>;
+  if (!b) return <div className="rounded-sm border border-dashed border-border bg-white p-4 text-sm text-muted-foreground">Todavía no se ha corrido la comparación. El equipo técnico la genera con las mismas preguntas para los dos buscadores (comando: <code className="rounded-sm bg-papel px-1">bun run benchmark --split dev</code>).</div>;
   const c = b.consultas;
   const r = (x: number, y: number) => (y ? x / y : 0);
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">Mismas consultas y mismas etiquetas humanas para la IA (embeddings locales) y el baseline (BM25 y palabras clave). Split {b.split}, {horaPanama(b.fecha)}.</p>
+      <p className="text-sm text-muted-foreground">La búsqueda por sentido (IA: embeddings locales) frente a la búsqueda por palabras (baseline: BM25 y palabras clave), con las mismas preguntas y las mismas etiquetas humanas. Conjunto {b.split === "dev" ? "de desarrollo" : "reservado"}, {horaPanama(b.fecha)}.</p>
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {b.temas && <Barra etiqueta="Clasificación de temas, macro-F1" ia={(b.temas.knn_loo ?? b.temas.zero_shot)?.macro_f1 ?? null} base={b.temas.baseline.macro_f1} n={`${b.temas.n} titulares etiquetados por ${b.temas.etiquetadores.join(", ")}${b.temas.knn_loo ? ", kNN leave-one-out" : ", zero-shot"}`} />}
-        {b.pares && <Barra etiqueta="Mismo evento, F1 de pares" ia={b.pares.ia.f1} base={b.pares.baseline.f1} n={`${b.pares.n} pares, umbral ${b.pares.umbral}`} />}
-        {c && <Barra etiqueta="Consultas sustentadas, Hit@5" ia={r(c.embeddings.sustentadas.hit5, c.embeddings.sustentadas.n)} base={r(c.bm25.sustentadas.hit5, c.bm25.sustentadas.n)} n={`${c.embeddings.sustentadas.hit5}/${c.embeddings.sustentadas.n} frente a ${c.bm25.sustentadas.hit5}/${c.bm25.sustentadas.n}`} />}
+        {b.temas && <Barra etiqueta="Acierto al clasificar el tema (macro-F1)" ia={(b.temas.knn_loo ?? b.temas.zero_shot)?.macro_f1 ?? null} base={b.temas.baseline.macro_f1} n={`${b.temas.n} titulares etiquetados por ${b.temas.etiquetadores.join(", ")}${b.temas.knn_loo ? "; vecinos más cercanos, dejando uno fuera (kNN LOO)" : "; sin etiquetas de entrenamiento (zero-shot)"}`} />}
+        {b.pares && <Barra etiqueta="Acierto al agrupar el mismo evento (F1 de pares)" ia={b.pares.ia.f1} base={b.pares.baseline.f1} n={`${b.pares.n} pares, umbral ${b.pares.umbral}`} />}
+        {c && <Barra etiqueta="La evidencia esperada aparece entre las 5 primeras (Hit@5)" ia={r(c.embeddings.sustentadas.hit5, c.embeddings.sustentadas.n)} base={r(c.bm25.sustentadas.hit5, c.bm25.sustentadas.n)} n={`${c.embeddings.sustentadas.hit5}/${c.embeddings.sustentadas.n} frente a ${c.bm25.sustentadas.hit5}/${c.bm25.sustentadas.n}`} />}
         {c && <Barra etiqueta="Abstención correcta" ia={r(c.embeddings.abstencion.correctas, c.embeddings.abstencion.n)} base={r(c.bm25.abstencion.correctas, c.bm25.abstencion.n)} n={`${c.embeddings.abstencion.correctas}/${c.embeddings.abstencion.n}; abstenciones indebidas ${c.embeddings.abstencion.abstenciones_incorrectas}/${c.embeddings.abstencion.de_respondibles}`} />}
         {c && <Barra etiqueta="Resistencia a inyección" ia={r(c.embeddings.adversarial.resistidos, c.embeddings.adversarial.n)} base={r(c.bm25.adversarial.resistidos, c.bm25.adversarial.n)} n={`${c.embeddings.adversarial.resistidos}/${c.embeddings.adversarial.n} ataques resistidos`} />}
         {c && <Barra etiqueta="Cobertura de citas" ia={r(c.embeddings.cobertura_citas.con_cita, c.embeddings.cobertura_citas.n)} base={r(c.bm25.cobertura_citas.con_cita, c.bm25.cobertura_citas.n)} n={`${c.embeddings.cobertura_citas.con_cita}/${c.embeddings.cobertura_citas.n} afirmaciones con cita`} />}
       </div>
-      {c && <p className="text-xs text-muted-foreground">Latencia por consulta: semántica mediana {c.embeddings.ms.mediana} ms, p95 {c.embeddings.ms.p95} ms; léxica mediana {c.bm25.ms.mediana} ms, p95 {c.bm25.ms.p95} ms. Numeradores y denominadores completos en data/processed/benchmark-{b.split}.json.</p>}
+      {c && <p className="text-xs text-muted-foreground">Tiempo por consulta: por sentido, la mitad responde en {c.embeddings.ms.mediana} ms o menos (el 95 % en {c.embeddings.ms.p95} ms; mediana y p95); por palabras, {c.bm25.ms.mediana} ms y {c.bm25.ms.p95} ms. Numeradores y denominadores completos en el archivo benchmark-{b.split}.json del repositorio.</p>}
     </div>
   );
 }
@@ -60,17 +61,19 @@ interface Control {
 export function Control() {
   const [c, setC] = useState<Control | null>(null);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => { fetch("/api/control").then(async (r) => { if (!r.ok) throw new Error(`No cargó el control (${r.status}).`); setC(await r.json()); }).catch((e) => setError(e.message)); }, []);
-  if (error) return <p className="text-sm">{error}</p>;
-  if (!c) return <p className="p-4 text-sm text-muted-foreground">Cargando…</p>;
+  const cargar = () => fetchMesa("/api/control").then(async (r) => { if (!r.ok) throw new Error("No se pudo cargar el control. Avisa al equipo técnico."); setC(await r.json()); }).catch((e) => setError(e instanceof TypeError ? "No hubo conexión. Revisa la red e intenta otra vez." : e.message));
+  useEffect(() => { void cargar(); }, []);
+  const reintentar = () => { setError(null); void cargar(); };
+  if (error) return <div className="flex flex-wrap items-center gap-3 text-sm" role="alert"><p>{error}</p><Button size="sm" variant="outline" onClick={reintentar}>Reintentar</Button></div>;
+  if (!c) return <p className="p-4 text-sm text-muted-foreground" aria-live="polite">Cargando…</p>;
   const pruebasPorId = new Map((c.pruebas ?? []).map((p) => [p.id, p]));
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold">Control y evaluación</h1>
-        <p className="text-sm text-muted-foreground">Modo {c.modo}. {c.revisiones} decisiones de revisión guardadas.</p>
+        <p className="text-sm text-muted-foreground">{c.modo === "offline" ? "Funciona sin internet (modo offline)" : `Modo ${c.modo}`}. {c.revisiones} decisiones de revisión guardadas.</p>
       </div>
-      <Seccion titulo="Snapshot">
+      <Seccion titulo="Datos del corte (snapshot)">
         <Tabla filas={[["Versión", c.manifest.version], ["Fecha de corte (UTC)", c.manifest.fecha_corte_UTC], ["Corte en hora Panamá", horaPanama(c.manifest.fecha_corte_UTC)], ...Object.entries(c.manifest.cantidades).map(([k, v]) => [k, String(v)] as [string, string]), ...Object.entries(c.manifest.sha256).map(([k, v]) => [`SHA-256 ${k}`, `${v.slice(0, 16)}…`] as [string, string])]} />
         <h3 className="mt-3 text-sm font-medium">Discrepancias del PDF del reto</h3>
         <ul className="list-disc pl-5 text-sm">{c.manifest.discrepancias_pdf.map((d, i) => <li key={i}>{d}</li>)}</ul>
@@ -83,7 +86,7 @@ export function Control() {
             <p className="text-sm">{c.calidad.noticias_validas} noticias válidas, {c.calidad.indicadores_validos} celdas de indicadores ({c.calidad.indicadores_nulos} nulas conservadas). {c.calidad.errores.length} errores separados.</p>
             {c.calidad.errores.length > 0 && <ul className="mt-1 list-disc pl-5 text-xs">{c.calidad.errores.slice(0, 30).map((e, i) => <li key={i}>{e.archivo} fila {e.fila}, {e.campo}: {e.motivo}</li>)}</ul>}
           </>
-        ) : <p className="text-sm text-muted-foreground">Pendiente: corre bun run motor.</p>}
+        ) : <p className="text-sm text-muted-foreground">Pendiente: el equipo técnico aún no corrió el motor sobre este corte.</p>}
       </Seccion>
       <Seccion titulo="Motor e IA">
         {c.motor ? (
@@ -94,7 +97,7 @@ export function Control() {
         <p className="text-sm">P = {Object.entries(c.reglas.pesos).map(([k, v]) => `${v}${k}`).join(" + ")}</p>
         <p className="mt-1 text-sm text-muted-foreground">{c.reglas.justificacion}</p>
       </Seccion>
-      <Seccion titulo="IA frente a baseline">
+      <Seccion titulo="Búsqueda por sentido frente a búsqueda por palabras (IA frente a baseline)">
         <SeccionIA b={c.benchmark} />
       </Seccion>
       <Seccion titulo="Pruebas de aceptación T01 a T10">

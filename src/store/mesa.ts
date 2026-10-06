@@ -1,6 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { AgendaDatos } from "@/components/mesa/tipos";
 
 export type Vista = "portada" | "agenda" | "ficha" | "control";
 export type Rol = "editor" | "periodista" | "productor";
@@ -11,34 +12,73 @@ export const ROLES: { id: Rol; label: string }[] = [
 ];
 export interface Sesion { nombre: string; rol: Rol }
 
+export const AVISO_SESION_VENCIDA = "Pasaron las 12 horas de la sesión; entra de nuevo.";
+
 interface Mesa {
   vista: Vista;
   eventoId: string | null;
   sesion: Sesion | null;
+  avisoSesion: string | null; // se muestra en la pantalla de entrada (sesión vencida, salida)
   modoConsulta: "embeddings" | "bm25";
   chatAbierto: boolean;
+  agenda: AgendaDatos | null; // una sola carga compartida por portada, agenda y chat
+  agendaError: string | null;
+  agendaCargando: boolean;
   irA: (v: Vista, eventoId?: string) => void;
   setSesion: (s: Sesion | null) => void;
+  cerrarSesion: (aviso?: string | null) => void;
   setModoConsulta: (m: "embeddings" | "bm25") => void;
   setChatAbierto: (a: boolean) => void;
+  cargarAgenda: (forzar?: boolean) => Promise<AgendaDatos | null>;
+  actualizarEstadoEvento: (id: string, estado: string) => void;
 }
 
 export const useMesa = create<Mesa>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       vista: "portada",
       eventoId: null,
       sesion: null,
+      avisoSesion: null,
       modoConsulta: "embeddings",
       chatAbierto: false,
+      agenda: null,
+      agendaError: null,
+      agendaCargando: false,
       irA: (vista, eventoId) => set((s) => ({ vista, eventoId: eventoId ?? (vista === "ficha" ? s.eventoId : null) })),
-      setSesion: (sesion) => set({ sesion }),
+      setSesion: (sesion) => set({ sesion, avisoSesion: null }),
+      cerrarSesion: (aviso = null) => set({ sesion: null, avisoSesion: aviso, chatAbierto: false, vista: "portada", eventoId: null }),
       setModoConsulta: (modoConsulta) => set({ modoConsulta }),
       setChatAbierto: (chatAbierto) => set({ chatAbierto }),
+      cargarAgenda: async (forzar = false) => {
+        const s = get();
+        if (s.agenda && !forzar) return s.agenda;
+        if (s.agendaCargando && !forzar) return s.agenda;
+        set({ agendaCargando: true, agendaError: null });
+        try {
+          const r = await fetchMesa("/api/agenda");
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          const a = (await r.json()) as AgendaDatos;
+          set({ agenda: a, agendaCargando: false });
+          return a;
+        } catch {
+          set({ agendaError: "No se pudo cargar la mesa. Avisa al equipo técnico.", agendaCargando: false });
+          return null;
+        }
+      },
+      actualizarEstadoEvento: (id, estado) =>
+        set((s) => (s.agenda ? { agenda: { ...s.agenda, eventos: s.agenda.eventos.map((e) => (e.id === id ? { ...e, estado_revision: estado } : e)), cinco: s.agenda.cinco.map((c) => (c.evento.id === id ? { ...c, evento: { ...c.evento, estado_revision: estado } } : c)) } } : {})),
     }),
     { name: "agentetvn-mesa", partialize: (s) => ({ modoConsulta: s.modoConsulta }) }
   )
 );
+
+/** fetch de la mesa: un 401 en cualquier llamada cierra la sesión en el cliente y muestra la entrada con el aviso. */
+export async function fetchMesa(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const r = await fetch(input, init);
+  if (r.status === 401 && useMesa.getState().sesion) useMesa.getState().cerrarSesion(AVISO_SESION_VENCIDA);
+  return r;
+}
 
 /** Rol y persona actuales (derivados de la sesión). */
 export const useRol = () => useMesa((s) => s.sesion?.rol ?? "editor");

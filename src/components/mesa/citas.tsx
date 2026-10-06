@@ -18,9 +18,11 @@ export function resolverCita(id: string, pubs: Publicacion[], inds: Indicador[],
 }
 
 export function BotonCita({ id, campo, onAbrir }: { id: string; campo?: string; onAbrir: (id: string) => void }) {
+  const corto = id.length > 22 ? `${id.slice(0, 20)}…` : id;
   return (
-    <button type="button" onClick={() => onAbrir(id)} className="ml-1 inline-flex items-center rounded-sm border border-acero/40 bg-white px-1.5 py-0.5 align-baseline font-mono text-[10.5px] text-acero hover:bg-acero hover:text-white" title={`Abrir evidencia ${id}${campo ? ` (campo ${campo})` : ""}`}>
-      {id.length > 22 ? `${id.slice(0, 20)}…` : id}
+    <button type="button" onClick={() => onAbrir(id)} className="ml-1 inline-flex items-center gap-1 rounded-sm border border-acero/40 bg-white px-1.5 py-0.5 align-baseline text-[10.5px] text-acero hover:bg-acero hover:text-white" aria-label={`Ver evidencia ${id}${campo ? `, campo ${campo}` : ""}`}>
+      <span>Ver evidencia</span>
+      <span className="font-mono opacity-70" aria-hidden>{corto}</span>
     </button>
   );
 }
@@ -64,7 +66,7 @@ export function Citas({ id, pubs, inds, sismos, onCerrar }: { id: string | null;
             {c.n.descripcion && <Fila k="Extracto" v={c.n.descripcion} />}
             <Fila k="URL" v={<Enlace u={c.n.url} />} />
             <Fila k="Publicación" v={c.n.fecha_publicacion ? horaPanama(c.n.fecha_publicacion) : "no disponible en la fuente"} />
-            <Fila k="Detección" v={c.n.fecha_deteccion ? `${horaPanama(c.n.fecha_deteccion)} (seendate de GDELT; no es la publicación)` : "no aplica"} />
+            <Fila k="Detección" v={c.n.fecha_deteccion ? `${horaPanama(c.n.fecha_deteccion)} (fecha en que GDELT la detectó; no es la fecha de publicación)` : "no aplica"} />
             <Fila k="Extracción" v={horaPanama(c.n.fecha_extraccion)} />
             <Fila k="Agencia" v={c.n.agencia ?? "no atribuida en el texto"} />
             <Fila k="Origen" v={`${c.n.origen}${c.n.seccion ? `, sección ${c.n.seccion}` : ""}`} />
@@ -78,7 +80,7 @@ export function Citas({ id, pubs, inds, sismos, onCerrar }: { id: string | null;
             <Fila k="País" v={c.i.pais_iso3} />
             <Fila k="Indicador" v={c.i.indicador_id} />
             <Fila k="Año" v={c.i.anio} />
-            <Fila k="Valor" v={c.i.valor === null ? "nulo (no publicado)" : `${c.i.valor} ${c.i.unidad}`} />
+            <Fila k="Valor" v={c.i.valor === null ? "nulo (no publicado)" : `${c.i.unidad === "personas" ? Math.round(c.i.valor).toLocaleString("es-PA") : (Math.round(c.i.valor * 100) / 100).toLocaleString("es-PA")} ${c.i.unidad}`} />
             <Fila k="Fuente" v={<Enlace u={c.i.fuente_url} />} />
             <Fila k="Extracción" v={horaPanama(c.i.fecha_extraccion)} />
             <Fila k="Licencia" v={c.i.licencia} />
