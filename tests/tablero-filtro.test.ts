@@ -6,7 +6,7 @@ import { porcentajes } from "../src/components/mesa/graficas/EvidenciaPorTema";
 const ev = (id: string, tema: string, P: number, pubs: { dia: string | null; medio: string; agencia?: string | null; proc?: string; procTipo?: "agencia" | "medio" | "primaria" | "no_verificada" }[], extra: Partial<EventoTablero> = {}): EventoTablero => ({
   id, titulo: id, tema, P, rango: P >= 70 ? "alto" : P >= 40 ? "medio" : "bajo", R: 1, I: 0.5, U: 1, N: 1, E: 0.4, estado_evidencia: "parcial",
   publicaciones: pubs.length, procedencias: 1, fecha: null, medio: pubs[0]?.medio ?? "", sintetica: false, no_confiable: false, por_revisar: false,
-  pubs: pubs.map((p) => ({ dia: p.dia, medio: p.medio, agencia: p.agencia ?? null, proc: p.proc ?? (p.agencia ? `agencia:${p.agencia}` : `medio:${p.medio}`), procTipo: p.procTipo ?? (p.agencia ? "agencia" : "medio") })), dias: [...new Set(pubs.map((p) => p.dia).filter((d): d is string => !!d))].sort(),
+  pubs: pubs.map((p) => ({ dia: p.dia, medio: p.medio, agencia: p.agencia ?? null, proc: p.proc ?? (p.agencia ? `agencia:${p.agencia}` : `medio:${p.medio}`), procTipo: p.procTipo ?? (p.agencia ? "agencia" : "medio"), deteccion: p.dia === null })), dias: [...new Set(pubs.map((p) => p.dia).filter((d): d is string => !!d))].sort(),
   ...extra,
 });
 

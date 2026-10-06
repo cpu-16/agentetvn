@@ -2,7 +2,8 @@
 
 export type TipoProcedencia = "agencia" | "medio" | "primaria" | "no_verificada";
 /** proc: id de la procedencia DENTRO del evento a la que pertenece esta publicación (las procedencias se cuentan por publicación filtrada). */
-export interface PublicacionTablero { dia: string | null; medio: string; agencia: string | null; proc: string; procTipo: TipoProcedencia }
+/** deteccion: la fuente no trae fecha de publicación y el día sale de la fecha de detección (GDELT). */
+export interface PublicacionTablero { dia: string | null; medio: string; agencia: string | null; proc: string; procTipo: TipoProcedencia; deteccion: boolean }
 export interface EventoTablero {
   id: string; titulo: string; tema: string; P: number; rango: "bajo" | "medio" | "alto";
   R: number; I: number; U: number; N: number; E: number;
@@ -20,6 +21,7 @@ export interface Agregados {
   publicaciones: number; // publicaciones que cumplen el filtro (período y medio incluidos)
   mediosDistintos: number; // medios distintos (campo medio) entre esas publicaciones; una misma definición en portada y tablero
   agenciasDistintas: number; // agencias identificadas en el texto (EFE, AFP…) entre esas publicaciones
+  porDeteccion: number; // de esas publicaciones, cuántas se ubican por fecha de detección (sin fecha de publicación)
   porDiaTema: { dia: string; tema: string; n: number }[];
   medios: { medio: string; publicaciones: number; eventos: number; agencia: boolean }[];
   procedencias: { tipo: TipoProcedencia; n: number }[]; // procedencias distintas por evento entre las publicaciones filtradas
@@ -82,7 +84,7 @@ export function filtrarDatos(eventos: EventoTablero[], f: Filtro, nombreTema: (i
       medioMap.set(p.medio, m);
     }
 
-  let publicaciones = 0;
+  let publicaciones = 0, porDeteccion = 0;
   const medios = new Set<string>();
   const agencias = new Set<string>();
   const cuentaDia = new Map<string, number>();
@@ -91,6 +93,7 @@ export function filtrarDatos(eventos: EventoTablero[], f: Filtro, nombreTema: (i
     for (const p of e.pubs) {
       if (!pubEnFiltro(p, f)) continue;
       publicaciones++;
+      if (p.deteccion) porDeteccion++;
       medios.add(p.medio);
       if (p.agencia) agencias.add(p.agencia);
       procs.set(`${e.id}|${p.proc}`, p.procTipo);
@@ -109,5 +112,5 @@ export function filtrarDatos(eventos: EventoTablero[], f: Filtro, nombreTema: (i
     const evs = filtrados.filter((e) => e.tema === tema);
     return { tema, insuficiente: evs.filter((e) => e.estado_evidencia === "insuficiente").length, parcial: evs.filter((e) => e.estado_evidencia === "parcial").length, suficiente: evs.filter((e) => e.estado_evidencia === "suficiente").length };
   }).sort((a, b) => (b.insuficiente + b.parcial + b.suficiente) - (a.insuficiente + a.parcial + a.suficiente));
-  return { eventos: filtrados, publicaciones, mediosDistintos: medios.size, agenciasDistintas: agencias.size, porDiaTema, medios: listaMedios, procedencias, temas, evidencia };
+  return { eventos: filtrados, publicaciones, mediosDistintos: medios.size, agenciasDistintas: agencias.size, porDeteccion, porDiaTema, medios: listaMedios, procedencias, temas, evidencia };
 }

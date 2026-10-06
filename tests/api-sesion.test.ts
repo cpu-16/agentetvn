@@ -22,6 +22,8 @@ describe("rutas de lectura con sesión", () => {
     const tab = await import("../src/app/api/tablero/route");
     const ag = await import("../src/app/api/agenda/route");
     const ev = await import("../src/app/api/eventos/[id]/route");
+    const ctl = await import("../src/app/api/control/route");
+    expect((await ctl.GET(conCookie())).status).toBe(200);
     const rt = await tab.GET(conCookie());
     const ra = await ag.GET(conCookie());
     expect(rt.status).toBe(200);

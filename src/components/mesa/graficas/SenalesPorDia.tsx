@@ -72,7 +72,7 @@ export function SenalesPorDia({ datos, filtro, onFiltro, porDeteccion, total }: 
   return (
     <Grafica
       titulo="Publicaciones por fecha y tema (hora Panamá)"
-      nota={`Fecha de publicación o, si la fuente no la trae, fecha de detección${porDeteccion != null && total ? `: ${fmt(porDeteccion)} de ${fmt(total)} publicaciones van por detección (GDELT), por eso los picos coinciden con los días de recolección` : ""}. Arrastra sobre el área para fijar el período del tablero; la leyenda enciende y apaga temas.`}
+      nota={`Fecha de publicación o, si la fuente no la trae, fecha de detección${porDeteccion != null && total ? `: ${fmt(porDeteccion)} de ${fmt(total)} publicaciones de esta serie van por detección (GDELT)${porDeteccion / total > 0.5 ? ", por eso los picos coinciden con los días de recolección" : ""}` : ""}. Arrastra sobre el área para fijar el período del tablero; la leyenda enciende y apaga temas.`}
       aria={`Área apilada de publicaciones por día y tema, ${dias.length} días y ${temas.length} temas`}
       opcion={opcion}
       eventos={eventos}

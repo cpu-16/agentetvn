@@ -91,7 +91,7 @@ export function Tablero() {
         Fuera del tablero: {fmt(datos.calidad.sinteticas)} publicaciones de casos de prueba sintéticos{datos.calidad.noConfiablesReales ? ` y ${fmt(datos.calidad.noConfiablesReales)} reales marcadas como no confiables` : ""}. En la agenda aparecen marcadas.
       </p>
 
-      <SenalesPorDia datos={aggSinTema.porDiaTema} filtro={filtro} onFiltro={onFiltro} porDeteccion={datos.calidad.sinFechaPublicacion} total={datos.calidad.tablero} />
+      <SenalesPorDia datos={aggSinTema.porDiaTema} filtro={filtro} onFiltro={onFiltro} porDeteccion={aggSinTema.porDeteccion} total={aggSinTema.publicaciones} />
 
       <div className="grid min-w-0 gap-3 lg:grid-cols-2">
         <MapaTemas temas={agg.temas} eventos={agg.eventos} filtro={filtro} onFiltro={onFiltro} abrirFicha={abrirFicha} />

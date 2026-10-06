@@ -20,6 +20,8 @@ describe.skipIf(!esV1)("tablero sobre el snapshot v1", () => {
     expect(a.procedencias.reduce((s, p) => s + p.n, 0)).toBe(74);
     expect(a.eventos.reduce((s, e) => s + e.publicaciones, 0)).toBe(85);
     expect(a.medios.find((m) => m.medio === "prensa.com")?.publicaciones).toBe(75); // alternativas sin el filtro de medio
+    expect(a.porDeteccion).toBe(0); // TVN trae fecha de publicación: la nota de la serie no debe hablar de detección
+    expect(filtrarDatos(evs, { temas: [], rango: [] }).porDeteccion).toBe(977);
   });
   test("regulación el 1-oct: 7 publicaciones también en el mapa", () => {
     const a = filtrarDatos(evs, { temas: ["regulacion"], rango: [], desde: "2026-10-01", hasta: "2026-10-01" });

@@ -24,7 +24,7 @@ export function eventosTablero(snap: Snapshot): EventoTablero[] {
     const pubs: PublicacionTablero[] = e.ids_noticia.map((i) => porId.get(i)).filter((n): n is Noticia => !!n && entraAlTablero(n)).map((n) => {
       const f = n.fecha_publicacion ?? n.fecha_deteccion;
       const proc = procDe.get(n.id_noticia);
-      return { dia: f ? diaPanama(f) : null, medio: n.medio, agencia: n.agencia ?? null, proc: proc?.id ?? `medio:${n.medio}`, procTipo: proc?.tipo ?? "medio" };
+      return { dia: f ? diaPanama(f) : null, medio: n.medio, agencia: n.agencia ?? null, proc: proc?.id ?? `medio:${n.medio}`, procTipo: proc?.tipo ?? "medio", deteccion: !n.fecha_publicacion };
     });
     if (!pubs.length) return [];
     return [{
