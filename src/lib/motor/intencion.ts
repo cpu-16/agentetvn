@@ -15,6 +15,9 @@ const IDENTIDAD = /\b(quien eres|que eres|como te llamas|que modelo|que ia|que i
 const AYUDA = /^(ayuda|help)$|\b(que puedes hacer|en que (me )?(puedes )?ayudar|como funcionas|como te uso|que (te )?puedo preguntar|para que sirves)\b/;
 const PANTALLA = /\b(de que (se )?trata( esto| esta pantalla| esta seccion| esta pagina)?|que es esto|esto que es|que estoy viendo|que significa (esto|esta pantalla)|explicame (esto|esta pantalla|la pantalla|esta seccion|esta pagina)|que hay aqui|que muestra (esto|esta pantalla))$/;
 
+/** Palabras de pregunta que no dicen de qué tema se trata (ya tokenizadas: sin tildes ni mayúsculas). */
+const DE_PREGUNTA = new Set("paso pasa paso ocurrio ocurre sabe saben dijo dicen dice hay hubo noticia noticias informacion tema temas cual cuales quien quienes donde cuando como hoy ayer ultimo ultima ultimos ultimas nuevo nueva reporta reportan explica explicame cuentame dime puedes quiero saber mas sobre acerca".split(" "));
+
 /** `enCorpus(token)`: ¿la palabra aparece en alguna publicación? (para detectar consultas vagas o con errores de tipeo). */
 export function intencion(q: string, opts: { tokens: string[]; enCorpus: (t: string) => boolean; contexto?: ContextoPantalla | null }): Intencion {
   const t = norm(q);
@@ -24,6 +27,11 @@ export function intencion(q: string, opts: { tokens: string[]; enCorpus: (t: str
   if (IDENTIDAD.test(t)) return charla("identidad", `Soy Jarvis, el agente de la mesa editorial de TVN. ${QUE_HAGO} No publico ni apruebo nada: eso lo decide una persona.`);
   if (AYUDA.test(t)) return charla("ayuda", `${QUE_HAGO} Puedes preguntarme por un tema, una persona, un lugar o un indicador de Panamá, y también qué significa la pantalla que tienes abierta.`);
   if (PANTALLA.test(t)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), SUGERENCIAS.slice(0, 1));
+  // El tema de la pregunta no aparece en ninguna noticia (a menudo, un nombre mal oído por la voz: «Nickelau» por «Enrique Lau»):
+  // decirlo, en vez de devolver lo que «suena parecido» por sentido.
+  const tema = opts.tokens.filter((x) => !DE_PREGUNTA.has(x));
+  if (tema.length && tema.length <= 3 && !tema.some(opts.enCorpus))
+    return charla("vaga", `No encontré «${tema.join(" ")}» en las noticias del corte. ¿Me lo dices de otra forma o con otro nombre?`);
   if (!opts.tokens.length || (opts.tokens.length <= 2 && !opts.tokens.some(opts.enCorpus)))
     return charla("vaga", "No encontré de qué tema me hablas en las noticias del corte. Prueba con un nombre, un lugar o un tema, por ejemplo:");
   return { tipo: "consulta" };
