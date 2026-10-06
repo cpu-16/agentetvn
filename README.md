@@ -96,6 +96,8 @@ flowchart LR
 
 Por sentido se usan las publicaciones que superan el umbral de coseno (0,80) **y** quedan a 0,02 o menos de la más parecida. El e5 comprime la escala: antes de ese margen, «¿qué se sabe de la aprehensión de Enrique Lau?» traía también otros arrestos. Con el margen, el benchmark da los mismos aciertos y abstenciones, y las evidencias por consulta bajan de 3,84 a 1,55 (decisión D13).
 
+<img src="docs/img/traza.webp" alt="Traza de una consulta: vector de la pregunta, histograma de similitud con el umbral 0,80 y las dos noticias usadas" width="360" align="right">
+
 **Cómo buscó, a la vista.** Cada respuesta del chat muestra su traza con los datos reales de la consulta: la pregunta convertida en vector, la similitud contra las 1 078 publicaciones con el umbral y la franja de las usadas, las más parecidas (usadas y descartadas) y el tiempo de cada paso, incluida la redacción. Si la pregunta se resolvió por una regla (cifra oficial, causalidad, fuera de alcance), lo dice. La misma traza queda en `db/consultas.jsonl` por cada consulta de texto o de voz, sin el nombre de la persona.
 
 Las 20 consultas reservadas se corren **una sola vez**, al congelar el producto.
@@ -121,7 +123,7 @@ Lo que no pasa se descarta y se cuenta. Si el LLM falla, tarda o no deja nada v�
 ## Jarvis-TVN: la mesa por voz
 
 <table><tr>
-<td width="68%"><img src="docs/img/jarvis.webp" alt="Orbe de Jarvis escuchando y panel con «Explícame esta pantalla»"></td>
+<td width="68%"><img src="docs/img/jarvis.webp" alt="Orbe de Jarvis escuchando (un toque) y panel con «Explícame esta pantalla»"></td>
 <td width="32%"><img src="docs/img/jarvis-celular.webp" alt="Jarvis en el celular: hoja inferior con botón de voz"></td>
 </tr></table>
 
