@@ -58,7 +58,7 @@ scripts/notion-sync.ts ─► Catálogo, Casos, Pruebas, Decisiones en Notion (i
 ```
 
 - **IA sustantiva**: recuperación semántica, agrupación de eventos y clasificación temática con embeddings locales. **Baseline**: BM25 y palabras clave, con las mismas consultas y etiquetas humanas (`data/labels/`). Resultados en `bun run benchmark`.
-- **Redacción**: extractiva por plantillas desde afirmaciones citadas (`{texto, tipo, evidence_id, campo, alcance}`). Sin LLM no hay cifra inventada posible. Un LLM es opcional (`AGENTETVN_MODO=online` + `LLM_API_KEY`) y sus salidas se validan contra IDs de evidencia existentes.
+- **Redacción**: extractiva por plantillas desde afirmaciones citadas (`{texto, tipo, evidence_id, campo, alcance}`). Sin LLM no hay cifra inventada posible. La v1 no usa LLM. Si se añade (previsto, no implementado), irá detrás de `AGENTETVN_MODO=online` y sus afirmaciones se validarán contra IDs de evidencia existentes.
 - **Puntaje** (`config/scoring-v1.json`): cada componente 0–1 con explicación en español; rangos bajo [0,40), medio [40,70), alto [70,100]; empate por U y luego id. Cambiar un peso exige versión, responsable y motivo.
 - **Estado de evidencia** (insuficiente / parcial / suficiente) es independiente de P. Prioridad alta + evidencia insuficiente = investigar, no publicar.
 - **Anti-inyección**: el texto de una fuente es dato; patrones de instrucción marcan la fuente como no confiable y la excluyen de consultas y paquetes (T07). Las URLs solo se enlazan si son http(s).

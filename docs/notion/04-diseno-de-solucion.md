@@ -30,7 +30,7 @@ Contrato de la §7 del reto: `noticias.csv` (id_noticia, titulo, url, medio, idi
 
 - Embeddings: `Xenova/multilingual-e5-small` (ONNX q8, 384 dims) vía `@huggingface/transformers@3`, caché local `./.cache-modelos`. Prefijos `query:` / `passage:`. Costo: 0 (local). Tiempo: ~14 ms por lote de 3 textos en CPU.
 - Baseline: BM25 (k1 1.5, b 0.75) sobre titular + extracto; palabras clave por tema.
-- LLM: no se usa en la demo. Extra documentado en `src/lib/motor/llm.ts` (si se activa: instrucciones separadas de las fuentes con bloques `<<fuente id=… tipo="dato">>`, salida JSON validada contra IDs de evidencia, timeout 15 s, fallback extractivo visible).
+- LLM: no se usa en la v1 (decisión D4). Previsto como extra, **no implementado**: instrucciones separadas de las fuentes con bloques `<<fuente id=… tipo="dato">>` (la función `bloqueFuente` ya existe en `src/lib/motor/inyeccion.ts`), salida JSON validada contra IDs de evidencia, timeout 15 s y fallback extractivo visible.
 
 ## Prompts
 
