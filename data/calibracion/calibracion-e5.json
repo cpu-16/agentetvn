@@ -1,0 +1,221 @@
+{
+  "fecha": "2026-10-06T22:19:59.299Z",
+  "perfil": "e5",
+  "modelo": "Xenova/multilingual-e5-small",
+  "referencia": true,
+  "umbrales": {
+    "umbral_mismo_evento": 0.9,
+    "umbral_coseno": 0.8,
+    "umbral_tema": 0.8,
+    "margen_tema": 0.008
+  },
+  "mismo_evento": {
+    "faciles": {
+      "n": 19,
+      "min": 0.9228,
+      "p10": 0.9259,
+      "p50": 0.9752,
+      "p90": 0.9878,
+      "p99": 0.9937,
+      "max": 0.9945
+    },
+    "duros": {
+      "n": 29,
+      "min": 0.9046,
+      "p10": 0.9374,
+      "p50": 0.9543,
+      "p90": 0.9671,
+      "p99": 0.9762,
+      "max": 0.9776,
+      "descartadas_por_jaccard": 14,
+      "pares": [
+        {
+          "clave": "sintetica:inyeccion",
+          "jaccard": 0.2222,
+          "coseno": 0.9298
+        },
+        {
+          "clave": "sintetica:replica_efe_1",
+          "jaccard": 0.3333,
+          "coseno": 0.9397
+        },
+        {
+          "clave": "sintetica:contradiccion_b",
+          "jaccard": 0.4444,
+          "coseno": 0.9585
+        },
+        {
+          "clave": "n_b9bccf44e28d",
+          "jaccard": 0.4615,
+          "coseno": 0.9697
+        },
+        {
+          "clave": "n_c82df4c12323",
+          "jaccard": 0.4706,
+          "coseno": 0.9405
+        },
+        {
+          "clave": "n_7f66d2d96c04",
+          "jaccard": 0.4286,
+          "coseno": 0.9533
+        },
+        {
+          "clave": "n_d3bed37b2282",
+          "jaccard": 0.3,
+          "coseno": 0.9617
+        },
+        {
+          "clave": "n_1e91e4a1d359",
+          "jaccard": 0.2667,
+          "coseno": 0.9611
+        },
+        {
+          "clave": "n_4b20680ef560",
+          "jaccard": 0.375,
+          "coseno": 0.9377
+        },
+        {
+          "clave": "n_de93dcd90a10",
+          "jaccard": 0.3571,
+          "coseno": 0.9609
+        },
+        {
+          "clave": "n_75502772d824",
+          "jaccard": 0.25,
+          "coseno": 0.9543
+        },
+        {
+          "clave": "n_db461d153f93",
+          "jaccard": 0.2941,
+          "coseno": 0.9498
+        },
+        {
+          "clave": "n_0fe022c95e28",
+          "jaccard": 0.375,
+          "coseno": 0.9538
+        },
+        {
+          "clave": "n_2cd5f769a4c1",
+          "jaccard": 0.3333,
+          "coseno": 0.9523
+        },
+        {
+          "clave": "n_931fc28e424a",
+          "jaccard": 0.2105,
+          "coseno": 0.9046
+        },
+        {
+          "clave": "n_976fa7ea7570",
+          "jaccard": 0.2308,
+          "coseno": 0.9776
+        },
+        {
+          "clave": "n_b53e79eee74d",
+          "jaccard": 0.2857,
+          "coseno": 0.9551
+        },
+        {
+          "clave": "n_1db38d7a53f3",
+          "jaccard": 0.3333,
+          "coseno": 0.9534
+        },
+        {
+          "clave": "n_771bdad4e9df",
+          "jaccard": 0.3636,
+          "coseno": 0.9447
+        },
+        {
+          "clave": "n_be4387f9ced1",
+          "jaccard": 0.3333,
+          "coseno": 0.9572
+        },
+        {
+          "clave": "n_fee9c0bb6403",
+          "jaccard": 0.4667,
+          "coseno": 0.9665
+        },
+        {
+          "clave": "n_b0a37a2adfd6",
+          "jaccard": 0.4545,
+          "coseno": 0.9727
+        },
+        {
+          "clave": "n_8297afabb3d4",
+          "jaccard": 0.3333,
+          "coseno": 0.9362
+        },
+        {
+          "clave": "n_73233c646065",
+          "jaccard": 0.25,
+          "coseno": 0.958
+        },
+        {
+          "clave": "n_024a175d5e83",
+          "jaccard": 0.2308,
+          "coseno": 0.9634
+        },
+        {
+          "clave": "n_426c9e03bc42",
+          "jaccard": 0.4118,
+          "coseno": 0.956
+        },
+        {
+          "clave": "n_72b4d18bdc9c",
+          "jaccard": 0.3333,
+          "coseno": 0.9571
+        },
+        {
+          "clave": "n_088575e5bfa7",
+          "jaccard": 0.3333,
+          "coseno": 0.9421
+        },
+        {
+          "clave": "n_eb8254b44b06",
+          "jaccard": 0.2222,
+          "coseno": 0.9412
+        }
+      ]
+    },
+    "negativos": {
+      "n": 3000,
+      "min": 0.7248,
+      "p10": 0.7857,
+      "p50": 0.824,
+      "p90": 0.8576,
+      "p99": 0.8873,
+      "max": 0.9178
+    },
+    "p10_duros": 0.9374,
+    "p99_negativos": 0.8873,
+    "hueco": 0.0501,
+    "hueco_suficiente": true,
+    "umbral_por_metodo": 0.9123,
+    "umbral_vigente": 0.9,
+    "faciles_bajo_umbral": 0
+  },
+  "consulta": {
+    "umbral": 0.8,
+    "M": 311,
+    "mediana_lograda": 311,
+    "consultas": 50,
+    "docs": 1077
+  },
+  "temas": {
+    "umbral": 0.8,
+    "margen": 0.008,
+    "clasificables": 985,
+    "frac_bajo_umbral": 0,
+    "frac_bajo_margen": 0.5421,
+    "frac_por_revisar": 0.5421,
+    "similitud_max": {
+      "n": 985,
+      "min": 0.8006,
+      "p10": 0.8284,
+      "p50": 0.853,
+      "p90": 0.8788,
+      "p99": 0.9001,
+      "max": 0.9138
+    }
+  },
+  "ms": 6977
+}

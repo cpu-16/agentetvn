@@ -1,5 +1,5 @@
 // Consulta en español sobre el snapshot (CU-01, CU-04, T06): recuperación semántica (o léxica) → afirmaciones tipadas con cita → abstención explícita.
-import { coseno, embeber, modeloDisponible } from "./embeddings";
+import { coseno, embeber, MODELO, modeloDisponible } from "./embeddings";
 import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
 import { CONCEPTO_INDICADOR, idIndicador } from "./contexto";
 import { leerScoring } from "./config";
@@ -84,7 +84,8 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   const t0 = Date.now();
   const cfg = leerScoring().consulta;
   const k = opts.k ?? cfg.k;
-  const usarEmb = opts.modo !== "bm25" && snap.embeddings && (await modeloDisponible());
+  // vectores del snapshot hechos con otro modelo: espacios distintos no se comparan → BM25
+  const usarEmb = opts.modo !== "bm25" && snap.embeddings?.modelo === MODELO && (await modeloDisponible());
   const modo: Respuesta["modo"] = usarEmb ? "embeddings" : "bm25";
   // causalidad/culpa/pérdidas: abstención ANTES de cualquier otra rama (también si menciona un indicador)
   // \b no funciona tras una vocal acentuada («qué»): se usan límites Unicode

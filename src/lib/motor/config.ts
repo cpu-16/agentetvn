@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import { PERFIL } from "./perfiles";
 
 export interface Scoring {
   version: string;
@@ -18,6 +19,12 @@ export interface TemaDef { id: string; nombre: string; descripcion: string; pala
 
 let scoring: Scoring | null = null;
 let temas: TemaDef[] | null = null;
-export const leerScoring = (): Scoring => (scoring ??= JSON.parse(readFileSync("config/scoring-v1.json", "utf8")));
+/** Superpone al JSON (escala del e5) solo los cuatro umbrales de similitud del perfil de embeddings activo; e5 no trae: rige el JSON. */
+function conUmbralesDelPerfil(s: Scoring): Scoring {
+  const u = PERFIL.umbrales;
+  if (!u) return s;
+  return { ...s, N: { ...s.N, umbral_mismo_evento: u.umbral_mismo_evento }, temas: { umbral: u.umbral_tema, margen: u.margen_tema }, consulta: { ...s.consulta, umbral_coseno: u.umbral_coseno } };
+}
+export const leerScoring = (): Scoring => (scoring ??= conUmbralesDelPerfil(JSON.parse(readFileSync("config/scoring-v1.json", "utf8"))));
 export const leerTemas = (): TemaDef[] => (temas ??= JSON.parse(readFileSync("config/temas.json", "utf8")).temas);
 export const TEMAS_AGENDA: string[] = JSON.parse(readFileSync("config/temas.json", "utf8")).agenda;

@@ -6,6 +6,7 @@
 import { readFileSync, unlinkSync, writeFileSync } from "fs";
 import { cargarSnapshot } from "../src/lib/motor/cargar";
 import { aLista, coseno, embeber, MODELO, modeloDisponible } from "../src/lib/motor/embeddings";
+import { PERFIL } from "../src/lib/motor/perfiles";
 import { clasificarKnn, clasificarTema, etiquetasConVector, SECCION_A_TEMA, temaPorPalabras, vectoresTemas } from "../src/lib/motor/temas";
 import { agruparEventos } from "../src/lib/motor/eventos";
 import { vincularContexto } from "../src/lib/motor/contexto";
@@ -119,7 +120,11 @@ escribirJson(`${OUT}/eventos.json`, ordenados);
 const fichas: Ficha[] = ordenados.map((e) => ({ id_caso: e.id, modalidad: "tvn", ids_fuente: e.ids_noticia, afirmaciones: [], citas: [...e.ids_noticia, ...e.contexto.indicadores, ...e.contexto.sismos], puntaje: e.P, componentes: e.componentes, estado_evidencia: e.estado_evidencia, borrador: null, estado_revision: "nuevo", persona_revisora: null, sintetica: e.ids_noticia.some((i) => porId.get(i)!.sintetica) || undefined }));
 writeFileSync(`${OUT}/fichas.jsonl`, fichas.map((f) => JSON.stringify(f)).join("\n") + "\n");
 escribirJson(`${OUT}/noticias-motor.json`, noticiasConTema.map((n) => ({ ...n, no_confiable: n.no_confiable })));
-const huellaEntradas = sha256([snap.manifest.sha256["noticias.csv"], snap.manifest.sha256["indicadores.csv"], sha256(leerArchivo("data/sinteticas.json")), sha256(leerArchivo("config/scoring-v1.json")), sha256(leerArchivo("config/temas.json")), usarKnn ? sha256(leerArchivo("data/labels/temas.csv")) : "sin-etiquetas", modoIA === "embeddings" ? MODELO : "lexico"].join("|"));
+// e5 usa los umbrales de scoring-v1.json (ya en la huella): su huella no cambia. Otro perfil trae los suyos y entran aquí.
+function huellaModelo(): string {
+  return PERFIL.umbrales ? `${MODELO}|perfil:${PERFIL.id}|${JSON.stringify(PERFIL.umbrales)}` : MODELO;
+}
+const huellaEntradas = sha256([snap.manifest.sha256["noticias.csv"], snap.manifest.sha256["indicadores.csv"], sha256(leerArchivo("data/sinteticas.json")), sha256(leerArchivo("config/scoring-v1.json")), sha256(leerArchivo("config/temas.json")), usarKnn ? sha256(leerArchivo("data/labels/temas.csv")) : "sin-etiquetas", modoIA === "embeddings" ? huellaModelo() : "lexico"].join("|"));
 if (modoIA !== "embeddings") { try { unlinkSync(`${OUT}/embeddings.json`); } catch {} }
 escribirJson(`${OUT}/motor-meta.json`, { fecha: new Date().toISOString(), huella_entradas: huellaEntradas, entradas_csv: [snap.manifest.sha256["noticias.csv"], snap.manifest.sha256["indicadores.csv"]], modoIA, clasificador: usarKnn ? `knn k=5 sobre ${etiquetas.length} etiquetas humanas (leave-one-out para las etiquetadas)` : "zero-shot por prototipos", modelo: modoIA === "embeddings" ? MODELO : null, reglas: cfg.version, corteUTC: corte, eventos: eventos.length, por_tema: Object.fromEntries([...new Set(eventos.map((e) => e.tema))].map((t) => [t, eventos.filter((e) => e.tema === t).length])), rangos: { alto: eventos.filter((e) => e.rango === "alto").length, medio: eventos.filter((e) => e.rango === "medio").length, bajo: eventos.filter((e) => e.rango === "bajo").length }, ms: Date.now() - t0 });
 log(`listo · top 5: ${ordenados.slice(0, 5).map((e) => `${e.P} ${e.tema} «${porId.get(e.representante)!.titulo.slice(0, 50)}»`).join(" | ")}`);
