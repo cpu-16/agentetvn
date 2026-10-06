@@ -25,7 +25,7 @@ export function desplazar(direccion?: string) {
   const paso = Math.round(window.innerHeight * 0.8);
   if (direccion === "inicio") window.scrollTo({ top: 0, behavior: suave });
   else if (direccion === "final") window.scrollTo({ top: document.documentElement.scrollHeight, behavior: suave });
-  else window.scrollBy({ top: direccion === "arriba" ? -paso : paso, behavior: suave });
+  else if (direccion === "arriba" || direccion === "abajo") window.scrollBy({ top: direccion === "arriba" ? -paso : paso, behavior: suave });
 }
 
 export function useVoz(opts: Opts = {}) {
@@ -88,7 +88,7 @@ export function useVoz(opts: Opts = {}) {
       const of = await fetchMesa("/api/voz/offer", { method: "POST", body: pc.localDescription!.sdp, headers: { "content-type": "application/sdp" } });
       const hilo = of.headers.get("x-hilo") ?? undefined;
       if (!vigente()) { if (hilo) void fetch(`/api/voz/colgar?hilo=${encodeURIComponent(hilo)}&motivo=cancelada`, { method: "POST" }).catch(() => null); return abortar(); }
-      if (!of.ok || !hilo) { const j = await of.json().catch(() => ({})); abortar(); emitir({ tipo: "fallo" }); optsRef.current.onAviso?.(j.error ?? "La voz no está disponible ahora. Puedes escribir tu pregunta."); return false; }
+      if (!of.ok || !hilo) { const j = await of.json().catch(() => ({})); abortar(); if (!vigente()) return false; emitir({ tipo: "fallo" }); optsRef.current.onAviso?.(j.error ?? "La voz no está disponible ahora. Puedes escribir tu pregunta."); return false; }
       con.hilo = hilo;
       await pc.setRemoteDescription({ type: "answer", sdp: await of.text() });
       if (!vigente()) { void fetch(`/api/voz/colgar?hilo=${encodeURIComponent(hilo)}&motivo=cancelada`, { method: "POST" }).catch(() => null); return abortar(); }
@@ -115,8 +115,8 @@ export function useVoz(opts: Opts = {}) {
   const alternar = useCallback(async () => {
     const c = r.current;
     if (vozActiva(c.estado)) { colgar("colgó"); return; }
-    c.conectando ??= conectar().finally(() => { c.conectando = null; });
-    await c.conectando;
+    const p = (c.conectando = conectar());
+    await p.finally(() => { if (c.conectando === p) c.conectando = null; }); // un intento viejo no borra la promesa del nuevo
   }, [conectar, colgar]);
 
   // Contexto de pantalla: cada cambio de vista, ficha, pestaña o filtro.

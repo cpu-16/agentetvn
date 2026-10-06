@@ -48,6 +48,8 @@ describe("herramientas", () => {
     expect(h.navegar("h1", { destino: "final" })).toContain("final");
     expect(h.navegar("h1", { destino: "atrás" })).toContain("anterior");
     expect(sacarAcciones("h1")).toEqual([{ tipo: "desplazar", direccion: "abajo" }, { tipo: "desplazar", direccion: "arriba" }, { tipo: "desplazar", direccion: "final" }, { tipo: "atras" }]);
+    for (const raro of ["constructor", "__proto__", "toString"]) expect(h.navegar("h1", { destino: raro })).toContain("No puedo abrir"); // lista cerrada (revisión de Codex)
+    expect(sacarAcciones("h1")).toHaveLength(0);
   });
   test("ficha por titular: única → abre; ninguna → no abre; empate → opciones sin abrir", () => {
     const snap = servicio.snapshot();

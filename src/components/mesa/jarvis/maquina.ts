@@ -17,10 +17,13 @@ export function estadoOrbe(e: EstadoVoz): "reposo" | "escuchando" | "pensando" |
   return e === "escuchando" || e === "hablando" || e === "no_disponible" || e === "pensando" ? e : e === "conectando" ? "pensando" : "reposo";
 }
 export const SILENCIO_MS = 60_000;
-/** Motivo para colgar, o null. «enCurso» = Jarvis piensa o habla: ese silencio no cuenta. */
+export const SIN_RESPUESTA_MS = 45_000;
+/** Motivo para colgar, o null. «enCurso» = Jarvis piensa o habla: ese silencio no cuenta, pero si pasa 45 s sin ningún evento
+ *  (la respuesta nunca llegó) también cuelga, para no gastar el cupo compartido. */
 export function debeColgar(s: { oculta: boolean; sesionVencida: boolean; msSinActividad: number; enCurso: boolean }): string | null {
   if (s.oculta) return "saliste de esta pantalla";
   if (s.sesionVencida) return "venció la sesión";
+  if (s.enCurso && s.msSinActividad >= SIN_RESPUESTA_MS) return "no me llegó la respuesta a tiempo";
   if (!s.enCurso && s.msSinActividad >= SILENCIO_MS) return "pasó un minuto sin conversación";
   return null;
 }

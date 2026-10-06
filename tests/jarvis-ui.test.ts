@@ -36,6 +36,7 @@ describe("máquina de la voz", () => {
     expect(debeColgar({ oculta: false, sesionVencida: true, msSinActividad: 0, enCurso: false })).toContain("sesión");
     expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 61_000, enCurso: false })).toContain("minuto");
     expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 25_000, enCurso: false })).toBeNull(); // 20 s ya no corta
-    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 90_000, enCurso: true })).toBeNull();
+    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 30_000, enCurso: true })).toBeNull(); // pensando con la herramienta
+    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 46_000, enCurso: true })).toContain("respuesta"); // nunca llegó
   });
 });
