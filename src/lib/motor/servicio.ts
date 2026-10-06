@@ -1,7 +1,7 @@
 // Capa de servicio usada por las rutas API (y por las pruebas sin HTTP).
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
-import { cincoTemas, consultar } from "./consulta";
+import { cincoTemas, consultar, LEYENDA } from "./consulta";
 import { generarPaquete } from "./paquete";
 import { resumenCorte } from "./tablero";
 import { fuentesDe, redactarOExtractivo, redactarRespuesta } from "./llm";
@@ -103,7 +103,10 @@ export async function revisar(id: string, nuevo: EstadoRevision, persona: string
 
 export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string) {
   const snap = snapshot();
-  const soloIds = eventoId ? snap.eventos.find((e) => e.id === eventoId)?.ids_noticia : undefined;
+  const ev = eventoId ? snap.eventos.find((e) => e.id === eventoId) : undefined;
+  if (eventoId && !ev) // un tema que no existe no amplía la búsqueda a todo el corpus
+    return { abstener: true, motivo: "Ese tema no existe en el corte actual.", faltante: "un tema de la agenda de hoy", afirmaciones: [], evidencias: [], contradicciones: [], modo: "bm25" as const, ms: 0, leyenda: LEYENDA };
+  const soloIds = ev?.ids_noticia;
   const r = await consultar(q, snap, { modo, soloIds });
   if (r.abstener) return r; // las abstenciones son deterministas: nunca pasan por el LLM
   const redaccion = await redactarRespuesta(q, fuentesDe(r.afirmaciones, new Map(snap.noticias.map((n) => [n.id_noticia, n]))));
