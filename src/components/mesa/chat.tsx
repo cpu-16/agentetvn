@@ -6,7 +6,7 @@ import { SPRING_PANEL, fetchMesa, useMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string }
+interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } } }
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null }
 
 const SUGERIDAS: { q: string; etiqueta?: string }[] = [
@@ -173,6 +173,21 @@ export function ChatAgente() {
                       {t.respuesta.faltante && <p className="mt-1"><span className="font-medium">Qué falta:</span> {t.respuesta.faltante}</p>}
                     </div>
                   ) : (
+                    <>
+                    {t.respuesta.redaccion && (
+                      <div className="space-y-1.5">
+                        <ul className="space-y-1.5">
+                          {t.respuesta.redaccion.frases.map((a, i) => (
+                            <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
+                              {a.texto}
+                              <BotonCita id={a.evidence_id} campo={a.campo} onAbrir={setCita} />
+                            </li>
+                          ))}
+                        </ul>
+                        {t.respuesta.redaccion.vacios.length > 0 && <p className="text-xs"><span className="font-medium">Qué falta:</span> {t.respuesta.redaccion.vacios.join("; ")}</p>}
+                        <p className="text-[10.5px] text-muted-foreground">Redactado por IA ({t.respuesta.redaccion.llm.modelo}, {Math.round(t.respuesta.redaccion.llm.ms / 1000)} s); cada frase validada contra su fuente. Evidencia recuperada:</p>
+                      </div>
+                    )}
                     <ul className="space-y-1.5">
                       {t.respuesta.afirmaciones.map((a, i) => (
                         <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
@@ -181,6 +196,7 @@ export function ChatAgente() {
                         </li>
                       ))}
                     </ul>
+                    </>
                   )}
                   {t.respuesta && t.respuesta.contradicciones.length > 0 && <p className="rounded-sm bg-[#fdecef] px-3 py-1.5 text-xs text-[#9b1526]">{t.respuesta.contradicciones.length} contradicción(es) abierta(s) entre las fuentes: {t.respuesta.contradicciones.map((c) => c.detalle).join("; ")}</p>}
                   {t.respuesta && <p className="text-[10.5px] text-muted-foreground">{t.respuesta.modo === "embeddings" ? "Por sentido" : "Por palabras"}, {t.respuesta.ms} ms. {t.respuesta.leyenda}</p>}

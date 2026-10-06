@@ -3,6 +3,7 @@ import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
 import { cincoTemas, consultar } from "./consulta";
 import { generarPaquete } from "./paquete";
+import { fuentesDe, redactarOExtractivo, redactarRespuesta } from "./llm";
 import { validarTransicion } from "./revision";
 import { leerScoring } from "./config";
 import type { EstadoRevision, Evento, Paquete } from "./contrato";
@@ -54,9 +55,13 @@ export async function paquete(id: string, persona: string, forzar = false) {
     const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
     const citas = [...p.brief, ...p.guion, ...p.copy].map((a) => a.evidence_id);
     const contaminado = citas.some((c) => porId.get(c)?.no_confiable);
-    if (!contaminado) return p; // si una fuente citada fue marcada después como no confiable, se regenera
+    const obsoleto = p.modo === "llm" && p.llm?.huella !== snap.huella; // redactado sobre otro snapshot: se vuelve a redactar
+    if (!contaminado && !obsoleto) return p; // si una fuente citada fue marcada después como no confiable, se regenera
   }
-  const p = generarPaquete(e, snap.noticias, snap.indicadores);
+  const base = generarPaquete(e, snap.noticias, snap.indicadores);
+  const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+  const contexto = `Tema: ${e.tema}. Prioridad P ${e.P} (${e.rango}). Estado de la evidencia: ${e.estado_evidencia}. ${e.ids_noticia.length} publicación(es); procedencias: ${e.procedencias.map((x) => `${x.nombre} (${x.tipo})`).join(", ")}.${e.contradicciones.length ? ` Contradicciones abiertas: ${e.contradicciones.map((c) => c.detalle).join("; ")}.` : ""}`;
+  const p = await redactarOExtractivo(base, fuentesDe([...base.brief, ...base.guion, ...base.copy], porId), contexto, snap.huella);
   await db.paqueteEditado.upsert({ where: { eventoId: id }, create: { eventoId: id, contenido: JSON.stringify(p), modo: p.modo, persona }, update: { contenido: JSON.stringify(p), modo: p.modo, persona } });
   return p;
 }
@@ -79,7 +84,10 @@ export async function revisar(id: string, nuevo: EstadoRevision, persona: string
 export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string) {
   const snap = snapshot();
   const soloIds = eventoId ? snap.eventos.find((e) => e.id === eventoId)?.ids_noticia : undefined;
-  return consultar(q, snap, { modo, soloIds });
+  const r = await consultar(q, snap, { modo, soloIds });
+  if (r.abstener) return r; // las abstenciones son deterministas: nunca pasan por el LLM
+  const redaccion = await redactarRespuesta(q, fuentesDe(r.afirmaciones, new Map(snap.noticias.map((n) => [n.id_noticia, n]))));
+  return redaccion ? { ...r, redaccion } : r;
 }
 
 export async function control() {

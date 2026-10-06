@@ -4,7 +4,7 @@ import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
 import { CONCEPTO_INDICADOR, idIndicador } from "./contexto";
 import { leerScoring } from "./config";
 import { INDICADORES, PAISES } from "../ingesta/bancomundial";
-import type { Afirmacion, Contradiccion, Evento, Indicador, Noticia } from "./contrato";
+import type { Afirmacion, Contradiccion, Evento, Indicador, MetaLLM, Noticia } from "./contrato";
 import type { Snapshot } from "./cargar";
 
 export interface Evidencia { id: string; tipo: "noticia" | "indicador" | "sismo"; resumen: string; score: number }
@@ -18,6 +18,7 @@ export interface Respuesta {
   modo: "embeddings" | "bm25";
   ms: number;
   leyenda: string;
+  redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: MetaLLM }; // solo en modo online, sobre lo recuperado
 }
 
 export const LEYENDA = "Basado únicamente en titular/metadatos del snapshot; no se leyó el artículo completo.";

@@ -119,7 +119,10 @@ export interface Paquete {
   copy: Afirmacion[]; // ≤80 palabras
   leyenda: string; // «Basado únicamente en titular/metadatos…»
   modo: "extractivo" | "llm";
+  llm?: MetaLLM; // solo en modo llm: modelo, latencia, costo medido y frases descartadas por la validación
 }
+
+export interface MetaLLM { modelo: string; ms: number; tokens: number | null; costo_usd: number | null; descartadas: string[]; huella?: string }
 
 export interface Ficha {
   id_caso: string;

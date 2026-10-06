@@ -7,7 +7,7 @@ import { BotonCita } from "./citas";
 import { cn } from "@/lib/utils";
 
 export interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-export interface Paquete { titulo: string; enfoque: string; brief: Afirmacion[]; preguntas: string[]; verificaciones: string[]; guion: Afirmacion[]; copy: Afirmacion[]; leyenda: string; modo: string; persona?: string; updatedAt?: string }
+export interface Paquete { titulo: string; enfoque: string; brief: Afirmacion[]; preguntas: string[]; verificaciones: string[]; guion: Afirmacion[]; copy: Afirmacion[]; leyenda: string; modo: string; persona?: string; updatedAt?: string; llm?: { modelo: string; ms: number; costo_usd: number | null; descartadas: string[] } }
 export interface Revision { estado: string; persona: string | null; motivo: string | null; createdAt: string | null }
 export interface RevisionHist { id: string; estado: string; persona: string; motivo: string | null; createdAt: string }
 
@@ -84,12 +84,14 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
         {!p ? (
           <div className="rounded-sm border border-dashed border-border bg-white p-6 text-sm">
             <p className="mb-3">Todavía no hay paquete para este tema. Se compone solo con afirmaciones citadas de las noticias del corte.</p>
-            <Button onClick={() => generar()} disabled={ocupado} variant={rol === "productor" ? "default" : "outline"}>Generar paquete</Button>
+            <Button onClick={() => generar()} disabled={ocupado} variant={rol === "productor" ? "default" : "outline"}>{ocupado ? "Preparando…" : "Generar paquete"}</Button>
+            {ocupado && <p role="status" className="mt-2 text-xs text-muted-foreground">Si redacta la IA, puede tardar hasta un minuto.</p>}
           </div>
         ) : (
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>{p.modo === "extractivo" ? "Compuesto solo con afirmaciones citadas" : `Modo ${p.modo}`}</span>
+              <span>{p.modo === "llm" && p.llm ? `Redactado por IA (${p.llm.modelo}) en ${Math.round(p.llm.ms / 1000)} s${p.llm.costo_usd != null ? `, US$${p.llm.costo_usd.toFixed(3)}` : ""}; cada frase validada contra su fuente${p.llm.descartadas.length ? ` (${p.llm.descartadas.length} descartada${p.llm.descartadas.length > 1 ? "s" : ""})` : ""}` : p.modo === "extractivo" ? "Compuesto solo con afirmaciones citadas" : `Modo ${p.modo}`}</span>
+              {ocupado && <span role="status">Preparando el paquete; si redacta la IA, puede tardar hasta un minuto…</span>}
               {p.updatedAt && <span>guardado {horaPanama(p.updatedAt)}{p.persona ? ` por ${p.persona}` : ""}</span>}
               <span className="ml-auto flex gap-2">
                 {editando ? <Button size="sm" onClick={guardar} disabled={ocupado}>Guardar edición</Button> : <Button size="sm" variant="outline" onClick={() => setEditando(true)}>Editar</Button>}
