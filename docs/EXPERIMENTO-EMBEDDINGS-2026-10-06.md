@@ -37,7 +37,9 @@ Comprobado antes de descargar (API de Hugging Face, 6-oct): los dos repos existe
 
 ## 4. Protocolo de medición
 
-Máquina: laptop Fedora, i9-13950HX (32 hilos), CPU solamente. El CT de 2 núcleos no se tocó; para aproximarlo se repiten los tiempos con `taskset -c 4,6` (dos núcleos P distintos). Lo que vale es la razón contra e5 medida igual.
+Máquina: laptop Fedora, i9-13950HX (32 hilos), CPU solamente. El CT de 2 núcleos no se tocó. Para aproximarlo se repiten los tiempos con el pool de ONNX Runtime limitado a 2 hilos (`AGENTETVN_MEDIR_HILOS=2`, solo en el script de medición) y fijado con `taskset -c 4,6` (dos núcleos P distintos). Lo que vale es la razón contra e5 medida igual.
+
+*Ajuste de protocolo durante la corrida:* `taskset` solo no sirve, porque ONNX Runtime fija su propia afinidad y siguió usando ~21 núcleos (`cpu=2019 %` con `taskset -c 4,6`). Una cuota de cgroup (`CPUQuota=200%`) tampoco, porque estrangula ~24 hilos y el e5 pasó de 3,3 s a 97 s por pasada: es una patología del sobre-suscribir, no lo que haría un CT. Con 2 hilos de ORT el proceso queda en `cpu≈195 %`.
 
 - Tiempos (`scripts/medir-embeddings.ts`, proceso nuevo, `HF_HUB_OFFLINE=1`): carga en frío = crear el extractor + primera consulta; corpus = las 1 079 notas de `noticias-motor.json` en lotes de 32 con el modelo ya cargado.
 - Motor (`bun run motor`) regenerado solo en este worktree; eventos y eventos con > 1 publicación de `eventos.json`.
@@ -46,8 +48,97 @@ Máquina: laptop Fedora, i9-13950HX (32 hilos), CPU solamente. El CT de 2 núcle
 
 ## 5. Resultados
 
-(pendiente)
+### 5.1 Calibración (sin etiquetas humanas)
 
-## 6. Veredicto
+| | e5 (referencia) | Granite | Gemma |
+|---|---|---|---|
+| Paráfrasis duras usadas (Jaccard en [0,2; 0,5)) | 29 de 43 | 29 de 43 | 29 de 43 |
+| p10 de paráfrasis duras | 0,9374 | 0,8637 | 0,7465 |
+| p99 de negativos (3 000 pares) | 0,8873 | 0,7911 | 0,5006 |
+| **Hueco p10 − p99** | **0,0501** | **0,0726** | **0,2459** |
+| `umbral_mismo_evento` | 0,90 (vigente; el método daría 0,912) | 0,8274 | 0,6236 |
+| Positivos fáciles (Jaccard ≥ 0,8) bajo el umbral | 0 de 19 | 0 de 19 | 3 de 19 (los toma igual el atajo léxico) |
+| `umbral_coseno` (mediana de 311 documentos que lo pasan, como el e5 a 0,80) | 0,80 | 0,7093 | 0,1359 |
+| `temas.umbral` / `temas.margen` | 0,80 / 0,008 | 0,6355 / 0,0186 | 0,1915 / 0,0481 |
+| Notas «por revisar» en temas (985 clasificables) | 54,2 % | 54,2 % | 54,2 % |
 
-(pendiente)
+Con e5, ninguna nota queda bajo `temas.umbral` = 0,80 (la mínima es 0,8006): hoy solo decide el margen. El umbral equivalente de cada candidato es, por eso, el mínimo de su distribución.
+
+### 5.2 Calidad, eventos y pruebas
+
+| | e5 | Granite-97M r2 q8 | EmbeddingGemma-300M q8 |
+|---|---|---|---|
+| hit@5 sustentadas (dev) | 17/20 | **16/20** | **18/20** |
+| Abstenciones correctas / indebidas | 6/7 · 0/20 | 6/7 · 0/20 | 6/7 · 0/20 |
+| Adversarial | 6/6 | 6/6 | 6/6 |
+| Citas | 38/38 | 38/38 | 38/38 |
+| Contradicción | 5/5 | 5/5 | 5/5 |
+| Latencia de consulta en el benchmark (mediana / p95) | 6 / 12 ms | 6 / 10 ms | 101 / 118 ms |
+| Eventos | 777 | 787 | 791 |
+| Eventos con > 1 publicación (Δ vs e5) | 137 | 136 (−0,7 %) | 132 (−3,6 %) |
+| T01–T10 (`scripts/pruebas.ts`, `HF_HUB_OFFLINE=1`) | 10/10 | 10/10 | 10/10 |
+| `bun test tests/` | 107/107 | 104/107 | 104/107 |
+| Primera consulta T10 en proceso nuevo, `fetch` bloqueado | 0,47–0,56 s, modo `embeddings`, 0 intentos de red | 0,55 s, `embeddings`, 0 | 0,79–0,87 s, `embeddings`, 0 |
+
+Los 3 fallos de los candidatos son los de `tests/tablero-snapshot.test.ts`, que fija conteos del snapshot e5 (774 eventos visibles, 74 procedencias TVN, 7 publicaciones de regulación el 1-oct). Cambian porque cambia el agrupamiento; no son T01–T10.
+
+Casos de dev que cambian: Granite pierde b08 («Más allá del 7 de septiembre»); Gemma gana b11 («El legado evoluciona»). Los tres fallan b01 y b07, y ninguno se abstiene en b42 (peaje del Canal de septiembre de 2026). La diferencia de Gemma es un caso de 20.
+
+### 5.3 Tiempos en esta máquina
+
+Corpus = 1 079 pasajes en lotes de 32 con el modelo ya cargado (dos pasadas por proceso, dos procesos). Frío = proceso nuevo: cargar desde `.cache-modelos` y embeber la primera consulta.
+
+| | e5 | Granite | Gemma |
+|---|---|---|---|
+| Corpus, ORT por defecto (~21 núcleos) | 3,1–4,0 s | 3,4–3,7 s (≈ 1,0×) | 25,5–26,8 s (**≈ 7,7×**) |
+| Corpus, 2 hilos de ORT | 5,6 s | 5,9–6,4 s (≈ 1,1×) | 58,3–59,3 s (**≈ 10,5×**) |
+| Carga en frío + 1.ª consulta (defecto / 2 hilos) | 0,44–0,64 s / 0,52–0,56 s | 0,49–0,59 s / 0,49–0,55 s | 0,73–0,83 s / 0,82 s |
+| Consulta caliente (mediana; defecto / 2 hilos) | 3–6 ms / 3–5 ms | 3–4 ms / 5–7 ms | 101–112 ms / 92 ms |
+| `bun run motor` completo (defecto / taskset, que ORT ignora) | 7,8 s / 7,9 s | 8,0 s / 8,4 s | 33,2 s / 34,1 s |
+| Memoria máxima del proceso | 0,85–0,91 GB | 0,72–0,79 GB | 1,9–2,1 GB |
+| Modelo en disco | 130 MB | 118 MB | 316 MB |
+
+### 5.4 Con el corte relativo del repo principal (`MARGEN_COSENO`)
+
+Pedido del coordinador. En `main`, `consultar()` deja entrar solo lo que queda a ≤ 0,02 de la mejor. Para los candidatos el margen se reescaló con el mismo método de selectividad: las 50 pseudoconsultas deben dar la misma media de evidencias que el e5 con 0,02 (3,42). Granite queda en 0,0279 y Gemma en 0,0927. El corte se aplicó con un parche temporal que no se comiteó.
+
+| | hit@5 | Abst. correctas / indebidas | Adversarial | Citas | Evidencias por consulta |
+|---|---|---|---|---|---|
+| e5, sin corte / con 0,02 | 17 / 17 | 6/7 · 0 | 6/6 | 38/38 | 3,84 → 1,55 |
+| Granite, sin corte / con 0,0279 | 16 / **14** | 6/7 · 0 | 6/6 | 38/38 | 3,84 → 1,87 |
+| Gemma, sin corte / con 0,0927 | 18 / **17** | 6/7 · 0 | 6/6 | 38/38 | 3,84 → 1,71 |
+
+Con el corte que ya está en `main`, Gemma empata con e5 en hit@5 y Granite queda más abajo.
+
+## 6. Veredicto: quedarse con e5
+
+Ningún candidato cumple los seis criterios.
+
+- **Granite-97M r2.** Cuesta lo mismo que e5 (≈ 1,0–1,1× en CPU, menos memoria) y abre un hueco algo mayor (0,073 contra 0,050), pero **hit@5 baja a 16/20** (criterio 2), y con el corte relativo a 14/20. Queda fuera.
+- **EmbeddingGemma-300M.** Gana en separación: el hueco es 0,246, unas cinco veces el del e5, y Gemma es el único con margen real para un umbral de «mismo evento». También gana un caso de dev (18/20). Mantiene abstención, adversarial, citas, contradicción, T01–T10 y la consulta en frío bajo 1 s, sin salir a la red, y los eventos con > 1 nota se mueven −3,6 %. Pero **embeber el corpus cuesta ≈ 7,7× el e5 con todos los núcleos y ≈ 10,5× con 2 hilos** (criterio 5, tope 3×). Además la consulta pasa de ~5 ms a ~100 ms y el proceso de ~0,9 a ~2 GB. Con el corte relativo de `main`, el +1 de hit@5 desaparece: 17/20, empate. Así cae también en el criterio 6: gana un eje y pierde otro.
+
+La hipótesis se cumple a medias. Gemma sí abre el hueco ≥ 0,05 y sube el hit@5 sin el corte, pero no dentro del presupuesto de CPU. Granite cumple el presupuesto, pero no la calidad.
+
+### Qué haría falta para adoptar Gemma (si se reabre)
+
+1. Aceptar de forma explícita un presupuesto de CPU mayor: el motor corre una vez por snapshot (~33 s aquí; en el CT, ~1 min por cada 1 000 notas si escala como con 2 hilos), y la consulta sube a ~100 ms. Antes hay que confirmar que el CT tiene ~2 GB libres para el proceso.
+2. Medir en el CT real (aquí solo se aproximó).
+3. Ampliar dev: +1 de 20 casos es ruido, y con el corte de `main` es empate. El reservado se usaría una sola vez, para confirmar después de decidir.
+4. Regenerar el snapshot con `AGENTETVN_EMB_MODELO=gemma bun run motor`, actualizar los conteos de `tests/tablero-snapshot.test.ts`, descargar el modelo (316 MB) en la caché del CT y reescalar `MARGEN_COSENO` (≈ 0,093).
+5. Revisar la licencia: EmbeddingGemma va bajo los Gemma Terms of Use. e5 es MIT y Granite es Apache-2.0.
+
+Un siguiente experimento con una sola perilla sería Gemma en q4 (`model_q4.onnx`), para ver si baja el costo sin perder el hueco. No se probó.
+
+### Reproducir
+
+```
+AGENTETVN_EMB_MODELO=gemma HF_HUB_OFFLINE=0 bun scripts/modelo-descargar.ts       # una vez, con red
+AGENTETVN_EMB_MODELO=e5 HF_HUB_OFFLINE=1 bun scripts/calibrar-embeddings.ts --referencia
+AGENTETVN_EMB_MODELO=gemma HF_HUB_OFFLINE=1 bun scripts/calibrar-embeddings.ts
+AGENTETVN_EMB_MODELO=gemma HF_HUB_OFFLINE=1 bun scripts/medir-embeddings.ts
+AGENTETVN_EMB_MODELO=gemma HF_HUB_OFFLINE=1 bun run motor && bun run benchmark --split dev   # reescribe data/processed: no comitear
+```
+
+Sin la variable rige e5. En este worktree, `bun run motor` regenera `eventos.json`, `embeddings.json`, `fichas.jsonl` y `noticias-motor.json` idénticos al snapshot comiteado, y `motor-meta.json` con la misma huella.
+
+Nota para fusionar: `consulta.ts` cambió en `main` (traza, `MARGEN_COSENO`). La línea de `usarEmb` de esta rama, que cae a BM25 si `snap.embeddings.modelo` no coincide con el modelo, se tiene que llevar a mano.
