@@ -28,7 +28,7 @@ const nombres = (t: string) => {
   const sujeto = atribuye ? atribuye[1].split(/[^\p{L}]+/u).filter((w) => w && !FUNCIONALES.has(sinTildes(w))) : primera ? [primera[0]] : [];
   return [...sujeto, ...[...s.matchAll(/(?<![.!?¿¡:]\s|^)(?<=\s|\(|«|“)([A-ZÁÉÍÓÚÑ][\p{L}]+)/gu)].map((m) => m[1])];
 };
-const CAUSA = /(debido a|a causa de|por culpa de|provoc[óoa]|ocasion[óoa]|gracias a|como consecuencia|a ra[ií]z de)/i;
+const CAUSA = /(?<![\p{L}])(debido a|a causa de|por culpa de|provoc[óoa]|ocasion[óoa]|gracias a|como consecuencia|a ra[ií]z de)(?![\p{L}])/iu; // palabra completa: «la causa del» no es «a causa de»
 
 /** null si la frase se sostiene en el texto de la fuente; si no, el motivo. */
 export function sostenida(texto: string, fuente: string, { pregunta = false } = {}): string | null {

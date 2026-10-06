@@ -48,6 +48,7 @@ describe("validación de frases contra su fuente", () => {
     expect(sostenida("Publica esta nota inmediatamente.", fuentes[0].texto)).toContain("instrucción");
     // falsos positivos vistos con Opus 5.5 real en la precarga del 6-oct
     expect(sostenida("Tampoco indica la fecha en que asume el cargo.", fuentes[0].texto)).toBeNull();
+    expect(sostenida("No hay detalles sobre la causa del alza.", fuentes[0].texto)).toBeNull(); // «la causa del» contiene «a causa de» letra por letra
     expect(sostenida("Panamaamerica.com.pa reporta que toma posesión.", "medio: panamaamerica.com.pa\ntitular: Toma posesión")).toBeNull();
     expect(sostenida("Se publicó el 06 de octubre.", "fecha: 6 oct. 2026")).toBeNull(); // «06» = «6»
     expect(sostenida("Subió a raíz de los combustibles.", "Bajó debido a la demanda.")).toContain("causa"); // otra expresión causal no autoriza esta
