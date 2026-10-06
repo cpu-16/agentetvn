@@ -44,6 +44,13 @@ describe("T06 abstención", () => {
     expect(a.afirmaciones).toHaveLength(0);
     expect((await consultar("¿por qué aumentó la inflación de Panamá en 2023?", snap(), { modo: "bm25" })).abstener).toBe(true);
   });
+  test("pedir una cantidad que los titulares no traen → abstención con las publicaciones relacionadas como pista; fuera de alcance → abstención", async () => {
+    const r = await consultar("¿Cuánto cobró de peaje el Canal de Panamá?", snap(), { modo: "bm25" });
+    expect(r.abstener).toBe(true);
+    expect(r.afirmaciones).toHaveLength(0);
+    expect(r.evidencias.length).toBeGreaterThan(0); // relacionado ≠ sustentado, pero se muestra como pista
+    expect((await consultar("¿Qué calificación crediticia tiene el cliente Juan Pérez?", snap(), { modo: "bm25" })).abstener).toBe(true);
+  });
   test("coincidencia léxica suelta no es respuesta: «extraterrestres en Panamá» se abstiene", async () => {
     expect((await consultar("¿Cuántos extraterrestres viven en Panamá?", snap(), { modo: "bm25" })).abstener).toBe(true);
   });

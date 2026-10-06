@@ -88,9 +88,13 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   // \b no funciona tras una vocal acentuada («qué»): se usan límites Unicode
   if (/(?<![\p{L}])(por qu[eé]|caus[oó]|culpa|culpable|p[eé]rdidas?|quebr|impago|fraude)/iu.test(q))
     return { abstener: true, motivo: "El corpus (titulares y metadatos) no permite establecer causas, culpas ni pérdidas.", faltante: "cobertura con fuentes primarias y lectura completa de los artículos", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
+  // fuera de alcance (§2 del reto): datos de clientes, crédito, solvencia, audiencia, expedientes, secretos
+  if (/(?<![\p{L}])(cliente|calificaci[oó]n crediticia|solvencia|riesgo de cr[eé]dito|cartera|rating|audiencia|expediente|c[eé]dula|token|contraseña|clave de)/iu.test(q))
+    return { abstener: true, motivo: "Fuera del alcance del reto: no hay datos de clientes, crédito, solvencia, audiencia ni expedientes en el corpus, y el agente no maneja secretos.", faltante: "nada: esta consulta no se responde desde este sistema", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
   const cifra = responderCifra(q, snap, t0, modo);
   if (cifra) return cifra;
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+  const pideCantidad = /(?<![\p{L}])(cu[aá]nt[oa]s?|cifra|monto|tasa|porcentaje|cu[aá]l fue el (valor|n[uú]mero|total)|cu[aá]ntos?)/iu.test(q);
   const permitida = (id: string) => porId.has(id) && !porId.get(id)!.no_confiable && (!opts.soloIds || opts.soloIds.includes(id));
   let candidatos: { id: string; score: number }[] = [];
   let modoEfectivo: Respuesta["modo"] = modo;
@@ -114,7 +118,10 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
       .slice(0, k);
   }
   if (!candidatos.length)
-    return { abstener: true, motivo: "No hay evidencia en el snapshot que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del snapshot", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
+    return { abstener: true, motivo: "No hay evidencia en el snapshot que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del snapshot", afirmaciones: [], evidencias: [], contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA };
+  // si se pide una cantidad y ningún titular/extracto recuperado contiene una cifra, lo recuperado es «relacionado», no «respuesta»
+  if (pideCantidad && !candidatos.some((c) => /\d/.test(`${porId.get(c.id)!.titulo} ${porId.get(c.id)!.descripcion}`)))
+    return { abstener: true, motivo: "Las publicaciones relacionadas no contienen la cifra solicitada; no se infiere un número.", faltante: `la cifra pedida con su fuente y período; publicaciones relacionadas: ${candidatos.slice(0, 3).map((c) => porId.get(c.id)!.medio).join(", ")}`, afirmaciones: [], evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${porId.get(c.id)!.medio} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })), contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA };
   const noticias = candidatos.map((c) => porId.get(c.id)!);
   const eventos = snap.eventos.filter((e) => e.ids_noticia.some((i) => candidatos.some((c) => c.id === i)));
   return {
