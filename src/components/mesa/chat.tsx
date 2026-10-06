@@ -301,7 +301,7 @@ export function ChatAgente() {
                 onLostPointerCapture={() => { clearTimeout(temporizador.current); voz.soltar(); }}
               >
                 <Orbe estado={orbe} nivel={voz.nivel} />
-                <span className={cn(celular && "sr-only")}>{voz.estado === "escuchando" ? "Te escucho" : "Mantén para hablar"}</span>
+                <span className={cn((celular || tamano === "compacto") && "sr-only")}>{voz.estado === "escuchando" ? "Te escucho" : "Mantén para hablar"}</span>
               </button>
               <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-10 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
             </form>
