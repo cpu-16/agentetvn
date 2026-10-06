@@ -4,6 +4,10 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "./citas";
 import { SPRING_PANEL, fetchMesa, useMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
+import { ETIQUETA_ORBE, Orbe } from "./jarvis/orbe";
+import { clasificarPulsacion } from "./jarvis/pulsacion";
+import { estadoOrbe } from "./jarvis/maquina";
+import { useVoz } from "./jarvis/useVoz";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
 interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } } }
@@ -37,6 +41,10 @@ export function ChatAgente() {
   const entrada = useRef<HTMLTextAreaElement>(null);
   const fin = useRef<HTMLDivElement>(null);
   const reducir = useReducedMotion();
+  const voz = useVoz(); // en la tarea 7 se le pasan los callbacks del hilo
+  const orbe = estadoOrbe(voz.estado);
+  const inicioPulsacion = useRef(0);
+  const temporizador = useRef<number | undefined>(undefined);
   const enFicha = vista === "ficha" && !!eventoId;
   const ambito = enFicha && soloTema ? eventoId : null;
 
@@ -103,10 +111,22 @@ export function ChatAgente() {
 
   return (
     <>
-      <button ref={boton} onClick={() => setChatAbierto(!chatAbierto)} className="chat-boton presionable fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full py-2.5 pl-3 pr-4 text-sm font-medium text-white" aria-expanded={chatAbierto} aria-controls="chat-agente" aria-haspopup="dialog">
-        <span className={cn("block h-2.5 w-2.5 rounded-full", modoConsulta === "embeddings" ? "bg-verde" : "bg-white/50")} aria-hidden />
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M4 5h16v11H8l-4 4z" /><path d="M8 9h8M8 12h5" /></svg>
-        Preguntar al agente
+      <button
+        ref={boton}
+        className="jarvis-boton presionable"
+        aria-expanded={chatAbierto}
+        aria-controls="chat-agente"
+        aria-haspopup="dialog"
+        aria-label={`Jarvis. Toca para abrir el chat; mantén presionado para hablar. ${ETIQUETA_ORBE[orbe]}`}
+        onContextMenu={(e) => e.preventDefault()}
+        onPointerDown={(e) => { (e.currentTarget as HTMLButtonElement).setPointerCapture(e.pointerId); voz.prepararAudio(); inicioPulsacion.current = Date.now(); temporizador.current = window.setTimeout(() => void voz.pulsar(), 250); }}
+        onPointerUp={() => { clearTimeout(temporizador.current); if (clasificarPulsacion(Date.now() - inicioPulsacion.current) === "sostenida") voz.soltar(); else setChatAbierto(!chatAbierto); }}
+        onPointerCancel={() => { clearTimeout(temporizador.current); voz.soltar(); }}
+        onLostPointerCapture={() => { clearTimeout(temporizador.current); voz.soltar(); }}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); setChatAbierto(!chatAbierto); } }}
+      >
+        <Orbe estado={orbe} nivel={voz.nivel} />
+        <span className="jarvis-texto">{voz.estado === "escuchando" ? "Te escucho…" : "Preguntar a Jarvis"}</span>
       </button>
       <p className="solo-lector" aria-live="polite" aria-atomic="true">{anuncio}</p>
       <AnimatePresence>
