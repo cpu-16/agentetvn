@@ -66,16 +66,27 @@ export function ChatAgente() {
   const enFicha = vista === "ficha" && !!eventoId;
   const ambito = enFicha && soloTema ? eventoId : null;
 
-  // Foco: entra al panel al abrir y vuelve al botón al cerrar. Escape y clic fuera cierran.
+  // Foco: entra al panel al abrir y vuelve al botón al cerrar (solo depende de abrir/cerrar: no roba el foco en cada render).
   useEffect(() => {
     if (!chatAbierto) return;
     const t = setTimeout(() => entrada.current?.focus(), 60); // respaldo del autoFocus (el panel se monta animado)
+    const b = boton.current;
+    return () => { clearTimeout(t); b?.focus({ preventScroll: true }); };
+  }, [chatAbierto]);
+
+  // Teclas y clic afuera. La voz se lee de una referencia (su identidad cambia en cada render).
+  const vozRef = useRef(voz);
+  useEffect(() => { vozRef.current = voz; });
+  useEffect(() => {
+    if (!chatAbierto) return;
+    let espacio = false; // el espacio empezó a hablar: su keyup SIEMPRE suelta, esté donde esté el foco
     const enCampo = (e: KeyboardEvent) => !!(e.target as HTMLElement).closest?.("textarea,input,select,button");
     const tecla = (e: KeyboardEvent) => {
       if (e.key === "Escape") { setChatAbierto(false); return; }
-      if (e.code === "Space" && !e.repeat && !enCampo(e)) { e.preventDefault(); voz.prepararAudio(); void voz.pulsar(); } // barra espaciadora = hablar
+      if (e.code === "Space" && !e.repeat && !enCampo(e)) { e.preventDefault(); espacio = true; vozRef.current.prepararAudio(); void vozRef.current.pulsar(); }
     };
-    const suelta = (e: KeyboardEvent) => { if (e.code === "Space" && !enCampo(e)) voz.soltar(); };
+    const suelta = (e: KeyboardEvent) => { if (e.code === "Space" && espacio) { espacio = false; vozRef.current.soltar(); } };
+    const perdio = () => { if (espacio) { espacio = false; vozRef.current.soltar(); } }; // la ventana perdió el foco con el espacio abajo
     const fuera = (e: PointerEvent) => {
       if (tamano !== "compacto") return; // en lateral y amplio el panel acompaña la pantalla: un clic afuera no lo cierra
       const t = e.target as Node;
@@ -83,9 +94,10 @@ export function ChatAgente() {
     };
     window.addEventListener("keydown", tecla);
     window.addEventListener("keyup", suelta);
+    window.addEventListener("blur", perdio);
     window.addEventListener("pointerdown", fuera);
-    return () => { clearTimeout(t); window.removeEventListener("keydown", tecla); window.removeEventListener("keyup", suelta); window.removeEventListener("pointerdown", fuera); boton.current?.focus({ preventScroll: true }); };
-  }, [chatAbierto, setChatAbierto, tamano, voz]);
+    return () => { perdio(); window.removeEventListener("keydown", tecla); window.removeEventListener("keyup", suelta); window.removeEventListener("blur", perdio); window.removeEventListener("pointerdown", fuera); };
+  }, [chatAbierto, setChatAbierto, tamano]);
 
   useEffect(() => { fin.current?.scrollIntoView({ block: "end", behavior: reducir ? "auto" : "smooth" }); }, [turnos, reducir]);
 
