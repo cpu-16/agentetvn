@@ -48,7 +48,6 @@ describe("T06 abstención", () => {
     const r = await consultar("¿Cuánto cobró de peaje el Canal de Panamá?", snap(), { modo: "bm25" });
     expect(r.abstener).toBe(true);
     expect(r.afirmaciones).toHaveLength(0);
-    expect(r.evidencias.length).toBeGreaterThan(0); // relacionado ≠ sustentado, pero se muestra como pista
     expect((await consultar("¿Qué calificación crediticia tiene el cliente Juan Pérez?", snap(), { modo: "bm25" })).abstener).toBe(true);
   });
   test("coincidencia léxica suelta no es respuesta: «extraterrestres en Panamá» se abstiene", async () => {

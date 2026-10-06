@@ -66,8 +66,9 @@ function responderCifra(q: string, snap: Snapshot, t0: number, modo: Respuesta["
   return { ...base, abstener: false, afirmaciones: [afirmacionIndicador(ult), { texto: `Es el último año con valor publicado; no es una medición de hoy.`, tipo: "inferencia", evidence_id: idIndicador(ult), campo: "anio", alcance: "fila_indicador" }], evidencias: [evidenciaIndicador(ult)], ms: Date.now() - t0 };
 }
 
-export const afirmacionIndicador = (i: Indicador): Afirmacion => ({ texto: `${nombreIndicador(i.indicador_id)} de ${i.pais_iso3} en ${i.anio}: ${i.valor} ${i.unidad} (Banco Mundial; contexto histórico).`, tipo: "hecho_reportado", evidence_id: idIndicador(i), campo: "valor", alcance: "fila_indicador" });
-export const evidenciaIndicador = (i: Indicador): Evidencia => ({ id: idIndicador(i), tipo: "indicador", resumen: `${i.pais_iso3} · ${i.indicador_id} · ${i.anio} · ${i.valor ?? "nulo"} ${i.unidad} · ${i.licencia}`, score: 1 });
+const fmtValor = (v: number | null, unidad: string) => (v === null ? "nulo" : unidad === "personas" ? Math.round(v).toLocaleString("es-PA") : (Math.round(v * 100) / 100).toLocaleString("es-PA", { maximumFractionDigits: 2 }));
+export const afirmacionIndicador = (i: Indicador): Afirmacion => ({ texto: `${nombreIndicador(i.indicador_id)} de ${i.pais_iso3} en ${i.anio}: ${fmtValor(i.valor, i.unidad)} ${i.unidad} (Banco Mundial; contexto histórico).`, tipo: "hecho_reportado", evidence_id: idIndicador(i), campo: "valor", alcance: "fila_indicador" });
+export const evidenciaIndicador = (i: Indicador): Evidencia => ({ id: idIndicador(i), tipo: "indicador", resumen: `${i.pais_iso3}, ${i.indicador_id}, ${i.anio}: ${fmtValor(i.valor, i.unidad)} ${i.unidad} (${i.licencia})`, score: 1 });
 export const afirmacionNoticia = (n: Noticia): Afirmacion => ({ texto: `El titular de ${n.medio} (${hora(n.fecha_publicacion ?? n.fecha_deteccion)}${n.fecha_publicacion ? "" : ", fecha de detección"}) reporta: «${n.titulo}».`, tipo: "hecho_reportado", evidence_id: n.id_noticia, campo: "titulo", alcance: "titular_metadatos" });
 /** Oraciones del extracto del RSS como hechos reportados (campo descripcion); una declaración atribuida («X dijo/explicó») se marca como declaración. */
 export const afirmacionesExtracto = (n: Noticia, max = 3): Afirmacion[] =>
@@ -120,7 +121,8 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   if (!candidatos.length)
     return { abstener: true, motivo: "No hay evidencia en el snapshot que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del snapshot", afirmaciones: [], evidencias: [], contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA };
   // si se pide una cantidad y ningún titular/extracto recuperado contiene una cifra, lo recuperado es «relacionado», no «respuesta»
-  if (pideCantidad && !candidatos.some((c) => /\d/.test(`${porId.get(c.id)!.titulo} ${porId.get(c.id)!.descripcion}`)))
+  const tieneCifra = (t: string) => [...t.matchAll(/\d+(?:[.,]\d+)?/g)].some((m) => !/^(19|20)\d{2}$/.test(m[0])); // un año suelto no es una cifra
+  if (pideCantidad && !candidatos.some((c) => tieneCifra(`${porId.get(c.id)!.titulo} ${porId.get(c.id)!.descripcion}`)))
     return { abstener: true, motivo: "Las publicaciones relacionadas no contienen la cifra solicitada; no se infiere un número.", faltante: `la cifra pedida con su fuente y período; publicaciones relacionadas: ${candidatos.slice(0, 3).map((c) => porId.get(c.id)!.medio).join(", ")}`, afirmaciones: [], evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${porId.get(c.id)!.medio} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })), contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA };
   const noticias = candidatos.map((c) => porId.get(c.id)!);
   const eventos = snap.eventos.filter((e) => e.ids_noticia.some((i) => candidatos.some((c) => c.id === i)));
