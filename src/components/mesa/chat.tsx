@@ -5,14 +5,14 @@ import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "
 import { SPRING_PANEL, fetchMesa, useMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 import { ETIQUETA_ORBE, Orbe } from "./jarvis/orbe";
-import { clasificarPulsacion } from "./jarvis/pulsacion";
-import { estadoOrbe } from "./jarvis/maquina";
+import { estadoOrbe, vozActiva } from "./jarvis/maquina";
 import { useVoz } from "./jarvis/useVoz";
-import { clasesPanel, type TamanoPanel } from "./jarvis/panel";
+import { clasesPanel, esCelular, type TamanoPanel } from "./jarvis/panel";
 import { contextoDesdeMesa, explicacionFija } from "@/lib/voz/catalogo";
+import { TrazaBuscando, TrazaBusqueda, type Traza } from "./traza";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } } }
+interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza }
 const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
@@ -61,15 +61,16 @@ export function ChatAgente() {
     return () => mq.removeEventListener("change", cambiar);
   }, []);
   const orbe = estadoOrbe(voz.estado);
-  const inicioPulsacion = useRef(0);
-  const temporizador = useRef<number | undefined>(undefined);
+  const activa = vozActiva(voz.estado);
+  /** Un toque al orbe: habla o cuelga. En escritorio abre el panel para ver la conversación; en el celular deja la pantalla libre. */
+  const tocarOrbe = () => { voz.prepararAudio(); if (!activa && !celular) setChatAbierto(true); void voz.alternar(); };
   const enFicha = vista === "ficha" && !!eventoId;
   const ambito = enFicha && soloTema ? eventoId : null;
 
-  // Foco: entra al panel al abrir y vuelve al botón al cerrar (solo depende de abrir/cerrar: no roba el foco en cada render).
+  // Foco: entra al cuadro al abrir y vuelve al botón al cerrar. En el celular no: el teclado tapaba la hoja (revisión de Cursor).
   useEffect(() => {
     if (!chatAbierto) return;
-    const t = setTimeout(() => entrada.current?.focus(), 60); // respaldo del autoFocus (el panel se monta animado)
+    const t = esCelular(window.innerWidth) ? undefined : setTimeout(() => entrada.current?.focus(), 60);
     const b = boton.current;
     return () => { clearTimeout(t); b?.focus({ preventScroll: true }); };
   }, [chatAbierto]);
@@ -79,24 +80,19 @@ export function ChatAgente() {
   useEffect(() => { vozRef.current = voz; });
   useEffect(() => {
     if (!chatAbierto) return;
-    let espacio = false; // el espacio empezó a hablar: su keyup SIEMPRE suelta, esté donde esté el foco
     const enCampo = (e: KeyboardEvent) => !!(e.target as HTMLElement).closest?.("textarea,input,select,button");
     const tecla = (e: KeyboardEvent) => {
       if (e.key === "Escape") { setChatAbierto(false); return; }
-      if (e.code === "Space" && !e.repeat && !enCampo(e)) { e.preventDefault(); espacio = true; vozRef.current.prepararAudio(); void vozRef.current.pulsar(); }
+      if (e.code === "Space" && !e.repeat && !enCampo(e)) { e.preventDefault(); vozRef.current.prepararAudio(); void vozRef.current.alternar(); }
     };
-    const suelta = (e: KeyboardEvent) => { if (e.code === "Space" && espacio) { espacio = false; vozRef.current.soltar(); } };
-    const perdio = () => { if (espacio) { espacio = false; vozRef.current.soltar(); } }; // la ventana perdió el foco con el espacio abajo
     const fuera = (e: PointerEvent) => {
       if (tamano !== "compacto") return; // en lateral y amplio el panel acompaña la pantalla: un clic afuera no lo cierra
       const t = e.target as Node;
-      if (panel.current && !panel.current.contains(t) && boton.current && !boton.current.contains(t) && !(t as HTMLElement).closest?.("[role=dialog]")) setChatAbierto(false);
+      if (panel.current && !panel.current.contains(t) && !(t as HTMLElement).closest?.(".jarvis-dock,[role=dialog]")) setChatAbierto(false);
     };
     window.addEventListener("keydown", tecla);
-    window.addEventListener("keyup", suelta);
-    window.addEventListener("blur", perdio);
     window.addEventListener("pointerdown", fuera);
-    return () => { perdio(); window.removeEventListener("keydown", tecla); window.removeEventListener("keyup", suelta); window.removeEventListener("blur", perdio); window.removeEventListener("pointerdown", fuera); };
+    return () => { window.removeEventListener("keydown", tecla); window.removeEventListener("pointerdown", fuera); };
   }, [chatAbierto, setChatAbierto, tamano]);
 
   useEffect(() => { fin.current?.scrollIntoView({ block: "end", behavior: reducir ? "auto" : "smooth" }); }, [turnos, reducir]);
@@ -148,23 +144,24 @@ export function ChatAgente() {
 
   return (
     <>
-      <button
-        ref={boton}
-        className="jarvis-boton presionable"
-        aria-expanded={chatAbierto}
-        aria-controls="chat-agente"
-        aria-haspopup="dialog"
-        aria-label={`Jarvis. Toca para abrir el chat; mantén presionado para hablar. ${ETIQUETA_ORBE[orbe]}`}
-        onContextMenu={(e) => e.preventDefault()}
-        onPointerDown={(e) => { (e.currentTarget as HTMLButtonElement).setPointerCapture(e.pointerId); voz.prepararAudio(); inicioPulsacion.current = Date.now(); temporizador.current = window.setTimeout(() => void voz.pulsar(), 250); }}
-        onPointerUp={() => { clearTimeout(temporizador.current); if (clasificarPulsacion(Date.now() - inicioPulsacion.current) === "sostenida") voz.soltar(); else setChatAbierto(!chatAbierto); }}
-        onPointerCancel={() => { clearTimeout(temporizador.current); voz.soltar(); }}
-        onLostPointerCapture={() => { clearTimeout(temporizador.current); voz.soltar(); }}
-        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); setChatAbierto(!chatAbierto); } }}
-      >
-        <Orbe estado={orbe} nivel={voz.nivel} />
-        <span className="jarvis-texto">{voz.estado === "escuchando" ? "Te escucho…" : "Preguntar a Jarvis"}</span>
-      </button>
+      <div className="jarvis-dock">
+        <button
+          type="button"
+          className="jarvis-boton presionable"
+          data-activa={activa}
+          aria-pressed={activa}
+          aria-label={activa ? `Colgar a Jarvis. ${ETIQUETA_ORBE[orbe]}` : "Hablar con Jarvis"}
+          onContextMenu={(e) => e.preventDefault()}
+          onClick={tocarOrbe}
+        >
+          <Orbe estado={orbe} nivel={voz.nivel} />
+          <span className="jarvis-texto">{activa ? ETIQUETA_ORBE[orbe] : "Hablar con Jarvis"}</span>
+        </button>
+        <button ref={boton} type="button" className="jarvis-escribir presionable" aria-expanded={chatAbierto} aria-controls="chat-agente" aria-haspopup="dialog" aria-label={chatAbierto ? "Cerrar el chat de Jarvis" : "Escribirle a Jarvis"} onClick={() => setChatAbierto(!chatAbierto)}>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+          <span className="jarvis-texto">Escribir</span>
+        </button>
+      </div>
       <p className="solo-lector" aria-live="polite" aria-atomic="true">{anuncio}</p>
       <AnimatePresence>
         {chatAbierto && (
@@ -182,9 +179,9 @@ export function ChatAgente() {
             id="chat-agente"
             ref={panel}
             role="dialog"
-            aria-modal={tamano === "compacto"}
+            aria-modal={celular || tamano !== "lateral"}
             aria-labelledby="chat-titulo"
-            className={cn("chat-panel pointer-events-auto flex flex-col", clasesPanel(tamano, celular), celular && "pb-[env(safe-area-inset-bottom)]")}
+            className={cn("chat-panel pointer-events-auto flex flex-col", clasesPanel(tamano, celular), celular && "pb-[env(safe-area-inset-bottom)]", celular && tamano === "amplio" && "pt-[env(safe-area-inset-top)]")}
             style={{ transformOrigin: "calc(100% - 28px) calc(100% + 24px)" }}
             initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "scale(0.94) translateY(8px)" }}
             animate={{ opacity: 1, transform: "scale(1) translateY(0px)" }}
@@ -201,7 +198,7 @@ export function ChatAgente() {
               </div>
               <div className="flex items-center gap-2">
                 <label className="sr-only" htmlFor="chat-modo">Tipo de búsqueda</label>
-                <select id="chat-modo" value={modoConsulta} onChange={(e) => setModoConsulta(e.target.value as "embeddings" | "bm25")} className="h-7 rounded-sm border border-border bg-white px-1.5 text-[11px]">
+                <select id="chat-modo" value={modoConsulta} onChange={(e) => setModoConsulta(e.target.value as "embeddings" | "bm25")} className={cn("rounded-sm border border-border bg-white px-1.5 text-[11px]", celular ? "h-11" : "h-7")}>
                   <option value="embeddings">Por sentido</option>
                   <option value="bm25">Por palabras</option>
                 </select>
@@ -224,9 +221,9 @@ export function ChatAgente() {
               </div>
             )}
             <div className="flex flex-wrap items-center gap-2 border-b border-border/60 px-4 py-2 text-xs">
-              <button type="button" className="presionable min-h-9 rounded-full border border-tinta/30 bg-white px-3 py-1 font-medium text-tinta hover:border-tinta" onClick={() => turnoVoz("jarvis", explicacionFija(contextoDesdeMesa(useMesa.getState())))}>Explícame esta pantalla</button>
-              <span className="text-muted-foreground">{voz.estado === "no_disponible" ? "Voz no disponible ahora; el chat funciona igual." : voz.estado === "inactiva" ? (celular ? "Mantén presionado el botón de voz para hablarle." : "Mantén presionado el botón de voz (o la barra espaciadora) para hablarle.") : `Voz: ${ETIQUETA_ORBE[orbe].toLowerCase()}.`}</span>
-              {voz.estado !== "inactiva" && voz.estado !== "no_disponible" && <button type="button" className="presionable ml-auto rounded-sm px-2 py-1 text-acero underline" onClick={() => voz.colgar("colgó")}>Colgar</button>}
+              <button type="button" className="presionable min-h-11 rounded-full border border-tinta/30 bg-white px-3 py-1 font-medium text-tinta hover:border-tinta sm:min-h-9" onClick={() => turnoVoz("jarvis", explicacionFija(contextoDesdeMesa(useMesa.getState())))}>Explícame esta pantalla</button>
+              <span className="text-muted-foreground">{voz.estado === "no_disponible" ? "Voz no disponible ahora. El chat funciona igual." : activa ? `${ETIQUETA_ORBE[orbe]}. Habla cuando quieras; toca el orbe para colgar.` : celular ? "Toca el orbe para conversar con Jarvis." : "Toca el orbe (o la barra espaciadora) para conversar con Jarvis."}</span>
+              {activa && <button type="button" className="presionable ml-auto min-h-11 rounded-sm px-3 text-acero underline sm:min-h-0 sm:py-1" onClick={() => voz.colgar("colgó")}>Colgar</button>}
             </div>
             <div className="fino flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3 text-sm">
               {turnos.length === 0 && (
@@ -241,7 +238,7 @@ export function ChatAgente() {
                   </div>
                 </div>
               )}
-              {turnos.map((t) => t.voz ? (
+              {turnos.map((t, iTurno) => t.voz ? (
                 <p key={t.id} className={cn("rounded-md px-3 py-2", t.voz.quien === "persona" ? "ml-8 bg-tinta/10" : t.voz.quien === "sistema" ? "bg-[#fff8e1] text-xs text-[#7a5600]" : "mr-8 border border-border bg-white")}>
                   <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">{t.voz.quien === "persona" ? "Tú (voz)" : t.voz.quien === "sistema" ? "Aviso" : "Jarvis"}</span>
                   {t.voz.texto}
@@ -256,8 +253,10 @@ export function ChatAgente() {
                       <button className="presionable mt-1 text-xs underline" onClick={() => preguntar(t.pregunta, t.id)}>Reintentar</button>
                     </div>
                   ) : !t.respuesta ? (
-                    <p className="text-xs text-muted-foreground">Buscando en las fuentes; si redacta la IA, unos segundos más…</p>
-                  ) : t.respuesta.abstener ? (
+                    <TrazaBuscando modo={modoConsulta} />
+                  ) : null}
+                  {t.respuesta?.traza && <TrazaBusqueda traza={t.respuesta.traza} llmMs={t.respuesta.redaccion?.llm.ms} abierta={iTurno === turnos.length - 1 || turnos.slice(iTurno + 1).every((x) => x.voz)} />}
+                  {t.error || !t.respuesta ? null : t.respuesta.abstener ? (
                     <div className="rounded-md border border-border bg-papel px-3 py-2">
                       <p className="font-medium">Sin respuesta sustentada</p>
                       <p className="text-muted-foreground">{t.respuesta.motivo}</p>
@@ -301,21 +300,19 @@ export function ChatAgente() {
               <div ref={fin} />
             </div>
             <form className="flex items-end gap-2 border-t border-border/60 p-3" onSubmit={(e) => { e.preventDefault(); preguntar(q); }}>
-              <textarea ref={entrada} autoFocus value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); preguntar(q); } }} rows={2} placeholder="Escribe tu pregunta" className="min-h-[44px] flex-1 resize-none rounded-sm border border-border bg-white px-3 py-2 text-base sm:text-sm" aria-label="Pregunta para el agente" />
+              <textarea ref={entrada} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); preguntar(q); } }} rows={2} placeholder="Escribe tu pregunta" className="min-h-[44px] flex-1 resize-none rounded-sm border border-border bg-white px-3 py-2 text-base sm:text-sm" aria-label="Pregunta para el agente" />
               <button
                 type="button"
                 className="jarvis-hablar presionable flex h-11 min-w-11 items-center gap-1.5 rounded-sm border border-tinta/30 bg-white px-2 text-xs font-medium text-tinta"
-                aria-label={`Mantén presionado para hablarle a Jarvis. ${ETIQUETA_ORBE[orbe]}`}
+                aria-pressed={activa}
+                aria-label={activa ? `Colgar a Jarvis. ${ETIQUETA_ORBE[orbe]}` : "Hablar con Jarvis"}
                 onContextMenu={(e) => e.preventDefault()}
-                onPointerDown={(e) => { (e.currentTarget as HTMLButtonElement).setPointerCapture(e.pointerId); voz.prepararAudio(); inicioPulsacion.current = Date.now(); temporizador.current = window.setTimeout(() => void voz.pulsar(), 150); }}
-                onPointerUp={() => { clearTimeout(temporizador.current); if (Date.now() - inicioPulsacion.current < 150) setAnuncio("Mantén presionado el botón de voz mientras hablas."); else voz.soltar(); }}
-                onPointerCancel={() => { clearTimeout(temporizador.current); voz.soltar(); }}
-                onLostPointerCapture={() => { clearTimeout(temporizador.current); voz.soltar(); }}
+                onClick={() => { voz.prepararAudio(); void voz.alternar(); }}
               >
                 <Orbe estado={orbe} nivel={voz.nivel} />
-                <span className={cn((celular || tamano === "compacto") && "sr-only")}>{voz.estado === "escuchando" ? "Te escucho" : "Mantén para hablar"}</span>
+                <span className={cn((celular || tamano === "compacto") && "sr-only")}>{activa ? "Colgar" : "Hablar"}</span>
               </button>
-              <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-10 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
+              <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-11 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
             </form>
           </motion.div>
           </motion.div>

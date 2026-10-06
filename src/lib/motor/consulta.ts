@@ -1,5 +1,5 @@
 // Consulta en español sobre el snapshot (CU-01, CU-04, T06): recuperación semántica (o léxica) → afirmaciones tipadas con cita → abstención explícita.
-import { coseno, embeber, modeloDisponible } from "./embeddings";
+import { coseno, DIM, embeber, MODELO, modeloDisponible } from "./embeddings";
 import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
 import { CONCEPTO_INDICADOR, idIndicador } from "./contexto";
 import { leerScoring } from "./config";
@@ -19,6 +19,32 @@ export interface Respuesta {
   ms: number;
   leyenda: string;
   redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: MetaLLM }; // solo en modo online, sobre lo recuperado
+  traza?: Traza; // cómo se buscó: lo dibuja el chat
+}
+/** Traza de la recuperación para mostrarla: vector de la pregunta (primeras 48 dims), distribución de similitudes del corpus,
+ *  umbral, los mejores (usados y los primeros descartados) y el tiempo de cada paso. */
+export interface Traza {
+  modo: "embeddings" | "bm25";
+  modelo?: string; dim?: number; vector?: number[];
+  comparadas: number; umbral?: number; margen?: number; sobreUmbral: number; k: number;
+  histograma?: { desde: number; hasta: number; cuentas: number[] };
+  mejores: { id: string; medio: string; titulo: string; score: number; usada: boolean }[];
+  pasos: { paso: string; ms: number }[];
+  regla?: string; // la pregunta se resolvió por una regla (sin búsqueda): cuál y por qué
+}
+const porRegla = (modo: Traza["modo"], k: number, regla: string): Traza => ({ modo, comparadas: 0, sobreUmbral: 0, k, mejores: [], pasos: [], regla });
+/** Además del umbral, se usan solo las que quedan a ≤ 0,02 de la mejor: el e5 comprime la escala y por encima de 0,80 entraban
+ *  notas de otro tema (p. ej. «aprehensión de Enrique Lau» traía otros arrestos). Benchmark dev 6-oct: mismas hit@5 17/20,
+ *  abstenciones 6/7 (0 indebidas), adversarial 6/6 y citas 38/38; evidencias por consulta de 3,84 a 1,55. Fuera del JSON
+ *  de reglas para no cambiar la huella del motor v1. */
+export const MARGEN_COSENO = 0.02;
+const r3 = (x: number) => Math.round(x * 1000) / 1000;
+export function histograma(scores: number[], bins = 28): Traza["histograma"] {
+  if (!scores.length) return undefined;
+  const desde = Math.floor(Math.min(...scores) * 50) / 50, hasta = Math.ceil(Math.max(...scores) * 50) / 50 || 1;
+  const cuentas = new Array(bins).fill(0);
+  for (const x of scores) cuentas[Math.min(bins - 1, Math.floor(((x - desde) / (hasta - desde || 1)) * bins))]++;
+  return { desde, hasta, cuentas };
 }
 
 export const LEYENDA = "Basado únicamente en titular/metadatos del snapshot; no se leyó el artículo completo.";
@@ -89,22 +115,31 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   // causalidad/culpa/pérdidas: abstención ANTES de cualquier otra rama (también si menciona un indicador)
   // \b no funciona tras una vocal acentuada («qué»): se usan límites Unicode
   if (/(?<![\p{L}])(por qu[eé]|caus[oó]|culpa|culpable|p[eé]rdidas?|quebr|impago|fraude)/iu.test(q))
-    return { abstener: true, motivo: "El corpus (titulares y metadatos) no permite establecer causas, culpas ni pérdidas.", faltante: "cobertura con fuentes primarias y lectura completa de los artículos", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
+    return { abstener: true, motivo: "El corpus (titulares y metadatos) no permite establecer causas, culpas ni pérdidas.", faltante: "cobertura con fuentes primarias y lectura completa de los artículos", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA, traza: porRegla(modo, k, "Pide causas, culpas o pérdidas: me abstengo antes de buscar, porque los titulares no alcanzan para eso.") };
   // fuera de alcance (§2 del reto): datos de clientes, crédito, solvencia, audiencia, expedientes, secretos
   if (/(?<![\p{L}])(cliente|calificaci[oó]n crediticia|solvencia|riesgo de cr[eé]dito|cartera|rating|audiencia|expediente|c[eé]dula|token|contraseña|clave de)/iu.test(q))
-    return { abstener: true, motivo: "Fuera del alcance del reto: no hay datos de clientes, crédito, solvencia, audiencia ni expedientes en el corpus, y el agente no maneja secretos.", faltante: "nada: esta consulta no se responde desde este sistema", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
+    return { abstener: true, motivo: "Fuera del alcance del reto: no hay datos de clientes, crédito, solvencia, audiencia ni expedientes en el corpus, y el agente no maneja secretos.", faltante: "nada: esta consulta no se responde desde este sistema", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA, traza: porRegla(modo, k, "Fuera del alcance del reto: no se busca.") };
   const cifra = responderCifra(q, snap, t0, modo);
-  if (cifra) return cifra;
+  if (cifra) return { ...cifra, traza: porRegla(modo, k, "Pide una cifra oficial: la leí directo de la serie del Banco Mundial, sin búsqueda por sentido.") };
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const pideCantidad = /(?<![\p{L}])(cu[aá]nt[oa]s?|cifra|monto|tasa|porcentaje|cu[aá]l fue el (valor|n[uú]mero|total)|cu[aá]ntos?)/iu.test(q);
   const permitida = (id: string) => porId.has(id) && !porId.get(id)!.no_confiable && (!opts.soloIds || opts.soloIds.includes(id));
   let candidatos: { id: string; score: number }[] = [];
   let modoEfectivo: Respuesta["modo"] = modo;
+  let traza: Traza | undefined;
+  const mejores = (orden: { id: string; score: number }[], usadas: number) => orden.slice(0, k + 3).map((c, i) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: i < usadas }));
   if (usarEmb) {
     try {
+      const t1 = Date.now();
       const [qv] = await embeber([q], "query");
+      const t2 = Date.now();
       const emb = snap.embeddings!;
-      candidatos = emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id) && c.score >= cfg.umbral_coseno).sort((a, b) => b.score - a.score).slice(0, k);
+      const todos = emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id)).sort((a, b) => b.score - a.score);
+      const t3 = Date.now();
+      const sobreUmbral = todos.filter((c) => c.score >= cfg.umbral_coseno);
+      candidatos = sobreUmbral.filter((c) => c.score >= todos[0].score - MARGEN_COSENO).slice(0, k);
+      traza = { modo: "embeddings", modelo: MODELO, dim: DIM, vector: Array.from(qv.slice(0, 48), (x) => Math.round(x * 1000) / 1000), comparadas: todos.length, umbral: cfg.umbral_coseno, margen: MARGEN_COSENO, sobreUmbral: sobreUmbral.length, k,
+        histograma: histograma(todos.map((c) => c.score)), mejores: mejores(todos, candidatos.length), pasos: [{ paso: "vectorizar", ms: t2 - t1 }, { paso: "comparar", ms: t3 - t2 }] };
     } catch {
       modoEfectivo = "bm25"; // modelo presente pero no cargable: fallback documentado (T10)
     }
@@ -113,18 +148,20 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
     // «relacionado» no es «sustentado»: se exige que al menos la mitad de los términos de la consulta (mínimo 2) aparezcan en el documento
     const qTokens = [...new Set(tokenizar(q))];
     const minimo = Math.max(2, Math.ceil(qTokens.length / 2));
+    const t1 = Date.now();
     const idx = indice(snap);
     const tokensDe = new Map(idx.docs.map((d) => [d.id, new Set(d.tokens)]));
-    candidatos = buscarBM25(idx, q, k * 3)
-      .filter((c) => permitida(c.id) && qTokens.filter((t) => tokensDe.get(c.id)?.has(t)).length >= minimo)
-      .slice(0, k);
+    const orden = buscarBM25(idx, q, k * 3).filter((c) => permitida(c.id));
+    candidatos = orden.filter((c) => qTokens.filter((t) => tokensDe.get(c.id)?.has(t)).length >= minimo).slice(0, k);
+    const usadas = new Set(candidatos.map((c) => c.id));
+    traza = { modo: "bm25", comparadas: idx.docs.length, sobreUmbral: candidatos.length, k, mejores: orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })), pasos: [{ paso: "buscar palabras", ms: Date.now() - t1 }] };
   }
   if (!candidatos.length)
-    return { abstener: true, motivo: "No hay evidencia en el snapshot que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del snapshot", afirmaciones: [], evidencias: [], contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA };
+    return { abstener: true, motivo: "No hay evidencia en el snapshot que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del snapshot", afirmaciones: [], evidencias: [], contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA, traza };
   // si se pide una cantidad y ningún titular/extracto recuperado contiene una cifra, lo recuperado es «relacionado», no «respuesta»
   const tieneCifra = (t: string) => [...t.matchAll(/\d+(?:[.,]\d+)?/g)].some((m) => !/^(19|20)\d{2}$/.test(m[0])); // un año suelto no es una cifra
   if (pideCantidad && !candidatos.some((c) => tieneCifra(`${porId.get(c.id)!.titulo} ${porId.get(c.id)!.descripcion}`)))
-    return { abstener: true, motivo: "Las publicaciones relacionadas no contienen la cifra solicitada; no se infiere un número.", faltante: `la cifra pedida con su fuente y período; publicaciones relacionadas: ${candidatos.slice(0, 3).map((c) => porId.get(c.id)!.medio).join(", ")}`, afirmaciones: [], evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${porId.get(c.id)!.medio} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })), contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA };
+    return { abstener: true, motivo: "Las publicaciones relacionadas no contienen la cifra solicitada; no se infiere un número.", faltante: `la cifra pedida con su fuente y período; publicaciones relacionadas: ${candidatos.slice(0, 3).map((c) => porId.get(c.id)!.medio).join(", ")}`, afirmaciones: [], evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${porId.get(c.id)!.medio} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })), contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA, traza };
   const noticias = candidatos.map((c) => porId.get(c.id)!);
   const eventos = snap.eventos.filter((e) => e.ids_noticia.some((i) => candidatos.some((c) => c.id === i)));
   return {
@@ -135,6 +172,7 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
     modo: modoEfectivo,
     ms: Date.now() - t0,
     leyenda: LEYENDA,
+    traza,
   };
 }
 

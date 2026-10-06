@@ -19,6 +19,7 @@ export const viewport: Viewport = {
   themeColor: "#00466f",
   width: "device-width",
   initialScale: 1,
+  interactiveWidget: "resizes-content", // el teclado del celular encoge la hoja en vez de taparla
 };
 
 export default function RootLayout({

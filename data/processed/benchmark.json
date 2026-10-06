@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-10-06T16:39:41.231Z",
+  "fecha": "2026-10-06T22:19:59.525Z",
   "split": "dev",
   "snapshot": "v1",
   "reglas": "v1",
@@ -30,8 +30,8 @@
         "n": 38
       },
       "ms": {
-        "mediana": 9,
-        "p95": 14
+        "mediana": 6,
+        "p95": 12
       },
       "filas": [
         {
@@ -42,7 +42,7 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 630,
+          "ms": 495,
           "evidencias": [
             "n_e333c6659516",
             "n_bccc42f8aa3f",
@@ -59,13 +59,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 12,
           "evidencias": [
-            "n_518c000d4992",
-            "n_b22dfba08fe9",
-            "n_37ac3d1cee3c",
-            "n_d0e39d948061",
-            "n_41e59870c552"
+            "n_518c000d4992"
           ]
         },
         {
@@ -76,13 +72,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 8,
           "evidencias": [
-            "n_ce443344c63b",
-            "n_8daf02149f4a",
-            "n_3f28a1863a82",
-            "n_b23c96281be4",
-            "n_6438bec02793"
+            "n_ce443344c63b"
           ]
         },
         {
@@ -93,13 +85,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 7,
           "evidencias": [
-            "n_4dbc153b7bf1",
-            "n_f7e7ffce8385",
-            "n_d03c8ebee77a",
-            "n_1aca5bb6e7f7",
-            "n_bc781545d029"
+            "n_4dbc153b7bf1"
           ]
         },
         {
@@ -110,13 +98,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 7,
           "evidencias": [
-            "n_f9d24d4be1b1",
-            "n_f7e7ffce8385",
-            "n_44f8ce26b64d",
-            "n_0d1f1252435f",
-            "n_0324ef8050dc"
+            "n_f9d24d4be1b1"
           ]
         },
         {
@@ -127,13 +111,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 14,
+          "ms": 10,
           "evidencias": [
-            "n_9f17006804cb",
-            "n_40d350f2a9d6",
-            "n_a0ec77afacf7",
-            "n_bfc9b18f26d9",
-            "n_811f78823982"
+            "n_9f17006804cb"
           ]
         },
         {
@@ -144,13 +124,9 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 9,
+          "ms": 6,
           "evidencias": [
-            "n_0cac53f44744",
-            "n_616ddf8b9542",
-            "n_4e00fb72f5d2",
-            "n_a00942e7cd60",
-            "n_024a175d5e83"
+            "n_0cac53f44744"
           ]
         },
         {
@@ -161,13 +137,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 7,
+          "ms": 5,
           "evidencias": [
-            "n_16d955b607c3",
-            "n_a9b1f9ff9441",
-            "n_9873933a6312",
-            "n_bf5fc281a356",
-            "n_5ac4850fb044"
+            "n_16d955b607c3"
           ]
         },
         {
@@ -178,13 +150,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 7,
           "evidencias": [
-            "n_e3f159403e0f",
-            "n_cc97f7e1a111",
-            "n_9e0ef6130b9b",
-            "n_f39ee681bf50",
-            "n_1db38d7a53f3"
+            "n_e3f159403e0f"
           ]
         },
         {
@@ -195,13 +163,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 6,
           "evidencias": [
-            "n_ff171edb4c0b",
-            "n_6d1749c7452c",
-            "n_f6a8a581d5df",
-            "n_024a175d5e83",
-            "n_91972ce9cbe1"
+            "n_ff171edb4c0b"
           ]
         },
         {
@@ -212,13 +176,10 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 9,
+          "ms": 5,
           "evidencias": [
             "n_72020673e6ca",
-            "n_b71d677a670e",
-            "n_a956d2942e9d",
-            "n_0b38fedb35b0",
-            "n_55eb3babab97"
+            "n_b71d677a670e"
           ]
         },
         {
@@ -229,13 +190,10 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 7,
           "evidencias": [
             "n_9d68e6ea53ee",
-            "n_034d4875076c",
-            "n_5bc4b3f1672f",
-            "n_3010c5dfda04",
-            "n_3ccc68a117a9"
+            "n_034d4875076c"
           ]
         },
         {
@@ -246,13 +204,12 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 5,
           "evidencias": [
             "n_8aae506a2abe",
             "n_91972ce9cbe1",
             "n_0d1f1252435f",
-            "n_ccfb30161637",
-            "n_f46ae3b71357"
+            "n_ccfb30161637"
           ]
         },
         {
@@ -263,13 +220,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 7,
+          "ms": 5,
           "evidencias": [
-            "n_b53e79eee74d",
-            "n_9e0ef6130b9b",
-            "n_e80816e1c4fd",
-            "n_13344d7e8768",
-            "n_43cbdd111a42"
+            "n_b53e79eee74d"
           ]
         },
         {
@@ -280,13 +233,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 6,
           "evidencias": [
-            "n_e4244def9c5a",
-            "n_91972ce9cbe1",
-            "n_f7e7ffce8385",
-            "n_40d350f2a9d6",
-            "n_a82782945024"
+            "n_e4244def9c5a"
           ]
         },
         {
@@ -297,13 +246,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 6,
           "evidencias": [
-            "n_617919f9dcab",
-            "n_f1234b81d944",
-            "n_cd235d5e917d",
-            "n_58833b728730",
-            "n_10f23a619343"
+            "n_617919f9dcab"
           ]
         },
         {
@@ -314,13 +259,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 6,
           "evidencias": [
-            "n_79658a38c016",
-            "n_b133d222160e",
-            "n_0242d39a099e",
-            "n_a74061500ed1",
-            "n_c4bab6290f74"
+            "n_79658a38c016"
           ]
         },
         {
@@ -331,13 +272,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 7,
+          "ms": 6,
           "evidencias": [
-            "n_a6c8c51fa207",
-            "n_f7e7ffce8385",
-            "n_28ad1ea405d8",
-            "n_1aca5bb6e7f7",
-            "n_91972ce9cbe1"
+            "n_a6c8c51fa207"
           ]
         },
         {
@@ -348,13 +285,10 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 5,
           "evidencias": [
             "n_5ee43004dedb",
-            "n_617919f9dcab",
-            "n_b3d3ad13ab20",
-            "n_f1234b81d944",
-            "n_8daf02149f4a"
+            "n_617919f9dcab"
           ]
         },
         {
@@ -365,13 +299,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 6,
           "evidencias": [
-            "n_ff61f9adc7ea",
-            "n_b70f1ae313b7",
-            "n_aa0b6b06403d",
-            "n_c7d1cf481fb2",
-            "n_f7e7ffce8385"
+            "n_ff61f9adc7ea"
           ]
         },
         {
@@ -382,13 +312,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 12,
+          "ms": 9,
           "evidencias": [
-            "n_691ced7c04b3",
-            "n_f3f2246adb4f",
-            "n_7adba080838e",
-            "n_32c44a330ef1",
-            "n_92781a0b537f"
+            "n_691ced7c04b3"
           ]
         },
         {
@@ -399,13 +325,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 6,
           "evidencias": [
-            "n_9f17006804cb",
-            "n_40d350f2a9d6",
-            "n_ccfee0258ed2",
-            "n_811f78823982",
-            "n_e4244def9c5a"
+            "n_9f17006804cb"
           ]
         },
         {
@@ -416,13 +338,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 6,
           "evidencias": [
-            "n_60ea9f71e6b4",
-            "n_12fb72c1c89f",
-            "n_bf435961b3eb",
-            "n_3d2893c64c1e",
-            "n_d93f7839c890"
+            "n_60ea9f71e6b4"
           ]
         },
         {
@@ -433,13 +351,9 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 7,
           "evidencias": [
-            "n_f958ec7d4930",
-            "n_2355f9338104",
-            "n_2a1814d6ec88",
-            "n_1f0389098601",
-            "n_37ac3d1cee3c"
+            "n_f958ec7d4930"
           ]
         },
         {
@@ -496,13 +410,12 @@
           "hit": null,
           "citas_ok": true,
           "ok": false,
-          "ms": 9,
+          "ms": 6,
           "evidencias": [
             "n_b03996f63626",
             "n_024a175d5e83",
             "n_b49d9a65904f",
-            "n_16d955b607c3",
-            "n_24df92ea8176"
+            "n_16d955b607c3"
           ]
         },
         {
@@ -546,7 +459,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 5,
           "evidencias": [
             "n_37ac3d1cee3c",
             "n_6d38ea05607a",
@@ -574,7 +487,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 11,
+          "ms": 7,
           "evidencias": [
             "n_51e9329f1407",
             "n_7b6ea82c3429",
@@ -591,7 +504,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 5,
           "evidencias": [
             "n_1a1ccc1b7058",
             "n_c592ad1ac4c1",
@@ -619,7 +532,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 6,
           "evidencias": [
             "n_37ac3d1cee3c",
             "n_c4bab6290f74",
@@ -657,7 +570,7 @@
       },
       "ms": {
         "mediana": 2,
-        "p95": 4
+        "p95": 3
       },
       "filas": [
         {
@@ -668,7 +581,7 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 13,
+          "ms": 9,
           "evidencias": []
         },
         {
@@ -679,7 +592,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_518c000d4992",
             "n_b22dfba08fe9"
@@ -719,7 +632,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 1,
           "evidencias": [
             "n_f9d24d4be1b1"
           ]
@@ -746,7 +659,7 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_0cac53f44744"
           ]
@@ -776,7 +689,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 4,
+          "ms": 2,
           "evidencias": [
             "n_e3f159403e0f"
           ]
@@ -816,7 +729,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 3,
+          "ms": 2,
           "evidencias": [
             "n_9d68e6ea53ee",
             "n_5bc4b3f1672f"
@@ -830,7 +743,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_91972ce9cbe1",
             "n_ccfb30161637"
@@ -896,7 +809,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_a6c8c51fa207"
           ]
@@ -909,7 +822,7 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 2,
+          "ms": 1,
           "evidencias": []
         },
         {
@@ -973,7 +886,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 2,
           "evidencias": [
             "n_f958ec7d4930"
           ]
@@ -986,7 +899,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 0,
           "evidencias": [
             "PAN:SL.UEM.TOTL.ZS:2024"
           ]
@@ -1032,7 +945,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 2,
           "evidencias": []
         },
         {
@@ -1076,7 +989,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 1,
           "evidencias": []
         },
         {
@@ -1109,7 +1022,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 2,
           "evidencias": []
         },
         {
@@ -1120,7 +1033,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 0,
           "evidencias": []
         },
         {

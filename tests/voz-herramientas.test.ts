@@ -42,6 +42,13 @@ describe("herramientas", () => {
     expect(h.navegar("h1", { destino: "borrar" })).toContain("No puedo abrir");
     expect(sacarAcciones("h1")).toHaveLength(0);
   });
+  test("subir, bajar, ir al inicio o al final y volver atrás (con o sin tilde) encolan su acción", () => {
+    expect(h.navegar("h1", { destino: "abajo" })).toContain("Bajé");
+    expect(h.navegar("h1", { destino: "Arriba" })).toContain("Subí");
+    expect(h.navegar("h1", { destino: "final" })).toContain("final");
+    expect(h.navegar("h1", { destino: "atrás" })).toContain("anterior");
+    expect(sacarAcciones("h1")).toEqual([{ tipo: "desplazar", direccion: "abajo" }, { tipo: "desplazar", direccion: "arriba" }, { tipo: "desplazar", direccion: "final" }, { tipo: "atras" }]);
+  });
   test("ficha por titular: única → abre; ninguna → no abre; empate → opciones sin abrir", () => {
     const snap = servicio.snapshot();
     const tituloDe = (id: string) => snap.noticias.find((n) => n.id_noticia === id)!.titulo;
@@ -63,6 +70,7 @@ describe("herramientas", () => {
   test("preguntarCorpus responde con «Según…» o se abstiene, y encola la respuesta completa para el hilo", async () => {
     const t = await h.preguntarCorpus("h1", { pregunta: "¿Qué se sabe del Canal de Panamá?" });
     expect(t.length).toBeGreaterThan(20);
+    expect(t.split(/\s+/).length).toBeLessThanOrEqual(60); // la voz dice poco; el detalle queda en el panel
     const [a] = sacarAcciones("h1");
     expect(a.tipo).toBe("mostrar");
   });

@@ -1,15 +1,7 @@
-// Jarvis-TVN · lógica pura de la interfaz: toque vs. mantener, panel dentro de la pantalla, estados y cuelgue.
+// Jarvis-TVN · lógica pura de la interfaz: panel dentro de la pantalla, estados de la conversación y cuelgue.
 import { describe, expect, test } from "bun:test";
-import { clasificarPulsacion } from "../src/components/mesa/jarvis/pulsacion";
 import { acotar, clasesPanel, esCelular } from "../src/components/mesa/jarvis/panel";
-import { debeColgar, estadoOrbe, siguiente } from "../src/components/mesa/jarvis/maquina";
-
-describe("pulsación", () => {
-  test("toque corto abre el panel; sostenida habla", () => {
-    expect(clasificarPulsacion(120)).toBe("toque");
-    expect(clasificarPulsacion(400)).toBe("sostenida");
-  });
-});
+import { debeColgar, estadoOrbe, siguiente, vozActiva } from "../src/components/mesa/jarvis/maquina";
 describe("panel", () => {
   test("celular a 640 px o menos; en celular siempre hoja inferior", () => {
     expect(esCelular(390)).toBe(true);
@@ -24,22 +16,26 @@ describe("panel", () => {
   });
 });
 describe("máquina de la voz", () => {
-  test("pulsar escucha, soltar piensa hasta que la voz empieza a hablar, y al terminar queda lista", () => {
-    let e = siguiente("inactiva", { tipo: "conectar" });
-    e = siguiente(e, { tipo: "conectada" }); expect(e).toBe("lista");
-    e = siguiente(e, { tipo: "pulsar" }); expect(e).toBe("escuchando");
-    e = siguiente(e, { tipo: "soltar" }); expect(e).toBe("pensando");
+  test("un toque conecta y escucha; al terminar su turno piensa, luego habla y vuelve a escuchar sin tocar nada", () => {
+    let e = siguiente("inactiva", { tipo: "conectar" }); expect(e).toBe("conectando"); expect(vozActiva(e)).toBe(true);
+    e = siguiente(e, { tipo: "conectada" }); expect(e).toBe("escuchando");
+    e = siguiente(e, { tipo: "turno_creado", rol: "user" }); expect(e).toBe("escuchando");
+    e = siguiente(e, { tipo: "turno_hecho", rol: "user" }); expect(e).toBe("pensando");
     e = siguiente(e, { tipo: "turno_creado", rol: "assistant" }); expect(e).toBe("hablando");
-    e = siguiente(e, { tipo: "turno_hecho", rol: "assistant" }); expect(e).toBe("lista");
+    e = siguiente(e, { tipo: "turno_creado", rol: "user" }); expect(e).toBe("escuchando"); // la persona lo interrumpe
+    e = siguiente(e, { tipo: "turno_hecho", rol: "assistant" }); expect(e).toBe("escuchando");
+    expect(siguiente(e, { tipo: "colgar" })).toBe("inactiva");
+    expect(vozActiva("inactiva")).toBe(false);
     expect(siguiente(e, { tipo: "fallo" })).toBe("no_disponible");
-    expect(estadoOrbe("lista")).toBe("reposo");
+    expect(siguiente("inactiva", { tipo: "turno_hecho", rol: "user" })).toBe("inactiva"); // un evento tardío no revive la llamada
+    expect(estadoOrbe("inactiva")).toBe("reposo");
     expect(estadoOrbe("conectando")).toBe("pensando");
   });
-  test("cuelga con pantalla oculta, sesión vencida o 20 s sin actividad, pero no mientras algo está en curso", () => {
+  test("cuelga con pantalla oculta, sesión vencida o un minuto sin conversación, pero no mientras Jarvis piensa o habla", () => {
     expect(debeColgar({ oculta: true, sesionVencida: false, msSinActividad: 0, enCurso: true })).toContain("pantalla");
     expect(debeColgar({ oculta: false, sesionVencida: true, msSinActividad: 0, enCurso: false })).toContain("sesión");
-    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 21_000, enCurso: false })).toContain("silencio");
-    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 60_000, enCurso: true })).toBeNull();
-    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 5_000, enCurso: false })).toBeNull();
+    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 61_000, enCurso: false })).toContain("minuto");
+    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 25_000, enCurso: false })).toBeNull(); // 20 s ya no corta
+    expect(debeColgar({ oculta: false, sesionVencida: false, msSinActividad: 90_000, enCurso: true })).toBeNull();
   });
 });

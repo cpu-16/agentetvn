@@ -1,13 +1,13 @@
 "use client";
-// Cliente de voz de Jarvis-TVN: WebRTC directo a OpenAI (la oferta pasa por /api/voz/offer con la sesión), pulsar para hablar,
-// eventos turn.* del canal oai-events, acciones de Next (navegar/mostrar/colgada) y contexto de la pantalla.
+// Cliente de voz de Jarvis-TVN: WebRTC directo a OpenAI (la oferta pasa por /api/voz/offer con la sesión). Un toque abre la
+// conversación con el micrófono abierto y otro la cuelga; los turnos los marca la detección de voz del modelo (eventos turn.*).
+// Acciones de Next (navegar/desplazar/mostrar/colgada) y contexto de la pantalla.
 // Reglas contra fugas de micrófono y carreras: una sola conexión a la vez (promesa compartida); cada intento tiene un número
-// que colgar invalida (lo que llegue tarde se cierra); la intención de hablar se registra ANTES de esperar; el sondeo va de
-// uno en uno y descarta respuestas de otra llamada.
+// que colgar invalida (lo que llegue tarde se cierra); el sondeo va de uno en uno y descarta respuestas de otra llamada.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchMesa, useMesa } from "@/store/mesa";
 import { contextoDesdeMesa } from "@/lib/voz/catalogo";
-import { debeColgar, siguiente, type EstadoVoz, type EventoVoz } from "./maquina";
+import { debeColgar, siguiente, vozActiva, type EstadoVoz, type EventoVoz } from "./maquina";
 import { esCelular } from "./panel";
 
 type Opts = { onTranscripcion?: (quien: "persona" | "jarvis", texto: string) => void; onMostrar?: (pregunta: string, respuesta: unknown) => void; onAviso?: (texto: string) => void };
@@ -19,10 +19,19 @@ function cerrarConexion(con: Conexion) {
   con.pc?.close(); con.mic?.getTracks().forEach((t) => t.stop()); void con.ctx?.close().catch(() => null);
 }
 
+/** Mueve la página: «abajo»/«arriba» casi una pantalla, «inicio»/«final» hasta el borde. */
+export function desplazar(direccion?: string) {
+  const suave = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  const paso = Math.round(window.innerHeight * 0.8);
+  if (direccion === "inicio") window.scrollTo({ top: 0, behavior: suave });
+  else if (direccion === "final") window.scrollTo({ top: document.documentElement.scrollHeight, behavior: suave });
+  else window.scrollBy({ top: direccion === "arriba" ? -paso : paso, behavior: suave });
+}
+
 export function useVoz(opts: Opts = {}) {
   const [estado, setEstado] = useState<EstadoVoz>("inactiva");
   const [nivel, setNivel] = useState(0);
-  const r = useRef({ intento: 0, conectando: null as Promise<boolean> | null, con: {} as Conexion, audio: undefined as HTMLAudioElement | undefined, quiereHablar: false, ultima: Date.now(), enCurso: false, roles: {} as Record<string, string>, estado: "inactiva" as EstadoVoz, sondeando: false });
+  const r = useRef({ intento: 0, conectando: null as Promise<boolean> | null, con: {} as Conexion, audio: undefined as HTMLAudioElement | undefined, ultima: Date.now(), roles: {} as Record<string, string>, estado: "inactiva" as EstadoVoz, sondeando: false });
   const optsRef = useRef(opts);
   useEffect(() => { optsRef.current = opts; });
   const emitir = useCallback((ev: EventoVoz) => { r.current.estado = siguiente(r.current.estado, ev); setEstado(r.current.estado); }, []);
@@ -30,7 +39,7 @@ export function useVoz(opts: Opts = {}) {
   const colgar = useCallback((motivo = "colgó") => {
     const c = r.current;
     c.intento++; // invalida cualquier conexión en curso: lo que llegue tarde se cierra al llegar
-    c.conectando = null; c.quiereHablar = false; c.enCurso = false;
+    c.conectando = null;
     if (c.con.hilo) void fetch(`/api/voz/colgar?hilo=${encodeURIComponent(c.con.hilo)}&motivo=${encodeURIComponent(motivo)}`, { method: "POST" }).catch(() => null);
     cerrarConexion(c.con); c.con = {};
     setNivel(0); emitir({ tipo: "colgar" });
@@ -54,10 +63,10 @@ export function useVoz(opts: Opts = {}) {
       if (!est.disponible) { emitir({ tipo: "fallo" }); optsRef.current.onAviso?.(`${est.motivo ?? "La voz no está disponible ahora."} Puedes escribir tu pregunta.`); return false; }
       con.mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
       if (!vigente()) return abortar();
-      con.mic.getAudioTracks().forEach((t) => (t.enabled = false)); // cerrado hasta confirmar que todavía quiere hablar
+      con.mic.getAudioTracks().forEach((t) => (t.enabled = false)); // cerrado hasta que la llamada quede conectada
       con.ctx = new AudioContext(); const an = con.ctx.createAnalyser(); con.ctx.createMediaStreamSource(con.mic).connect(an);
       const datos = new Uint8Array(an.fftSize);
-      const medir = () => { an.getByteTimeDomainData(datos); let m = 0; for (const v of datos) m = Math.max(m, Math.abs(v - 128)); setNivel(c.quiereHablar ? Math.min(1, Math.round((m / 64) * 10) / 10) : 0); con.raf = requestAnimationFrame(medir); };
+      const medir = () => { an.getByteTimeDomainData(datos); let m = 0; for (const v of datos) m = Math.max(m, Math.abs(v - 128)); setNivel(c.con === con ? Math.min(1, Math.round((m / 64) * 10) / 10) : 0); con.raf = requestAnimationFrame(medir); };
       con.raf = requestAnimationFrame(medir);
       const pc = (con.pc = new RTCPeerConnection());
       con.mic.getTracks().forEach((t) => pc.addTrack(t, con.mic!));
@@ -70,7 +79,7 @@ export function useVoz(opts: Opts = {}) {
         if (!ev.type?.startsWith("turn.")) return;
         const turno = ev.turn ?? {}; if (ev.type === "turn.created" && turno.id) c.roles[turno.id] = turno.role ?? "";
         const rol = (turno.role ?? c.roles[ev.turn_id ?? ""]) === "user" ? "user" : "assistant";
-        c.ultima = Date.now(); c.enCurso = ev.type === "turn.created";
+        c.ultima = Date.now();
         emitir({ tipo: ev.type === "turn.created" ? "turno_creado" : "turno_hecho", rol });
         if (ev.type === "turn.done" && turno.transcript) optsRef.current.onTranscripcion?.(rol === "user" ? "persona" : "jarvis", turno.transcript);
       };
@@ -84,6 +93,8 @@ export function useVoz(opts: Opts = {}) {
       await pc.setRemoteDescription({ type: "answer", sdp: await of.text() });
       if (!vigente()) { void fetch(`/api/voz/colgar?hilo=${encodeURIComponent(hilo)}&motivo=cancelada`, { method: "POST" }).catch(() => null); return abortar(); }
       c.con = con; c.ultima = Date.now();
+      con.mic.getAudioTracks().forEach((t) => (t.enabled = true));
+      navigator.vibrate?.(15);
       emitir({ tipo: "conectada" });
       void enviarContexto();
       return true;
@@ -100,50 +111,44 @@ export function useVoz(opts: Opts = {}) {
     c.audio = Object.assign(new Audio(), { autoplay: true }); c.audio.setAttribute("playsinline", ""); void c.audio.play().catch(() => null);
   }, []);
 
-  const pulsar = useCallback(async () => {
+  /** Un toque: si no hay llamada, la abre con el micrófono abierto; si la hay (o está conectando), cuelga. */
+  const alternar = useCallback(async () => {
     const c = r.current;
-    c.quiereHablar = true; // la intención se registra ANTES de esperar: si suelta mientras conecta, no se abre el micrófono
-    if (!c.con.hilo) {
-      c.conectando ??= conectar().finally(() => { c.conectando = null; });
-      const ok = await c.conectando;
-      if (!ok || !c.quiereHablar) return; // soltó o colgó mientras conectaba
-    }
-    c.con.mic?.getAudioTracks().forEach((t) => (t.enabled = true)); c.ultima = Date.now();
-    navigator.vibrate?.(15);
-    emitir({ tipo: "pulsar" });
-  }, [conectar, emitir]);
-
-  const soltar = useCallback(() => {
-    const c = r.current;
-    const hablaba = c.quiereHablar;
-    c.quiereHablar = false;
-    c.con.mic?.getAudioTracks().forEach((t) => (t.enabled = false)); // siempre, aunque todavía no hubiera pista
-    if (hablaba) { c.ultima = Date.now(); emitir({ tipo: "soltar" }); }
-  }, [emitir]);
+    if (vozActiva(c.estado)) { colgar("colgó"); return; }
+    c.conectando ??= conectar().finally(() => { c.conectando = null; });
+    await c.conectando;
+  }, [conectar, colgar]);
 
   // Contexto de pantalla: cada cambio de vista, ficha, pestaña o filtro.
-  useEffect(() => useMesa.subscribe((s, p) => { if (s.vista !== p.vista || s.eventoId !== p.eventoId || s.pantalla !== p.pantalla) void enviarContexto(); }), [enviarContexto]);
+  // «atrás» vuelve a la pantalla anterior, la haya abierto la voz o la persona.
+  const anterior = useRef<{ vista: string; eventoId: string | null } | null>(null);
+  useEffect(() => useMesa.subscribe((s, p) => {
+    if (s.vista !== p.vista || s.eventoId !== p.eventoId) anterior.current = { vista: p.vista, eventoId: p.eventoId };
+    if (s.vista !== p.vista || s.eventoId !== p.eventoId || s.pantalla !== p.pantalla) void enviarContexto();
+  }), [enviarContexto]);
 
   // Regla de cuelgue y acciones de Next, cada segundo y de uno en uno.
   useEffect(() => {
     const t = window.setInterval(async () => {
       const c = r.current; const hilo = c.con.hilo;
       if (!hilo || c.sondeando) return;
-      const motivo = debeColgar({ oculta: document.visibilityState === "hidden", sesionVencida: !useMesa.getState().sesion, msSinActividad: Date.now() - c.ultima, enCurso: c.enCurso || c.quiereHablar });
-      if (motivo) { colgar(motivo); optsRef.current.onAviso?.(`Colgué la voz: ${motivo}. Mantén presionado para hablar de nuevo.`); return; }
+      const motivo = debeColgar({ oculta: document.visibilityState === "hidden", sesionVencida: !useMesa.getState().sesion, msSinActividad: Date.now() - c.ultima, enCurso: c.estado === "pensando" || c.estado === "hablando" });
+      if (motivo) { colgar(motivo); optsRef.current.onAviso?.(`Colgué porque ${motivo}. Toca el orbe para hablar otra vez.`); return; }
       c.sondeando = true;
       try {
         const res = await fetchMesa(`/api/voz/acciones?hilo=${encodeURIComponent(hilo)}`);
         if (c.con.hilo !== hilo) return; // la llamada cambió mientras tanto: esta respuesta ya no vale
         if (res.status === 404 || res.status === 401 || res.status === 403) { colgar("la llamada terminó"); return; }
         if (!res.ok) return;
-        const cuerpo = (await res.json().catch(() => null)) as { acciones?: { tipo: string; vista?: string; eventoId?: string; pregunta?: string; respuesta?: unknown; motivo?: string }[] } | null;
+        const cuerpo = (await res.json().catch(() => null)) as { acciones?: { tipo: string; vista?: string; eventoId?: string; direccion?: string; pregunta?: string; respuesta?: unknown; motivo?: string }[] } | null;
         if (c.con.hilo !== hilo || !Array.isArray(cuerpo?.acciones)) return;
         for (const a of cuerpo.acciones) {
           c.ultima = Date.now();
-          if (a.tipo === "navegar") { useMesa.getState().irA(a.vista as never, a.eventoId); if (esCelular(window.innerWidth)) useMesa.getState().setChatAbierto(false); }
+          if (a.tipo === "navegar") { useMesa.getState().irA(a.vista as never, a.eventoId); window.scrollTo({ top: 0 }); if (esCelular(window.innerWidth)) useMesa.getState().setChatAbierto(false); }
+          if (a.tipo === "atras" && anterior.current) { useMesa.getState().irA(anterior.current.vista as never, anterior.current.eventoId ?? undefined); window.scrollTo({ top: 0 }); }
+          if (a.tipo === "desplazar") desplazar(a.direccion);
           if (a.tipo === "mostrar") optsRef.current.onMostrar?.(a.pregunta ?? "", a.respuesta);
-          if (a.tipo === "colgada") { colgar(a.motivo); optsRef.current.onAviso?.(`La llamada terminó: ${a.motivo}.`); return; }
+          if (a.tipo === "colgada") { colgar(a.motivo); optsRef.current.onAviso?.(`La llamada terminó: ${a.motivo}. Toca el orbe para hablar otra vez.`); return; }
         }
       } catch { /* red caída: se reintenta en el próximo segundo; el puente corta por su lado si la página deja de consultar */ }
       finally { c.sondeando = false; }
@@ -152,5 +157,5 @@ export function useVoz(opts: Opts = {}) {
   }, [colgar]);
 
   useEffect(() => () => colgar("cerró la página"), [colgar]);
-  return { estado, nivel, prepararAudio, pulsar, soltar, colgar };
+  return { estado, nivel, prepararAudio, alternar, colgar };
 }

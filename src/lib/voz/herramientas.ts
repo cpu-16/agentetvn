@@ -24,9 +24,14 @@ export function buscarEventos(texto: string, max = 3) {
     .map(({ id, titulo, score }) => ({ id, titulo, score }));
 }
 
+const MOVER = { arriba: "Subí la página.", abajo: "Bajé la página.", inicio: "Volví al inicio de la página.", final: "Bajé hasta el final." } as const;
+
 export function navegar(hilo: string, args: { destino?: string; consulta?: string; eventoId?: string }): string {
-  const destino = args.destino as VistaVoz;
-  if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema.`;
+  const pedido = String(args.destino ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+  if (pedido in MOVER) { encolar(hilo, { tipo: "desplazar", direccion: pedido as keyof typeof MOVER }); return MOVER[pedido as keyof typeof MOVER]; }
+  if (pedido === "atras") { encolar(hilo, { tipo: "atras" }); return "Listo, volví a la pantalla anterior."; }
+  const destino = pedido as VistaVoz;
+  if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema, subir o bajar la página y volver atrás.`;
   if (destino !== "ficha") { encolar(hilo, { tipo: "navegar", vista: destino }); return `Listo, abrí ${NOMBRE[destino]}.`; }
   const snap = snapshot();
   if (args.eventoId && snap.eventos.some((e) => e.id === args.eventoId)) { encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: args.eventoId }); return "Listo, abrí la ficha."; }
@@ -46,9 +51,10 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
     ? await consultar(pregunta, snapshot(), { soloIds: args.eventoId ? snapshot().eventos.find((e) => e.id === args.eventoId)?.ids_noticia : undefined })
     : await consulta(pregunta, undefined, args.eventoId || undefined);
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
-  if (r.abstener) return `No tengo evidencia para responder eso. ${r.motivo ?? ""} ${r.faltante ? `Falta: ${r.faltante}.` : ""}`.trim();
+  // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
+  if (r.abstener) return `No tengo evidencia para responder eso. ${r.motivo ?? ""}`.trim();
   const frases = (r.redaccion?.frases ?? r.afirmaciones).map((a) => a.texto);
-  return palabras(frases.join(" "), 120);
+  return `${palabras(frases.slice(0, 2).join(" "), 45)} El detalle con las citas quedó en el panel.`;
 }
 
 export async function explicarPantalla(hilo: string): Promise<string> {
