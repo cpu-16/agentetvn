@@ -299,17 +299,22 @@ export function ChatAgente() {
                         </ul>
                         {t.respuesta.redaccion.vacios.length > 0 && <p className="rounded-sm bg-[#fff8e1] px-3 py-1.5 text-xs text-[#7a5600]"><span className="font-medium">Qué falta en el borrador:</span> {t.respuesta.redaccion.vacios.map((v) => v.replace(/[.;\s]+$/, "")).join("; ")}.</p>}
                         <p className="text-xs text-muted-foreground">{nombreModelo(t.respuesta.redaccion.llm.modelo)}, {Math.round(t.respuesta.redaccion.llm.ms / 1000)} s. Cada frase se sostuvo en su cita; no sustituye la revisión humana.</p>
-                        <p className="text-xs font-medium">Afirmaciones recuperadas de las fuentes (no son el borrador):</p>
                       </div>
                     )}
-                    <ul className="space-y-1.5" aria-label="Afirmaciones recuperadas de las fuentes">
-                      {t.respuesta.afirmaciones.map((a, i) => (
-                        <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
-                          {a.texto}
-                          <BotonCita id={a.evidence_id} campo={a.campo} onAbrir={setCita} />
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Con borrador, las afirmaciones recuperadas quedan plegadas: el borrador ya cita las mismas fuentes */}
+                    <details className="group" open={!t.respuesta.redaccion}>
+                      <summary className={cn("presionable min-h-9 cursor-pointer list-none py-1 text-xs font-medium [&::-webkit-details-marker]:hidden", !t.respuesta.redaccion && "sr-only")}>
+                        <span className="mr-1 inline-block transition-transform group-open:rotate-90" aria-hidden>▸</span>Ver las {t.respuesta.afirmaciones.length} afirmaciones recuperadas de las fuentes (no son el borrador)
+                      </summary>
+                      <ul className="space-y-1.5" aria-label="Afirmaciones recuperadas de las fuentes">
+                        {t.respuesta.afirmaciones.map((a, i) => (
+                          <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
+                            {a.texto}
+                            <BotonCita id={a.evidence_id} campo={a.campo} onAbrir={setCita} />
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
                     </>
                   )}
                   {t.respuesta && t.respuesta.contradicciones.length > 0 && <p className="rounded-sm bg-[#fdecef] px-3 py-1.5 text-xs text-[#9b1526]">{t.respuesta.contradicciones.length} contradicción(es) abierta(s) entre las fuentes: {t.respuesta.contradicciones.map((c) => c.detalle).join("; ")}</p>}
