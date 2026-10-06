@@ -16,3 +16,5 @@ data/raw/**/*.html
 .claude
 __pycache__/
 *.pyc
+AGENTS.md
+CLAUDE.md
