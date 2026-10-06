@@ -53,6 +53,10 @@ export async function fetchJson<T>(url: string, intentos = 3): Promise<T> {
     try {
       const r = await fetch(url, { headers: { "User-Agent": "AgenteTVN/0.1 (hackIAthon Panamá; contacto: gilberto@ciberpty.com)" } });
       const texto = await r.text();
+      if (r.status === 429) {
+        await dormir(20000); // GDELT: esperar antes de reintentar
+        throw new Error(`HTTP 429: ${texto.slice(0, 80)}`);
+      }
       if (!r.ok) throw new Error(`HTTP ${r.status}: ${texto.slice(0, 120)}`);
       return JSON.parse(texto) as T;
     } catch (e) {

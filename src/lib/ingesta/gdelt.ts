@@ -63,7 +63,7 @@ export async function ingestarGdelt(corte: Date, fechaExtraccion: string, log: (
       }
       log(`GDELT «${q}» ${v.desde.toISOString().slice(0, 10)}→${v.hasta.toISOString().slice(0, 10)} · ${n}`);
       consultas.push({ fuente: "gdelt", consulta: url, fecha: fechaExtraccion, n });
-      await dormir(5500); // límite público: 1 consulta cada 5 s
+      await dormir(8000); // límite público: 1 consulta cada 5 s (en la práctica, 8 s evita el 429)
     }
   }
   void fmt;
