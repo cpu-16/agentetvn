@@ -90,6 +90,15 @@ def herramienta(rid, p):
 
 
 def lector(proc):
+    try:
+        leer(proc)
+    except Exception as e:
+        print("lector falló:", e, flush=True)
+    if proc is app:  # el app-server de Jarvis murió o se rompió el canal: salir y que systemd lo levante limpio
+        print("el app-server de Jarvis terminó; salgo para reiniciar", flush=True); os._exit(1)
+
+
+def leer(proc):
     for linea in proc.stdout:
         m = json.loads(linea); metodo, p = m.get("method", ""), m.get("params") or {}
         if "id" in m and metodo == "item/tool/call": threading.Thread(target=herramienta, args=(m["id"], p), daemon=True).start()
@@ -101,8 +110,6 @@ def lector(proc):
         elif metodo == "thread/tokenUsage/updated":
             a = estado["activa"]
             if a and a["hilo"] == p.get("threadId"): a["tokens"] = p["tokenUsage"]["total"]["totalTokens"]
-    if proc is app:  # el app-server de Jarvis murió solo: salir y que systemd lo levante limpio (no anunciarse disponible sin Codex)
-        print("el app-server de Jarvis terminó; salgo para reiniciar", flush=True); os._exit(1)
 
 
 def seg_ultima_hora(ahora):
@@ -114,7 +121,8 @@ def seg_ultima_hora(ahora):
 
 
 def guardar_uso():
-    try: json.dump({"uso": list(estado["uso"]), "inicios": list(estado["inicios"])}, open(ESTADO_ARCHIVO, "w"))
+    a = estado["activa"]
+    try: json.dump({"uso": list(estado["uso"]), "inicios": list(estado["inicios"]), "en_curso": [a["inicio"], a["limite"]] if a else None}, open(ESTADO_ARCHIVO, "w"))
     except Exception: pass
 
 
@@ -123,24 +131,18 @@ def cargar_uso():
         d = json.load(open(ESTADO_ARCHIVO)); ahora = time.time()
         estado["uso"] = deque((i, s) for i, s in d.get("uso", []) if ahora - i <= 3600)
         estado["inicios"] = deque(i for i in d.get("inicios", []) if ahora - i <= 3600)
-    except Exception: pass
-
-
-def reiniciar_app():
-    """Mata y relanza SOLO el app-server de Jarvis (proceso hijo de este puente). El de la CSS es otro proceso: no se toca."""
-    global app
-    viejo = app
-    arrancar()
-    try: viejo.kill(); viejo.wait(timeout=5)
+        if d.get("en_curso") and ahora - d["en_curso"][0] <= 3600:  # una llamada cortada por un reinicio cuenta completa
+            estado["uso"].append((d["en_curso"][0], d["en_curso"][1]))
     except Exception: pass
 
 
 def detener(hilo):
-    """Cierra el realtime. Si el app-server no lo confirma, se reinicia el de Jarvis: así ninguna llamada queda abierta gastando cuota."""
-    try: rpc("thread/realtime/stop", {"threadId": hilo}, timeout=10); return True
+    """Cierra el realtime. Si Codex no lo confirma, el puente se cae a propósito: systemd mata TODO el grupo de este servicio
+    (incluido nuestro app-server, nunca el de la CSS, que es otro servicio) y lo levanta limpio. Así ninguna llamada queda abierta."""
+    try: rpc("thread/realtime/stop", {"threadId": hilo}, timeout=10)
     except Exception as e:
-        print(f"[{hilo[-6:]}] stop no confirmado ({e}); reinicio el app-server de Jarvis", flush=True)
-        reiniciar_app(); return False
+        print(f"[{hilo[-6:]}] stop no confirmado ({e}); salgo para que systemd cierre todo", flush=True)
+        guardar_uso(); os._exit(1)
 
 
 def cortar(hilo, motivo, avisar_next=True):
@@ -150,7 +152,7 @@ def cortar(hilo, motivo, avisar_next=True):
         a["cerrando"] = True  # sigue ocupada hasta confirmar el cierre: no entra otra llamada mientras tanto
     detener(hilo)
     with lock: estado["activa"] = None
-    respuestas.pop(hilo, None)
+    respuestas.pop(hilo, None)  # (si detener no confirmó, el proceso ya salió)
     seg = time.time() - a["inicio"]; estado["uso"].append((a["inicio"], seg)); guardar_uso()
     if avisar_next: a_next("/api/voz/fin", {"hilo": hilo, "motivo": motivo})
     try:
@@ -178,7 +180,7 @@ def atender_oferta(cmd):
             estado["activa"] = {"hilo": "", "inicio": ahora, "limite": min(MAX_SEG, restante), "persona": str(cmd.get("persona", ""))[:60], "tokens": 0, "herramientas": []}
     if ocupado:  # la respuesta HTTP va FUERA del candado
         a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": False, "status": 429, "error": "ocupada"}); return
-    estado["inicios"].append(ahora); guardar_uso()
+    estado["inicios"].append(ahora); guardar_uso()  # incluye la llamada en curso por si el puente se reinicia
     hilo = None
     try:
         hilo = rpc("thread/start", {"cwd": VACIA, "ephemeral": True, "approvalPolicy": "never", "sandbox": "read-only",
@@ -194,11 +196,12 @@ def atender_oferta(cmd):
         if hilo: detener(hilo)  # pudo haber arrancado el realtime: se cierra
         with lock: estado["activa"] = None
         if hilo: respuestas.pop(hilo, None)
+        estado["uso"].append((ahora, time.time() - ahora)); guardar_uso()
         a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": False, "status": 502, "error": str(e)[:200]}); return
-    codigo, r = a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": True, "sdp": sdp, "hilo": hilo})
+    threading.Thread(target=vigilar, args=(hilo,), daemon=True).start()  # el tope corre desde la admisión, antes de avisar
+    codigo, r = a_next("/api/voz/puente/respuesta", {"id": cmd["id"], "ok": True, "sdp": sdp, "hilo": hilo}, timeout=10)
     if codigo != 200 or not r.get("aceptada"):
         cortar(hilo, "nadie esperaba la llamada", avisar_next=False); return
-    threading.Thread(target=vigilar, args=(hilo,), daemon=True).start()
     print(f"[{hilo[-6:]}] llamada conectada para {estado['activa']['persona'] if estado['activa'] else '?'}, voz {VOZ}, límite {estado['activa']['limite'] if estado['activa'] else '?'} s", flush=True)
 
 
@@ -295,18 +298,54 @@ def revisar():
     assert esperar(lambda: estado["activa"] is None and paro("hilo-prueba-2")), "el comando colgar corta la llamada y la cierra en Codex"
     comandos.put({"tipo": "offer", "id": "o4", "sdp": "v=0 oferta", "persona": "Ana"})  # Next ya no la espera
     assert esperar(lambda: resp("o4") and estado["activa"] is None and paro("hilo-prueba-3")), "una respuesta que nadie espera se cuelga"
+    MAX_SEG, MAX_SEG_HORA = 100, seg_ultima_hora(time.time()) + 16  # quedan 16 s de cupo: la llamada dura a lo sumo eso
+    comandos.put({"tipo": "offer", "id": "o6", "sdp": "v=0 oferta", "persona": "Ana"})
+    assert esperar(lambda: resp("o6") and estado["activa"]), "con cupo justo se admite"
+    assert 14 <= estado["activa"]["limite"] <= 16, estado["activa"]["limite"]
+    assert json.load(open(ESTADO_ARCHIVO))["en_curso"], "la llamada en curso queda guardada por si el puente se reinicia"
+    comandos.put({"tipo": "colgar", "hilo": estado["activa"]["hilo"], "motivo": "prueba"})
+    assert esperar(lambda: estado["activa"] is None)
     MAX_SEG_HORA = seg_ultima_hora(time.time()) + 10  # quedan < 15 s de cupo
     comandos.put({"tipo": "offer", "id": "o5", "sdp": "v=0 oferta", "persona": "Ana"})
     assert esperar(lambda: resp("o5")) and resp("o5")[0]["status"] == 429, "sin cupo en la hora → 429"
     guardado = json.load(open(ESTADO_ARCHIVO))
-    assert len(guardado["uso"]) == 3 and len(guardado["inicios"]) == 3, guardado  # 3 llamadas cerradas, 3 inicios
+    assert len(guardado["uso"]) == 4 and len(guardado["inicios"]) == 4, guardado  # 4 llamadas cerradas, 4 inicios
     estado["uso"].clear(); cargar_uso()
-    assert len(estado["uso"]) == 3, "el consumo de la hora sobrevive a un reinicio"
+    assert len(estado["uso"]) == 4, "el consumo de la hora sobrevive a un reinicio"
+    # Cierre no confirmado: un puente cuyo app-server ignora el stop debe SALIR (código 1) para que systemd cierre todo.
+    env = dict(os.environ, FALSO_SIN_STOP="1")
+    t0 = time.time()
+    r = subprocess.run([sys.executable, os.path.abspath(__file__), "--check-cierre"], env=env, capture_output=True, text=True, timeout=40)
+    assert r.returncode == 1 and "stop no confirmado" in r.stdout, (r.returncode, r.stdout[-300:], r.stderr[-300:])
+    assert time.time() - t0 < 30
     parar.set()
     print("puente --check: OK (respuesta por id, 1 llamada a la vez, lista cerrada, token, cierre confirmado, respuesta tardía, cupo por hora, consumo persistido, colgar)", flush=True)
 
 
+def revisar_cierre():
+    """Subproceso de --check: una llamada con tope de 1 s y un app-server que no confirma el stop → el proceso sale con 1."""
+    global TOKEN, NEXT, MAX_SEG, REGISTRO, ESTADO_ARCHIVO
+    import http.server
+    TOKEN, MAX_SEG, REGISTRO, ESTADO_ARCHIVO = "t0ken-de-prueba-0123456789", 1, os.devnull, tempfile.mktemp()
+    os.environ["CODEX_BIN"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app_server_falso.py")
+    os.environ["FALSO_LOG"] = tempfile.mktemp()
+    entregado = threading.Event()
+    class N(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            cmd = {"tipo": "nada"} if entregado.is_set() else {"tipo": "offer", "id": "c1", "sdp": "v=0", "persona": "Ana"}
+            entregado.set(); time.sleep(0.2)
+            self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(json.dumps(cmd).encode())
+        def do_POST(self):
+            self.rfile.read(int(self.headers["Content-Length"]))
+            self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(b'{"ok":true,"aceptada":true,"texto":"ok"}')
+        def log_message(self, *a): pass
+    nx = http.server.ThreadingHTTPServer(("127.0.0.1", 0), N); threading.Thread(target=nx.serve_forever, daemon=True).start()
+    NEXT = f"http://127.0.0.1:{nx.server_address[1]}"
+    arrancar(); bucle()
+
+
 if __name__ == "__main__":
+    if "--check-cierre" in sys.argv: revisar_cierre()
     if "--check" in sys.argv: revisar(); os._exit(0)
     if len(TOKEN) < 16: sys.exit("Falta VOZ_TOKEN (≥ 16 caracteres)")
     cargar_uso()

@@ -19,5 +19,5 @@ for linea in sys.stdin:
         enviar({"jsonrpc": "2.0", "id": 9002, "method": "item/tool/call", "params": {"threadId": p["threadId"], "tool": "borrar_todo", "arguments": {}}})
     elif metodo == "thread/realtime/stop":
         open(log, "a").write(json.dumps({"stop": p.get("threadId")}) + "\n")
-        enviar({"jsonrpc": "2.0", "id": m["id"], "result": {}})
+        if not os.environ.get("FALSO_SIN_STOP"): enviar({"jsonrpc": "2.0", "id": m["id"], "result": {}})  # sin respuesta: cierre no confirmado
     elif "id" in m: enviar({"jsonrpc": "2.0", "id": m["id"], "result": {}})
