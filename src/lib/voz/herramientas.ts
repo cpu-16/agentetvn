@@ -57,9 +57,12 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   return `${palabras(frases.slice(0, 2).join(" "), 45)} El detalle con las citas quedó en el panel.`;
 }
 
+/** Para la voz: las dos primeras frases del texto fijo (el panel muestra el texto completo con «Explícame esta pantalla»). */
+const dosFrases = (t: string) => t.split(/(?<=\.)\s+/).slice(0, 2).join(" ");
+
 export async function explicarPantalla(hilo: string): Promise<string> {
   const c = contextoDe(hilo) ?? { vista: "portada" as const };
-  const fijo = explicacionFija(c);
+  const fijo = dosFrases(explicacionFija(c));
   if (c.vista === "ficha" && c.eventoId) {
     const snap = snapshot();
     const e = snap.eventos.find((x) => x.id === c.eventoId);
