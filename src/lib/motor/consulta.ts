@@ -176,6 +176,9 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   };
 }
 
+/** Título de la página en vez del titular (asamblea.gob.pa trae «Preview - Asamblea de Panamá»; el titular solo está en la URL). */
+export const TITULO_DE_PAGINA = /^\s*(preview|vista previa)\s*[-–|]/i;
+
 /** CU-01 · los cinco temas que merecen revisión, con razones y vacíos. */
 export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[]; vacios: string[] }[] {
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
@@ -184,6 +187,7 @@ export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[];
   const elegidos: Evento[] = [];
   for (const e of snap.eventos) {
     if (e.no_confiable || e.tema === "deportes" || e.tema === "otro" || e.ids_noticia.some((i) => porId.get(i)?.sintetica)) continue;
+    if (TITULO_DE_PAGINA.test(porId.get(e.representante)?.titulo ?? "")) continue; // sin titular real no se puede revisar desde la portada
     if ((porTema.get(e.tema) ?? 0) >= 2) continue;
     porTema.set(e.tema, (porTema.get(e.tema) ?? 0) + 1);
     elegidos.push(e);

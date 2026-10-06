@@ -32,6 +32,13 @@ describe("T08 prioridad alta", () => {
     const snap = { eventos, noticias: eventos.map((e) => n({ id_noticia: e.id, url: `https://x.com/${e.id}` })) } as unknown as import("../src/lib/motor/cargar").Snapshot;
     expect(cincoTemas(snap).map((c) => c.evento.id)).toEqual(["a", "b", "e", "f", "g"]);
   });
+  test("un título de página («Preview - Asamblea de Panamá») no entra en los cinco temas", async () => {
+    const { cincoTemas } = await import("../src/lib/motor/consulta");
+    const mk = (id: string, P: number): import("../src/lib/motor/contrato").Evento => ({ id, representante: id, ids_noticia: [id], procedencias: [], tema: `t${id}`, tema_confianza: 1, por_revisar: false, fecha_original: null, contexto: { indicadores: [], sismos: [] }, contradicciones: [], componentes: { R: 1, I: 1, U: 1, N: 1, E: 1, explicacion: { R: "", I: "", U: "", N: "", E: "" } }, P, rango: "alto", estado_evidencia: "parcial", no_confiable: false });
+    const eventos = ["a", "b", "c", "d", "e", "f"].map((id, i) => mk(id, 90 - i));
+    const snap = { eventos, noticias: eventos.map((e) => n({ id_noticia: e.id, url: `https://x.com/${e.id}`, titulo: e.id === "b" ? "Preview - Asamblea de Panamá" : `Titular ${e.id}` })) } as unknown as import("../src/lib/motor/cargar").Snapshot;
+    expect(cincoTemas(snap).map((c) => c.evento.id)).toEqual(["a", "c", "d", "e", "f"]);
+  });
   test("orden: P desc, U desc, id asc", () => {
     const o = ordenar([{ id: "b", P: 50, componentes: { U: 1 } }, { id: "a", P: 50, componentes: { U: 1 } }, { id: "c", P: 80, componentes: { U: 0 } }, { id: "d", P: 50, componentes: { U: 0.4 } }]);
     expect(o.map((x) => x.id)).toEqual(["c", "a", "b", "d"]);
