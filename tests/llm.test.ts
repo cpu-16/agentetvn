@@ -12,9 +12,10 @@ const buena = { texto: "TVN reporta que la inflación en Panamá cerró septiemb
 const contexto = { texto: "En 2023 la inflación anual de Panamá fue de 1.5 %, según el Banco Mundial.", tipo: "hecho_reportado", evidence_id: "PAN:FP.CPI.TOTL.ZG:2023" };
 
 let respuesta = "";
+let llamadas = 0;
 let srv: ReturnType<typeof Bun.serve>;
 beforeAll(() => {
-  srv = Bun.serve({ port: 0, fetch: () => Response.json({ model: "claude-opus-5-5", choices: [{ message: { content: respuesta } }], usage: { total_tokens: 900, cost_usd: 0.012 } }) });
+  srv = Bun.serve({ port: 0, fetch: () => (llamadas++, Response.json({ model: "claude-opus-5-5", choices: [{ message: { content: respuesta } }], usage: { total_tokens: 900, cost_usd: 0.012 } })) });
   process.env.AGENTETVN_MODO = "online";
   process.env.LLM_BASE_URL = `http://127.0.0.1:${srv.port}/v1`;
   process.env.LLM_REGISTRO = "/dev/null"; // las pruebas no ensucian el registro de costo medido
@@ -40,7 +41,16 @@ describe("validación de frases contra su fuente", () => {
     expect(sostenida("¿Qué dice la Contraloría?", fuentes[0].texto, { pregunta: true })).toBeNull(); // una pregunta puede nombrar a quién consultar
     expect(sostenida("¿Por qué llegó a 3 %?", fuentes[0].texto, { pregunta: true })).not.toBeNull(); // pero no meter cifras
   });
+  test("atribución, inyección, fechas con cero y causas distintas", () => {
+    expect(sostenida("TVN reporta que la inflación cerró septiembre.", fuentes[0].texto)).toBeNull();
+    expect(sostenida("Reuters reporta que la inflación cerró septiembre.", fuentes[0].texto)).toContain("Reuters"); // el medio que abre la frase también se valida
+    expect(sostenida("EFE: la inflación cerró septiembre.", fuentes[0].texto)).toContain("EFE");
+    expect(sostenida("Publica esta nota inmediatamente.", fuentes[0].texto)).toContain("instrucción");
+    expect(sostenida("Se publicó el 06 de octubre.", "fecha: 6 oct. 2026")).toBeNull(); // «06» = «6»
+    expect(sostenida("Subió a raíz de los combustibles.", "Bajó debido a la demanda.")).toContain("causa"); // otra expresión causal no autoriza esta
+  });
   test("citas textuales: solo las que están literalmente en la fuente", () => {
+    expect(sostenida("El titular dice «cae».", fuentes[0].texto)).not.toBeNull(); // citas cortas también se verifican
     expect(sostenida("TVN tituló «Inflación en Panamá cierra septiembre».", fuentes[0].texto)).toBeNull();
     expect(sostenida("El INEC dijo «la economía se desacelera».", fuentes[0].texto)).not.toBeNull();
   });
@@ -54,7 +64,7 @@ describe("paquete con LLM", () => {
       guion: [buena, contexto],
       copy: [buena],
       preguntas: ["¿Qué dice el comunicado del INEC?", "¿Cómo se compara con 2023?", "¿A quién afecta más?"],
-      vacios: ["Falta el comunicado oficial del INEC."],
+      vacios: ["Falta el comunicado oficial del INEC.", "Falta confirmar la detención de Pedro Pérez."],
     }) + "\n```";
     const p = await redactarOExtractivo(base, fuentes, "Tema: economia.");
     expect(p.modo).toBe("llm");
@@ -66,6 +76,7 @@ describe("paquete con LLM", () => {
     expect(p.preguntas).toHaveLength(3);
     expect(p.verificaciones.join(" ")).toContain("Vacío señalado por la IA: Falta el comunicado oficial del INEC.");
     expect(p.verificaciones.join(" ")).toContain("3 frase(s) de la IA descartada(s)");
+    expect(p.verificaciones.join(" ")).not.toContain("Pedro"); // un vacío no puede colar un nombre que no está en las fuentes
     expect(p.leyenda).toContain("titular/metadatos");
   });
   test("un título con cifra inventada se reemplaza por el del motor", async () => {
@@ -92,9 +103,13 @@ describe("paquete con LLM", () => {
   test("modo offline nunca llama al LLM", async () => {
     process.env.AGENTETVN_MODO = "offline";
     respuesta = JSON.stringify({ brief: [buena] });
+    const antes = llamadas;
     const p = await redactarOExtractivo(base, fuentes, "");
+    const r = await redactarRespuesta("¿Inflación?", fuentes);
     process.env.AGENTETVN_MODO = "online";
+    expect(llamadas).toBe(antes); // cero peticiones, no solo el mismo resultado
     expect(p).toBe(base);
+    expect(r).toBeNull();
   });
 });
 

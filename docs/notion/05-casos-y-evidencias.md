@@ -1,6 +1,6 @@
 # Casos y evidencias · AgenteTVN (snapshot v1, corte 2026-10-06T16:39:20.671Z)
 
-Cada ficha: ID, fuentes, puntaje desglosado, estado de evidencia, borrador (extractivo) y persona revisora (se registra en la app; aquí el estado inicial).
+Cada ficha: ID, fuentes, puntaje desglosado, estado de evidencia, borrador (extractivo, o redactado por IA y validado frase por frase) y persona revisora (se registra en la app; aquí el estado inicial).
 
 ## ev_40d350f2a9d6 · Producto Interno Bruto de Panamá crece 6.4% en el segundo trimestre de 2026
 

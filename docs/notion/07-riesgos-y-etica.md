@@ -6,7 +6,7 @@
 | Contar réplicas como corroboración | Publicación ≠ evento ≠ procedencia; agencia replicada = 1; sin atribución = «independencia no verificada» | T02, caso sintético de 5 réplicas EFE |
 | Presentar un dato anual como actual | País, año, unidad y «contexto histórico» en cada cita; abstención si el año pedido no existe | T04, T06 |
 | Inyección desde una fuente | Texto de fuente = dato; detector de patrones marca «no confiable» y excluye; el agente no tiene herramientas de publicación ni acceso a secretos; URLs solo http(s) | T07, 10 consultas adversariales |
-| Alucinación | Sin LLM en la demo; si se activa, salida validada contra IDs existentes y fallback extractivo | T06 |
+| Alucinación | Offline: sin LLM. Online (D11): el LLM solo reescribe evidencia recuperada; cada frase se valida contra su fuente (ID, tipo, cifras, citas, nombres, causas) y lo inválido se descarta; respaldo extractivo; abstenciones sin LLM. Límite: la validación es léxica, no semántica (una paráfrasis que cambie el sentido sin cambiar cifras ni nombres pasa); por eso la revisión humana sigue siendo obligatoria | T06, T09, `tests/llm.test.ts` |
 | Privacidad y reputación | No se almacenan datos personales; acusaciones se muestran como «declaración», no hecho; no hay listas de personas | Diseño del contrato |
 | Derechos de las fuentes | Solo metadatos; sin cuerpos, imágenes ni videos; condiciones por fuente en `fuentes.json`; GDELT no transfiere derechos | Catálogo de datos |
 | Sesgo del ranking | Prior editorial por tema declarado y versionado; pesos del reto; cambio exige motivo; Precision@5 contra selección a ciegas | Control, decisiones |

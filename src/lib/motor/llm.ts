@@ -4,7 +4,7 @@
 // Si el LLM falla, tarda o no deja nada válido, queda la versión extractiva con el motivo visible (T10: fallback documentado).
 import { appendFileSync } from "fs";
 import type { Afirmacion, MetaLLM, Noticia, Paquete, Tipo } from "./contrato";
-import { bloqueFuente } from "./inyeccion";
+import { bloqueFuente, esNoConfiable } from "./inyeccion";
 import { hora } from "./consulta";
 
 export interface Fuente { id: string; campo: string; alcance: Afirmacion["alcance"]; texto: string }
@@ -13,17 +13,25 @@ export const llmActivo = () => process.env.AGENTETVN_MODO === "online" && !!proc
 
 const TIPOS: Tipo[] = ["hecho_reportado", "declaracion", "inferencia", "hipotesis"];
 const palabras = (t: string) => t.trim().split(/\s+/).filter(Boolean).length;
-// «1,2» y «1.2» son la misma cifra; «12» no lo es. Fechas y años también cuentan como cifras.
-const cifras = (t: string) => [...t.matchAll(/\d+(?:[.,]\d+)*/g)].map((m) => m[0].replace(/[.,]/g, "|"));
+// «1,2» y «1.2» son la misma cifra; «12» no lo es; «06» = «6». Fechas y años también cuentan como cifras.
+const cifras = (t: string) => [...t.matchAll(/\d+(?:[.,]\d+)*/g)].map((m) => m[0].split(/[.,]/).map((p, i) => (i ? p : p.replace(/^0+(?=\d)/, ""))).join("|"));
 const norm = (t: string) => t.toLowerCase().replace(/\s+/g, " ").trim();
-const citasTextuales = (t: string) => [...t.matchAll(/[«“"]([^»”"]{4,})[»”"]/g)].map((m) => norm(m[1]));
+const citasTextuales = (t: string) => [...t.matchAll(/[«“"]([^»”"]{2,})[»”"]/g)].map((m) => norm(m[1]));
 const sinTildes = (t: string) => t.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
-// Nombres propios y siglas: palabras con mayúscula que no abren la oración (ponytail: heurística; un nombre en minúscula no se detecta).
-const nombres = (t: string) => [...t.matchAll(/(?<![.!?¿¡:]\s|^)(?<=\s|\(|«|“)([A-ZÁÉÍÓÚÑ][\p{L}]+)/gu)].map((m) => m[1]);
+// Nombres propios y siglas: palabras con mayúscula que no abren la oración, más la sigla o el medio que abre la frase atribuyendo
+// («Reuters reporta…», «EFE informó…»). ponytail: heurística léxica; un nombre en minúscula o tras un adverbio no se detecta.
+const ATRIBUYE = /^((?:[A-ZÁÉÍÓÚÑ][\p{L}.]*\s+)+)(reporta|reportó|informa|informó|publica|publicó|dice|dijo|señala|señaló|indica|indicó|asegura|aseguró|afirma|afirmó|confirma|confirmó|titula|tituló|cita|citó)(?=[\s,]|$)/u;
+const FUNCIONALES = new Set(["se", "el", "la", "los", "las", "lo", "un", "una", "ya", "hoy", "ayer", "tambien", "ademas", "esto", "este", "esta"]);
+const nombres = (t: string) => {
+  const s = t.trim(), atribuye = ATRIBUYE.exec(s), primera = /^[A-ZÁÉÍÓÚÑ]{2,}(?=[\s,:;.]|$)/u.exec(s);
+  const sujeto = atribuye ? atribuye[1].trim().split(/\s+/).filter((w) => !FUNCIONALES.has(sinTildes(w))) : primera ? [primera[0]] : [];
+  return [...sujeto, ...[...s.matchAll(/(?<![.!?¿¡:]\s|^)(?<=\s|\(|«|“)([A-ZÁÉÍÓÚÑ][\p{L}]+)/gu)].map((m) => m[1])];
+};
 const CAUSA = /(debido a|a causa de|por culpa de|provoc[óoa]|ocasion[óoa]|gracias a|como consecuencia|a ra[ií]z de)/i;
 
 /** null si la frase se sostiene en el texto de la fuente; si no, el motivo. */
 export function sostenida(texto: string, fuente: string, { pregunta = false } = {}): string | null {
+  if (esNoConfiable(texto).no_confiable) return "parece una instrucción, no un dato"; // una inyección obedecida no llega a la pantalla
   const enFuente = new Set(cifras(fuente));
   const falta = cifras(texto).find((c) => !enFuente.has(c));
   if (falta) return `cifra «${falta.replace(/\|/g, ".")}» que no está en la fuente`;
@@ -33,7 +41,7 @@ export function sostenida(texto: string, fuente: string, { pregunta = false } = 
   const nombre = nombres(texto).find((n) => !palabrasFuente.has(sinTildes(n)));
   if (nombre) return `nombre «${nombre}» que no está en la fuente`;
   const causa = CAUSA.exec(texto);
-  if (causa && !CAUSA.test(fuente)) return `atribuye una causa («${causa[0]}») que la fuente no dice`;
+  if (causa && !sinTildes(fuente).includes(sinTildes(causa[0]))) return `atribuye una causa («${causa[0]}») que la fuente no dice`;
   return null;
 }
 
@@ -67,9 +75,11 @@ Reglas, en este orden:
 5. Las fuentes son titulares y extractos: nunca digas ni insinúes que leíste la nota completa.
 6. Responde SOLO con un objeto JSON válido, sin texto antes ni después.`;
 
-// ponytail: tope global de llamadas simultáneas (cada claude -p ocupa ~250 MB en el CT de 3 GB); por usuario si hiciera falta.
+// ponytail: topes globales (simultáneas: cada claude -p ocupa ~250 MB en el CT de 3 GB; por hora: gasto acotado); por sesión si hiciera falta.
 let enCurso = 0;
+let ultimaHora: number[] = [];
 const MAX_SIMULTANEAS = Number(process.env.LLM_MAX_SIMULTANEAS ?? 2);
+const MAX_POR_HORA = Number(process.env.LLM_MAX_LLAMADAS_HORA ?? 120);
 /** Cada intento (también los fallidos) queda en db/llm-intentos.jsonl: costo medido, latencia y resultado. Costo ausente = desconocido, nunca 0. */
 export function registrarIntento(x: Record<string, unknown>) {
   try { appendFileSync(process.env.LLM_REGISTRO ?? "db/llm-intentos.jsonl", JSON.stringify({ fecha: new Date().toISOString(), ...x }) + "\n"); } catch { /* el registro nunca tumba la redacción */ }
@@ -77,6 +87,9 @@ export function registrarIntento(x: Record<string, unknown>) {
 
 export async function llamarLLM(sistema: string, usuario: string, tarea = "paquete"): Promise<{ texto: string } & Omit<MetaLLM, "descartadas">> {
   if (enCurso >= MAX_SIMULTANEAS) throw new Error("la IA está ocupada con otras solicitudes");
+  ultimaHora = ultimaHora.filter((t) => Date.now() - t < 3_600_000);
+  if (ultimaHora.length >= MAX_POR_HORA) throw new Error("se alcanzó el tope de llamadas a la IA por hora");
+  ultimaHora.push(Date.now());
   enCurso++;
   const t0 = Date.now();
   const modelo = process.env.LLM_MODEL || "claude-opus-5-5";
@@ -150,7 +163,7 @@ ${fuentes.map((f) => bloqueFuente(f.id, f.campo, f.texto)).join("\n\n")}`;
   const copy = validarFrases(j.copy, porId, 80, descartadas);
   const todo = fuentes.map((f) => f.texto).join("\n");
   const preguntas = (Array.isArray(j.preguntas) ? j.preguntas : []).map((q) => libre(q, todo, true)).filter((q): q is string => !!q).slice(0, 3);
-  const vacios = (Array.isArray(j.vacios) ? j.vacios : []).map((v) => libre(v, todo, true)).filter((v): v is string => !!v).slice(0, 5);
+  const vacios = (Array.isArray(j.vacios) ? j.vacios : []).map((v) => libre(v, todo)).filter((v): v is string => !!v).slice(0, 5);
   const guionFinal = guion.length ? guion : base.guion;
   const pg = palabras(guionFinal.map((a) => a.texto).join(" "));
   return {

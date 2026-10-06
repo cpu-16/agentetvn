@@ -42,26 +42,45 @@ export async function evento(id: string) {
   const revision = await estadoDe(id);
   const historial = await db.revision.findMany({ where: { eventoId: id }, orderBy: { createdAt: "asc" } });
   const guardado = await db.paqueteEditado.findUnique({ where: { eventoId: id } });
-  return { evento: e, publicaciones: e.ids_noticia.map((i) => porId.get(i)).filter(Boolean), indicadores, sismos, revision, historial, paquete: guardado ? { ...(JSON.parse(guardado.contenido) as Paquete), modo: guardado.modo, persona: guardado.persona, updatedAt: guardado.updatedAt } : null };
+  const p = guardado ? (JSON.parse(guardado.contenido) as Paquete) : null;
+  return { evento: e, publicaciones: e.ids_noticia.map((i) => porId.get(i)).filter(Boolean), indicadores, sismos, revision, historial, paquete: p && vigente(p, snap) ? { ...p, modo: guardado!.modo, persona: guardado!.persona, updatedAt: guardado!.updatedAt } : null };
 }
 
-export async function paquete(id: string, persona: string, forzar = false) {
+/** Un paquete guardado sigue valiendo si no cita fuentes marcadas después como no confiables y, si lo redactó la IA, es del mismo snapshot. */
+function vigente(p: Paquete, snap: Snapshot): boolean {
+  const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+  const contaminado = [...p.brief, ...p.guion, ...p.copy].some((a) => porId.get(a.evidence_id)?.no_confiable);
+  return !contaminado && !(p.modo === "llm" && p.llm?.huella !== snap.huella);
+}
+
+// Una sola redacción en curso por evento: dos clics (o dos personas) comparten la misma llamada a la IA.
+const enCurso = new Map<string, Promise<Paquete | null>>();
+
+export function paquete(id: string, persona: string, forzar = false): Promise<Paquete | null> {
+  const previa = enCurso.get(id);
+  if (previa) return previa;
+  const p = componerPaquete(id, persona, forzar).finally(() => enCurso.delete(id));
+  enCurso.set(id, p);
+  return p;
+}
+
+async function componerPaquete(id: string, persona: string, forzar: boolean): Promise<Paquete | null> {
   const snap = snapshot();
   const e = snap.eventos.find((x) => x.id === id);
   if (!e) return null;
+  const t0 = new Date();
   const existente = forzar ? null : await db.paqueteEditado.findUnique({ where: { eventoId: id } });
   if (existente) {
     const p = JSON.parse(existente.contenido) as Paquete;
-    const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
-    const citas = [...p.brief, ...p.guion, ...p.copy].map((a) => a.evidence_id);
-    const contaminado = citas.some((c) => porId.get(c)?.no_confiable);
-    const obsoleto = p.modo === "llm" && p.llm?.huella !== snap.huella; // redactado sobre otro snapshot: se vuelve a redactar
-    if (!contaminado && !obsoleto) return p; // si una fuente citada fue marcada después como no confiable, se regenera
+    if (vigente(p, snap)) return p; // si cita una fuente marcada después como no confiable o es de otro snapshot, se regenera
   }
   const base = generarPaquete(e, snap.noticias, snap.indicadores);
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const contexto = `Tema: ${e.tema}. Prioridad P ${e.P} (${e.rango}). Estado de la evidencia: ${e.estado_evidencia}. ${e.ids_noticia.length} publicación(es); procedencias: ${e.procedencias.map((x) => `${x.nombre} (${x.tipo})`).join(", ")}.${e.contradicciones.length ? ` Contradicciones abiertas: ${e.contradicciones.map((c) => c.detalle).join("; ")}.` : ""}`;
   const p = await redactarOExtractivo(base, fuentesDe([...base.brief, ...base.guion, ...base.copy], porId), contexto, snap.huella);
+  const ahora = await db.paqueteEditado.findUnique({ where: { eventoId: id } });
+  if (ahora && ahora.updatedAt > t0) // alguien guardó una edición mientras la IA redactaba (~40 s): no se pisa
+    return { ...p, verificaciones: [...p.verificaciones, `No se guardó: ${ahora.persona} editó este paquete mientras se redactaba. Recarga para ver su versión.`] };
   await db.paqueteEditado.upsert({ where: { eventoId: id }, create: { eventoId: id, contenido: JSON.stringify(p), modo: p.modo, persona }, update: { contenido: JSON.stringify(p), modo: p.modo, persona } });
   return p;
 }
