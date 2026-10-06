@@ -95,7 +95,8 @@ export function ChatAgente() {
     return () => { window.removeEventListener("keydown", tecla); window.removeEventListener("pointerdown", fuera); };
   }, [chatAbierto, setChatAbierto, tamano]);
 
-  useEffect(() => { fin.current?.scrollIntoView({ block: "end", behavior: reducir ? "auto" : "smooth" }); }, [turnos, reducir]);
+  // Muestra el inicio del último turno (la pregunta y debajo cómo buscó), no el final de la respuesta.
+  useEffect(() => { (fin.current?.previousElementSibling ?? fin.current)?.scrollIntoView({ block: "start", behavior: reducir ? "auto" : "smooth" }); }, [turnos, reducir]);
 
   const preguntar = async (texto: string, idExistente?: number) => {
     const pregunta = texto.trim();
