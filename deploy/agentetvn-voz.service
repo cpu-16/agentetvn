@@ -1,0 +1,18 @@
+[Unit]
+Description=AgenteTVN · puente de voz de Jarvis (reusa el login de Codex de la CSS; no toca css-codex)
+After=network-online.target css-codex.service
+
+[Service]
+WorkingDirectory=/opt/agentetvn-voz
+EnvironmentFile=/opt/agentetvn-voz/.env
+Environment=HOME=/root PYTHONUNBUFFERED=1 CODEX_BIN=/usr/local/bin/codex VOZ_REGISTRO=/opt/agentetvn-voz/voz-llamadas.jsonl VOZ_ESTADO=/opt/agentetvn-voz/voz-uso.json
+ExecStart=/usr/bin/python3 /opt/agentetvn-voz/puente.py
+Restart=on-failure
+RestartSec=5
+# Para no competir con la voz de la CSS en el mismo CT
+MemoryMax=600M
+CPUQuota=100%
+Nice=5
+
+[Install]
+WantedBy=multi-user.target
