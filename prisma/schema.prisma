@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// AgenteTVN · solo persiste lo que decide una persona.
+// El snapshot y los artefactos del motor viven en data/processed/ (reproducibles).
+
+model Revision {
+  id                 String   @id @default(cuid())
+  eventoId           String
+  estado             String // nuevo | en_revision | requiere_evidencia | aprobado_borrador | descartado
+  persona            String
+  motivo             String?
+  evidenciaPendiente String?
+  createdAt          DateTime @default(now())
+
+  @@index([eventoId])
+}
+
+model PaqueteEditado {
+  id        String   @id @default(cuid())
+  eventoId  String   @unique
+  contenido String // JSON del Paquete (ver src/lib/motor/contrato.ts)
+  modo      String // extractivo | llm
+  persona   String
+  updatedAt DateTime @updatedAt
+}
+
+model Decision {
+  id          String   @id @default(cuid())
+  titulo      String
+  alternativa String
+  motivo      String
+  persona     String
+  createdAt   DateTime @default(now())
+}

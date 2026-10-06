@@ -1,0 +1,13 @@
+{
+  "agencias": [
+    { "nombre": "EFE", "patrones": ["\\bEFE\\b"] },
+    { "nombre": "AFP", "patrones": ["\\bAFP\\b"] },
+    { "nombre": "AP", "patrones": ["\\bAP\\b", "Associated Press"] },
+    { "nombre": "Reuters", "patrones": ["Reuters"] },
+    { "nombre": "Xinhua", "patrones": ["Xinhua"] },
+    { "nombre": "Prensa Latina", "patrones": ["Prensa Latina"] },
+    { "nombre": "Bloomberg", "patrones": ["Bloomberg"] },
+    { "nombre": "DPA", "patrones": ["\\bDPA\\b", "\\bdpa\\b"] },
+    { "nombre": "ANSA", "patrones": ["\\bANSA\\b"] }
+  ]
+}

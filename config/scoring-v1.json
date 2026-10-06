@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "fecha": "2026-10-06",
+  "pesos": { "R": 30, "I": 25, "U": 20, "N": 15, "E": 10 },
+  "R": { "geo": 0.7, "tema": 0.3 },
+  "E": { "trazable": 0.4, "procedencia": 0.4, "conflicto": 0.2 },
+  "U": { "vida_media_h": 36 },
+  "N": { "umbral_mismo_evento": 0.82, "jaccard_titular": 0.8, "ventana_dias": 7 },
+  "temas": { "umbral": 0.78, "margen": 0.03 },
+  "consulta": { "umbral_coseno": 0.8, "k": 5 },
+  "rangos": { "bajo": [0, 40], "medio": [40, 70], "alto": [70, 100] },
+  "justificacion": "Pesos tomados del reto §4 (P = 30R + 25I + 20U + 15N + 10E). Umbrales de similitud calibrados con data/labels el 6-oct-2026. Cualquier cambio exige nueva versión, responsable y motivo (Decision en la base)."
+}
