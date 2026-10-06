@@ -44,9 +44,9 @@ export function Procedencias({ procedencias }: { procedencias: Tablero["proceden
   const total = procedencias.reduce((s, p) => s + p.n, 0);
   const opcion = useMemo<Opcion>(() => ({
     tooltip: { ...TOOLTIP, formatter: (p: { name: string; value: number; percent: number }) => `<strong>${esc(p.name)}</strong><br/>${fmt(p.value)} (${fmt(p.percent)} %)` },
-    legend: { orient: "vertical", left: 0, bottom: 0, icon: "circle", itemWidth: 10, itemHeight: 10, textStyle: { fontFamily: FUENTE, fontSize: 11 } },
+    legend: { orient: "vertical", right: 8, top: "middle", icon: "circle", itemWidth: 10, itemHeight: 10, textStyle: { fontFamily: FUENTE, fontSize: 11 } },
     series: [{
-      type: "pie", radius: ["48%", "72%"], center: ["50%", "32%"], avoidLabelOverlap: true,
+      type: "pie", radius: ["46%", "70%"], center: ["32%", "50%"], avoidLabelOverlap: true,
       itemStyle: { borderColor: "#fff", borderWidth: 2 },
       label: { show: false },
       emphasis: { label: { show: true, fontFamily: FUENTE, fontSize: 12, formatter: "{d}%" } },

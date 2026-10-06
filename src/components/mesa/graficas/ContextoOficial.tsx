@@ -17,11 +17,11 @@ export function ContextoOficial({ indicadores }: { indicadores: Tablero["indicad
     const anios = ind.series[0]?.puntos.map((p) => p[0]) ?? [];
     const ordenadas = [...ind.series].sort((a) => (a.pais === "PAN" ? 1 : -1)); // Panamá al final = encima
     return {
-      grid: { left: 64, right: 16, top: 40, bottom: 28 },
+      grid: { left: 64, right: 64, top: 40, bottom: 28 },
       legend: { top: 0, left: 0, icon: "roundRect", itemWidth: 14, itemHeight: 3, textStyle: { fontFamily: FUENTE, fontSize: 11 }, data: ind.series.map((s) => PAIS[s.pais] ?? s.pais) },
       tooltip: { ...TOOLTIP, trigger: "axis", axisPointer: { type: "line", lineStyle: { color: "#9aa4b2" } }, valueFormatter: (v: number | null) => (v === null || v === undefined ? "sin dato" : `${fmt(v, decimales)} ${unidad}`) },
       xAxis: { type: "category", data: anios, boundaryGap: false, ...EJE },
-      yAxis: { type: "value", name: unidad, nameTextStyle: { color: "#5b6572", fontFamily: FUENTE, fontSize: 11, align: "left" }, ...EJE, axisLabel: { ...EJE.axisLabel, formatter: (v: number) => (unidad === "personas" ? `${fmt(v / 1e6, 0)} M` : fmt(v, 0)) }, scale: true },
+      yAxis: { type: "value", ...EJE, axisLabel: { ...EJE.axisLabel, formatter: (v: number) => (unidad === "personas" ? `${fmt(v / 1e6, 0)} M` : fmt(v, 0)) }, scale: true },
       series: ordenadas.map((s) => ({
         name: PAIS[s.pais] ?? s.pais, type: "line", connectNulls: false, showSymbol: false, symbol: "circle", symbolSize: 8,
         lineStyle: { width: s.pais === "PAN" ? 3 : 1.5, color: s.pais === "PAN" ? AZUL_TVN : "#aab3bf" },
@@ -38,7 +38,7 @@ export function ContextoOficial({ indicadores }: { indicadores: Tablero["indicad
   return (
     <Grafica
       titulo="Contexto oficial: Banco Mundial"
-      nota="Dato anual, contexto histórico: no es una medición de hoy. Los huecos son valores no publicados; nunca se rellenan con cero."
+      nota={`${ind?.nombre ?? ""}, en ${unidad}. Dato anual, contexto histórico: no es una medición de hoy. Los huecos son valores no publicados; nunca se rellenan con cero.`}
       aria={`Líneas de ${ind?.nombre ?? "indicador"} 2010 a 2024 para seis países, Panamá resaltado`}
       opcion={opcion}
       alto={320}

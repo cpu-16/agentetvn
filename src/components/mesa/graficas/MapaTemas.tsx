@@ -25,12 +25,15 @@ export function MapaTemas({ eventos, filtro, onFiltro, abrirFicha }: Props) {
       };
     }).sort((a, b) => (b.value[0] as number) - (a.value[0] as number));
   }, [eventos]);
+  // con un solo tema activo, los eventos pasan a ser el primer nivel (no hace falta un segundo clic)
+  const unSoloTema = filtro.temas.length === 1 && arbol.length === 1;
+  const datosTreemap = unSoloTema ? arbol[0].children : arbol; // sin color fijo: el visualMap pinta cada evento por su P
 
   const opcion = useMemo<Opcion>(() => ({
     tooltip: { ...TOOLTIP, formatter: (p: { name: string; value: number[]; treePathInfo?: { name: string }[] }) => `<strong>${esc(p.name)}</strong><br/>${fmt(p.value[0])} publicaciones<br/>P ${p.treePathInfo && p.treePathInfo.length > 2 ? "" : "mediana "}${fmt(p.value[1], 1)}` },
     visualMap: { type: "continuous", min: 0, max: 100, dimension: 1, inRange: { color: RAMPA_AZUL }, text: ["P 100", "P 0"], orient: "horizontal", left: "center", bottom: 0, itemWidth: 10, itemHeight: 120, textStyle: { fontFamily: FUENTE, fontSize: 10, color: "#5b6572" }, seriesIndex: 0 },
     series: [{
-      type: "treemap", roam: false, nodeClick: "link", leafDepth: 1, width: "100%", height: "86%", top: 0,
+      type: "treemap", roam: false, nodeClick: "link", leafDepth: unSoloTema ? undefined : 1, width: "100%", height: "86%", top: 0,
       breadcrumb: { show: true, height: 20, itemStyle: { color: "#f3f5f8", textStyle: { color: "#0f1b2d", fontFamily: FUENTE } } },
       label: { show: true, fontFamily: FUENTE_DISPLAY, fontSize: 13, color: "#fff", overflow: "truncate" },
       upperLabel: { show: true, height: 22, fontFamily: FUENTE_DISPLAY, fontSize: 12, color: "#fff" },
@@ -38,9 +41,9 @@ export function MapaTemas({ eventos, filtro, onFiltro, abrirFicha }: Props) {
         { itemStyle: { borderWidth: 0, gapWidth: 3 }, colorMappingBy: "id", visualDimension: 1, color: undefined },
         { itemStyle: { borderColor: "#fff", borderWidth: 2, gapWidth: 2 }, label: { fontSize: 11 } },
       ],
-      data: arbol,
+      data: datosTreemap,
     }],
-  }), [arbol]);
+  }), [arbol, datosTreemap, unSoloTema]);
 
   const eventosGr = useMemo<Manejadores>(() => ({
     click: (p) => {
@@ -55,7 +58,7 @@ export function MapaTemas({ eventos, filtro, onFiltro, abrirFicha }: Props) {
   return (
     <Grafica
       titulo="Mapa de temas"
-      nota="Tamaño: publicaciones. Color: puntaje de atención mediano. Trama: por revisar. Clic en un tema para filtrar el tablero y entrar; clic en un evento abre su ficha."
+      nota={unSoloTema ? `Eventos de ${arbol[0].name}: tamaño, publicaciones; color, puntaje de atención; trama, por revisar. Clic abre la ficha. «Limpiar» vuelve a los temas.` : "Tamaño: publicaciones. Color: puntaje de atención mediano. Trama: por revisar. Clic en un tema filtra el tablero y muestra sus eventos; clic en un evento abre su ficha."}
       aria={`Mapa de temas con ${arbol.length} temas y ${eventos.length} eventos`}
       opcion={opcion}
       eventos={eventosGr}

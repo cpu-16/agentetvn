@@ -89,19 +89,15 @@ export function Tablero() {
 
       <SenalesPorDia datos={porDia} filtro={filtro} onFiltro={onFiltro} />
 
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div className="grid min-w-0 gap-3 lg:grid-cols-2">
         <MapaTemas eventos={eventos} filtro={filtro} onFiltro={onFiltro} abrirFicha={abrirFicha} />
         <RelevanciaEvidencia eventos={eventos} abrirFicha={abrirFicha} />
         <EvidenciaPorTema eventos={eventos} />
-        <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr]">
-          <Medios medios={datos.medios} filtro={filtro} onFiltro={onFiltro} />
-          <Procedencias procedencias={datos.procedencias} />
-        </div>
+        <Medios medios={datos.medios} filtro={filtro} onFiltro={onFiltro} />
+        <Procedencias procedencias={datos.procedencias} />
         <ContextoOficial indicadores={datos.indicadores} />
-        <div className="grid gap-3">
-          <SismosMapa sismos={datos.sismos} />
-          <SismosPorMes meses={datos.sismosPorMes} />
-        </div>
+        <SismosMapa sismos={datos.sismos} />
+        <SismosPorMes meses={datos.sismosPorMes} />
       </div>
 
       <section aria-label="Calidad del corte" className="grid grid-cols-2 gap-3 md:grid-cols-5">

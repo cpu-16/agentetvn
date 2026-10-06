@@ -8,6 +8,8 @@ interface Props { datos: Tablero["porDiaTema"]; filtro: Filtro; onFiltro: (f: Pa
 
 const diaCorto = (d: string) => new Intl.DateTimeFormat("es-PA", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
+const activarBrush = (chart: { dispatchAction: (a: unknown) => void }) => chart.dispatchAction({ type: "takeGlobalCursor", key: "brush", brushOption: { brushType: "lineX", brushMode: "single" } });
+
 export function SenalesPorDia({ datos, filtro, onFiltro }: Props) {
   const { dias, temas, matriz } = useMemo(() => {
     const dias = [...new Set(datos.map((d) => d.dia))].sort();
@@ -21,12 +23,12 @@ export function SenalesPorDia({ datos, filtro, onFiltro }: Props) {
 
   const opcion = useMemo<Opcion>(() => ({
     color: temas.map(colorTema),
-    grid: { left: 44, right: 16, top: 36, bottom: 64 },
+    grid: { left: 44, right: 16, top: 40, bottom: 64 },
     tooltip: { ...TOOLTIP, trigger: "axis", axisPointer: { type: "line", lineStyle: { color: "#9aa4b2" } }, valueFormatter: (v: number) => fmt(v) },
     legend: { top: 0, left: 0, icon: "roundRect", itemWidth: 10, itemHeight: 10, textStyle: { fontFamily: FUENTE, fontSize: 11 }, data: temas.map(nombreTema) },
     xAxis: { type: "category", data: dias, boundaryGap: false, ...EJE, axisLabel: { ...EJE.axisLabel, formatter: diaCorto, hideOverlap: true } },
-    yAxis: { type: "value", name: "publicaciones", nameTextStyle: { color: "#5b6572", fontFamily: FUENTE, fontSize: 11, align: "left" }, ...EJE, minInterval: 1 },
-    dataZoom: [{ type: "inside", xAxisIndex: 0 }, { type: "slider", xAxisIndex: 0, height: 18, bottom: 10, borderColor: "#d9dee6", fillerColor: "rgba(0,119,200,.12)", handleStyle: { color: "#0077c8" }, textStyle: { fontFamily: FUENTE, fontSize: 10 }, labelFormatter: (_: number, v: string) => (v ? diaCorto(v) : "") }],
+    yAxis: { type: "value", ...EJE, minInterval: 1 },
+    dataZoom: [{ type: "slider", xAxisIndex: 0, height: 18, bottom: 10, borderColor: "#d9dee6", fillerColor: "rgba(0,119,200,.12)", handleStyle: { color: "#0077c8" }, textStyle: { fontFamily: FUENTE, fontSize: 10 }, labelFormatter: (_: number, v: string) => (v ? diaCorto(v) : "") }],
     brush: { xAxisIndex: 0, brushType: "lineX", brushMode: "single", brushStyle: { color: "rgba(0,119,200,.10)", borderColor: "#0077c8" }, throttleType: "debounce", throttleDelay: 200, removeOnClick: true },
     series: temas.map((t) => ({ name: nombreTema(t), type: "line", stack: "total", areaStyle: { opacity: 0.85 }, lineStyle: { width: 1, color: "#fff" }, showSymbol: false, emphasis: { focus: "series" }, data: matriz[t] })),
   }), [dias, temas, matriz]);
@@ -57,7 +59,7 @@ export function SenalesPorDia({ datos, filtro, onFiltro }: Props) {
       eventos={eventos}
       alto={320}
       tabla={tabla}
-      alMontar={(chart) => chart.dispatchAction({ type: "takeGlobalCursor", key: "brush", brushOption: { brushType: "lineX", brushMode: "single" } })}
+      trasOpcion={activarBrush}
     />
   );
 }

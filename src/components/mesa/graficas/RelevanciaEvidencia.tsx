@@ -28,7 +28,7 @@ export function RelevanciaEvidencia({ eventos, abrirFicha }: Props) {
     tooltip: { ...TOOLTIP, formatter: (p: { data: { titulo: string; P: number; estado: string; value: number[] } }) => `<strong>${esc(p.data.titulo)}</strong><br/>P ${fmt(p.data.P, 1)}; evidencia ${esc(p.data.estado)}<br/>Relevancia ${p.data.value[0]}, evidencia ${p.data.value[1]}, ${fmt(p.data.value[2])} publicaciones` },
     xAxis: { type: "value", min: 0, max: 1, name: "relevancia (R)", nameLocation: "middle", nameGap: 24, nameTextStyle: { color: "#5b6572", fontFamily: FUENTE, fontSize: 11 }, ...EJE },
     yAxis: { type: "value", min: 0, max: 1, name: "evidencia (E)", nameTextStyle: { color: "#5b6572", fontFamily: FUENTE, fontSize: 11, align: "left" }, ...EJE },
-    series: series.map((s, i) => (i === 0 ? { ...s, markLine: { silent: true, symbol: "none", lineStyle: { type: "dashed", color: "#9aa4b2" }, label: { fontFamily: FUENTE, fontSize: 10, color: "#5b6572" }, data: [{ xAxis: 0.5, label: { formatter: "relevancia 0.5", position: "insideEndTop" } }, { yAxis: 0.4, label: { formatter: "evidencia 0.4: por debajo, investigar", position: "insideEndTop" } }] } } : s)),
+    series: series.map((s, i) => (i === 0 ? { ...s, markLine: { silent: true, symbol: "none", lineStyle: { type: "dashed", color: "#9aa4b2" }, label: { fontFamily: FUENTE, fontSize: 10, color: "#5b6572" }, data: [{ xAxis: 0.5, label: { formatter: "relevancia 0.5", position: "insideStartTop" } }, { yAxis: 0.4, label: { formatter: "evidencia 0.4: por debajo, investigar", position: "insideEndBottom" } }] } } : s)),
   }), [series]);
 
   const manejadores = useMemo<Manejadores>(() => ({ click: (p) => { const id = (p as { data?: { id?: string } }).data?.id; if (id) abrirFicha(id); } }), [abrirFicha]);
