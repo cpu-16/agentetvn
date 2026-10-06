@@ -39,6 +39,19 @@ Registro por intento en `db/llm-intentos.jsonl` del servidor de la demo (6-oct-2
 
 Validación sobre la última precarga (11 paquetes, 11 de 11 en modo IA): 5 frases descartadas. Cuatro, bien descartadas: mezclaban la fuente citada con otra o hablaban de entidades que la fuente no menciona («Asamblea», «Canal»). Una era un falso positivo («la causa del» contenía «a causa de»), corregido en `212b85d` con su prueba. En una pasada anterior, el validador también descartó inferencias de fecha que la fuente no da («el miércoles sería el 7 de octubre»). Pruebas: 79 en verde, entre ellas `tests/llm.test.ts` (validador, respaldo, cero llamadas offline) y `tests/llm-servicio.test.ts` (SQLite real: una llamada por evento, edición humana no pisada, paquete de otro snapshot no mostrado), las dos con control positivo (al desactivar la protección, la prueba falla).
 
+## Comparación de modelos de embeddings (D14)
+
+A/B pre-registrado (hipótesis y criterios de «no cambiar» escritos antes de embeber), sobre el benchmark dev y T01–T10, sin abrir el reservado. Detalle en `docs/EXPERIMENTO-EMBEDDINGS-2026-10-06.md`.
+
+| | e5-small (se queda) | Granite-97M r2 | EmbeddingGemma-300M |
+|---|---|---|---|
+| hit@5 dev (sin margen / con margen) | 17 / 17 | 16 / 14 | 18 / 17 |
+| Abstenciones, adversarial, citas | 6/7 · 0 indebidas, 6/6, 38/38 | igual | igual |
+| Hueco paráfrasis − otro tema | 0,050 | 0,073 | 0,246 |
+| Embeber el corpus (vs e5) | 1× | ≈ 1,0× | 7,7–10,5× |
+| Consulta caliente | ~5 ms | ~4 ms | ~100 ms |
+| T01–T10 | 10/10 | 10/10 | 10/10 |
+
 ## Jarvis-TVN (voz)
 
 Pruebas: 110 en verde con `bun test` (incluye `tests/voz-herramientas.test.ts`, `tests/voz-rutas.test.ts` y `tests/jarvis-ui.test.ts`), más `bun run voz:check` para el puente sin red. Hay controles positivos en el token, los topes, la detección de empates, la regla de cuelgue y el cierre confirmado. La prueba de punta a punta (`scripts/e2e-voz.py`, 6-oct) corrió contra el sitio publicado con micrófono falso: el orbe escucha, la llamada se conecta por el puente inverso, soltar fuera del orbe cierra el micrófono, la herramienta `navegar` mueve la página al tablero y una página cerrada sin colgar se corta en 26 s. La voz de la CSS quedó sana antes y después de cada despliegue (`active active estado=ok refresh=0`). Pendiente: prueba en campo con voz real y celulares.

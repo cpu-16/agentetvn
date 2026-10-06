@@ -94,7 +94,7 @@ flowchart LR
 | Latencia mediana / p95 | 6 ms / 12 ms | 2 ms / 3 ms |
 | Evidencias usadas por consulta (promedio) | 1,55 | 0,87 |
 
-Por sentido se usan las publicaciones que superan el umbral de coseno (0,80) **y** quedan a 0,02 o menos de la más parecida. El e5 comprime la escala: antes de ese margen, «¿qué se sabe de la aprehensión de Enrique Lau?» traía también otros arrestos. Con el margen, el benchmark da los mismos aciertos y abstenciones, y las evidencias por consulta bajan de 3,84 a 1,55 (decisión D13).
+Por sentido se usan las publicaciones que superan el umbral de coseno (0,80) **y** quedan a 0,02 o menos de la más parecida. El e5 comprime la escala: antes de ese margen, «¿qué se sabe de la aprehensión de Enrique Lau?» traía también otros arrestos. Con el margen, el benchmark da los mismos aciertos y abstenciones, y las evidencias por consulta bajan de 3,84 a 1,55 (decisión D13). También se comparó el e5 con EmbeddingGemma-300M y Granite-97M en un A/B pre-registrado: Gemma separa mejor, pero cuesta 7,7–10,5× más CPU y con el margen empata; Granite baja aciertos. Se queda el e5 (D14, `docs/EXPERIMENTO-EMBEDDINGS-2026-10-06.md`).
 
 <img src="docs/img/traza.webp" alt="Traza de una consulta: vector de la pregunta, histograma de similitud con el umbral 0,80 y las dos noticias usadas" width="360" align="right">
 
@@ -209,7 +209,7 @@ src/app/api/         rutas de la mesa
 src/components/mesa/ portada, agenda, ficha, paquete, chat, tablero (ECharts), control
 scripts/             ingesta, motor, benchmark, pruebas, doctor, redactar, notion-sync
 tests/               T01–T10 del reto, motor, redacción con IA
-docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D13, catálogo, casos, métricas, riesgos)
+docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D14, catálogo, casos, métricas, riesgos)
 SPEC.md              especificación
 ```
 
