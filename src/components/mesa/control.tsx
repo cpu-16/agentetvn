@@ -10,7 +10,7 @@ interface Control {
   motor: { modoIA: string; modelo: string | null; reglas: string; eventos: number; por_tema: Record<string, number>; rangos: Record<string, number>; ms: number } | null;
   reglas: { version: string; fecha: string; pesos: Record<string, number>; justificacion: string };
   benchmark: { split: string; filas: { metrica: string; ia: string; baseline: string; n: string }[] } | null;
-  pruebas: { id: string; estado: string; observado: string; commit?: string }[] | null;
+  pruebas: { id: string; nombre: string; esperado: string; estado: string; resultado: string; commit?: string; fecha?: string; correccion?: string }[] | null;
   modo: string;
   decisiones: { id: string; titulo: string; alternativa: string; motivo: string; persona: string; createdAt: string }[];
   revisiones: number;
@@ -59,8 +59,21 @@ export function Control() {
         ) : <p className="text-sm text-muted-foreground">Pendiente: bun run benchmark.</p>}
       </Seccion>
       <Seccion titulo="Pruebas de aceptación T01 a T10">
-        <ul className="space-y-1 text-sm">
-          {PRUEBAS.map((p) => { const id = p.slice(0, 3); const r = pruebasPorId.get(id); return <li key={id} className="flex flex-wrap gap-2"><span className="w-full sm:w-auto sm:min-w-[340px]">{p}</span><span className={r ? (r.estado === "pasa" ? "text-verde" : "text-senal") : "text-muted-foreground"}>{r ? `${r.estado}${r.commit ? ` (${r.commit.slice(0, 7)})` : ""}: ${r.observado}` : "pendiente"}</span></li>; })}
+        <ul className="escaleta rounded-sm border border-border bg-white text-sm">
+          {PRUEBAS.map((p) => {
+            const id = p.slice(0, 3);
+            const r = pruebasPorId.get(id);
+            return (
+              <li key={id} className="grid gap-x-4 gap-y-1 px-3 py-2 sm:grid-cols-[320px_1fr]">
+                <span className="font-medium">{p}</span>
+                <span>
+                  <span className={r ? (r.estado === "pasa" ? "text-verde" : "text-senal") : "text-muted-foreground"}>{r ? `${r.estado}, ${r.resultado}${r.commit ? ` (commit ${r.commit.slice(0, 7)})` : ""}${r.fecha ? `, ${horaPanama(r.fecha)}` : ""}` : "pendiente"}</span>
+                  {r?.esperado && <span className="block text-xs text-muted-foreground">Esperado: {r.esperado}</span>}
+                  {r?.correccion && <span className="block text-xs">Corrección: {r.correccion}</span>}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </Seccion>
       <Seccion titulo="Decisiones registradas">

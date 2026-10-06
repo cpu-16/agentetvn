@@ -9,7 +9,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { parse } from "csv-parse/sync";
 import { cargarSnapshot } from "../src/lib/motor/cargar";
 import { consultar } from "../src/lib/motor/consulta";
-import { clasificarTema, temaPorPalabras, vectoresTemas } from "../src/lib/motor/temas";
+import { clasificarKnn, clasificarTema, etiquetasConVector, temaPorPalabras, vectoresTemas } from "../src/lib/motor/temas";
 import { coseno, modeloDisponible } from "../src/lib/motor/embeddings";
 import { jaccard } from "../src/lib/motor/bm25";
 import { leerScoring } from "../src/lib/motor/config";
@@ -34,12 +34,14 @@ if (process.argv.includes("--etiquetas") || !existsSync("data/benchmark/benchmar
     const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
     const emb = snap.embeddings;
     const temasVec = (await modeloDisponible()) ? await vectoresTemas() : [];
-    const pred = { ia: new Map<string, string>(), base: new Map<string, string>() };
+    const pred = { ia: new Map<string, string>(), knn: new Map<string, string>(), base: new Map<string, string>() };
+    const etiq = etiquetasConVector(emb);
     for (const e of etiquetadas) {
       const n = porId.get(e.id_noticia);
       if (!n) continue;
       const i = emb?.ids.indexOf(e.id_noticia) ?? -1;
       if (emb && i >= 0 && temasVec.length) pred.ia.set(e.id_noticia, n.seccion === "deportes" ? "deportes" : clasificarTema(emb.vectores[i], temasVec).tema);
+      if (emb && i >= 0 && etiq.length >= 10) pred.knn.set(e.id_noticia, n.seccion === "deportes" ? "deportes" : clasificarKnn(emb.vectores[i], etiq, 5, e.id_noticia).tema); // leave-one-out
       pred.base.set(e.id_noticia, n.seccion === "deportes" ? "deportes" : (temaPorPalabras(`${n.titulo} ${n.descripcion}`) ?? "otro"));
     }
     const macroF1 = (p: Map<string, string>) => {
@@ -53,7 +55,7 @@ if (process.argv.includes("--etiquetas") || !existsSync("data/benchmark/benchmar
       });
       return { macro_f1: Math.round((f1s.reduce((s, x) => s + x.f1, 0) / Math.max(1, f1s.length)) * 1000) / 1000, exactitud: Math.round((etiquetadas.filter((e) => p.get(e.id_noticia) === e.tema).length / etiquetadas.length) * 1000) / 1000, por_clase: f1s };
     };
-    resumen.temas = { n: etiquetadas.length, etiquetadores: [...new Set(etiquetadas.map((e) => e.revisado_por))], ia: pred.ia.size ? macroF1(pred.ia) : null, baseline: macroF1(pred.base) };
+    resumen.temas = { n: etiquetadas.length, etiquetadores: [...new Set(etiquetadas.map((e) => e.revisado_por))], metodo: "etiquetas humanas sobre titular+extracto; kNN evaluado leave-one-out", zero_shot: pred.ia.size ? macroF1(pred.ia) : null, knn_loo: pred.knn.size ? macroF1(pred.knn) : null, baseline: macroF1(pred.base) };
   }
   if (existsSync("data/labels/pares.csv")) {
     const pares = (parse(readFileSync("data/labels/pares.csv", "utf8"), { columns: true, skip_empty_lines: true }) as { a: string; b: string; mismo_evento: string; revisado_por: string }[]).filter((p) => p.mismo_evento && p.revisado_por);

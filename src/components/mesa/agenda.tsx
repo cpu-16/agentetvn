@@ -63,7 +63,7 @@ export function Agenda({ onCargada }: { onCargada?: (a: { corteUTC: string; vers
       <section>
         <div className="mb-3 flex flex-wrap items-end gap-3">
           <h1 className="text-2xl font-semibold">Agenda del día</h1>
-          <p className="text-sm text-muted-foreground">{data.eventos.length} temas ordenados por puntaje de atención. Corte {horaPanama(data.corteUTC)}.</p>
+          <p className="text-sm text-muted-foreground">{data.eventos.length} temas ordenados por puntaje de atención. Corte {horaPanama(data.corteUTC)}</p>
         </div>
         <div className="mb-2 flex flex-wrap gap-2 text-sm">
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar titular o medio" className="h-9 w-full rounded-sm border border-border bg-white px-3 sm:w-64" />

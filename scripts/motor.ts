@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { cargarSnapshot } from "../src/lib/motor/cargar";
 import { aLista, coseno, embeber, MODELO, modeloDisponible } from "../src/lib/motor/embeddings";
-import { clasificarTema, SECCION_A_TEMA, temaPorPalabras, vectoresTemas } from "../src/lib/motor/temas";
+import { clasificarKnn, clasificarTema, etiquetasConVector, SECCION_A_TEMA, temaPorPalabras, vectoresTemas } from "../src/lib/motor/temas";
 import { agruparEventos } from "../src/lib/motor/eventos";
 import { vincularContexto } from "../src/lib/motor/contexto";
 import { detectarContradicciones, estadoEvidencia } from "../src/lib/motor/evidencia";
@@ -59,8 +59,11 @@ if (await modeloDisponible()) {
   log("modelo ausente: modo léxico (temas por palabras, eventos por Jaccard)");
 }
 
-// 4 · temas
+// 4 · temas: kNN si hay ≥30 etiquetas humanas (con el vector precalculado), si no zero-shot por prototipos
 const temasVec = modoIA === "embeddings" ? await vectoresTemas() : [];
+const etiquetas = modoIA === "embeddings" ? etiquetasConVector({ ids: noticias.map((n) => n.id_noticia), vectores: noticias.map((n) => Array.from(vecs.get(n.id_noticia)!)) }) : [];
+const usarKnn = etiquetas.length >= 30;
+log(`temas: ${usarKnn ? `kNN con ${etiquetas.length} etiquetas humanas` : "zero-shot por prototipos (sin etiquetas suficientes)"}`);
 const temaDe = new Map<string, { tema: string; confianza: number; por_revisar: boolean }>();
 for (const n of noticias) {
   const base = temaPorPalabras(`${n.titulo} ${n.descripcion}`);
@@ -70,7 +73,7 @@ for (const n of noticias) {
     continue;
   }
   if (modoIA === "embeddings") {
-    const c = clasificarTema(vecs.get(n.id_noticia)!, temasVec, cfg.temas);
+    const c = usarKnn ? clasificarKnn(vecs.get(n.id_noticia)!, etiquetas, 5, n.id_noticia) : clasificarTema(vecs.get(n.id_noticia)!, temasVec, cfg.temas);
     // si la IA duda y el baseline tiene señal clara, se usa el baseline pero queda «por revisar»
     temaDe.set(n.id_noticia, c.por_revisar && base ? { tema: base, confianza: c.confianza, por_revisar: true } : c);
   } else temaDe.set(n.id_noticia, { tema: base ?? "otro", confianza: base ? 0.5 : 0, por_revisar: !base });
@@ -109,5 +112,5 @@ escribirJson(`${OUT}/eventos.json`, ordenados);
 const fichas: Ficha[] = ordenados.map((e) => ({ id_caso: e.id, modalidad: "tvn", ids_fuente: e.ids_noticia, afirmaciones: [], citas: [...e.ids_noticia, ...e.contexto.indicadores, ...e.contexto.sismos], puntaje: e.P, componentes: e.componentes, estado_evidencia: e.estado_evidencia, borrador: null, estado_revision: "nuevo", persona_revisora: null, sintetica: e.ids_noticia.some((i) => porId.get(i)!.sintetica) || undefined }));
 writeFileSync(`${OUT}/fichas.jsonl`, fichas.map((f) => JSON.stringify(f)).join("\n") + "\n");
 escribirJson(`${OUT}/noticias-motor.json`, noticiasConTema.map((n) => ({ ...n, no_confiable: n.no_confiable })));
-escribirJson(`${OUT}/motor-meta.json`, { fecha: new Date().toISOString(), modoIA, modelo: modoIA === "embeddings" ? MODELO : null, reglas: cfg.version, corteUTC: corte, eventos: eventos.length, por_tema: Object.fromEntries([...new Set(eventos.map((e) => e.tema))].map((t) => [t, eventos.filter((e) => e.tema === t).length])), rangos: { alto: eventos.filter((e) => e.rango === "alto").length, medio: eventos.filter((e) => e.rango === "medio").length, bajo: eventos.filter((e) => e.rango === "bajo").length }, ms: Date.now() - t0 });
+escribirJson(`${OUT}/motor-meta.json`, { fecha: new Date().toISOString(), modoIA, clasificador: usarKnn ? `knn k=5 sobre ${etiquetas.length} etiquetas humanas (leave-one-out para las etiquetadas)` : "zero-shot por prototipos", modelo: modoIA === "embeddings" ? MODELO : null, reglas: cfg.version, corteUTC: corte, eventos: eventos.length, por_tema: Object.fromEntries([...new Set(eventos.map((e) => e.tema))].map((t) => [t, eventos.filter((e) => e.tema === t).length])), rangos: { alto: eventos.filter((e) => e.rango === "alto").length, medio: eventos.filter((e) => e.rango === "medio").length, bajo: eventos.filter((e) => e.rango === "bajo").length }, ms: Date.now() - t0 });
 log(`listo · top 5: ${ordenados.slice(0, 5).map((e) => `${e.P} ${e.tema} «${porId.get(e.representante)!.titulo.slice(0, 50)}»`).join(" | ")}`);

@@ -1,4 +1,6 @@
 // Clasificación temática · IA: similitud con la descripción de cada tema (zero-shot) · baseline: palabras clave.
+import { existsSync, readFileSync } from "fs";
+import { parse } from "csv-parse/sync";
 import { coseno, embeber } from "./embeddings";
 import { tokenizar } from "./bm25";
 import { leerScoring, leerTemas, type TemaDef } from "./config";
@@ -41,4 +43,28 @@ export function temaPorPalabras(texto: string, defs: TemaDef[] = leerTemas()): s
     if (n > 0 && (!mejor || n > mejor.n)) mejor = { id: t.id, n };
   }
   return mejor?.id ?? null;
+}
+
+/** kNN sobre etiquetas humanas (IA supervisada con pocas etiquetas): vota entre los k vecinos más parecidos. */
+export function clasificarKnn(vec: Float32Array | number[], etiquetados: { id: string; vec: Float32Array | number[]; tema: string }[], k = 5, excluirId?: string): Clasificacion {
+  const vecinos = etiquetados
+    .filter((e) => e.id !== excluirId)
+    .map((e) => ({ tema: e.tema, s: coseno(vec, e.vec) }))
+    .sort((a, b) => b.s - a.s)
+    .slice(0, k);
+  const votos = new Map<string, number>();
+  for (const v of vecinos) votos.set(v.tema, (votos.get(v.tema) ?? 0) + v.s);
+  const orden = [...votos].sort((a, b) => b[1] - a[1]);
+  const total = orden.reduce((s, [, v]) => s + v, 0) || 1;
+  const conf = orden[0][1] / total;
+  const margen = (orden[0][1] - (orden[1]?.[1] ?? 0)) / total;
+  return { tema: orden[0][0], confianza: Math.round(conf * 1000) / 1000, por_revisar: conf < 0.5 || margen < 0.15, segundo: orden[1]?.[0] ?? "", margen: Math.round(margen * 1000) / 1000 };
+}
+
+/** Etiquetas humanas disponibles (tema + revisado_por) con su vector del snapshot. */
+export function etiquetasConVector(snapEmb: { ids: string[]; vectores: number[][] } | null, rutaCsv = "data/labels/temas.csv"): { id: string; vec: number[]; tema: string }[] {
+  if (!snapEmb || !existsSync(rutaCsv)) return [];
+  const filas = parse(readFileSync(rutaCsv, "utf8"), { columns: true, skip_empty_lines: true }) as { id_noticia: string; tema: string; revisado_por: string }[];
+  const idx = new Map(snapEmb.ids.map((id, i) => [id, i]));
+  return filas.filter((f) => f.tema && f.tema !== "?" && f.revisado_por && idx.has(f.id_noticia)).map((f) => ({ id: f.id_noticia, vec: snapEmb.vectores[idx.get(f.id_noticia)!], tema: f.tema }));
 }
