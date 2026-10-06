@@ -42,7 +42,12 @@ try {
 const modo = process.env.AGENTETVN_MODO ?? "offline";
 const claves = Object.keys(process.env).filter((k) => /^(LLM_API_KEY|ANTHROPIC_API_KEY|OPENAI_API_KEY)$/.test(k) && process.env[k]);
 if (modo === "offline") r("OK", "Modo", `offline · cero llamadas de red${claves.length ? " (hay claves en el entorno, pero no se usan)" : ""}`);
-else r(claves.length ? "AVISO" : "FALLA", "Modo", claves.length ? "online · el LLM de redacción está habilitado; todo lo demás sigue local" : "online sin LLM_API_KEY: usa AGENTETVN_MODO=offline");
+else if (!process.env.LLM_BASE_URL) r("FALLA", "Modo", "online sin LLM_BASE_URL: define el endpoint del LLM o usa AGENTETVN_MODO=offline");
+else {
+  const url = process.env.LLM_BASE_URL.replace(/\/$/, "");
+  const vivo = await fetch(`${url}/models`, { signal: AbortSignal.timeout(3000) }).then((x) => x.ok).catch(() => false);
+  r(vivo ? "OK" : "AVISO", "Modo", vivo ? `online · LLM de redacción (${process.env.LLM_MODEL ?? "claude-opus-5-5"}) responde en ${url}; si se cae, respaldo extractivo` : `online, pero ${url} no responde: la redacción usará el respaldo extractivo`);
+}
 r(existsSync(".env.example") && !/=(secret|ntn_|sk-)/.test(readFileSync(".env.example", "utf8")) ? "OK" : "FALLA", "Secretos", ".env.example sin valores; .env ignorado por git");
 
 const ancho = Math.max(...filas.map((f) => f.nombre.length));
