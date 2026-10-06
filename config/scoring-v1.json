@@ -1,13 +1,87 @@
 {
   "version": "v1",
   "fecha": "2026-10-06",
-  "pesos": { "R": 30, "I": 25, "U": 20, "N": 15, "E": 10 },
-  "R": { "geo": 0.7, "tema": 0.3 },
-  "E": { "trazable": 0.4, "procedencia": 0.4, "conflicto": 0.2 },
-  "U": { "vida_media_h": 36 },
-  "N": { "umbral_mismo_evento": 0.82, "jaccard_titular": 0.8, "ventana_dias": 7 },
-  "temas": { "umbral": 0.78, "margen": 0.03 },
-  "consulta": { "umbral_coseno": 0.8, "k": 5 },
-  "rangos": { "bajo": [0, 40], "medio": [40, 70], "alto": [70, 100] },
-  "justificacion": "Pesos tomados del reto §4 (P = 30R + 25I + 20U + 15N + 10E). Umbrales de similitud calibrados con data/labels el 6-oct-2026. Cualquier cambio exige nueva versión, responsable y motivo (Decision en la base)."
+  "pesos": {
+    "R": 30,
+    "I": 25,
+    "U": 20,
+    "N": 15,
+    "E": 10
+  },
+  "R": {
+    "geo": 0.45,
+    "tema": 0.55,
+    "geo_sin_mencion": 0.4
+  },
+  "E": {
+    "primaria": 0.45,
+    "independencia": 0.35,
+    "identificable": 0.2,
+    "umbral_insuficiente": 0.4
+  },
+  "U": {
+    "tabla_horas": [
+      [
+        24,
+        1.0
+      ],
+      [
+        72,
+        0.7
+      ],
+      [
+        168,
+        0.4
+      ],
+      [
+        720,
+        0.15
+      ]
+    ],
+    "mas_antigua": 0.05,
+    "sin_fecha_publicacion": 0.2
+  },
+  "N": {
+    "umbral_mismo_evento": 0.82,
+    "jaccard_titular": 0.8,
+    "ventana_dias": 7,
+    "segunda_ola": 0.3
+  },
+  "temas": {
+    "umbral": 0.78,
+    "margen": 0.03
+  },
+  "consulta": {
+    "umbral_coseno": 0.8,
+    "k": 5
+  },
+  "rangos": {
+    "bajo": [
+      0,
+      40
+    ],
+    "medio": [
+      40,
+      70
+    ],
+    "alto": [
+      70,
+      100
+    ]
+  },
+  "justificacion": "Pesos 30/25/20/15/10 del reto §4. Normalizaciones 0–1 por reglas documentadas (R geo+tema; I prior editorial por tema + magnitud del dato oficial; U por edad de la publicación más reciente; N por primera aparición; E primaria+independencia+identificable). Umbrales de similitud calibrados con data/labels el 6-oct-2026. Cambiar un peso exige nueva versión, responsable y motivo (tabla Decision).",
+  "I": {
+    "prior": {
+      "logistica_canal": 0.85,
+      "regulacion": 0.75,
+      "economia": 0.7,
+      "servicios_publicos": 0.65,
+      "eventos_naturales": 0.6,
+      "turismo": 0.55,
+      "deportes": 0,
+      "otro": 0
+    },
+    "peso_prior": 0.6,
+    "peso_magnitud": 0.4
+  }
 }

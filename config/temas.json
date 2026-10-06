@@ -1,10 +1,152 @@
 {
   "temas": [
-    { "id": "economia", "nombre": "Economía", "descripcion": "Noticias sobre la economía de Panamá: crecimiento, PIB, inflación, empleo, precios, comercio, finanzas públicas, inversión y banca.", "palabras": ["economía", "pib", "inflación", "empleo", "desempleo", "precios", "inversión", "banca", "comercio", "exportaciones", "déficit", "crecimiento", "salario", "costo de vida"] },
-    { "id": "logistica_canal", "nombre": "Logística y Canal", "descripcion": "Canal de Panamá, puertos, carga, tránsito de buques, peajes, zona libre, aeropuertos, transporte de mercancías y conectividad.", "palabras": ["canal", "acp", "puerto", "buques", "tránsito", "peaje", "carga", "logística", "zona libre", "colón", "tocumen", "contenedores", "esclusas"] },
-    { "id": "turismo", "nombre": "Turismo", "descripcion": "Llegada de visitantes, hoteles, cruceros, promoción turística, aerolíneas, eventos y destinos.", "palabras": ["turismo", "turistas", "visitantes", "hotel", "cruceros", "atp", "promoción", "vuelos", "aerolínea", "destino", "feria"] },
-    { "id": "servicios_publicos", "nombre": "Servicios públicos", "descripcion": "Agua, electricidad, salud pública, educación, seguridad social, transporte público, basura y obras del Estado.", "palabras": ["agua", "idaan", "luz", "electricidad", "css", "salud", "hospital", "escuela", "meduca", "metro", "metrobús", "basura", "carretera", "medicamentos"] },
-    { "id": "eventos_naturales", "nombre": "Eventos naturales", "descripcion": "Sismos, lluvias, inundaciones, deslizamientos, sequía, fenómeno de El Niño, alertas del Sinaproc y clima.", "palabras": ["sismo", "temblor", "terremoto", "lluvias", "inundación", "deslizamiento", "sequía", "el niño", "sinaproc", "alerta", "tormenta", "clima", "mareas"] },
-    { "id": "regulacion", "nombre": "Regulación", "descripcion": "Leyes, decretos, Asamblea Nacional, Corte Suprema, contrataciones públicas, licitaciones, superintendencias y normas.", "palabras": ["ley", "decreto", "asamblea", "diputados", "corte", "licitación", "contrato", "superintendencia", "norma", "reglamento", "reforma", "proyecto de ley", "contraloría"] }
+    {
+      "id": "economia",
+      "nombre": "Economía",
+      "descripcion": "Noticias sobre la economía de Panamá: crecimiento, PIB, inflación, empleo, precios, comercio, finanzas públicas, inversión y banca.",
+      "palabras": [
+        "economía",
+        "pib",
+        "inflación",
+        "empleo",
+        "desempleo",
+        "precios",
+        "inversión",
+        "banca",
+        "comercio",
+        "exportaciones",
+        "déficit",
+        "crecimiento",
+        "salario",
+        "costo de vida"
+      ]
+    },
+    {
+      "id": "logistica_canal",
+      "nombre": "Logística y Canal",
+      "descripcion": "Canal de Panamá, puertos, carga, tránsito de buques, peajes, zona libre, aeropuertos, transporte de mercancías y conectividad.",
+      "palabras": [
+        "canal",
+        "acp",
+        "puerto",
+        "buques",
+        "tránsito",
+        "peaje",
+        "carga",
+        "logística",
+        "zona libre",
+        "colón",
+        "tocumen",
+        "contenedores",
+        "esclusas"
+      ]
+    },
+    {
+      "id": "turismo",
+      "nombre": "Turismo",
+      "descripcion": "Llegada de visitantes, hoteles, cruceros, promoción turística, aerolíneas, eventos y destinos.",
+      "palabras": [
+        "turismo",
+        "turistas",
+        "visitantes",
+        "hotel",
+        "cruceros",
+        "atp",
+        "promoción",
+        "vuelos",
+        "aerolínea",
+        "destino",
+        "feria"
+      ]
+    },
+    {
+      "id": "servicios_publicos",
+      "nombre": "Servicios públicos",
+      "descripcion": "Agua, electricidad, salud pública, educación, seguridad social, transporte público, basura y obras del Estado.",
+      "palabras": [
+        "agua",
+        "idaan",
+        "luz",
+        "electricidad",
+        "css",
+        "salud",
+        "hospital",
+        "escuela",
+        "meduca",
+        "metro",
+        "metrobús",
+        "basura",
+        "carretera",
+        "medicamentos"
+      ]
+    },
+    {
+      "id": "eventos_naturales",
+      "nombre": "Eventos naturales",
+      "descripcion": "Sismos, lluvias, inundaciones, deslizamientos, sequía, fenómeno de El Niño, alertas del Sinaproc y clima.",
+      "palabras": [
+        "sismo",
+        "temblor",
+        "terremoto",
+        "lluvias",
+        "inundación",
+        "deslizamiento",
+        "sequía",
+        "el niño",
+        "sinaproc",
+        "alerta",
+        "tormenta",
+        "clima",
+        "mareas"
+      ]
+    },
+    {
+      "id": "regulacion",
+      "nombre": "Regulación",
+      "descripcion": "Leyes, decretos, Asamblea Nacional, Corte Suprema, contrataciones públicas, licitaciones, superintendencias y normas.",
+      "palabras": [
+        "ley",
+        "decreto",
+        "asamblea",
+        "diputados",
+        "corte",
+        "licitación",
+        "contrato",
+        "superintendencia",
+        "norma",
+        "reglamento",
+        "reforma",
+        "proyecto de ley",
+        "contraloría"
+      ]
+    },
+    {
+      "id": "deportes",
+      "nombre": "Deportes",
+      "descripcion": "Partidos, goles, ligas, selección nacional, béisbol, fútbol, atletas y resultados deportivos. Fuera de la agenda informativa de este reto.",
+      "palabras": [
+        "partido",
+        "gol",
+        "liga",
+        "selección",
+        "béisbol",
+        "fútbol",
+        "torneo",
+        "campeonato",
+        "jugador",
+        "lpf",
+        "mundial",
+        "atleta",
+        "final"
+      ]
+    }
+  ],
+  "agenda": [
+    "economia",
+    "logistica_canal",
+    "turismo",
+    "servicios_publicos",
+    "eventos_naturales",
+    "regulacion"
   ]
 }
