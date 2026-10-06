@@ -63,6 +63,14 @@ export function ChatAgente() {
   const orbe = estadoOrbe(voz.estado);
   const activa = vozActiva(voz.estado);
   /** Un toque al orbe: habla o cuelga. En escritorio abre el panel para ver la conversación; en el celular deja la pantalla libre. */
+  // El lector de pantalla oye cada cambio de estado de la voz (revisión de Cursor).
+  const estadoAnterior = useRef(voz.estado);
+  useEffect(() => {
+    if (estadoAnterior.current === voz.estado) return;
+    const antes = estadoAnterior.current; estadoAnterior.current = voz.estado;
+    if (voz.estado === "inactiva") { if (antes !== "no_disponible") setAnuncio("Llamada terminada."); }
+    else setAnuncio(`${ETIQUETA_ORBE[orbe]}.`);
+  }, [voz.estado, orbe]);
   const tocarOrbe = () => { voz.prepararAudio(); if (!activa && !celular) setChatAbierto(true); void voz.alternar(); };
   const enFicha = vista === "ficha" && !!eventoId;
   const ambito = enFicha && soloTema ? eventoId : null;
@@ -80,7 +88,7 @@ export function ChatAgente() {
   useEffect(() => { vozRef.current = voz; });
   useEffect(() => {
     if (!chatAbierto) return;
-    const enCampo = (e: KeyboardEvent) => !!(e.target as HTMLElement).closest?.("textarea,input,select,button");
+    const enCampo = (e: KeyboardEvent) => !!(e.target as HTMLElement).closest?.("textarea,input,select,button,summary,a,[role=button]");
     const tecla = (e: KeyboardEvent) => {
       if (e.key === "Escape") { setChatAbierto(false); return; }
       if (e.code === "Space" && !e.repeat && !enCampo(e)) { e.preventDefault(); vozRef.current.prepararAudio(); void vozRef.current.alternar(); }
@@ -156,7 +164,10 @@ export function ChatAgente() {
           onClick={tocarOrbe}
         >
           <Orbe estado={orbe} nivel={voz.nivel} />
-          <span className="jarvis-texto">{activa ? ETIQUETA_ORBE[orbe] : "Hablar con Jarvis"}</span>
+          <span className="jarvis-texto">
+            <span className="jarvis-accion">{activa ? "Colgar" : celular ? "Hablar" : "Hablar con Jarvis"}</span>
+            {activa && !celular && <span className="jarvis-estado">{ETIQUETA_ORBE[orbe]}</span>}
+          </span>
         </button>
         <button ref={boton} type="button" className="jarvis-escribir presionable" aria-expanded={chatAbierto} aria-controls="chat-agente" aria-haspopup="dialog" aria-label={chatAbierto ? "Cerrar el chat de Jarvis" : "Escribirle a Jarvis"} onClick={() => setChatAbierto(!chatAbierto)}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
@@ -232,7 +243,7 @@ export function ChatAgente() {
                   <p className="text-muted-foreground">Pregunta en español sobre las noticias y los indicadores del corte. Responde con citas o se abstiene y dice qué falta.</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {SUGERIDAS.map((s) => (
-                      <button key={s.q} className="presionable rounded-full border border-border bg-white px-2.5 py-1 text-left text-xs hover:border-tinta" onClick={() => preguntar(s.q)}>
+                      <button key={s.q} className="presionable min-h-11 rounded-full border border-border bg-white px-2.5 py-1 text-left text-xs hover:border-tinta sm:min-h-0" onClick={() => preguntar(s.q)}>
                         {s.q}{s.etiqueta && <span className="ml-1 text-[10px] text-muted-foreground">({s.etiqueta})</span>}
                       </button>
                     ))}

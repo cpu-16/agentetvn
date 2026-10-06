@@ -301,11 +301,14 @@ main, .contenido-principal { padding-bottom: 6rem; }
    Reposo: respira y lanza un destello cada 5 s. Escuchando: ondas que salen al ritmo de la voz. Pensando: arco que gira rápido.
    Hablando: late. Un toque abre la conversación y otro la cuelga. */
 .jarvis-dock { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 50; display: flex; align-items: center; gap: .5rem; }
+.jarvis-texto { display: flex; flex-direction: column; line-height: 1.15; text-align: left; }
+.jarvis-estado { font-size: .72rem; font-weight: 400; opacity: .8; }
 .jarvis-boton { position: relative; display: flex; align-items: center; gap: .7rem; min-height: 64px; padding: 4px 20px 4px 4px; border-radius: 999px; background: #00466f; color: #fff; font-weight: 500; box-shadow: 0 18px 40px -18px rgba(0,70,111,.7); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: box-shadow .3s ease-out, background-color .3s ease-out; }
 .jarvis-boton[data-activa="true"] { background: #003354; box-shadow: 0 0 0 2px rgba(126,224,255,.55), 0 18px 48px -12px rgba(0,119,200,.85); }
 .jarvis-escribir { display: flex; align-items: center; gap: .4rem; min-height: 48px; min-width: 48px; justify-content: center; padding: 0 14px; border-radius: 999px; background: #fff; color: #00466f; font-weight: 500; border: 1px solid rgba(0,70,111,.25); box-shadow: 0 10px 28px -16px rgba(0,70,111,.6); }
-.jarvis-boton:focus-visible, .jarvis-escribir:focus-visible { outline: 3px solid #7ee0ff; outline-offset: 3px; }
-@media (max-width: 640px) { .jarvis-boton { padding: 4px; } .jarvis-escribir { padding: 0; } .jarvis-dock .jarvis-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
+.jarvis-boton:focus-visible { outline: 3px solid #7ee0ff; outline-offset: 3px; }
+.jarvis-escribir:focus-visible { outline: 3px solid #00466f; outline-offset: 3px; }
+@media (max-width: 640px) { .jarvis-dock { flex-direction: column-reverse; align-items: flex-end; } .jarvis-boton { padding: 4px 16px 4px 4px; min-height: 60px; } .jarvis-escribir { padding: 0; } .jarvis-escribir .jarvis-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
 .orbe { --nivel: 0; position: relative; display: block; flex: none; width: 56px; height: 56px; }
 /* halo detrás de la esfera: crece con el volumen de la voz */
 .orbe::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; background: radial-gradient(circle, rgba(0,153,230,.55), transparent 66%); filter: blur(6px); opacity: .7; transform: scale(calc(1 + var(--nivel) * .6)); transition: transform 80ms linear, opacity .3s ease-out; }
@@ -331,7 +334,7 @@ main, .contenido-principal { padding-bottom: 6rem; }
 @keyframes orbe-gira { to { transform: rotate(360deg); } }
 @keyframes orbe-onda { from { transform: scale(1); opacity: .9; } to { transform: scale(2.1); opacity: 0; } }
 @keyframes orbe-destello { 0% { transform: scale(1); opacity: .8; } 22%, 100% { transform: scale(1.9); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .orbe::before, .orbe .orbe-esfera, .orbe .orbe-esfera::after, .orbe .orbe-onda { animation: none !important; transition: none; } .orbe[data-estado="escuchando"] .orbe-onda:first-child { opacity: .8; transform: scale(1.25); } }
+@media (prefers-reduced-motion: reduce) { .orbe::before, .orbe .orbe-esfera, .orbe .orbe-esfera::after, .orbe .orbe-onda { animation: none !important; transition: none; } .orbe[data-estado="escuchando"] .orbe-onda:first-child { opacity: .8; transform: scale(1.25); } .orbe[data-estado="pensando"] .orbe-onda:first-child { opacity: .9; border-style: dashed; transform: scale(1.18); } .orbe[data-estado="hablando"] .orbe-onda:first-child { opacity: 1; border-color: #fff; border-width: 3px; transform: scale(1.12); } }
 
 .jarvis-hablar { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .jarvis-hablar .orbe { width: 28px; height: 28px; }

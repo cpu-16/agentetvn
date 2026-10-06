@@ -47,7 +47,7 @@ export function histograma(scores: number[], bins = 28): Traza["histograma"] {
   return { desde, hasta, cuentas };
 }
 
-export const LEYENDA = "Basado únicamente en titular/metadatos del snapshot; no se leyó el artículo completo.";
+export const LEYENDA = "Basado únicamente en titular/metadatos del corte; no se leyó el artículo completo.";
 const PAIS_NOMBRE: Record<string, RegExp> = { PAN: /panam/i, CRI: /costa rica/i, COL: /colombia/i, DOM: /dominican/i, MEX: /m[eé]xico/i, GTM: /guatemala/i };
 const nombreIndicador = (id: string) => INDICADORES[id]?.nombre ?? id;
 export const hora = (iso: string | null) => (iso ? new Date(iso).toLocaleString("es-PA", { timeZone: "America/Panama", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }).replace(/\.\s*,/, ",") : "fecha no disponible");
@@ -75,7 +75,7 @@ function responderCifra(q: string, snap: Snapshot, t0: number, modo: Respuesta["
   if (!d) return null;
   const base = { contradicciones: [], modo, leyenda: LEYENDA };
   if (d.pais === "OTRO")
-    return { ...base, abstener: true, motivo: `El snapshot solo cubre PAN, CRI, COL, DOM, MEX y GTM; el país consultado no está.`, faltante: `serie ${nombreIndicador(d.indicador)} (${d.indicador}) del país consultado`, afirmaciones: [], evidencias: [], ms: Date.now() - t0 };
+    return { ...base, abstener: true, motivo: `El corte solo cubre PAN, CRI, COL, DOM, MEX y GTM; el país consultado no está.`, faltante: `serie ${nombreIndicador(d.indicador)} (${d.indicador}) del país consultado`, afirmaciones: [], evidencias: [], ms: Date.now() - t0 };
   // «hoy/actualmente» se resuelve contra el corte del snapshot (reproducible), no contra el reloj
   const anioCorte = Number(snap.manifest.fecha_corte_UTC.slice(0, 4));
   if (d.anio === "corte") d.anio = anioCorte;
@@ -84,12 +84,12 @@ function responderCifra(q: string, snap: Snapshot, t0: number, modo: Respuesta["
     const fila = serie.find((i) => i.anio === d.anio);
     if (!fila || fila.valor === null) {
       const disponibles = serie.filter((i) => i.valor !== null).map((i) => i.anio);
-      return { ...base, abstener: true, motivo: `El snapshot no contiene ${nombreIndicador(d.indicador)} de ${d.pais} para ${d.anio}.`, faltante: `valor de ${nombreIndicador(d.indicador)} (${d.indicador}) para ${d.pais} en ${d.anio}; años disponibles con valor: ${disponibles.length ? `${disponibles[0]}–${disponibles[disponibles.length - 1]}` : "ninguno"}`, afirmaciones: [], evidencias: [], ms: Date.now() - t0 };
+      return { ...base, abstener: true, motivo: `El corte no contiene ${nombreIndicador(d.indicador)} de ${d.pais} para ${d.anio}.`, faltante: `valor de ${nombreIndicador(d.indicador)} (${d.indicador}) para ${d.pais} en ${d.anio}; años disponibles con valor: ${disponibles.length ? `${disponibles[0]}–${disponibles[disponibles.length - 1]}` : "ninguno"}`, afirmaciones: [], evidencias: [], ms: Date.now() - t0 };
     }
     return { ...base, abstener: false, afirmaciones: [afirmacionIndicador(fila)], evidencias: [evidenciaIndicador(fila)], ms: Date.now() - t0 };
   }
   const ult = serie.filter((i) => i.valor !== null).sort((a, b) => b.anio - a.anio)[0];
-  if (!ult) return { ...base, abstener: true, motivo: `No hay valores de ${nombreIndicador(d.indicador)} para ${d.pais} en el snapshot.`, faltante: `serie ${d.indicador} de ${d.pais}`, afirmaciones: [], evidencias: [], ms: Date.now() - t0 };
+  if (!ult) return { ...base, abstener: true, motivo: `No hay valores de ${nombreIndicador(d.indicador)} para ${d.pais} en el corte.`, faltante: `serie ${d.indicador} de ${d.pais}`, afirmaciones: [], evidencias: [], ms: Date.now() - t0 };
   return { ...base, abstener: false, afirmaciones: [afirmacionIndicador(ult), { texto: `Es el último año con valor publicado; no es una medición de hoy.`, tipo: "inferencia", evidence_id: idIndicador(ult), campo: "anio", alcance: "fila_indicador" }], evidencias: [evidenciaIndicador(ult)], ms: Date.now() - t0 };
 }
 
@@ -157,7 +157,7 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
     traza = { modo: "bm25", comparadas: idx.docs.length, sobreUmbral: candidatos.length, k, mejores: orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })), pasos: [{ paso: "buscar palabras", ms: Date.now() - t1 }] };
   }
   if (!candidatos.length)
-    return { abstener: true, motivo: "No hay evidencia en el snapshot que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del snapshot", afirmaciones: [], evidencias: [], contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA, traza };
+    return { abstener: true, motivo: "No hay evidencia en el corte que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del corte", afirmaciones: [], evidencias: [], contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA, traza };
   // si se pide una cantidad y ningún titular/extracto recuperado contiene una cifra, lo recuperado es «relacionado», no «respuesta»
   const tieneCifra = (t: string) => [...t.matchAll(/\d+(?:[.,]\d+)?/g)].some((m) => !/^(19|20)\d{2}$/.test(m[0])); // un año suelto no es una cifra
   if (pideCantidad && !candidatos.some((c) => tieneCifra(`${porId.get(c.id)!.titulo} ${porId.get(c.id)!.descripcion}`)))

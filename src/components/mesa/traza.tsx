@@ -46,7 +46,7 @@ export function TrazaBusqueda({ traza, llmMs, abierta }: { traza: Traza; llmMs?:
   const entra = (i: number) => (reducir ? {} : { initial: { opacity: 0, transform: "translateY(4px)" }, animate: { opacity: 1, transform: "translateY(0px)" }, transition: { duration: 0.22, delay: i * 0.12, ease: [0.23, 1, 0.32, 1] as const } });
   return (
     <details className="traza group rounded-md border border-azul/25 bg-[#f2f8fd] text-xs" open={abierta}>
-      <summary className="presionable flex min-h-9 cursor-pointer list-none items-center gap-2 px-3 py-1.5 font-medium text-tinta [&::-webkit-details-marker]:hidden">
+      <summary className="presionable flex min-h-11 cursor-pointer sm:min-h-9 list-none items-center gap-2 px-3 py-1.5 font-medium text-tinta [&::-webkit-details-marker]:hidden">
         <span className="inline-block size-2 rounded-full bg-azul" aria-hidden />
         <span className="flex-1">{resumen}</span>
         <span className="text-muted-foreground transition-transform group-open:rotate-90" aria-hidden>▸</span>
@@ -88,7 +88,7 @@ export function TrazaBusqueda({ traza, llmMs, abierta }: { traza: Traza; llmMs?:
                   <span className={cn("traza-puntaje absolute inset-y-0 left-0", m.usada ? "bg-azul" : "bg-[#9fb0c2]")} style={{ width: `${emb && h ? Math.max(6, x(m.score)) : Math.max(6, (m.score / (traza.mejores[0]?.score || 1)) * 100)}%` }} />
                   <span className={cn("relative block px-1 text-[10px] font-semibold tabular-nums leading-4", m.usada ? "text-white" : "text-tinta")}>{num(m.score, emb ? 3 : 1)}</span>
                 </span>
-                <span className="truncate" title={m.titulo}><span className="font-medium">{m.medio}</span> · {m.titulo}</span>
+                <span className="line-clamp-2 sm:truncate" title={m.titulo}><span className="sr-only">{m.usada ? "Usada: " : "Quedó fuera: "}</span><span className="font-medium">{m.medio}</span> · {m.titulo}</span>
               </li>
             ))}
           </ol>
