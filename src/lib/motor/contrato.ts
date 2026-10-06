@@ -1,7 +1,7 @@
 // Contrato de datos de AgenteTVN · alineado a la §7 del reto (campos mínimos) y a la §4 (puntaje y estados).
 import { createHash } from "crypto";
 
-export type Origen = "tvn_rss" | "gdelt" | "sintetica";
+export type Origen = "tvn_rss" | "rss_otros" | "gdelt" | "sintetica";
 
 export interface Noticia {
   id_noticia: string;

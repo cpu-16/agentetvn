@@ -1,8 +1,18 @@
+"use client";
+import { useCallback, useState } from "react";
+import { Shell } from "@/components/mesa/shell";
+import { Agenda } from "@/components/mesa/agenda";
+import { Ficha } from "@/components/mesa/ficha";
+import { Control } from "@/components/mesa/control";
+import { useMesa } from "@/store/mesa";
+
 export default function Page() {
+  const { vista, eventoId } = useMesa();
+  const [meta, setMeta] = useState<{ corteUTC: string; version: string } | null>(null);
+  const onCargada = useCallback((m: { corteUTC: string; version: string }) => setMeta(m), []);
   return (
-    <main className="mx-auto max-w-3xl p-8">
-      <h1 className="text-2xl font-semibold">AgenteTVN</h1>
-      <p className="text-muted-foreground">De la señal a la decisión. Esqueleto en construcción (6-oct-2026).</p>
-    </main>
+    <Shell corteUTC={meta?.corteUTC} version={meta?.version}>
+      {vista === "ficha" && eventoId ? <Ficha id={eventoId} /> : vista === "control" ? <Control /> : <Agenda onCargada={onCargada} />}
+    </Shell>
   );
 }

@@ -58,7 +58,7 @@ export function validarNoticias(filas: Record<string, unknown>[]): { validas: No
       fecha_deteccion: det,
       fecha_extraccion: fechaISO(f.fecha_extraccion) ?? "",
       tema: str(f.tema) || null,
-      origen: ["tvn_rss", "gdelt", "sintetica"].includes(origen) ? origen : "gdelt",
+      origen: ["tvn_rss", "rss_otros", "gdelt", "sintetica"].includes(origen) ? origen : "gdelt",
       alcance_texto: "titular_metadatos",
       agencia: str(f.agencia) || null,
       sintetica: bool(f.sintetica),

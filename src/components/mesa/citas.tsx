@@ -25,6 +25,20 @@ export function BotonCita({ id, campo, onAbrir }: { id: string; campo?: string; 
   );
 }
 
+/** Solo http(s): una URL del snapshot (GDELT) es dato no confiable; «javascript:» en una fuente es un ataque T07 real. */
+export const urlSegura = (u: string) => {
+  try {
+    const p = new URL(u);
+    return p.protocol === "http:" || p.protocol === "https:" ? p.href : undefined;
+  } catch {
+    return undefined;
+  }
+};
+function Enlace({ u }: { u: string }) {
+  const seguro = urlSegura(u);
+  return seguro ? <a href={seguro} target="_blank" rel="noopener noreferrer" className="break-all text-acero underline">{u}</a> : <span className="break-all">{u} <span className="text-senal">(URL con esquema no permitido; no se enlaza)</span></span>;
+}
+
 function Fila({ k, v }: { k: string; v: React.ReactNode }) {
   return (
     <div className="grid grid-cols-[130px_1fr] gap-2 border-b border-border py-1.5 text-sm last:border-0">
@@ -48,7 +62,7 @@ export function Citas({ id, pubs, inds, sismos, onCerrar }: { id: string | null;
             <Fila k="Medio" v={c.n.medio} />
             <Fila k="Titular" v={c.n.titulo} />
             {c.n.descripcion && <Fila k="Extracto" v={c.n.descripcion} />}
-            <Fila k="URL" v={<a href={c.n.url} target="_blank" rel="noreferrer" className="text-acero underline">{c.n.url}</a>} />
+            <Fila k="URL" v={<Enlace u={c.n.url} />} />
             <Fila k="Publicación" v={c.n.fecha_publicacion ? horaPanama(c.n.fecha_publicacion) : "no disponible en la fuente"} />
             <Fila k="Detección" v={c.n.fecha_deteccion ? `${horaPanama(c.n.fecha_deteccion)} (seendate de GDELT; no es la publicación)` : "no aplica"} />
             <Fila k="Extracción" v={horaPanama(c.n.fecha_extraccion)} />
@@ -65,10 +79,10 @@ export function Citas({ id, pubs, inds, sismos, onCerrar }: { id: string | null;
             <Fila k="Indicador" v={c.i.indicador_id} />
             <Fila k="Año" v={c.i.anio} />
             <Fila k="Valor" v={c.i.valor === null ? "nulo (no publicado)" : `${c.i.valor} ${c.i.unidad}`} />
-            <Fila k="Fuente" v={<a href={c.i.fuente_url} target="_blank" rel="noreferrer" className="text-acero underline break-all">{c.i.fuente_url}</a>} />
+            <Fila k="Fuente" v={<Enlace u={c.i.fuente_url} />} />
             <Fila k="Extracción" v={horaPanama(c.i.fecha_extraccion)} />
             <Fila k="Licencia" v={c.i.licencia} />
-            <p className="mt-2 text-xs text-ambar-700 text-[#7a5600]">Contexto histórico, no dato de hoy: es la cifra anual de {c.i.anio} publicada por el Banco Mundial.</p>
+            <p className="mt-2 text-xs text-[#7a5600]">Contexto histórico, no dato de hoy: es la cifra anual de {c.i.anio} publicada por el Banco Mundial.</p>
           </div>
         )}
         {c?.tipo === "sismo" && (
@@ -78,7 +92,7 @@ export function Citas({ id, pubs, inds, sismos, onCerrar }: { id: string | null;
             <Fila k="Fecha" v={horaPanama(c.s.time)} />
             <Fila k="Lugar" v={c.s.place} />
             <Fila k="Profundidad" v={`${c.s.depth} km`} />
-            <Fila k="URL" v={<a href={c.s.url} target="_blank" rel="noreferrer" className="text-acero underline">{c.s.url}</a>} />
+            <Fila k="URL" v={<Enlace u={c.s.url} />} />
             <p className="mt-2 text-xs text-muted-foreground">Solo prueba el hecho sísmico; no es evidencia de daños ni pérdidas.</p>
           </div>
         )}
