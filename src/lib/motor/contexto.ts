@@ -20,9 +20,13 @@ export function ultimoConValor(indicadores: Indicador[], pais: string, indicador
 const mencionaPanama = (place: string) => /panam/i.test(place);
 const dias = (a: string, b: string) => Math.abs(new Date(a).getTime() - new Date(b).getTime()) / 86400000;
 
+const OTRO_PAIS = /\b(costa rica|colombia|m[eé]xico|guatemala|honduras|nicaragua|el salvador|venezuela|ecuador|per[uú]|chile|argentina|brasil|espa[ñn]a|estados unidos|eeuu|rep[uú]blica dominicana|europa|china|rusia)\b/i;
+const DE_PANAMA = /panam[aá]|panameñ|\bacp\b|\binec\b|\bmef\b|\bcss\b|chiriqu[ií]|col[oó]n|azuero|bocas del toro|veraguas|dari[eé]n/i;
+
 export function vincularContexto(texto: string, tema: string, fechaRef: string | null, indicadores: Indicador[], sismos: Sismo[]): Contexto {
   const out: Contexto = { indicadores: [], sismos: [] };
-  if (tema === "economia") {
+  // una noticia que habla de otro país no se liga a la serie de Panamá (no forzar relaciones)
+  if (tema === "economia" && !(OTRO_PAIS.test(texto) && !DE_PANAMA.test(texto))) {
     for (const c of CONCEPTO_INDICADOR) {
       if (!c.re.test(texto)) continue;
       const fila = ultimoConValor(indicadores, "PAN", c.id);

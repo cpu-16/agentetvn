@@ -78,10 +78,12 @@ export function componenteI(tema: string, contexto: EntradaPuntaje["contexto"], 
 export function componenteU(pubs: Noticia[], corteUTC: string, cfg: Scoring["U"]): { v: number; expl: string } {
   const fechas = pubs.map((p) => p.fecha_publicacion).filter((f): f is string => !!f).sort();
   if (!fechas.length) return { v: cfg.sin_fecha_publicacion, expl: "sin fecha de publicación (GDELT solo informa detección, que no rejuvenece la noticia)" };
-  const reciente = fechas[fechas.length - 1];
-  const horas = (new Date(corteUTC).getTime() - new Date(reciente).getTime()) / 3600000;
-  for (const [h, v] of cfg.tabla_horas) if (horas < h) return { v, expl: `publicación más reciente hace ${Math.round(horas)} h (< ${h} h)` };
-  return { v: cfg.mas_antigua, expl: `publicación más reciente hace ${Math.round(horas / 24)} días; se muestra la fecha original` };
+  // Se usa la fecha ORIGINAL del evento: una réplica o recirculación posterior no rejuvenece la urgencia (T03, CU-03).
+  const original = fechas[0];
+  const horas = (new Date(corteUTC).getTime() - new Date(original).getTime()) / 3600000;
+  if (horas < 0) return { v: 0, expl: "fecha de publicación posterior al corte del snapshot: no se puntúa urgencia (revisar el registro)" };
+  for (const [h, v] of cfg.tabla_horas) if (horas < h) return { v, expl: `publicación original hace ${Math.round(horas)} h (< ${h} h)${fechas.length > 1 ? `; ${fechas.length - 1} publicación(es) posterior(es) no rejuvenecen` : ""}` };
+  return { v: cfg.mas_antigua, expl: `publicación original hace ${Math.round(horas / 24)} días; se muestra la fecha original` };
 }
 
 export function componenteN(novedad: EntradaPuntaje["novedad"], cfg: Scoring["N"]): { v: number; expl: string } {
@@ -91,14 +93,16 @@ export function componenteN(novedad: EntradaPuntaje["novedad"], cfg: Scoring["N"
 }
 
 export function componenteE(pubs: Noticia[], procedencias: Procedencia[], contexto: EntradaPuntaje["contexto"], cfg: Scoring["E"]): { v: number; expl: string; primaria: boolean } {
-  const primaria = contexto.indicadores.length > 0 || contexto.sismos.length > 0 || pubs.some((p) => /\.gob\.pa$/i.test(p.medio));
+  // Primaria = fuente oficial del hecho (dominio gob.pa o evento USGS del mismo sismo). Un indicador anual es CONTEXTO: suma la mitad y no acredita suficiencia.
+  const primaria = contexto.sismos.length > 0 || pubs.some((p) => /\.gob\.pa$/i.test(p.medio));
+  const contextoOficial = contexto.indicadores.length > 0;
   const M = procedencias.filter((p) => p.tipo !== "no_verificada").length;
   const indep = Math.min(1, M / 2);
   const ident = pubs.every((p) => p.url && (p.fecha_publicacion || p.fecha_deteccion)) ? 1 : 0;
   const noVer = procedencias.find((p) => p.tipo === "no_verificada");
   return {
-    v: r3(cfg.primaria * (primaria ? 1 : 0) + cfg.independencia * indep + cfg.identificable * ident),
-    expl: `${primaria ? "con" : "sin"} fuente primaria; ${M} procedencia(s) identificada(s)${noVer ? ` + ${noVer.ids_noticia.length} publicación(es) con independencia no verificada` : ""}; ${ident ? "todas" : "no todas"} las publicaciones con URL y fecha`,
+    v: r3(cfg.primaria * (primaria ? 1 : contextoOficial ? 0.5 : 0) + cfg.independencia * indep + cfg.identificable * ident),
+    expl: `${primaria ? "con fuente primaria" : contextoOficial ? "sin fuente primaria del hecho; con contexto oficial histórico (cuenta la mitad)" : "sin fuente primaria"}; ${M} procedencia(s) identificada(s)${noVer ? ` + ${noVer.ids_noticia.length} publicación(es) con independencia no verificada` : ""}; ${ident ? "todas" : "no todas"} las publicaciones con URL y fecha`,
     primaria,
   };
 }

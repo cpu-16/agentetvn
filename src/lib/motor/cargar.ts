@@ -17,6 +17,8 @@ export interface Snapshot {
   eventos: Evento[];
   fichas: Ficha[];
   embeddings: { modelo: string; dim: number; ids: string[]; vectores: number[][] } | null;
+  huella: string; // identifica el snapshot (manifest + derivados) para cachés
+  avisos: string[];
 }
 
 let cache: Snapshot | null = null;
@@ -47,5 +49,25 @@ export function cargarSnapshot(dir = process.env.AGENTETVN_DATOS ?? "data/proces
   const fichas = existsSync(`${dir}/fichas.jsonl`)
     ? readFileSync(`${dir}/fichas.jsonl`, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l) as Ficha)
     : [];
-  return (cache = { dir, manifest, noticias: vn.validas, indicadores: vi.validas, sismos, errores: [...erroresCsv, ...vi.errores], eventos: leerJson<Evento[]>("eventos.json", []), fichas, embeddings: leerJson("embeddings.json", null) });
+  // Los derivados del motor (eventos, fichas, embeddings, noticias-motor) solo valen si nacieron de ESTOS CSV.
+  const meta = leerJson<{ huella_entradas?: string } | null>("motor-meta.json", null);
+  const avisos: string[] = [];
+  const derivadosValidos = (() => {
+    if (!meta?.huella_entradas) return true; // motor viejo sin huella: se acepta (compatibilidad), se avisa
+    const esperada = meta.huella_entradas;
+    try {
+      const partes = [manifest.sha256["noticias.csv"], manifest.sha256["indicadores.csv"]];
+      // la huella completa incluye sintéticas/config/etiquetas; aquí basta comprobar que las entradas CSV son las mismas
+      const sinteticas = existsSync("data/sinteticas.json") ? sha256(readFileSync("data/sinteticas.json")) : "";
+      return esperada.length > 0 && !!partes[0] && (leerJson<{ entradas_csv?: string[] }>("motor-meta.json", {}).entradas_csv ?? partes).join() === partes.join() && !!sinteticas;
+    } catch {
+      return false;
+    }
+  })();
+  if (!derivadosValidos) avisos.push("los derivados del motor no corresponden a este snapshot: corre bun run motor");
+  const eventos = derivadosValidos ? leerJson<Evento[]>("eventos.json", []) : [];
+  const emb = derivadosValidos ? leerJson<Snapshot["embeddings"]>("embeddings.json", null) : null;
+  const noticiasFinales = derivadosValidos ? vn.validas : validarNoticias(leerCsv(`${dir}/noticias.csv`)).validas;
+  const huella = sha256(`${manifest.sha256["noticias.csv"]}|${manifest.sha256["indicadores.csv"]}|${meta?.huella_entradas ?? ""}|${noticiasFinales.length}`);
+  return (cache = { dir, manifest, noticias: noticiasFinales, indicadores: vi.validas, sismos, errores: [...erroresCsv, ...vi.errores], eventos, fichas: derivadosValidos ? fichas : [], embeddings: emb, huella, avisos });
 }

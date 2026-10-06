@@ -12,6 +12,9 @@ import { vincularContexto } from "../src/lib/motor/contexto";
 import { detectarContradicciones, estadoEvidencia } from "../src/lib/motor/evidencia";
 import { ordenar, puntuar } from "../src/lib/motor/puntaje";
 import { esNoConfiable } from "../src/lib/motor/inyeccion";
+import { jaccard } from "../src/lib/motor/bm25";
+import { readFileSync as leerArchivo } from "fs";
+import { sha256 } from "../src/lib/motor/contrato";
 import { leerScoring } from "../src/lib/motor/config";
 import { nuevaNoticia } from "../src/lib/ingesta/comun";
 import { escribirJson } from "../src/lib/ingesta/escribir";
@@ -40,7 +43,7 @@ const sinteticas: Noticia[] = (JSON.parse(readFileSync("data/sinteticas.json", "
 );
 const noticias: Noticia[] = [...snap.noticias.filter((n) => !n.sintetica), ...sinteticas].map((n) => {
   const d = esNoConfiable(`${n.titulo} ${n.descripcion}`);
-  return { ...n, no_confiable: d.no_confiable };
+  return { ...n, no_confiable: n.no_confiable || d.no_confiable }; // una exclusión previa (humana o del CSV) nunca se borra
 });
 log(`${sinteticas.length} sintéticas añadidas · ${noticias.filter((n) => n.no_confiable).length} no confiables`);
 
@@ -87,10 +90,14 @@ log(`${bases.length} eventos de ${noticias.length} publicaciones`);
 // 6 · novedad: ¿hay un evento más viejo semánticamente igual (segunda ola)?
 const repVec = (b: (typeof bases)[number]) => vecs.get(b.representante);
 const fechaEv = (b: (typeof bases)[number]) => b.fecha_original ?? porId.get(b.representante)!.fecha_deteccion ?? corte;
-const novedadDe = (b: (typeof bases)[number]): "primera" | "segunda_ola" => {
+const novedadDe = (b: (typeof bases)[number]): "primera" | "segunda_ola" | "repeticion" => {
+  const rep = porId.get(b.representante)!;
+  const anteriores = bases.filter((o) => o !== b && fechaEv(o) < fechaEv(b));
+  // titular (casi) idéntico a un evento anterior → repetición/recirculación: no suma novedad
+  if (anteriores.some((o) => jaccard(rep.titulo, porId.get(o.representante)!.titulo) >= cfg.N.jaccard_titular)) return "repeticion";
   const v = repVec(b);
   if (!v) return "primera";
-  return bases.some((o) => o !== b && fechaEv(o) < fechaEv(b) && repVec(o) && coseno(v, repVec(o)!) >= cfg.N.umbral_mismo_evento) ? "segunda_ola" : "primera";
+  return anteriores.some((o) => repVec(o) && coseno(v, repVec(o)!) >= cfg.N.umbral_mismo_evento) ? "segunda_ola" : "primera";
 };
 
 // 7 · contexto, contradicciones, puntaje, estado
@@ -112,5 +119,7 @@ escribirJson(`${OUT}/eventos.json`, ordenados);
 const fichas: Ficha[] = ordenados.map((e) => ({ id_caso: e.id, modalidad: "tvn", ids_fuente: e.ids_noticia, afirmaciones: [], citas: [...e.ids_noticia, ...e.contexto.indicadores, ...e.contexto.sismos], puntaje: e.P, componentes: e.componentes, estado_evidencia: e.estado_evidencia, borrador: null, estado_revision: "nuevo", persona_revisora: null, sintetica: e.ids_noticia.some((i) => porId.get(i)!.sintetica) || undefined }));
 writeFileSync(`${OUT}/fichas.jsonl`, fichas.map((f) => JSON.stringify(f)).join("\n") + "\n");
 escribirJson(`${OUT}/noticias-motor.json`, noticiasConTema.map((n) => ({ ...n, no_confiable: n.no_confiable })));
-escribirJson(`${OUT}/motor-meta.json`, { fecha: new Date().toISOString(), modoIA, clasificador: usarKnn ? `knn k=5 sobre ${etiquetas.length} etiquetas humanas (leave-one-out para las etiquetadas)` : "zero-shot por prototipos", modelo: modoIA === "embeddings" ? MODELO : null, reglas: cfg.version, corteUTC: corte, eventos: eventos.length, por_tema: Object.fromEntries([...new Set(eventos.map((e) => e.tema))].map((t) => [t, eventos.filter((e) => e.tema === t).length])), rangos: { alto: eventos.filter((e) => e.rango === "alto").length, medio: eventos.filter((e) => e.rango === "medio").length, bajo: eventos.filter((e) => e.rango === "bajo").length }, ms: Date.now() - t0 });
+const huellaEntradas = sha256([snap.manifest.sha256["noticias.csv"], snap.manifest.sha256["indicadores.csv"], sha256(leerArchivo("data/sinteticas.json")), sha256(leerArchivo("config/scoring-v1.json")), sha256(leerArchivo("config/temas.json")), usarKnn ? sha256(leerArchivo("data/labels/temas.csv")) : "sin-etiquetas", modoIA === "embeddings" ? MODELO : "lexico"].join("|"));
+if (modoIA !== "embeddings") { try { require("fs").unlinkSync(`${OUT}/embeddings.json`); } catch {} }
+escribirJson(`${OUT}/motor-meta.json`, { fecha: new Date().toISOString(), huella_entradas: huellaEntradas, entradas_csv: [snap.manifest.sha256["noticias.csv"], snap.manifest.sha256["indicadores.csv"]], modoIA, clasificador: usarKnn ? `knn k=5 sobre ${etiquetas.length} etiquetas humanas (leave-one-out para las etiquetadas)` : "zero-shot por prototipos", modelo: modoIA === "embeddings" ? MODELO : null, reglas: cfg.version, corteUTC: corte, eventos: eventos.length, por_tema: Object.fromEntries([...new Set(eventos.map((e) => e.tema))].map((t) => [t, eventos.filter((e) => e.tema === t).length])), rangos: { alto: eventos.filter((e) => e.rango === "alto").length, medio: eventos.filter((e) => e.rango === "medio").length, bajo: eventos.filter((e) => e.rango === "bajo").length }, ms: Date.now() - t0 });
 log(`listo · top 5: ${ordenados.slice(0, 5).map((e) => `${e.P} ${e.tema} «${porId.get(e.representante)!.titulo.slice(0, 50)}»`).join(" | ")}`);

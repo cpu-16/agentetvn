@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Medidor, type Componentes } from "./medidor";
+import { itemEscalonado } from "./motion";
 import { ESTADO_LABEL, EVIDENCIA_LABEL, TEMA_LABEL, horaPanama, useMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 
@@ -8,7 +10,7 @@ export interface EventoResumen {
   id: string; titulo: string; medio: string; tema: string; por_revisar: boolean; P: number; rango: "bajo" | "medio" | "alto";
   componentes: Componentes; estado_evidencia: "insuficiente" | "parcial" | "suficiente"; estado_revision: string;
   procedencias: { id: string; tipo: string; nombre: string; ids_noticia: string[] }[]; publicaciones: number; fecha_original: string | null;
-  contradicciones: unknown[]; sintetica?: boolean; no_confiable: boolean;
+  contradicciones: unknown[]; sintetica?: boolean; no_confiable: boolean; ids_noticia: string[];
 }
 interface Agenda { corteUTC: string; version: string; eventos: EventoResumen[]; cinco: { evento: EventoResumen; razones: string[]; vacios: string[] }[] }
 
@@ -38,6 +40,14 @@ export function Agenda({ onCargada }: { onCargada?: (a: { corteUTC: string; vers
   const [q, setQ] = useState("");
   const [verCinco, setVerCinco] = useState(true);
   const irA = useMesa((s) => s.irA);
+  const reducir = useReducedMotion();
+  const [animarEntrada, setAnimarEntrada] = useState(true); // el escalonado solo la primera vez, no al filtrar
+
+  useEffect(() => {
+    if (!data) return;
+    const t = setTimeout(() => setAnimarEntrada(false), 1200);
+    return () => clearTimeout(t);
+  }, [data]);
 
   useEffect(() => {
     fetch("/api/agenda").then(async (r) => {
@@ -79,7 +89,7 @@ export function Agenda({ onCargada }: { onCargada?: (a: { corteUTC: string; vers
         <div className="escaleta rounded-sm border border-border bg-papel">
           {filtrados.length === 0 && <p className="p-6 text-sm text-muted-foreground">Ningún tema coincide con el filtro. Quita un filtro o cambia la búsqueda.</p>}
           {filtrados.map((e, i) => (
-            <div key={e.id} role="button" tabIndex={0} className="fila cursor-pointer" onClick={() => irA("ficha", e.id)} onKeyDown={(k) => k.key === "Enter" && irA("ficha", e.id)}>
+            <motion.div key={e.id} role="button" tabIndex={0} className="fila presionable cursor-pointer" onClick={() => irA("ficha", e.id)} onKeyDown={(k) => k.key === "Enter" && irA("ficha", e.id)} {...(animarEntrada ? itemEscalonado(i, reducir) : {})}>
               <div>
                 <Medidor P={e.P} rango={e.rango} componentes={e.componentes} />
                 <p className="mt-1 text-[11px] text-muted-foreground">#{i + 1}</p>
@@ -93,7 +103,7 @@ export function Agenda({ onCargada }: { onCargada?: (a: { corteUTC: string; vers
                 <Chips e={e} />
                 <p className="mt-2 text-xs">{ESTADO_LABEL[e.estado_revision] ?? e.estado_revision}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -107,7 +117,7 @@ export function Agenda({ onCargada }: { onCargada?: (a: { corteUTC: string; vers
             <ol className="escaleta border-t border-border">
               {data.cinco.map((c, i) => (
                 <li key={c.evento.id} className="px-4 py-3">
-                  <button className="text-left" onClick={() => irA("ficha", c.evento.id)}>
+                  <button className="presionable text-left" onClick={() => irA("ficha", c.evento.id)}>
                     <span className="titular text-[15px] font-semibold leading-snug">{i + 1}. {c.evento.titulo}</span>
                   </button>
                   <div className="mt-1.5"><Chips e={c.evento} compacto /></div>

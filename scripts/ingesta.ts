@@ -38,9 +38,11 @@ if (!sinGdelt) {
   gdeltNoticias = g.noticias;
 }
 const limite = new Date(corte.getTime() - 90 * 86400000).toISOString();
+const corteISO = corte.toISOString();
 const enVentana = (n: Noticia) => {
   const f = n.fecha_publicacion ?? n.fecha_deteccion;
-  return !f || f >= limite;
+  if (!f) return true; // sin ninguna fecha: se conserva y se marca (U=0.2 y aviso en la ficha)
+  return f >= limite && f <= corteISO; // ni anteriores a 90 días ni posteriores al corte
 };
 const otros = await ingestarOtrosRss(fechaExtraccion, log);
 escribirJson(`${RAW}/${dia}/otros_rss.json`, otros.noticias);
@@ -84,7 +86,7 @@ const manifest: Manifest = {
   transformaciones: [
     "URLs normalizadas (host minúsculas, sin www, sin utm_*/fbclid/gclid, sin fragmento ni barra final) y deduplicadas conservando la primera aparición",
     "fecha_publicacion = pubDate del RSS (ISO UTC); GDELT solo aporta fecha_deteccion (seendate) y deja fecha_publicacion nula",
-    "ventana de noticias: 90 días previos al corte (§6 del reto); la ventana [2024-01-01, 2025-10-01) de la §7 no se aplica a noticias porque contradice la §6 y la fecha de consulta",
+    "ventana de noticias: 90 días previos al corte y nunca posteriores al corte (§6 del reto); la ventana [2024-01-01, 2025-10-01) de la §7 no se aplica a noticias porque contradice la §6 y la fecha de consulta; política configurable en scripts/ingesta.ts",
     "indicadores: grilla completa país × indicador × año con valor nulo cuando el Banco Mundial no publica; nunca 0 por ausencia",
     "agencia detectada por patrones (config/agencias.json) sobre titular + descripción",
     `excluidas ${excluidas} noticias duplicadas por URL y ${fueraVentana} fuera de ventana`,

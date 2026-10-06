@@ -49,7 +49,13 @@ export async function paquete(id: string, persona: string, forzar = false) {
   const e = snap.eventos.find((x) => x.id === id);
   if (!e) return null;
   const existente = forzar ? null : await db.paqueteEditado.findUnique({ where: { eventoId: id } });
-  if (existente) return JSON.parse(existente.contenido) as Paquete;
+  if (existente) {
+    const p = JSON.parse(existente.contenido) as Paquete;
+    const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+    const citas = [...p.brief, ...p.guion, ...p.copy].map((a) => a.evidence_id);
+    const contaminado = citas.some((c) => porId.get(c)?.no_confiable);
+    if (!contaminado) return p; // si una fuente citada fue marcada después como no confiable, se regenera
+  }
   const p = generarPaquete(e, snap.noticias, snap.indicadores);
   await db.paqueteEditado.upsert({ where: { eventoId: id }, create: { eventoId: id, contenido: JSON.stringify(p), modo: p.modo, persona }, update: { contenido: JSON.stringify(p), modo: p.modo, persona } });
   return p;

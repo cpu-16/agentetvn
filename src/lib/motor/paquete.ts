@@ -26,8 +26,16 @@ const generica = ["¿Qué fuente primaria confirma el hecho?", "¿Desde cuándo 
 export function generarPaquete(ev: Evento, noticias: Noticia[], indicadores: Indicador[]): Paquete {
   const porId = new Map(noticias.map((n) => [n.id_noticia, n]));
   const pubs = ev.ids_noticia.map((i) => porId.get(i)!).filter((n) => n && !n.no_confiable);
-  const rep = porId.get(ev.representante)!;
   const tema = leerTemas().find((t) => t.id === ev.tema);
+  if (!pubs.length) {
+    // sin publicaciones confiables no hay paquete: abstención explícita
+    const leyenda = "Sin publicaciones confiables en este evento: no se genera paquete. Revisar la fuente marcada como no confiable.";
+    return { titulo: "", enfoque: "", brief: [], preguntas: [], verificaciones: [leyenda], guion: [], copy: [], leyenda, modo: "extractivo" };
+  }
+  const rep = pubs.find((p) => p.id_noticia === ev.representante) ?? pubs[0]; // representante siempre permitido
+  const permitidos = new Set(pubs.map((p) => p.id_noticia));
+  const contradicciones = ev.contradicciones.filter((c) => permitidos.has(c.a) && permitidos.has(c.b));
+  const procedencias = ev.procedencias.map((p) => ({ ...p, ids_noticia: p.ids_noticia.filter((i) => permitidos.has(i)) })).filter((p) => p.ids_noticia.length);
   const hechos: Afirmacion[] = [...pubs.slice(0, 3).map(afirmacionNoticia), ...pubs.slice(0, 2).flatMap((p) => afirmacionesExtracto(p))];
   const contexto: Afirmacion[] = ev.contexto.indicadores
     .map((id) => {
@@ -37,19 +45,24 @@ export function generarPaquete(ev: Evento, noticias: Noticia[], indicadores: Ind
     .filter((i): i is Indicador => !!i)
     .flatMap((i) => [afirmacionIndicador(i), { texto: `Esa cifra es anual (${i.anio}) y sirve de contexto; no describe la situación de hoy.`, tipo: "inferencia" as const, evidence_id: `${i.pais_iso3}:${i.indicador_id}:${i.anio}`, campo: "anio", alcance: "fila_indicador" as const }]);
   const procedencia: Afirmacion = {
-    texto: `Procedencias identificadas: ${ev.procedencias.map((p) => `${p.nombre} (${p.ids_noticia.length})`).join(", ")}; ${ev.ids_noticia.length} publicación(es) en total.`,
+    texto: `Procedencias identificadas: ${procedencias.map((p) => `${p.nombre} (${p.ids_noticia.length})`).join(", ")}; ${pubs.length} publicación(es) confiables.`,
     tipo: "inferencia",
-    evidence_id: ev.representante,
-    campo: "procedencias",
+    evidence_id: rep.id_noticia,
+    campo: "medio",
     alcance: "titular_metadatos",
   };
-  const hipotesis: Afirmacion[] = ev.contradicciones.map((c) => ({ texto: `Las versiones no coinciden: ${c.detalle}. Verificación pendiente.`, tipo: "hipotesis", evidence_id: c.a, campo: c.campo, alcance: "titular_metadatos" }));
+  const hipotesis: Afirmacion[] = contradicciones.flatMap((c) => [
+    { texto: `Las versiones no coinciden: ${c.detalle}. Verificación pendiente.`, tipo: "hipotesis" as const, evidence_id: c.a, campo: c.campo.split("/")[0], alcance: "titular_metadatos" as const },
+    { texto: `Segunda versión citada: ${porId.get(c.b)?.medio ?? c.b}.`, tipo: "hipotesis" as const, evidence_id: c.b, campo: c.campo.split("/").pop()!, alcance: "titular_metadatos" as const },
+  ]);
   let brief = [...hechos, ...contexto, procedencia, ...hipotesis];
-  while (palabras(brief) > 250 && brief.length > 2) brief = brief.slice(0, -1);
+  while (palabras(brief) > 250 && brief.length > 1) brief = brief.slice(0, -1);
+  if (palabras(brief) > 250) brief = [{ ...brief[0], texto: brief[0].texto.split(/\s+/).slice(0, 245).join(" ") + "…" }];
   const verificaciones = [
     ...(ev.estado_evidencia !== "suficiente" ? [`Evidencia ${ev.estado_evidencia}: conseguir fuente primaria antes de afirmar el hecho.`] : []),
-    ...ev.procedencias.filter((p) => p.tipo === "no_verificada").map((p) => `${p.ids_noticia.length} publicación(es) con titular copiado sin agencia: confirmar independencia.`),
-    ...ev.contradicciones.map((c) => `Contradicción: ${c.detalle}.`),
+    ...procedencias.filter((p) => p.tipo === "no_verificada").map((p) => `${p.ids_noticia.length} publicación(es) con titular copiado sin agencia: confirmar independencia.`),
+    ...contradicciones.map((c) => `Contradicción: ${c.detalle}.`),
+    ...(ev.ids_noticia.length > pubs.length ? [`${ev.ids_noticia.length - pubs.length} publicación(es) excluida(s) por contenido no confiable.`] : []),
     "Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos.",
   ];
   // guion de 45–60 s ≈ 110–150 palabras leídas: se llena con hechos citados hasta el tope, nunca con relleno
@@ -59,7 +72,9 @@ export function generarPaquete(ev: Evento, noticias: Noticia[], indicadores: Ind
     guion.push(a);
   }
   if (!guion.length) guion = hechos.slice(0, 1);
-  const copy: Afirmacion[] = [{ ...hechos[0], texto: `${rep.titulo}. ${ev.contexto.indicadores.length ? "Con el dato oficial, en la nota." : "Qué se sabe y qué falta confirmar, en la nota."}` }];
+  if (palabras(guion) < 110) verificaciones.push(`Guion incompleto (${palabras(guion)} palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.`);
+  const tituloCopy = rep.titulo.split(/\s+/).length > 60 ? rep.titulo.split(/\s+/).slice(0, 60).join(" ") + "…" : rep.titulo;
+  const copy: Afirmacion[] = [{ texto: `${tituloCopy}. ${contexto.length ? "Con el dato oficial, en la nota." : "Qué se sabe y qué falta confirmar, en la nota."}`, tipo: "hecho_reportado", evidence_id: rep.id_noticia, campo: "titulo", alcance: "titular_metadatos" }];
   return {
     titulo: rep.titulo,
     enfoque: `Interés público (${tema?.nombre ?? ev.tema}): ${ENFOQUE[ev.tema] ?? "qué se sabe, quién lo dice y qué falta confirmar"}.`,

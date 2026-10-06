@@ -9,10 +9,16 @@ export interface ErrorFila {
   id?: string;
 }
 
-const fechaISO = (v: unknown): string | null => {
+/** Fecha ISO estricta: exige zona horaria explícita (si falta se asume UTC y se marca) y calendario válido (30/02 no se acepta). */
+export const fechaISO = (v: unknown): string | null => {
   if (v === null || v === undefined || v === "" || v === "null") return null;
-  const d = new Date(String(v));
-  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  let s = String(v).trim();
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(s)) s += "Z"; // sin zona → UTC explícito, no el reloj local
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if (m && (d.getUTCFullYear() !== Number(m[1]) || d.getUTCMonth() + 1 !== Number(m[2]) || d.getUTCDate() !== Number(m[3]))) return null; // 2026-02-30 → inválida, no 2 de marzo
+  return d.toISOString();
 };
 const bool = (v: unknown) => v === true || v === "true" || v === "1";
 const str = (v: unknown) => (v === undefined || v === null ? "" : String(v));
@@ -36,6 +42,8 @@ export function validarNoticias(filas: Record<string, unknown>[]): { validas: No
       return;
     }
     ids.add(id);
+    if (!str(f.fecha_extraccion)) errores.push({ archivo: "noticias.csv", fila, campo: "fecha_extraccion", motivo: "obligatorio vacío; se conserva la fila", id });
+    if (!str(f.origen)) errores.push({ archivo: "noticias.csv", fila, campo: "origen", motivo: "obligatorio vacío; se asume gdelt", id });
     const pub = fechaISO(f.fecha_publicacion);
     if (f.fecha_publicacion && !pub) errores.push({ archivo: "noticias.csv", fila, campo: "fecha_publicacion", motivo: `fecha inválida «${str(f.fecha_publicacion)}»; se guarda nula`, id });
     const det = fechaISO(f.fecha_deteccion);
@@ -72,13 +80,21 @@ export function validarNoticias(filas: Record<string, unknown>[]): { validas: No
 export function validarIndicadores(filas: Record<string, unknown>[]): { validas: Indicador[]; errores: ErrorFila[] } {
   const validas: Indicador[] = [];
   const errores: ErrorFila[] = [];
+  const clavesInd = new Set<string>();
   filas.forEach((f, i) => {
     const fila = i + 1;
-    const anio = Number(f.anio);
-    if (!str(f.pais_iso3) || !str(f.indicador_id) || !Number.isInteger(anio)) {
+    const anio = str(f.anio).trim() === "" ? NaN : Number(f.anio);
+    if (!str(f.pais_iso3) || !str(f.indicador_id) || !Number.isInteger(anio) || anio < 1900) {
       errores.push({ archivo: "indicadores.csv", fila, campo: "pais_iso3,indicador_id,anio", motivo: "clave incompleta; fila excluida" });
       return;
     }
+    const clave = `${str(f.pais_iso3)}:${str(f.indicador_id)}:${anio}`;
+    if (clavesInd.has(clave)) {
+      errores.push({ archivo: "indicadores.csv", fila, campo: "pais_iso3,indicador_id,anio", motivo: "clave duplicada; se conserva la primera" });
+      return;
+    }
+    clavesInd.add(clave);
+    for (const campo of ["unidad", "licencia", "fuente_url"] as const) if (!str(f[campo])) errores.push({ archivo: "indicadores.csv", fila, campo, motivo: "campo obligatorio vacío; se conserva la fila" });
     const crudo = str(f.valor).trim();
     let valor: number | null = null;
     if (crudo !== "" && crudo !== "null") {

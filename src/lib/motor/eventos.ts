@@ -20,7 +20,10 @@ const dominio = (n: Noticia) => n.medio.toLowerCase().replace(/^www\./, "");
 /** ¿La noticia pertenece al evento cuyo representante es `rep`? Compara contra el representante, no en cadena. */
 export function mismoEvento(n: Noticia, rep: Noticia, vecs: Map<string, Float32Array | number[]>, cfg = leerScoring().N): boolean {
   if (n.fecha_publicacion && rep.fecha_publicacion && dias(n.fecha_publicacion, rep.fecha_publicacion) > cfg.ventana_dias) return false;
-  if (jaccard(n.titulo, rep.titulo) >= cfg.jaccard_titular) return true;
+  const j = jaccard(n.titulo, rep.titulo);
+  if (j >= cfg.jaccard_titular) return true;
+  // solapamiento fuerte pero no idéntico (p. ej. «3 muertos» vs «5 muertos» del mismo deslizamiento) y ≤ 3 días
+  if (j >= 0.5 && (!n.fecha_publicacion || !rep.fecha_publicacion || dias(n.fecha_publicacion, rep.fecha_publicacion) <= 3)) return true;
   const a = vecs.get(n.id_noticia);
   const b = vecs.get(rep.id_noticia);
   if (!a || !b) return false;
@@ -41,14 +44,13 @@ export function procedenciasDe(ids: string[], porId: Map<string, Noticia>, cfg =
   const sinAgencia: Noticia[] = [];
   for (const n of ns) {
     if (n.agencia) agregar(`agencia:${n.agencia}`, "agencia", n.agencia, n);
-    else if (n.medio === "TVN") agregar("medio:TVN", "medio", "TVN", n);
-    else sinAgencia.push(n);
+    else sinAgencia.push(n); // TVN incluido: pertenecer a un medio no acredita producción independiente
   }
   // Sin atribución: si el titular es (casi) idéntico al de otro medio, no se puede afirmar independencia.
   for (const n of sinAgencia) {
     const copiado = ns.some((m) => m.id_noticia !== n.id_noticia && dominio(m) !== dominio(n) && jaccard(m.titulo, n.titulo) >= cfg.jaccard_titular);
     if (copiado) agregar("no_verificada", "no_verificada", "independencia no verificada", n);
-    else agregar(`medio:${dominio(n)}`, "medio", dominio(n), n);
+    else agregar(`medio:${n.medio === "TVN" ? "TVN" : dominio(n)}`, "medio", n.medio === "TVN" ? "TVN" : dominio(n), n);
   }
   return [...out.values()];
 }

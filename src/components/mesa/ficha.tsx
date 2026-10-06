@@ -1,19 +1,18 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Medidor, type Componentes } from "./medidor";
 import { Chips, type EventoResumen } from "./agenda";
 import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "./citas";
 import { PaqueteYRevision, type Afirmacion, type Paquete, type Revision, type RevisionHist } from "./paquete";
-import { ESTADO_LABEL, horaPanama, useMesa } from "@/store/mesa";
+import { ESTADO_LABEL, SPRING, horaPanama, useMesa, useRol } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 
 interface Evento extends Omit<EventoResumen, "titulo" | "medio" | "publicaciones" | "estado_revision"> {
   representante: string; ids_noticia: string[]; tema_confianza: number; contexto: { indicadores: string[]; sismos: string[] }; contradicciones: { a: string; b: string; campo: string; detalle: string }[]; componentes: Componentes;
 }
 interface Detalle { evento: Evento; publicaciones: Publicacion[]; indicadores: Indicador[]; sismos: Sismo[]; revision: Revision; historial: RevisionHist[]; paquete: Paquete | null }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string }
 
 function accionRecomendada(e: Evento): string {
   if (e.no_confiable) return "Tratar el contenido marcado como no confiable: no se usa en el borrador ni en la consulta.";
@@ -27,10 +26,11 @@ export function Ficha({ id }: { id: string }) {
   const [d, setD] = useState<Detalle | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cita, setCita] = useState<string | null>(null);
-  const [q, setQ] = useState("");
-  const [resp, setResp] = useState<Respuesta | null>(null);
-  const [consultando, setConsultando] = useState(false);
-  const { irA, rol, modoConsulta, setModoConsulta } = useMesa();
+  const irA = useMesa((s) => s.irA);
+  const setChatAbierto = useMesa((s) => s.setChatAbierto);
+  const rol = useRol();
+  const reducir = useReducedMotion();
+  const [tab, setTab] = useState<"evidencia" | "paquete">(rol === "productor" ? "paquete" : "evidencia");
 
   const cargar = useCallback(() => {
     fetch(`/api/eventos/${id}`).then(async (r) => {
@@ -39,14 +39,6 @@ export function Ficha({ id }: { id: string }) {
     }).catch((e) => setError(e.message));
   }, [id]);
   useEffect(cargar, [cargar]);
-
-  const preguntar = async () => {
-    if (!q.trim()) return;
-    setConsultando(true);
-    const r = await fetch("/api/consulta", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q, modo: modoConsulta, eventoId: id }) });
-    setResp(r.ok ? await r.json() : { abstener: true, motivo: `La consulta falló (${r.status}).`, afirmaciones: [], evidencias: [], contradicciones: [], modo: modoConsulta, ms: 0, leyenda: "" });
-    setConsultando(false);
-  };
 
   if (error) return <div><Button variant="ghost" onClick={() => irA("agenda")}>Volver a la agenda</Button><p className="mt-3 text-sm">{error}</p></div>;
   if (!d) return <p className="p-4 text-sm text-muted-foreground">Cargando la ficha…</p>;
@@ -66,18 +58,30 @@ export function Ficha({ id }: { id: string }) {
       <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
         <Button variant="ghost" size="sm" onClick={() => irA("agenda")}>Agenda</Button>
         <span className="text-muted-foreground">/ Ficha {e.id}</span>
-        <span className="ml-auto text-xs text-muted-foreground">Revisión: {ESTADO_LABEL[d.revision.estado]}</span>
+        <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">Revisión:
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span key={d.revision.estado} className="chip" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} transition={SPRING}>{ESTADO_LABEL[d.revision.estado]}</motion.span>
+          </AnimatePresence>
+        </span>
       </div>
       <h1 className="titular text-2xl font-semibold leading-tight sm:text-3xl">{rep?.titulo}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{rep?.medio}, {e.fecha_original ? `publicado ${horaPanama(e.fecha_original)}` : "sin fecha de publicación (solo detección)"}</p>
       <div className="mt-2"><Chips e={resumen} /></div>
 
-      <Tabs defaultValue={rol === "productor" ? "paquete" : "evidencia"} className="mt-5">
-        <TabsList className="h-9 rounded-sm bg-white">
-          <TabsTrigger value="evidencia">Evidencia</TabsTrigger>
-          <TabsTrigger value="paquete">Paquete y revisión</TabsTrigger>
-        </TabsList>
-        <TabsContent value="evidencia" className="mt-4">
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <div role="tablist" aria-label="Secciones de la ficha" className="relative inline-flex h-9 rounded-sm border border-border bg-white p-0.5">
+          {(["evidencia", "paquete"] as const).map((t) => (
+            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("presionable relative rounded-sm px-3 text-sm", tab === t ? "font-medium text-white" : "text-muted-foreground")}>
+              {tab === t && <motion.span layoutId="tab-ficha" className="absolute inset-0 rounded-sm bg-tinta" transition={SPRING} aria-hidden />}
+              <span className="relative">{t === "evidencia" ? "Evidencia" : "Paquete y revisión"}</span>
+            </button>
+          ))}
+        </div>
+        <Button size="sm" variant={rol === "periodista" ? "default" : "outline"} className="presionable" onClick={() => setChatAbierto(true)}>Preguntar sobre este tema</Button>
+      </div>
+      <AnimatePresence mode="wait" initial={false}>
+      <motion.div key={tab} className="mt-4" initial={reducir ? { opacity: 0 } : { opacity: 0, filter: "blur(2px)" }} animate={{ opacity: 1, filter: "blur(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, filter: "blur(2px)" }} transition={{ duration: 0.18 }}>
+        {tab === "evidencia" ? (
           <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
             <section className="space-y-6">
               <div className="rounded-sm border border-tinta bg-papel p-4">
@@ -130,42 +134,21 @@ export function Ficha({ id }: { id: string }) {
             </section>
 
             <aside className="lg:sticky lg:top-16 lg:self-start">
-              <div className="rounded-sm border border-border bg-white p-4">
-                <h2 className="titular text-lg font-semibold">Preguntar sobre este tema</h2>
-                <textarea value={q} onChange={(e) => setQ(e.target.value)} rows={3} placeholder="¿Cuál fue la inflación de Panamá en 2024?" className="mt-2 w-full rounded-sm border border-border p-2 text-sm" />
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Button size="sm" onClick={preguntar} disabled={consultando} variant={rol === "periodista" ? "default" : "outline"}>{consultando ? "Buscando…" : "Preguntar"}</Button>
-                  <select value={modoConsulta} onChange={(e) => setModoConsulta(e.target.value as "embeddings" | "bm25")} className="h-8 rounded-sm border border-border px-2 text-xs">
-                    <option value="embeddings">Semántica (embeddings)</option>
-                    <option value="bm25">Léxica (BM25, baseline)</option>
-                  </select>
-                </div>
-                {resp && (
-                  <div className="mt-3 text-sm">
-                    <p className="text-[11px] text-muted-foreground">Modo {resp.modo}, {resp.ms} ms</p>
-                    {resp.abstener ? (
-                      <div className="mt-1 rounded-sm bg-papel p-3 text-muted-foreground">
-                        <p className="font-medium text-foreground">Sin respuesta sustentada.</p>
-                        <p>{resp.motivo}</p>
-                        {resp.faltante && <p className="mt-1">Haría falta: {resp.faltante}</p>}
-                      </div>
-                    ) : (
-                      <ul className="mt-1 space-y-2">
-                        {resp.afirmaciones.map((a, i) => <li key={i} className={cn("bg-papel px-3 py-2", `tipo-${a.tipo}`)}>{a.texto}<BotonCita id={a.evidence_id} campo={a.campo} onAbrir={setCita} /></li>)}
-                      </ul>
-                    )}
-                    {resp.contradicciones.length > 0 && <p className="mt-2 text-xs text-senal">Hay {resp.contradicciones.length} contradicción(es) abierta(s) en estas fuentes.</p>}
-                    {resp.leyenda && <p className="mt-2 text-[11px] text-muted-foreground">{resp.leyenda}</p>}
-                  </div>
-                )}
+              <div className="rounded-sm border border-border bg-white p-4 text-sm">
+                <p className="titular text-lg font-semibold">Qué hacer con este tema</p>
+                <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted-foreground">
+                  <li>Abrir cada cita y confirmar que el campo respalda la afirmación.</li>
+                  <li>Preguntar al agente por la cifra o el dato que falte; si se abstiene, buscar la fuente primaria.</li>
+                  <li>Generar el paquete y registrar la decisión con tu nombre.</li>
+                </ol>
               </div>
             </aside>
           </div>
-        </TabsContent>
-        <TabsContent value="paquete" className="mt-4">
+        ) : (
           <PaqueteYRevision eventoId={id} paquete={d.paquete} revision={d.revision} historial={d.historial} onCita={setCita} onCambio={cargar} />
-        </TabsContent>
-      </Tabs>
+        )}
+      </motion.div>
+      </AnimatePresence>
       <Citas id={cita} pubs={pubs} inds={d.indicadores} sismos={d.sismos} onCerrar={() => setCita(null)} />
     </div>
   );

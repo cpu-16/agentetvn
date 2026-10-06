@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ESTADO_LABEL, TIPO_LABEL, horaPanama, useMesa } from "@/store/mesa";
+import { ESTADO_LABEL, SPRING, TIPO_LABEL, horaPanama, usePersona, useRol } from "@/store/mesa";
 import { BotonCita } from "./citas";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +37,9 @@ function Afirmaciones({ lista, onCita, editable, onCambio }: { lista: Afirmacion
 }
 
 export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCita, onCambio }: { eventoId: string; paquete: Paquete | null; revision: Revision; historial: RevisionHist[]; onCita: (id: string) => void; onCambio: () => void }) {
-  const { persona, setPersona, rol } = useMesa();
+  const persona = usePersona();
+  const rol = useRol();
+  const reducir = useReducedMotion();
   const [p, setP] = useState<Paquete | null>(paquete);
   const [editando, setEditando] = useState(false);
   const [motivo, setMotivo] = useState("");
@@ -46,25 +49,23 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
 
   const generar = async (regenerar = false) => {
     setOcupado(true); setMsg(null);
-    const r = await fetch(`/api/eventos/${eventoId}/paquete`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ persona: nombre || "sin nombre", regenerar }) });
+    const r = await fetch(`/api/eventos/${eventoId}/paquete`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ regenerar }) });
     setOcupado(false);
-    if (!r.ok) return setMsg(`No se pudo generar el paquete (${r.status}).`);
+    if (!r.ok) return setMsg(r.status === 401 ? "Tu sesión venció: vuelve a entrar a la mesa." : `No se pudo generar el paquete (${r.status}).`);
     setP(await r.json()); setEditando(false); onCambio();
   };
   const guardar = async () => {
     if (!p) return;
-    if (!nombre) return setMsg("Escribe tu nombre antes de guardar.");
     setOcupado(true);
-    const r = await fetch(`/api/eventos/${eventoId}/paquete`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ paquete: p, persona: nombre }) });
+    const r = await fetch(`/api/eventos/${eventoId}/paquete`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ paquete: p }) });
     setOcupado(false);
     setMsg(r.ok ? "Edición guardada." : `No se guardó (${r.status}).`);
     if (r.ok) { setEditando(false); onCambio(); }
   };
   const revisar = async (estado: string, exigeMotivo?: boolean) => {
-    if (!nombre) return setMsg("Escribe tu nombre: cada decisión lleva responsable.");
     if (exigeMotivo && !motivo.trim()) return setMsg(`${ESTADO_LABEL[estado]} necesita un motivo.`);
     setOcupado(true);
-    const r = await fetch(`/api/eventos/${eventoId}/revision`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ estado, persona: nombre, motivo: motivo.trim() || null }) });
+    const r = await fetch(`/api/eventos/${eventoId}/revision`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ estado, motivo: motivo.trim() || null }) });
     const j = await r.json();
     setOcupado(false);
     if (!r.ok) return setMsg(j.error ?? `Error ${r.status}`);
@@ -125,16 +126,19 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
       <aside className="space-y-4 lg:sticky lg:top-16 lg:self-start">
         <div className="rounded-sm border border-tinta bg-white p-4">
           <h3 className="titular text-lg font-semibold">Revisión</h3>
-          <p className="mt-1 text-sm">Estado actual: <span className="font-medium">{ESTADO_LABEL[revision.estado]}</span>{revision.persona ? ` (${revision.persona}, ${horaPanama(revision.createdAt)})` : ""}</p>
-          <label className="mt-3 block text-xs text-muted-foreground">Persona responsable
-            <input value={persona} onChange={(e) => setPersona(e.target.value)} placeholder="Tu nombre" className="mt-1 w-full rounded-sm border border-border p-2 text-sm text-foreground" />
-          </label>
+          <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm">Estado actual:
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span key={revision.estado} className="chip font-medium" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} transition={SPRING}>{ESTADO_LABEL[revision.estado]}</motion.span>
+            </AnimatePresence>
+            {revision.persona && <span className="text-muted-foreground">({revision.persona}, {horaPanama(revision.createdAt)})</span>}
+          </p>
+          <p className="mt-3 text-xs text-muted-foreground">Responsable: <span className="font-medium text-foreground">{nombre}</span> (de tu sesión)</p>
           <label className="mt-2 block text-xs text-muted-foreground">Motivo (obligatorio para descartar o pedir evidencia)
             <textarea value={motivo} onChange={(e) => setMotivo(e.target.value)} rows={2} className="mt-1 w-full rounded-sm border border-border p-2 text-sm text-foreground" />
           </label>
           <div className="mt-3 flex flex-wrap gap-2">
             {(TRANSICIONES[revision.estado] ?? []).map((t) => (
-              <Button key={t.a} size="sm" variant={t.primario && rol === "editor" ? "default" : "outline"} disabled={ocupado} onClick={() => revisar(t.a, t.motivo)}>{t.label}</Button>
+              <Button key={t.a} size="sm" className="presionable" variant={t.primario && rol === "editor" ? "default" : "outline"} disabled={ocupado} onClick={() => revisar(t.a, t.motivo)}>{t.label}</Button>
             ))}
           </div>
           <p className="mt-3 text-xs font-medium text-senal">Aprobar como borrador no publica nada.</p>

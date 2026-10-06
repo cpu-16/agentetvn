@@ -208,3 +208,77 @@
 .tipo-declaracion { border-left: 3px solid var(--acero); }
 .tipo-inferencia { border-left: 3px solid var(--ambar); }
 .tipo-hipotesis { border-left: 3px solid var(--senal); }
+
+/* ─── Al aire: motion y materiales ───────────────────────────── */
+/* Sangrado a todo el ancho desde dentro del contenedor (el clip evita scroll por la barra) */
+body { overflow-x: clip; }
+.sangrado { width: 100vw; margin-left: calc(50% - 50vw); }
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+/* Feedback al presionar: instantáneo, en el pointer-down */
+.presionable { transition: transform 160ms var(--ease-out), background-color 160ms ease, border-color 160ms ease, color 160ms ease; }
+.presionable:active { transform: scale(0.97); }
+button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+
+/* Encabezado como material: la tinta deja pasar el contenido al hacer scroll */
+.vidrio-tinta {
+  background: rgba(15, 27, 45, 0.86);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+@media (prefers-reduced-transparency: reduce) { .vidrio-tinta { background: var(--tinta); backdrop-filter: none; -webkit-backdrop-filter: none; } }
+
+/* Rótulo tipo lower-third: barra roja + texto blanco condensado */
+.rotulo {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: var(--senal);
+  padding: 4px 10px 4px 8px;
+  border-left: 4px solid #fff;
+  line-height: 1.2;
+}
+.rotulo-tinta { background: var(--tinta); }
+
+/* Punto AL AIRE: pulso lento (2 s), solo en la portada */
+.al-aire { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 600; font-size: 13px; }
+.al-aire::before { content: ""; width: 10px; height: 10px; border-radius: 999px; background: var(--senal); box-shadow: 0 0 0 0 rgba(215, 38, 61, 0.55); animation: pulso 2s ease-out infinite; }
+@keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(215, 38, 61, 0.55); } 70% { box-shadow: 0 0 0 10px rgba(215, 38, 61, 0); } 100% { box-shadow: 0 0 0 0 rgba(215, 38, 61, 0); } }
+
+/* Ticker continuo: lineal, pausa al hover, se detiene con reduced-motion */
+.ticker { overflow: hidden; white-space: nowrap; mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+.ticker-pista { display: inline-flex; gap: 0; will-change: transform; animation: ticker var(--ticker-dur, 60s) linear infinite; }
+.ticker:hover .ticker-pista { animation-play-state: paused; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-item { display: inline-flex; align-items: center; gap: 10px; padding: 0 28px; }
+.ticker-item .p { font-family: var(--font-display); font-weight: 700; color: var(--senal); font-variant-numeric: tabular-nums; }
+
+/* Hover solo con puntero fino */
+@media (hover: hover) and (pointer: fine) {
+  .fila:hover { background: #fff; }
+  .tarjeta:hover { border-color: var(--tinta); }
+}
+.fila { transition: background-color 160ms ease; }
+.tarjeta { transition: border-color 160ms ease, transform 160ms var(--ease-out); }
+
+/* Chat flotante del agente */
+.chat-boton { box-shadow: 0 10px 30px -10px rgba(15, 27, 45, 0.55); }
+.chat-panel {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  box-shadow: 0 30px 80px -30px rgba(15, 27, 45, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+@media (prefers-reduced-transparency: reduce) { .chat-panel { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-pista { animation: none; }
+  .al-aire::before { animation: none; }
+  .presionable:active { transform: none; }
+}

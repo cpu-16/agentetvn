@@ -6,19 +6,32 @@ export const URL_USGS =
 
 type Feature = { id: string; properties: { mag: number; time: number; updated: number; place: string; status: string; url: string }; geometry: { coordinates: [number, number, number] } };
 
+export const erroresUsgs: { id: string; motivo: string }[] = [];
+/** Un evento inválido se excluye con motivo; nunca aborta la carga ni inventa 1970 para un tiempo nulo. */
 export function parsearUsgs(geo: { features: Feature[] }): Sismo[] {
-  return geo.features.map((f) => ({
-    id: f.id,
-    magnitude: f.properties.mag,
-    time: new Date(f.properties.time).toISOString(),
-    updated: new Date(f.properties.updated).toISOString(),
-    longitude: f.geometry.coordinates[0],
-    latitude: f.geometry.coordinates[1],
-    depth: f.geometry.coordinates[2],
-    place: f.properties.place,
-    status: f.properties.status,
-    url: f.properties.url,
-  }));
+  erroresUsgs.length = 0;
+  const out: Sismo[] = [];
+  for (const f of geo.features ?? []) {
+    const t = typeof f?.properties?.time === "number" ? new Date(f.properties.time) : null;
+    if (!f?.id || !t || Number.isNaN(t.getTime()) || typeof f.properties.mag !== "number" || !Array.isArray(f.geometry?.coordinates)) {
+      erroresUsgs.push({ id: f?.id ?? "?", motivo: "evento sin id, tiempo, magnitud o coordenadas válidos; excluido" });
+      continue;
+    }
+    const u = typeof f.properties.updated === "number" ? new Date(f.properties.updated) : null;
+    out.push({
+      id: f.id,
+      magnitude: f.properties.mag,
+      time: t.toISOString(),
+      updated: u && !Number.isNaN(u.getTime()) ? u.toISOString() : t.toISOString(),
+      longitude: f.geometry.coordinates[0],
+      latitude: f.geometry.coordinates[1],
+      depth: f.geometry.coordinates[2],
+      place: f.properties.place ?? "",
+      status: f.properties.status ?? "",
+      url: f.properties.url ?? "",
+    });
+  }
+  return out;
 }
 
 export async function ingestarUsgs(fechaExtraccion: string, log: (s: string) => void) {

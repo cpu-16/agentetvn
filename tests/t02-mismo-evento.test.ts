@@ -28,6 +28,13 @@ describe("T02 mismo evento y procedencias", () => {
     expect(ids).toEqual(["medio:TVN", "medio:m3.com", "no_verificada"]);
     expect(p.find((x) => x.id === "no_verificada")?.ids_noticia).toEqual(["a", "b"]);
   });
+  test("una copia idéntica de TVN sin atribución no suma procedencia ni evidencia (CU-03)", () => {
+    const efe = n({ id_noticia: "e", titulo: "Panamá y Singapur firman seis acuerdos de cooperación marítima", url: "https://m1.com/e", medio: "m1.com", agencia: "EFE" });
+    const tvn = n({ id_noticia: "t", titulo: "Panamá y Singapur firman seis acuerdos de cooperación marítima", url: "https://tvn-2.com/t", medio: "TVN", origen: "tvn_rss" });
+    const p = procedenciasDe(["e", "t"], new Map([[efe.id_noticia, efe], [tvn.id_noticia, tvn]]));
+    expect(p.filter((x) => x.tipo !== "no_verificada")).toHaveLength(1);
+    expect(p.find((x) => x.tipo === "no_verificada")?.ids_noticia).toEqual(["t"]);
+  });
   test("eventos distintos no se mezclan", () => {
     const ev = agruparEventos([tres[0], n({ id_noticia: "z", titulo: "Inflación de Panamá cierra septiembre en 1,1 %", url: "https://m9.com/z" })], new Map());
     expect(ev).toHaveLength(2);

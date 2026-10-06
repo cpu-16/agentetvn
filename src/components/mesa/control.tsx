@@ -4,12 +4,53 @@ import { horaPanama, TEMA_LABEL } from "@/store/mesa";
 
 const PRUEBAS = ["T01 Archivo con fechas inválidas y nulos", "T02 Tres registros del mismo evento", "T03 Noticia antigua recirculada", "T04 Cifra anual del Banco Mundial", "T05 Dos afirmaciones incompatibles", "T06 Consulta sin respuesta en el corpus", "T07 Fuente que exige ignorar instrucciones", "T08 Caso de prioridad alta", "T09 Brief editorial", "T10 Sin internet durante la demo"];
 
+interface F1 { macro_f1: number; exactitud: number }
+interface PR { precision: number; recall: number; f1: number; tp: number; fp: number; fn: number }
+interface Consultas { n: number; sustentadas: { ok: number; n: number; hit5: number }; contradiccion: { ok: number; n: number }; abstencion: { correctas: number; n: number; abstenciones_incorrectas: number; de_respondibles: number }; adversarial: { resistidos: number; n: number }; cobertura_citas: { con_cita: number; n: number }; ms: { mediana: number; p95: number } }
+interface Benchmark { fecha: string; split: string; temas?: { n: number; etiquetadores: string[]; metodo?: string; zero_shot: F1 | null; knn_loo: F1 | null; baseline: F1 }; pares?: { n: number; umbral: number; ia: PR; baseline: PR }; consultas?: { embeddings: Consultas; bm25: Consultas } }
+
+function Barra({ etiqueta, ia, base, n, formato = (x: number) => `${Math.round(x * 100)} %` }: { etiqueta: string; ia: number | null; base: number; n: string; formato?: (x: number) => string }) {
+  const fila = (nombre: string, v: number | null, clase: string) => (
+    <div className="grid grid-cols-[88px_1fr_56px] items-center gap-2 text-xs">
+      <span className="text-muted-foreground">{nombre}</span>
+      <span className="h-2.5 overflow-hidden rounded-sm bg-papel"><span className={`block h-full ${clase}`} style={{ width: `${Math.max(2, Math.min(100, (v ?? 0) * 100))}%` }} /></span>
+      <span className="tabular-nums">{v === null ? "sin dato" : formato(v)}</span>
+    </div>
+  );
+  return (
+    <div className="rounded-sm border border-border bg-white p-3">
+      <p className="mb-2 text-sm font-medium">{etiqueta} <span className="font-normal text-muted-foreground">({n})</span></p>
+      <div className="space-y-1.5">{fila("IA", ia, "bg-tinta")}{fila("Baseline", base, "bg-[oklch(0.72_0.08_250)]")}</div>
+    </div>
+  );
+}
+
+function SeccionIA({ b }: { b: Benchmark | null }) {
+  if (!b) return <div className="rounded-sm border border-dashed border-border bg-white p-4 text-sm text-muted-foreground">Todavía no hay benchmark. Corre <code className="rounded-sm bg-papel px-1">bun run benchmark --split dev</code> (y <code className="rounded-sm bg-papel px-1">--etiquetas</code> con las etiquetas humanas) y vuelve a cargar.</div>;
+  const c = b.consultas;
+  const r = (x: number, y: number) => (y ? x / y : 0);
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-muted-foreground">Mismas consultas y mismas etiquetas humanas para la IA (embeddings locales) y el baseline (BM25 y palabras clave). Split {b.split}, {horaPanama(b.fecha)}.</p>
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {b.temas && <Barra etiqueta="Clasificación de temas, macro-F1" ia={(b.temas.knn_loo ?? b.temas.zero_shot)?.macro_f1 ?? null} base={b.temas.baseline.macro_f1} n={`${b.temas.n} titulares etiquetados por ${b.temas.etiquetadores.join(", ")}${b.temas.knn_loo ? ", kNN leave-one-out" : ", zero-shot"}`} />}
+        {b.pares && <Barra etiqueta="Mismo evento, F1 de pares" ia={b.pares.ia.f1} base={b.pares.baseline.f1} n={`${b.pares.n} pares, umbral ${b.pares.umbral}`} />}
+        {c && <Barra etiqueta="Consultas sustentadas, Hit@5" ia={r(c.embeddings.sustentadas.hit5, c.embeddings.sustentadas.n)} base={r(c.bm25.sustentadas.hit5, c.bm25.sustentadas.n)} n={`${c.embeddings.sustentadas.hit5}/${c.embeddings.sustentadas.n} frente a ${c.bm25.sustentadas.hit5}/${c.bm25.sustentadas.n}`} />}
+        {c && <Barra etiqueta="Abstención correcta" ia={r(c.embeddings.abstencion.correctas, c.embeddings.abstencion.n)} base={r(c.bm25.abstencion.correctas, c.bm25.abstencion.n)} n={`${c.embeddings.abstencion.correctas}/${c.embeddings.abstencion.n}; abstenciones indebidas ${c.embeddings.abstencion.abstenciones_incorrectas}/${c.embeddings.abstencion.de_respondibles}`} />}
+        {c && <Barra etiqueta="Resistencia a inyección" ia={r(c.embeddings.adversarial.resistidos, c.embeddings.adversarial.n)} base={r(c.bm25.adversarial.resistidos, c.bm25.adversarial.n)} n={`${c.embeddings.adversarial.resistidos}/${c.embeddings.adversarial.n} ataques resistidos`} />}
+        {c && <Barra etiqueta="Cobertura de citas" ia={r(c.embeddings.cobertura_citas.con_cita, c.embeddings.cobertura_citas.n)} base={r(c.bm25.cobertura_citas.con_cita, c.bm25.cobertura_citas.n)} n={`${c.embeddings.cobertura_citas.con_cita}/${c.embeddings.cobertura_citas.n} afirmaciones con cita`} />}
+      </div>
+      {c && <p className="text-xs text-muted-foreground">Latencia por consulta: semántica mediana {c.embeddings.ms.mediana} ms, p95 {c.embeddings.ms.p95} ms; léxica mediana {c.bm25.ms.mediana} ms, p95 {c.bm25.ms.p95} ms. Numeradores y denominadores completos en data/processed/benchmark-{b.split}.json.</p>}
+    </div>
+  );
+}
+
 interface Control {
   manifest: { version: string; fecha_corte_UTC: string; cantidades: Record<string, number>; sha256: Record<string, string>; discrepancias_pdf: string[]; transformaciones: string[]; licencias: Record<string, string> };
   calidad: { errores: { archivo: string; fila: number; campo: string; motivo: string }[]; noticias_validas: number; indicadores_validos: number; indicadores_nulos: number } | null;
   motor: { modoIA: string; modelo: string | null; reglas: string; eventos: number; por_tema: Record<string, number>; rangos: Record<string, number>; ms: number } | null;
   reglas: { version: string; fecha: string; pesos: Record<string, number>; justificacion: string };
-  benchmark: { split: string; filas: { metrica: string; ia: string; baseline: string; n: string }[] } | null;
+  benchmark: Benchmark | null;
   pruebas: { id: string; nombre: string; esperado: string; estado: string; resultado: string; commit?: string; fecha?: string; correccion?: string }[] | null;
   modo: string;
   decisiones: { id: string; titulo: string; alternativa: string; motivo: string; persona: string; createdAt: string }[];
@@ -54,9 +95,7 @@ export function Control() {
         <p className="mt-1 text-sm text-muted-foreground">{c.reglas.justificacion}</p>
       </Seccion>
       <Seccion titulo="IA frente a baseline">
-        {c.benchmark ? (
-          <table className="w-full text-sm"><thead><tr className="border-b border-tinta text-left"><th className="py-1">Métrica</th><th>IA</th><th>Baseline</th><th>n</th></tr></thead><tbody>{c.benchmark.filas.map((f, i) => <tr key={i} className="border-b border-border"><td className="py-1">{f.metrica}</td><td>{f.ia}</td><td>{f.baseline}</td><td>{f.n}</td></tr>)}</tbody></table>
-        ) : <p className="text-sm text-muted-foreground">Pendiente: bun run benchmark.</p>}
+        <SeccionIA b={c.benchmark} />
       </Seccion>
       <Seccion titulo="Pruebas de aceptación T01 a T10">
         <ul className="escaleta rounded-sm border border-border bg-white text-sm">

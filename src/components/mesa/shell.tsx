@@ -1,41 +1,50 @@
 "use client";
-import { ROLES, horaPanama, useMesa } from "@/store/mesa";
+import { motion } from "framer-motion";
+import { ROLES, SPRING, horaPanama, useMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 
+const NAV: { v: "portada" | "agenda" | "control"; label: string }[] = [
+  { v: "portada", label: "Portada" },
+  { v: "agenda", label: "Agenda" },
+  { v: "control", label: "Control" },
+];
+
 export function Shell({ corteUTC, version, children }: { corteUTC?: string; version?: string; children: React.ReactNode }) {
-  const { vista, rol, irA, setRol } = useMesa();
+  const { vista, sesion, irA, setSesion, setChatAbierto } = useMesa();
+  const activa = vista === "ficha" ? "agenda" : vista;
+  const salir = async () => {
+    await fetch("/api/entrar", { method: "DELETE" });
+    setChatAbierto(false);
+    setSesion(null);
+    irA("portada");
+  };
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 border-b border-border bg-tinta text-white">
+      <header className="vidrio-tinta sticky top-0 z-40 text-white">
         <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 lg:px-8">
-          <button className="flex items-center gap-2.5 text-left" onClick={() => irA("agenda")}>
+          <button className="presionable flex items-center gap-2.5 text-left" onClick={() => irA("portada")}>
             <span className="block h-7 w-1.5 bg-senal" aria-hidden />
             <span>
               <span className="titular block text-lg font-bold leading-none">AgenteTVN</span>
-              <span className="block text-[11px] text-white/70">De la señal a la decisión</span>
+              <span className="block text-[11px] text-white/70">Mesa editorial para TVN Media</span>
             </span>
           </button>
-          <nav className="flex items-center gap-1 text-sm">
-            {(["agenda", "control"] as const).map((v) => (
-              <button key={v} onClick={() => irA(v)} className={cn("rounded-sm px-3 py-1.5", vista === v || (v === "agenda" && vista === "ficha") ? "bg-white/15 font-medium" : "text-white/75 hover:text-white")}>
-                {v === "agenda" ? "Agenda" : "Control"}
+          <nav className="relative flex items-center gap-1 text-sm" aria-label="Secciones">
+            {NAV.map((n) => (
+              <button key={n.v} onClick={() => irA(n.v)} className={cn("presionable relative rounded-sm px-3 py-1.5", activa === n.v ? "font-medium text-white" : "text-white/70 hover:text-white")}>
+                {activa === n.v && <motion.span layoutId="nav-activa" className="absolute inset-0 rounded-sm bg-white/15" transition={SPRING} aria-hidden />}
+                <span className="relative">{n.label}</span>
               </button>
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-3 text-xs text-white/75">
-            {corteUTC && (
-              <span className="hidden sm:inline">
-                Corte del snapshot {horaPanama(corteUTC)} {version ? `(${version})` : ""}
+            {corteUTC && <span className="hidden md:inline">Corte del snapshot {horaPanama(corteUTC)}{version ? ` (${version})` : ""}</span>}
+            {sesion && (
+              <span className="flex items-center gap-2">
+                <span className="hidden sm:inline">{sesion.nombre}, {ROLES.find((r) => r.id === sesion.rol)?.label.toLowerCase()}</span>
+                <button onClick={salir} className="presionable rounded-sm border border-white/25 px-2 py-1 text-white hover:bg-white/10">Salir</button>
               </span>
             )}
-            <label className="flex items-center gap-1.5">
-              <span className="sr-only">Rol</span>
-              <select value={rol} onChange={(e) => setRol(e.target.value as typeof rol)} className="rounded-sm border border-white/25 bg-transparent px-2 py-1 text-white [&>option]:text-tinta">
-                {ROLES.map((r) => (
-                  <option key={r.id} value={r.id}>{r.label}</option>
-                ))}
-              </select>
-            </label>
           </div>
         </div>
       </header>

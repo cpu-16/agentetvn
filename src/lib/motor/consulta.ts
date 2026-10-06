@@ -1,6 +1,6 @@
 // Consulta en español sobre el snapshot (CU-01, CU-04, T06): recuperación semántica (o léxica) → afirmaciones tipadas con cita → abstención explícita.
 import { coseno, embeber, modeloDisponible } from "./embeddings";
-import { buscarBM25, indexarBM25, type BM25 } from "./bm25";
+import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
 import { CONCEPTO_INDICADOR, idIndicador } from "./contexto";
 import { leerScoring } from "./config";
 import { INDICADORES, PAISES } from "../ingesta/bancomundial";
@@ -25,27 +25,34 @@ const PAIS_NOMBRE: Record<string, RegExp> = { PAN: /panam/i, CRI: /costa rica/i,
 const nombreIndicador = (id: string) => INDICADORES[id]?.nombre ?? id;
 export const hora = (iso: string | null) => (iso ? new Date(iso).toLocaleString("es-PA", { timeZone: "America/Panama", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }).replace(/\.\s*,/, ",") : "fecha no disponible");
 
-let bm25: { idx: BM25; n: number } | null = null;
+let bm25: { idx: BM25; huella: string } | null = null;
 function indice(snap: Snapshot): BM25 {
-  if (!bm25 || bm25.n !== snap.noticias.length) bm25 = { idx: indexarBM25(snap.noticias.filter((n) => !n.no_confiable).map((n) => ({ id: n.id_noticia, texto: `${n.titulo} ${n.descripcion}` }))), n: snap.noticias.length };
+  if (!bm25 || bm25.huella !== snap.huella) bm25 = { idx: indexarBM25(snap.noticias.filter((n) => !n.no_confiable).map((n) => ({ id: n.id_noticia, texto: `${n.titulo} ${n.descripcion}` }))), huella: snap.huella };
   return bm25.idx;
 }
+const OTRO_PAIS = /\b(honduras|nicaragua|el salvador|venezuela|ecuador|per[uú]|chile|argentina|brasil|bolivia|uruguay|paraguay|cuba|espa[ñn]a|estados unidos|eeuu|europa|china|rusia|jap[oó]n|canad[aá])\b/i;
 
 /** ¿La consulta pide una cifra de indicador? → {indicador, pais, anio} */
-export function detectarCifra(q: string): { indicador: string; pais: string; anio: number | null } | null {
+export function detectarCifra(q: string): { indicador: string; pais: string; anio: number | "corte" | null } | null {
   const c = CONCEPTO_INDICADOR.find((c) => c.re.test(q));
   if (!c) return null;
-  const pais = PAISES.find((p) => PAIS_NOMBRE[p].test(q)) ?? "PAN";
-  const m = /\b(20\d{2}|19\d{2})\b/.exec(q);
-  const hoy = /\b(hoy|actual|ahora|este a[ñn]o|[uú]ltim[oa]|reciente)\b/i.test(q);
-  return { indicador: c.id, pais, anio: m ? Number(m[1]) : hoy ? new Date().getUTCFullYear() : null };
+  const soportado = PAISES.find((p) => PAIS_NOMBRE[p].test(q));
+  const pais = soportado ?? (OTRO_PAIS.test(q) ? "OTRO" : "PAN"); // un país explícito no soportado NO se sustituye por Panamá
+  const m = /\b(\d{4})\b/.exec(q); // cualquier año explícito, esté o no en el corpus
+  const hoy = /\b(hoy|actual(mente)?|ahora|este a[ñn]o|[uú]ltim[oa]|reciente|al d[ií]a de hoy)\b/i.test(q);
+  return { indicador: c.id, pais, anio: m ? Number(m[1]) : hoy ? "corte" : null };
 }
 
 function responderCifra(q: string, snap: Snapshot, t0: number, modo: Respuesta["modo"]): Respuesta | null {
   const d = detectarCifra(q);
   if (!d) return null;
-  const serie = snap.indicadores.filter((i) => i.pais_iso3 === d.pais && i.indicador_id === d.indicador);
   const base = { contradicciones: [], modo, leyenda: LEYENDA };
+  if (d.pais === "OTRO")
+    return { ...base, abstener: true, motivo: `El snapshot solo cubre PAN, CRI, COL, DOM, MEX y GTM; el país consultado no está.`, faltante: `serie ${nombreIndicador(d.indicador)} (${d.indicador}) del país consultado`, afirmaciones: [], evidencias: [], ms: Date.now() - t0 };
+  // «hoy/actualmente» se resuelve contra el corte del snapshot (reproducible), no contra el reloj
+  const anioCorte = Number(snap.manifest.fecha_corte_UTC.slice(0, 4));
+  if (d.anio === "corte") d.anio = anioCorte;
+  const serie = snap.indicadores.filter((i) => i.pais_iso3 === d.pais && i.indicador_id === d.indicador);
   if (d.anio !== null) {
     const fila = serie.find((i) => i.anio === d.anio);
     if (!fila || fila.valor === null) {
@@ -77,18 +84,35 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   const k = opts.k ?? cfg.k;
   const usarEmb = opts.modo !== "bm25" && snap.embeddings && (await modeloDisponible());
   const modo: Respuesta["modo"] = usarEmb ? "embeddings" : "bm25";
+  // causalidad/culpa/pérdidas: abstención ANTES de cualquier otra rama (también si menciona un indicador)
+  // \b no funciona tras una vocal acentuada («qué»): se usan límites Unicode
+  if (/(?<![\p{L}])(por qu[eé]|caus[oó]|culpa|culpable|p[eé]rdidas?|quebr|impago|fraude)/iu.test(q))
+    return { abstener: true, motivo: "El corpus (titulares y metadatos) no permite establecer causas, culpas ni pérdidas.", faltante: "cobertura con fuentes primarias y lectura completa de los artículos", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
   const cifra = responderCifra(q, snap, t0, modo);
   if (cifra) return cifra;
-  if (/\b(por qu[eé]|caus[oó]|culpa|p[eé]rdidas?|quebr|impago|fraude)\b/i.test(q))
-    return { abstener: true, motivo: "El corpus (titulares y metadatos) no permite establecer causas, culpas ni pérdidas.", faltante: "cobertura con fuentes primarias y lectura completa de los artículos", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
-  const permitida = (id: string) => !porId.get(id)?.no_confiable && (!opts.soloIds || opts.soloIds.includes(id));
+  const permitida = (id: string) => porId.has(id) && !porId.get(id)!.no_confiable && (!opts.soloIds || opts.soloIds.includes(id));
   let candidatos: { id: string; score: number }[] = [];
+  let modoEfectivo: Respuesta["modo"] = modo;
   if (usarEmb) {
-    const [qv] = await embeber([q], "query");
-    const emb = snap.embeddings!;
-    candidatos = emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id) && c.score >= cfg.umbral_coseno).sort((a, b) => b.score - a.score).slice(0, k);
-  } else candidatos = buscarBM25(indice(snap), q, k * 2).filter((c) => permitida(c.id)).slice(0, k);
+    try {
+      const [qv] = await embeber([q], "query");
+      const emb = snap.embeddings!;
+      candidatos = emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id) && c.score >= cfg.umbral_coseno).sort((a, b) => b.score - a.score).slice(0, k);
+    } catch {
+      modoEfectivo = "bm25"; // modelo presente pero no cargable: fallback documentado (T10)
+    }
+  }
+  if (modoEfectivo === "bm25") {
+    // «relacionado» no es «sustentado»: se exige que al menos la mitad de los términos de la consulta (mínimo 2) aparezcan en el documento
+    const qTokens = [...new Set(tokenizar(q))];
+    const minimo = Math.max(2, Math.ceil(qTokens.length / 2));
+    const idx = indice(snap);
+    const tokensDe = new Map(idx.docs.map((d) => [d.id, new Set(d.tokens)]));
+    candidatos = buscarBM25(idx, q, k * 3)
+      .filter((c) => permitida(c.id) && qTokens.filter((t) => tokensDe.get(c.id)?.has(t)).length >= minimo)
+      .slice(0, k);
+  }
   if (!candidatos.length)
     return { abstener: true, motivo: "No hay evidencia en el snapshot que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del snapshot", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA };
   const noticias = candidatos.map((c) => porId.get(c.id)!);
@@ -97,8 +121,8 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
     abstener: false,
     afirmaciones: noticias.map(afirmacionNoticia),
     evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${porId.get(c.id)!.medio} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })),
-    contradicciones: eventos.flatMap((e) => e.contradicciones),
-    modo,
+    contradicciones: eventos.flatMap((e) => e.contradicciones.filter((c) => permitida(c.a) && permitida(c.b))),
+    modo: modoEfectivo,
     ms: Date.now() - t0,
     leyenda: LEYENDA,
   };

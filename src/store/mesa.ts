@@ -2,42 +2,47 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Vista = "agenda" | "ficha" | "control";
+export type Vista = "portada" | "agenda" | "ficha" | "control";
 export type Rol = "editor" | "periodista" | "productor";
 export const ROLES: { id: Rol; label: string }[] = [
   { id: "editor", label: "Editor/a" },
   { id: "periodista", label: "Periodista" },
   { id: "productor", label: "Productor/a digital" },
 ];
+export interface Sesion { nombre: string; rol: Rol }
 
 interface Mesa {
   vista: Vista;
   eventoId: string | null;
-  rol: Rol;
-  persona: string;
+  sesion: Sesion | null;
   modoConsulta: "embeddings" | "bm25";
+  chatAbierto: boolean;
   irA: (v: Vista, eventoId?: string) => void;
-  setRol: (r: Rol) => void;
-  setPersona: (p: string) => void;
+  setSesion: (s: Sesion | null) => void;
   setModoConsulta: (m: "embeddings" | "bm25") => void;
+  setChatAbierto: (a: boolean) => void;
 }
 
 export const useMesa = create<Mesa>()(
   persist(
     (set) => ({
-      vista: "agenda",
+      vista: "portada",
       eventoId: null,
-      rol: "editor",
-      persona: "",
+      sesion: null,
       modoConsulta: "embeddings",
+      chatAbierto: false,
       irA: (vista, eventoId) => set((s) => ({ vista, eventoId: eventoId ?? (vista === "ficha" ? s.eventoId : null) })),
-      setRol: (rol) => set({ rol }),
-      setPersona: (persona) => set({ persona }),
+      setSesion: (sesion) => set({ sesion }),
       setModoConsulta: (modoConsulta) => set({ modoConsulta }),
+      setChatAbierto: (chatAbierto) => set({ chatAbierto }),
     }),
-    { name: "agentetvn-mesa", partialize: (s) => ({ rol: s.rol, persona: s.persona, modoConsulta: s.modoConsulta }) }
+    { name: "agentetvn-mesa", partialize: (s) => ({ modoConsulta: s.modoConsulta }) }
   )
 );
+
+/** Rol y persona actuales (derivados de la sesión). */
+export const useRol = () => useMesa((s) => s.sesion?.rol ?? "editor");
+export const usePersona = () => useMesa((s) => s.sesion?.nombre ?? "");
 
 export const horaPanama = (iso: string | null | undefined, conHora = true) =>
   iso
@@ -63,3 +68,8 @@ export const ESTADO_LABEL: Record<string, string> = {
 };
 export const EVIDENCIA_LABEL: Record<string, string> = { insuficiente: "Evidencia insuficiente", parcial: "Evidencia parcial", suficiente: "Suficiente para el borrador" };
 export const TIPO_LABEL: Record<string, string> = { hecho_reportado: "Hecho reportado", declaracion: "Declaración", inferencia: "Inferencia", hipotesis: "Hipótesis" };
+
+/** Springs de la casa (Apple): críticamente amortiguados; rebote solo con momento del usuario. */
+export const SPRING = { type: "spring", bounce: 0, duration: 0.32 } as const;
+export const SPRING_PANEL = { type: "spring", bounce: 0, duration: 0.28 } as const;
+export const EASE_OUT = [0.23, 1, 0.32, 1] as const;
