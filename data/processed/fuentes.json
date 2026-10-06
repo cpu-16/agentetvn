@@ -5,6 +5,12 @@
     "condiciones": "Solo titular, extracto corto, URL y fecha. El RSS público no implica licencia sobre artículos, imágenes ni videos; no se redistribuyen cuerpos.",
     "cobertura": "secciones con feed activo al corte; el RSS no conserva histórico"
   },
+  "rss_otros": {
+    "nombre": "RSS públicos de Prensa, Panamá América y Crítica",
+    "url": "ver manifest.consultas",
+    "condiciones": "Solo titular, extracto corto, URL y fecha; sin redistribución de contenido. Fuente complementaria para corroboración independiente (CU-03).",
+    "cobertura": "últimos ítems del feed al corte (sin histórico)"
+  },
   "gdelt": {
     "nombre": "GDELT DOC 2.0 API",
     "url": "https://api.gdeltproject.org/api/v2/doc/doc",

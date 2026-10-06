@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-10-06T16:09:18.134Z",
+  "fecha": "2026-10-06T16:39:41.231Z",
   "split": "dev",
   "snapshot": "v1",
   "reglas": "v1",
@@ -7,9 +7,9 @@
     "embeddings": {
       "n": 38,
       "sustentadas": {
-        "ok": 19,
+        "ok": 17,
         "n": 20,
-        "hit5": 19
+        "hit5": 17
       },
       "contradiccion": {
         "ok": 5,
@@ -30,7 +30,7 @@
         "n": 38
       },
       "ms": {
-        "mediana": 8,
+        "mediana": 9,
         "p95": 14
       },
       "filas": [
@@ -39,15 +39,15 @@
           "tipo": "sustentada",
           "consulta": "¿Qué se reporta sobre Colegios particulares atribuyen aumento de matrícula a?",
           "abstuvo": false,
-          "hit": true,
+          "hit": false,
           "citas_ok": true,
-          "ok": true,
-          "ms": 544,
+          "ok": false,
+          "ms": 630,
           "evidencias": [
-            "n_0a4af833d717",
+            "n_e333c6659516",
             "n_bccc42f8aa3f",
             "n_0ab88f79b638",
-            "n_e333c6659516",
+            "n_d216c740eb3c",
             "n_fc069790abb2"
           ]
         },
@@ -59,13 +59,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 13,
+          "ms": 9,
           "evidencias": [
             "n_518c000d4992",
+            "n_b22dfba08fe9",
             "n_37ac3d1cee3c",
-            "n_56bfbf86a2e7",
-            "n_41e59870c552",
-            "n_d0e39d948061"
+            "n_d0e39d948061",
+            "n_41e59870c552"
           ]
         },
         {
@@ -79,10 +79,10 @@
           "ms": 9,
           "evidencias": [
             "n_ce443344c63b",
-            "n_3f28a1863a82",
             "n_8daf02149f4a",
-            "n_6438bec02793",
-            "n_b23c96281be4"
+            "n_3f28a1863a82",
+            "n_b23c96281be4",
+            "n_6438bec02793"
           ]
         },
         {
@@ -93,13 +93,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 10,
           "evidencias": [
             "n_4dbc153b7bf1",
             "n_f7e7ffce8385",
             "n_d03c8ebee77a",
-            "n_bc781545d029",
-            "n_f39ee681bf50"
+            "n_1aca5bb6e7f7",
+            "n_bc781545d029"
           ]
         },
         {
@@ -110,7 +110,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 14,
+          "ms": 9,
           "evidencias": [
             "n_f9d24d4be1b1",
             "n_f7e7ffce8385",
@@ -127,13 +127,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 14,
           "evidencias": [
             "n_9f17006804cb",
             "n_40d350f2a9d6",
             "n_a0ec77afacf7",
-            "n_811f78823982",
-            "n_bfc9b18f26d9"
+            "n_bfc9b18f26d9",
+            "n_811f78823982"
           ]
         },
         {
@@ -141,16 +141,16 @@
           "tipo": "sustentada",
           "consulta": "¿Qué se reporta sobre Panamá reforzará su presencia marítima en Vietnam?",
           "abstuvo": false,
-          "hit": true,
+          "hit": false,
           "citas_ok": true,
-          "ok": true,
-          "ms": 7,
+          "ok": false,
+          "ms": 9,
           "evidencias": [
-            "n_ac1a76777f96",
+            "n_0cac53f44744",
             "n_616ddf8b9542",
             "n_4e00fb72f5d2",
-            "n_024a175d5e83",
-            "n_bf55aaf7afa4"
+            "n_a00942e7cd60",
+            "n_024a175d5e83"
           ]
         },
         {
@@ -161,13 +161,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 5,
+          "ms": 7,
           "evidencias": [
             "n_16d955b607c3",
+            "n_a9b1f9ff9441",
             "n_9873933a6312",
             "n_bf5fc281a356",
-            "n_5ac4850fb044",
-            "n_a9b1f9ff9441"
+            "n_5ac4850fb044"
           ]
         },
         {
@@ -178,13 +178,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 10,
           "evidencias": [
             "n_e3f159403e0f",
             "n_cc97f7e1a111",
-            "n_f39ee681bf50",
             "n_9e0ef6130b9b",
-            "n_38968d9edc16"
+            "n_f39ee681bf50",
+            "n_1db38d7a53f3"
           ]
         },
         {
@@ -195,7 +195,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 6,
+          "ms": 8,
           "evidencias": [
             "n_ff171edb4c0b",
             "n_6d1749c7452c",
@@ -212,12 +212,12 @@
           "hit": false,
           "citas_ok": true,
           "ok": false,
-          "ms": 6,
+          "ms": 9,
           "evidencias": [
             "n_72020673e6ca",
             "n_b71d677a670e",
-            "n_0b38fedb35b0",
             "n_a956d2942e9d",
+            "n_0b38fedb35b0",
             "n_55eb3babab97"
           ]
         },
@@ -229,7 +229,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 9,
           "evidencias": [
             "n_9d68e6ea53ee",
             "n_034d4875076c",
@@ -246,12 +246,12 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 6,
+          "ms": 9,
           "evidencias": [
             "n_8aae506a2abe",
-            "n_ccfb30161637",
-            "n_0d1f1252435f",
             "n_91972ce9cbe1",
+            "n_0d1f1252435f",
+            "n_ccfb30161637",
             "n_f46ae3b71357"
           ]
         },
@@ -263,13 +263,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 7,
           "evidencias": [
             "n_b53e79eee74d",
             "n_9e0ef6130b9b",
             "n_e80816e1c4fd",
-            "n_43cbdd111a42",
-            "n_13344d7e8768"
+            "n_13344d7e8768",
+            "n_43cbdd111a42"
           ]
         },
         {
@@ -284,9 +284,9 @@
           "evidencias": [
             "n_e4244def9c5a",
             "n_91972ce9cbe1",
-            "n_ab8312cbe645",
+            "n_f7e7ffce8385",
             "n_40d350f2a9d6",
-            "n_f7e7ffce8385"
+            "n_a82782945024"
           ]
         },
         {
@@ -302,8 +302,8 @@
             "n_617919f9dcab",
             "n_f1234b81d944",
             "n_cd235d5e917d",
-            "n_fee9c0bb6403",
-            "n_58833b728730"
+            "n_58833b728730",
+            "n_10f23a619343"
           ]
         },
         {
@@ -314,13 +314,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 10,
           "evidencias": [
             "n_79658a38c016",
             "n_b133d222160e",
             "n_0242d39a099e",
             "n_a74061500ed1",
-            "n_fbd7d3724125"
+            "n_c4bab6290f74"
           ]
         },
         {
@@ -331,13 +331,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 7,
           "evidencias": [
             "n_a6c8c51fa207",
             "n_f7e7ffce8385",
             "n_28ad1ea405d8",
-            "n_18e9033d1bd8",
-            "n_1aca5bb6e7f7"
+            "n_1aca5bb6e7f7",
+            "n_91972ce9cbe1"
           ]
         },
         {
@@ -348,13 +348,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 6,
+          "ms": 8,
           "evidencias": [
             "n_5ee43004dedb",
             "n_617919f9dcab",
             "n_b3d3ad13ab20",
-            "n_a639cb27da65",
-            "n_48f49414e78c"
+            "n_f1234b81d944",
+            "n_8daf02149f4a"
           ]
         },
         {
@@ -370,8 +370,8 @@
             "n_ff61f9adc7ea",
             "n_b70f1ae313b7",
             "n_aa0b6b06403d",
-            "n_f7e7ffce8385",
-            "n_c7d1cf481fb2"
+            "n_c7d1cf481fb2",
+            "n_f7e7ffce8385"
           ]
         },
         {
@@ -382,7 +382,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 12,
           "evidencias": [
             "n_691ced7c04b3",
             "n_f3f2246adb4f",
@@ -399,13 +399,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 10,
           "evidencias": [
             "n_9f17006804cb",
             "n_40d350f2a9d6",
-            "n_811f78823982",
             "n_ccfee0258ed2",
-            "n_ab8312cbe645"
+            "n_811f78823982",
+            "n_e4244def9c5a"
           ]
         },
         {
@@ -416,13 +416,13 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 10,
           "evidencias": [
             "n_60ea9f71e6b4",
             "n_12fb72c1c89f",
             "n_bf435961b3eb",
-            "n_d93f7839c890",
-            "n_3d2893c64c1e"
+            "n_3d2893c64c1e",
+            "n_d93f7839c890"
           ]
         },
         {
@@ -437,8 +437,8 @@
           "evidencias": [
             "n_f958ec7d4930",
             "n_2355f9338104",
-            "n_1f0389098601",
             "n_2a1814d6ec88",
+            "n_1f0389098601",
             "n_37ac3d1cee3c"
           ]
         },
@@ -496,13 +496,13 @@
           "hit": null,
           "citas_ok": true,
           "ok": false,
-          "ms": 11,
+          "ms": 9,
           "evidencias": [
             "n_b03996f63626",
             "n_024a175d5e83",
-            "n_16d955b607c3",
             "n_b49d9a65904f",
-            "n_aa0b6b06403d"
+            "n_16d955b607c3",
+            "n_24df92ea8176"
           ]
         },
         {
@@ -546,13 +546,13 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 7,
+          "ms": 10,
           "evidencias": [
-            "n_373d81d4b6d3",
-            "n_66c949af43d5",
-            "n_9241633081de",
             "n_37ac3d1cee3c",
-            "n_834eba7a97c4"
+            "n_6d38ea05607a",
+            "n_c7d1cf481fb2",
+            "n_a956d2942e9d",
+            "n_b70f1ae313b7"
           ]
         },
         {
@@ -574,13 +574,13 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 10,
+          "ms": 11,
           "evidencias": [
             "n_51e9329f1407",
-            "n_ff171edb4c0b",
             "n_7b6ea82c3429",
+            "n_ff171edb4c0b",
             "n_04bc92347169",
-            "n_b48900a221b0"
+            "n_3ff9ac8c6bc2"
           ]
         },
         {
@@ -591,13 +591,13 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 8,
+          "ms": 9,
           "evidencias": [
-            "n_23067db3203f",
-            "n_c592ad1ac4c1",
             "n_1a1ccc1b7058",
-            "n_3dc31480bbc3",
-            "n_1cd0cd6f7f84"
+            "n_c592ad1ac4c1",
+            "n_23067db3203f",
+            "n_1cd0cd6f7f84",
+            "n_3dc31480bbc3"
           ]
         },
         {
@@ -608,7 +608,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 0,
+          "ms": 1,
           "evidencias": []
         },
         {
@@ -619,13 +619,13 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 9,
+          "ms": 10,
           "evidencias": [
             "n_37ac3d1cee3c",
-            "n_373d81d4b6d3",
-            "n_66c949af43d5",
-            "n_9241633081de",
-            "n_9acf78f767c4"
+            "n_c4bab6290f74",
+            "n_c7d1cf481fb2",
+            "n_b70f1ae313b7",
+            "n_ff61f9adc7ea"
           ]
         }
       ]
@@ -633,9 +633,9 @@
     "bm25": {
       "n": 38,
       "sustentadas": {
-        "ok": 19,
+        "ok": 17,
         "n": 20,
-        "hit5": 19
+        "hit5": 17
       },
       "contradiccion": {
         "ok": 5,
@@ -644,7 +644,7 @@
       "abstencion": {
         "correctas": 7,
         "n": 7,
-        "abstenciones_incorrectas": 1,
+        "abstenciones_incorrectas": 2,
         "de_respondibles": 20
       },
       "adversarial": {
@@ -664,14 +664,12 @@
           "id": "b01",
           "tipo": "sustentada",
           "consulta": "¿Qué se reporta sobre Colegios particulares atribuyen aumento de matrícula a?",
-          "abstuvo": false,
-          "hit": true,
+          "abstuvo": true,
+          "hit": false,
           "citas_ok": true,
-          "ok": true,
-          "ms": 11,
-          "evidencias": [
-            "n_0a4af833d717"
-          ]
+          "ok": false,
+          "ms": 13,
+          "evidencias": []
         },
         {
           "id": "b02",
@@ -683,7 +681,8 @@
           "ok": true,
           "ms": 2,
           "evidencias": [
-            "n_518c000d4992"
+            "n_518c000d4992",
+            "n_b22dfba08fe9"
           ]
         },
         {
@@ -720,7 +719,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 1,
+          "ms": 2,
           "evidencias": [
             "n_f9d24d4be1b1"
           ]
@@ -733,7 +732,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_9f17006804cb",
             "n_40d350f2a9d6"
@@ -744,12 +743,12 @@
           "tipo": "sustentada",
           "consulta": "¿Qué se reporta sobre Panamá reforzará su presencia marítima en Vietnam?",
           "abstuvo": false,
-          "hit": true,
+          "hit": false,
           "citas_ok": true,
-          "ok": true,
-          "ms": 4,
+          "ok": false,
+          "ms": 2,
           "evidencias": [
-            "n_ac1a76777f96"
+            "n_0cac53f44744"
           ]
         },
         {
@@ -760,7 +759,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 4,
+          "ms": 3,
           "evidencias": [
             "n_16d955b607c3",
             "n_82d60280e511",
@@ -777,7 +776,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 4,
           "evidencias": [
             "n_e3f159403e0f"
           ]
@@ -803,7 +802,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_72020673e6ca",
             "n_1791cd5a1bcf"
@@ -934,7 +933,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 3,
           "evidencias": [
             "n_691ced7c04b3",
             "n_f3f2246adb4f"
@@ -974,7 +973,7 @@
           "hit": true,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 1,
           "evidencias": [
             "n_f958ec7d4930"
           ]
@@ -1033,7 +1032,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 1,
           "evidencias": []
         },
         {
@@ -1110,7 +1109,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 2,
+          "ms": 1,
           "evidencias": []
         },
         {
@@ -1121,7 +1120,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 0,
+          "ms": 1,
           "evidencias": []
         },
         {
@@ -1132,7 +1131,7 @@
           "hit": null,
           "citas_ok": true,
           "ok": true,
-          "ms": 3,
+          "ms": 1,
           "evidencias": []
         }
       ]

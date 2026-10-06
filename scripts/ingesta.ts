@@ -2,6 +2,7 @@
 // ingesta · arma el snapshot «Panamá · Señales y Evidencias v1»
 //   bun run ingesta            (descarga TVN RSS, GDELT, Banco Mundial, USGS)
 //   bun run ingesta --sin-gdelt   (solo lo rápido; útil para probar)
+//   bun run ingesta --gdelt-solo-cache   (sin llamar a GDELT: une lo ya bajado en data/raw/gdelt/)
 // Sale 2 si no se alcanza el mínimo del reto (100 noticias únicas, 20 de TVN).
 // ─────────────────────────────────────────────────────────────
 import { mkdirSync, existsSync } from "fs";
@@ -15,6 +16,7 @@ import { COLUMNAS_INDICADORES, COLUMNAS_NOTICIAS, escribirCsv, escribirJson, has
 import type { Manifest, Noticia } from "../src/lib/motor/contrato";
 
 const sinGdelt = process.argv.includes("--sin-gdelt");
+const gdeltSoloCache = process.argv.includes("--gdelt-solo-cache"); // sin red: une todas las descargas previas de data/raw/gdelt/
 const corte = new Date();
 const fechaExtraccion = corte.toISOString();
 const dia = fechaExtraccion.slice(0, 10);
@@ -32,7 +34,7 @@ consultas.push(...tvn.consultas);
 let gdeltNoticias: Noticia[] = [];
 if (!sinGdelt) {
   const corteHora = new Date(Math.floor(corte.getTime() / 3600000) * 3600000); // ventanas estables dentro de la misma hora → la caché por URL sirve
-  const g = await ingestarGdelt(corteHora, fechaExtraccion, log);
+  const g = await ingestarGdelt(corteHora, fechaExtraccion, log, gdeltSoloCache);
   escribirJson(`${RAW}/${dia}/gdelt.json`, g.noticias);
   consultas.push(...g.consultas);
   gdeltNoticias = g.noticias;

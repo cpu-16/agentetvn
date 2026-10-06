@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import { dormir, fetchJson, gdeltFecha, nuevaNoticia } from "./comun";
 import { sha256, type Noticia } from "../motor/contrato";
 
@@ -59,9 +59,23 @@ export function parsearGdelt(arts: Art[], fechaExtraccion: string): Noticia[] {
     );
 }
 
-export async function ingestarGdelt(corte: Date, fechaExtraccion: string, log: (s: string) => void) {
+/** Todo lo bajado en corridas anteriores (cualquier hora de corte) también entra: GDELT limita y cada ventana lograda vale. */
+export function articulosEnCache(): { url: string; articles: Art[] }[] {
+  if (!existsSync(CACHE)) return [];
+  return readdirSync(CACHE).filter((f) => f.endsWith(".json")).map((f) => JSON.parse(readFileSync(`${CACHE}/${f}`, "utf8")) as { url: string; articles?: Art[] }).map((j) => ({ url: j.url, articles: j.articles ?? [] }));
+}
+
+export async function ingestarGdelt(corte: Date, fechaExtraccion: string, log: (s: string) => void, soloCache = false) {
   const todas: Noticia[] = [];
   const consultas: { fuente: string; consulta: string; fecha: string; n: number }[] = [];
+  const previas = articulosEnCache();
+  for (const p of previas) {
+    const ns = parsearGdelt(p.articles, fechaExtraccion);
+    todas.push(...ns);
+    consultas.push({ fuente: "gdelt", consulta: `${p.url} (caché)`, fecha: fechaExtraccion, n: ns.length });
+  }
+  log(`GDELT caché previa: ${previas.length} llamadas, ${todas.length} artículos`);
+  if (soloCache) return { noticias: todas, consultas };
   for (const [q, dias] of CONSULTAS_GDELT) {
     for (const v of ventanas(corte, 90, dias)) {
       const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q)}&mode=artlist&maxrecords=250&format=json&sort=datedesc&startdatetime=${aGdelt(v.desde)}&enddatetime=${aGdelt(v.hasta)}`;
