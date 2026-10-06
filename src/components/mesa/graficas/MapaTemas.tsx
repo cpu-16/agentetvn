@@ -57,7 +57,7 @@ export function MapaTemas({ temas, eventos, filtro, onFiltro, abrirFicha }: Prop
 
   return (
     <Grafica
-      titulo="Mapa de temas"
+      titulo={unSoloTema ? `Publicaciones por evento: ${nombreTema(filtro.temas[0])}` : "Publicaciones por tema"}
       nota={unSoloTema ? `Eventos de ${nombreTema(filtro.temas[0])}: tamaño, publicaciones; color, puntaje de atención (P); borde punteado, por revisar. Clic abre la ficha; «Limpiar» vuelve a los temas.` : "Tamaño: publicaciones. Color: el del tema en todo el tablero. Clic en un tema filtra el tablero y muestra sus eventos."}
       aria={unSoloTema ? `Mapa de ${evsTema.length} eventos del tema ${nombreTema(filtro.temas[0])}` : `Mapa de ${temas.length} temas con ${eventos.length} eventos`}
       opcion={opcion}

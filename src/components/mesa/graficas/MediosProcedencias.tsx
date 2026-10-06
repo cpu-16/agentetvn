@@ -6,7 +6,7 @@ import type { Agregados, Filtro } from "./tipos";
 
 const TIPO: Record<string, { nombre: string; color: string }> = {
   agencia: { nombre: "Agencia (réplicas cuentan una vez)", color: AZUL_TVN },
-  medio: { nombre: "Medio con redacción propia", color: "#5fa8dd" },
+  medio: { nombre: "Medio, sin agencia atribuida", color: "#5fa8dd" },
   primaria: { nombre: "Fuente primaria", color: VERDE },
   no_verificada: { nombre: "Independencia no verificada", color: AMBAR },
 };
@@ -36,8 +36,8 @@ export function Medios({ medios, filtro, onFiltro }: { medios: Agregados["medios
   }), [top, filtro.medio]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Grafica
-      titulo="Medios con más publicaciones"
-      nota="Dentro del filtro actual. Clic en un medio deja solo las publicaciones de ese medio (los demás quedan en gris para poder cambiar)."
+      titulo={`${top.length} medios con más publicaciones`}
+      nota="Dentro del tema, rango y período; el medio elegido no recorta esta lista. Clic en un medio deja solo sus publicaciones en el resto del tablero (los demás quedan en gris para poder cambiar)."
       aria={`Barras de publicaciones por medio, ${top.length} medios`}
       opcion={opcion}
       eventos={manejadores}
@@ -65,8 +65,8 @@ export function Procedencias({ procedencias }: { procedencias: Agregados["proced
   }), [procedencias, compacto]);
   return (
     <Grafica
-      titulo="Tipos de procedencia"
-      nota={`${fmt(total)} procedencias en los eventos filtrados. Cinco medios que replican una agencia cuentan como una.`}
+      titulo="Procedencias acumuladas por evento"
+      nota={`${fmt(total)} procedencias: se cuentan una vez por evento entre las publicaciones filtradas (un medio que aparece en dos eventos suma dos). Cinco medios que replican una agencia cuentan como una.`}
       aria="Dona con la proporción de tipos de procedencia"
       opcion={opcion}
       alto={300}

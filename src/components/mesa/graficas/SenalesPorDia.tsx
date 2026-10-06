@@ -5,11 +5,11 @@ import { Grafica, useCompacto, type Manejadores, type Opcion } from "./Grafica";
 import { colorTema, EJE, FUENTE, leyenda, nombreTema, ORDEN_TEMAS, TOOLTIP, esc, fmt } from "./paleta";
 import type { Filtro, Tablero } from "./tipos";
 
-interface Props { datos: Tablero["porDiaTema"]; filtro: Filtro; onFiltro: (f: Partial<Filtro>) => void }
+interface Props { datos: Tablero["porDiaTema"]; filtro: Filtro; onFiltro: (f: Partial<Filtro>) => void; porDeteccion?: number; total?: number }
 
 const diaCorto = (d: string) => new Intl.DateTimeFormat("es-PA", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
-export function SenalesPorDia({ datos, filtro, onFiltro }: Props) {
+export function SenalesPorDia({ datos, filtro, onFiltro, porDeteccion, total }: Props) {
   const compacto = useCompacto();
   const chartRef = useRef<ECharts | null>(null);
   const diasRef = useRef<string[]>([]);
@@ -71,8 +71,8 @@ export function SenalesPorDia({ datos, filtro, onFiltro }: Props) {
 
   return (
     <Grafica
-      titulo="Señales por día y tema"
-      nota="Publicaciones por día en hora de Panamá, de todo el rango de fechas. Arrastra sobre el área para fijar el período del tablero; la leyenda enciende y apaga temas."
+      titulo="Publicaciones por fecha y tema (hora Panamá)"
+      nota={`Fecha de publicación o, si la fuente no la trae, fecha de detección${porDeteccion != null && total ? `: ${fmt(porDeteccion)} de ${fmt(total)} publicaciones van por detección (GDELT), por eso los picos coinciden con los días de recolección` : ""}. Arrastra sobre el área para fijar el período del tablero; la leyenda enciende y apaga temas.`}
       aria={`Área apilada de publicaciones por día y tema, ${dias.length} días y ${temas.length} temas`}
       opcion={opcion}
       eventos={eventos}

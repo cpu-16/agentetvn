@@ -43,7 +43,7 @@ export function RelevanciaEvidencia({ eventos, abrirFicha }: Props) {
   return (
     <Grafica
       titulo="Relevancia frente a evidencia"
-      nota="Cada punto es un evento; el tamaño, sus publicaciones. Arriba a la derecha: relevante y respaldado. Rojo: prioridad alta sin evidencia suficiente. Clic abre la ficha."
+      nota="Cada punto es un evento; el tamaño, sus publicaciones. Arriba a la derecha: relevante y respaldado. Rojo: prioridad alta con evidencia insuficiente. Clic abre la ficha."
       aria={`Dispersión de ${eventos.length} eventos por relevancia y evidencia`}
       opcion={opcion}
       eventos={manejadores}
