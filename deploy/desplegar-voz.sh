@@ -9,5 +9,7 @@ TOKEN=$(ssh prox "pct exec 130 -- grep -oP '^VOZ_TOKEN=\K.+' /opt/agentetvn/.env
 tmp=$(mktemp -d); cp voz/puente.py voz/app_server_falso.py deploy/agentetvn-voz.service deploy/instalar-voz-en-ct.sh "$tmp/"
 printf 'VOZ_TOKEN=%s\nNEXT_URL=https://agentetvn.ciberpty.com\nVOZ=maple\nMODELO=gpt-6-luna\n' "$TOKEN" > "$tmp/env"; chmod 600 "$tmp/env"
 scp -q "$tmp"/* prox3:/tmp/ && rm -r "$tmp"
-ssh prox3 "pct exec 130 -- mkdir -p /opt/agentetvn-voz && for f in puente.py app_server_falso.py instalar-voz-en-ct.sh; do pct push 130 /tmp/\$f /opt/agentetvn-voz/\$f; done && pct push 130 /tmp/env /opt/agentetvn-voz/.env --perms 600 && pct push 130 /tmp/agentetvn-voz.service /etc/systemd/system/agentetvn-voz.service && rm /tmp/puente.py /tmp/app_server_falso.py /tmp/instalar-voz-en-ct.sh /tmp/env /tmp/agentetvn-voz.service"
-ssh prox3 "pct exec 130 -- bash /opt/agentetvn-voz/instalar-voz-en-ct.sh"
+# set -e en el nodo: si falla cualquier copia, no se instala una mezcla de versiones
+ssh prox3 "set -e; pct exec 130 -- mkdir -p /opt/agentetvn-voz; for f in puente.py app_server_falso.py instalar-voz-en-ct.sh; do pct push 130 /tmp/\$f /opt/agentetvn-voz/\$f; done; pct push 130 /tmp/env /opt/agentetvn-voz/.env --perms 600; pct push 130 /tmp/agentetvn-voz.service /etc/systemd/system/agentetvn-voz.service; rm /tmp/puente.py /tmp/app_server_falso.py /tmp/instalar-voz-en-ct.sh /tmp/env /tmp/agentetvn-voz.service"
+# El instalador corre como unidad propia en el CT (systemd-run): si se cae esta sesión SSH, igual termina su verificación y retirada.
+ssh prox3 "pct exec 130 -- systemd-run --unit=agentetvn-voz-instalar --collect --wait --quiet -p StandardOutput=journal -p StandardError=journal bash /opt/agentetvn-voz/instalar-voz-en-ct.sh; r=\$?; pct exec 130 -- journalctl -u agentetvn-voz-instalar --since -3min --no-pager -o cat; exit \$r"
