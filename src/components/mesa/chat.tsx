@@ -187,7 +187,7 @@ export function ChatAgente() {
                             </li>
                           ))}
                         </ul>
-                        {t.respuesta.redaccion.vacios.length > 0 && <p className="rounded-sm bg-[#fff8e1] px-3 py-1.5 text-xs text-[#7a5600]"><span className="font-medium">Qué falta en el borrador:</span> {t.respuesta.redaccion.vacios.join("; ")}</p>}
+                        {t.respuesta.redaccion.vacios.length > 0 && <p className="rounded-sm bg-[#fff8e1] px-3 py-1.5 text-xs text-[#7a5600]"><span className="font-medium">Qué falta en el borrador:</span> {t.respuesta.redaccion.vacios.map((v) => v.replace(/[.;\s]+$/, "")).join("; ")}.</p>}
                         <p className="text-xs text-muted-foreground">{nombreModelo(t.respuesta.redaccion.llm.modelo)}, {Math.round(t.respuesta.redaccion.llm.ms / 1000)} s. Cada frase se sostuvo en su cita; no sustituye la revisión humana.</p>
                         <p className="text-xs font-medium">Afirmaciones recuperadas de las fuentes (no son el borrador):</p>
                       </div>
