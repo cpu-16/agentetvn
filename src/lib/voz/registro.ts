@@ -3,12 +3,14 @@
 import type { ContextoPantalla, VistaVoz } from "./catalogo";
 
 export type Accion = { tipo: "navegar"; vista: VistaVoz; eventoId?: string } | { tipo: "mostrar"; pregunta: string; respuesta: unknown } | { tipo: "colgada"; motivo: string };
-interface Llamada { persona: string; desde: string; contexto: ContextoPantalla | null; acciones: Accion[] }
+interface Llamada { persona: string; desde: string; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number }
 const g = globalThis as unknown as { __vozLlamadas?: Map<string, Llamada> };
 const llamadas = (g.__vozLlamadas ??= new Map<string, Llamada>());
 
-export const abrirLlamada = (hilo: string, persona: string, desde: string) => void llamadas.set(hilo, { persona, desde, contexto: null, acciones: [] });
-export const existeLlamada = (hilo: string) => llamadas.has(hilo);
+/** Una llamada dura a lo sumo 3 min: si se perdió el aviso de fin, a los 10 min se borra sola. */
+const barrer = (ahora = Date.now()) => { for (const [h, l] of llamadas) if (ahora - l.inicio > 10 * 60_000) llamadas.delete(h); };
+export const abrirLlamada = (hilo: string, persona: string, desde: string) => { barrer(); llamadas.set(hilo, { persona, desde, contexto: null, acciones: [], inicio: Date.now() }); };
+export const existeLlamada = (hilo: string) => { barrer(); return llamadas.has(hilo); };
 export const esDueno = (hilo: string, persona: string, desde: string) => { const l = llamadas.get(hilo); return !!l && l.persona === persona && l.desde === desde; };
 export const guardarContexto = (hilo: string, c: ContextoPantalla) => { const l = llamadas.get(hilo); if (l) l.contexto = c; };
 export const contextoDe = (hilo: string) => llamadas.get(hilo)?.contexto ?? null;

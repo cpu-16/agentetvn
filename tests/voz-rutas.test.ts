@@ -40,7 +40,7 @@ describe("rutas de la página", () => {
     const oferta = ofertar(ANA);
     const cmd = await (await pedirEspera()).json();
     expect(cmd).toMatchObject({ tipo: "offer", sdp: "v=0 oferta", persona: "Ana" });
-    expect((await responder({ id: cmd.id, ok: true, sdp: "v=0 respuesta", hilo: "hilo-1" })).status).toBe(200);
+    expect(await (await responder({ id: cmd.id, ok: true, sdp: "v=0 respuesta", hilo: "hilo-1" })).json()).toMatchObject({ aceptada: true });
     const r = await oferta;
     expect(r.status).toBe(200);
     expect(r.headers.get("x-hilo")).toBe("hilo-1");
@@ -56,6 +56,29 @@ describe("rutas de la página", () => {
     const r = await oferta;
     expect(r.status).toBe(429);
     expect((await r.json()).error).toContain("ocupada");
+  });
+  test("puente ocupado u otra oferta en curso → 429 al instante, sin encolar", async () => {
+    await (await ruta("puente/espera")).GET(new Request("http://x/api/voz/puente/espera?ocupada=1&seg_hora=0&ms=100", { headers: { "x-voz-token": TOKEN } }));
+    const t0 = Date.now();
+    expect((await ofertar(ANA)).status).toBe(429);
+    expect(Date.now() - t0).toBeLessThan(500);
+    await pedirEspera(); // libre otra vez
+    const primera = ofertar(ANA);
+    expect((await ofertar(BETO)).status).toBe(429); // la segunda no espera ni se encola
+    const cmd = await (await pedirEspera()).json();
+    await responder({ id: cmd.id, ok: false, status: 502, error: "x" });
+    expect((await primera).status).toBe(503);
+  });
+  test("respuesta tardía (nadie la espera) → aceptada=false para que el puente cuelgue", async () => {
+    const r = await responder({ id: "ya-vencida", ok: true, sdp: "v=0", hilo: "hilo-x" });
+    expect(await r.json()).toMatchObject({ aceptada: false });
+  });
+  test("reconciliación: si el puente reporta una llamada que Next no conoce, le ordena colgarla", async () => {
+    const r = await (await ruta("puente/espera")).GET(new Request("http://x/api/voz/puente/espera?ocupada=1&seg_hora=10&activa=hilo-fantasma&ms=100", { headers: { "x-voz-token": TOKEN } }));
+    expect(await r.json()).toMatchObject({ tipo: "colgar", hilo: "hilo-fantasma" });
+    abrirLlamada("hilo-conocido", ANA.nombre, ANA.desde);
+    const r2 = await (await ruta("puente/espera")).GET(new Request("http://x/api/voz/puente/espera?ocupada=1&seg_hora=10&activa=hilo-conocido&ms=100", { headers: { "x-voz-token": TOKEN } }));
+    expect(await r2.json()).toMatchObject({ tipo: "nada" });
   });
   test("puente vivo que no contesta → 503 tras el plazo", async () => {
     await pedirEspera();

@@ -17,4 +17,7 @@ for linea in sys.stdin:
         enviar({"jsonrpc": "2.0", "method": "thread/realtime/sdp", "params": {"threadId": p["threadId"], "sdp": "v=0 falso"}})
         enviar({"jsonrpc": "2.0", "id": 9001, "method": "item/tool/call", "params": {"threadId": p["threadId"], "tool": "navegar", "arguments": {"destino": "tablero"}}})
         enviar({"jsonrpc": "2.0", "id": 9002, "method": "item/tool/call", "params": {"threadId": p["threadId"], "tool": "borrar_todo", "arguments": {}}})
+    elif metodo == "thread/realtime/stop":
+        open(log, "a").write(json.dumps({"stop": p.get("threadId")}) + "\n")
+        enviar({"jsonrpc": "2.0", "id": m["id"], "result": {}})
     elif "id" in m: enviar({"jsonrpc": "2.0", "id": m["id"], "result": {}})

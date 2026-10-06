@@ -7,6 +7,6 @@ export async function GET(req: Request) {
   if (!tokenValido(req)) return NextResponse.json({ error: "token" }, { status: 401 });
   const q = new URL(req.url).searchParams;
   const ms = Math.min(25_000, Math.max(100, Number(q.get("ms") ?? 25_000)));
-  const c = await esperarComando({ ocupada: q.get("ocupada") === "1", seg_hora: Number(q.get("seg_hora") ?? 0) || 0 }, ms);
+  const c = await esperarComando({ ocupada: q.get("ocupada") === "1", seg_hora: Number(q.get("seg_hora") ?? 0) || 0, activa: (q.get("activa") ?? "").slice(0, 120) || undefined }, ms);
   return NextResponse.json(c ?? { tipo: "nada" });
 }
