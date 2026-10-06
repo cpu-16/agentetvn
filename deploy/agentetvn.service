@@ -1,0 +1,15 @@
+[Unit]
+Description=AgenteTVN · mesa editorial (Next.js)
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/agentetvn
+EnvironmentFile=/opt/agentetvn/.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/root/.bun/bin/bun run start
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
