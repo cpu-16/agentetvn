@@ -1,69 +1,70 @@
 "use client";
 import { useMemo } from "react";
-import { Grafica, type Manejadores, type Opcion } from "./Grafica";
-import { colorTema, FUENTE, FUENTE_DISPLAY, nombreTema, RAMPA_AZUL, TOOLTIP, esc, fmt } from "./paleta";
-import type { EventoTablero, Filtro } from "./tipos";
+import { AccionTabla, Grafica, type Manejadores, type Opcion } from "./Grafica";
+import { colorTema, FUENTE, FUENTE_DISPLAY, nombreTema, RAMPA_AZUL_OSCURA, TOOLTIP, esc, fmt } from "./paleta";
+import type { Agregados, EventoTablero, Filtro } from "./tipos";
 
-interface Props { eventos: EventoTablero[]; filtro: Filtro; onFiltro: (f: Partial<Filtro>) => void; abrirFicha: (id: string) => void }
+interface Props { temas: Agregados["temas"]; eventos: EventoTablero[]; filtro: Filtro; onFiltro: (f: Partial<Filtro>) => void; abrirFicha: (id: string) => void }
 
-export function MapaTemas({ eventos, filtro, onFiltro, abrirFicha }: Props) {
-  const arbol = useMemo(() => {
-    const porTema = new Map<string, EventoTablero[]>();
-    for (const e of eventos) porTema.set(e.tema, [...(porTema.get(e.tema) ?? []), e]);
-    return [...porTema].map(([tema, evs]) => {
-      const ps = evs.map((e) => e.P).sort((a, b) => a - b);
-      return {
-        name: nombreTema(tema),
-        tema,
-        value: [evs.reduce((s, e) => s + e.publicaciones, 0), ps[Math.floor(ps.length / 2)] ?? 0],
-        itemStyle: { color: colorTema(tema), borderColor: "#fff", borderWidth: 2, gapWidth: 2 },
-        children: evs.map((e) => ({
-          name: e.titulo, id: e.id,
-          value: [e.publicaciones, e.P],
-          itemStyle: { ...(e.por_revisar ? { decal: { symbol: "rect", dashArrayX: [1, 0], dashArrayY: [2, 3], rotation: Math.PI / 4, color: "rgba(255,255,255,.45)" } } : {}) },
-        })),
-      };
-    }).sort((a, b) => (b.value[0] as number) - (a.value[0] as number));
-  }, [eventos]);
-  // con un solo tema activo, los eventos pasan a ser el primer nivel (no hace falta un segundo clic)
-  const unSoloTema = filtro.temas.length === 1 && arbol.length === 1;
-  const datosTreemap = unSoloTema ? arbol[0].children : arbol; // sin color fijo: el visualMap pinta cada evento por su P
+// Dos vistas con UNA codificación de color cada una:
+// · temas: color categórico del tema (el mismo de todo el tablero), tamaño = publicaciones.
+// · eventos de un solo tema: rampa azul por P (texto blanco legible), tamaño = publicaciones; «por revisar» con borde punteado y sufijo.
+export function MapaTemas({ temas, eventos, filtro, onFiltro, abrirFicha }: Props) {
+  const unSoloTema = filtro.temas.length === 1;
+  const evsTema = useMemo(() => (unSoloTema ? eventos.filter((e) => e.tema === filtro.temas[0]) : []), [eventos, filtro.temas, unSoloTema]);
 
-  const opcion = useMemo<Opcion>(() => ({
-    tooltip: { ...TOOLTIP, formatter: (p: { name: string; value: number[]; treePathInfo?: { name: string }[] }) => `<strong>${esc(p.name)}</strong><br/>${fmt(p.value[0])} publicaciones<br/>P ${p.treePathInfo && p.treePathInfo.length > 2 ? "" : "mediana "}${fmt(p.value[1], 1)}` },
-    visualMap: { type: "continuous", min: 0, max: 100, dimension: 1, inRange: { color: RAMPA_AZUL }, text: ["P 100", "P 0"], orient: "horizontal", left: "center", bottom: 0, itemWidth: 10, itemHeight: 120, textStyle: { fontFamily: FUENTE, fontSize: 10, color: "#5b6572" }, seriesIndex: 0 },
+  const datosTemas = useMemo(() => temas.map((t) => ({
+    name: nombreTema(t.tema), tema: t.tema, value: [t.publicaciones, t.P_mediana, t.eventos, t.por_revisar],
+    itemStyle: { color: colorTema(t.tema), borderColor: "#fff", borderWidth: 2, gapWidth: 2 },
+  })), [temas]);
+  const datosEventos = useMemo(() => evsTema.map((e) => ({
+    name: e.por_revisar ? `${e.titulo} (por revisar)` : e.titulo, id: e.id, value: [e.publicaciones, e.P],
+    itemStyle: e.por_revisar ? { borderColor: "#0f1b2d", borderWidth: 1.5, borderType: "dashed" } : {},
+  })), [evsTema]);
+
+  const arr = (v: unknown): number[] => (Array.isArray(v) ? (v as number[]) : [v as number]);
+  const [pMin, pMax] = useMemo(() => { const ps = evsTema.map((e) => e.P); return ps.length ? [Math.floor(Math.min(...ps) / 5) * 5, Math.ceil(Math.max(...ps) / 5) * 5] : [0, 100]; }, [evsTema]);
+  const opcion = useMemo<Opcion>(() => (unSoloTema ? {
+    tooltip: { ...TOOLTIP, formatter: (p: { name: string; value: unknown }) => { const v = arr(p.value); return `<strong>${esc(p.name)}</strong><br/>${fmt(v[0])} publicaciones, P ${fmt(v[1], 1)}`; } },
+    visualMap: { type: "continuous", min: pMin, max: pMax === pMin ? pMin + 1 : pMax, dimension: 1, inRange: { color: RAMPA_AZUL_OSCURA }, text: [`P ${pMax}`, `P ${pMin}`], orient: "horizontal", left: "center", bottom: 0, itemWidth: 10, itemHeight: 120, textStyle: { fontFamily: FUENTE, fontSize: 10, color: "#5b6572" }, seriesIndex: 0 },
     series: [{
-      type: "treemap", roam: false, nodeClick: "link", leafDepth: unSoloTema ? undefined : 1, width: "100%", height: "86%", top: 0,
-      breadcrumb: { show: true, height: 20, itemStyle: { color: "#f3f5f8", textStyle: { color: "#0f1b2d", fontFamily: FUENTE } } },
-      label: { show: true, fontFamily: FUENTE_DISPLAY, fontSize: 13, color: "#fff", overflow: "truncate" },
-      upperLabel: { show: true, height: 22, fontFamily: FUENTE_DISPLAY, fontSize: 12, color: "#fff" },
-      levels: [
-        { itemStyle: { borderWidth: 0, gapWidth: 3 }, colorMappingBy: "id", visualDimension: 1, color: undefined },
-        { itemStyle: { borderColor: "#fff", borderWidth: 2, gapWidth: 2 }, label: { fontSize: 11 } },
-      ],
-      data: datosTreemap,
+      type: "treemap", roam: false, nodeClick: false, width: "100%", height: "88%", top: 0, breadcrumb: { show: false },
+      label: { show: true, fontFamily: FUENTE_DISPLAY, fontSize: 12, color: "#fff", overflow: "truncate" },
+      itemStyle: { borderColor: "#fff", borderWidth: 1, gapWidth: 2 },
+      data: datosEventos,
     }],
-  }), [arbol, datosTreemap, unSoloTema]);
+  } : {
+    tooltip: { ...TOOLTIP, formatter: (p: { name: string; value: unknown }) => { const v = arr(p.value); return `<strong>${esc(p.name)}</strong><br/>${fmt(v[2])} eventos, ${fmt(v[0])} publicaciones<br/>P mediana ${fmt(v[1], 1)}; ${fmt(v[3])} por revisar`; } },
+    series: [{
+      type: "treemap", roam: false, nodeClick: false, width: "100%", height: "100%", top: 0, breadcrumb: { show: false },
+      label: { show: true, fontFamily: FUENTE_DISPLAY, fontSize: 13, color: "#fff", overflow: "truncate", formatter: (p: { name: string; value: unknown }) => `${p.name}\n${fmt(arr(p.value)[2])} eventos` },
+      data: datosTemas,
+    }],
+  }), [unSoloTema, datosTemas, datosEventos, pMin, pMax]);
 
   const eventosGr = useMemo<Manejadores>(() => ({
     click: (p) => {
-      const d = p as { data?: { id?: string; tema?: string }; treePathInfo?: unknown[] };
+      const d = p as { data?: { id?: string; tema?: string } };
       if (d.data?.id) abrirFicha(d.data.id);
       else if (d.data?.tema) onFiltro({ temas: filtro.temas.length === 1 && filtro.temas[0] === d.data.tema ? [] : [d.data.tema] });
     },
   }), [abrirFicha, onFiltro, filtro.temas]);
 
-  const tabla = useMemo(() => ({ cabeceras: ["Tema", "Eventos", "Publicaciones", "P mediana"], filas: arbol.map((t) => [t.name, t.children.length, t.value[0] as number, t.value[1] as number]) }), [arbol]);
+  const tabla = useMemo(() => (unSoloTema
+    ? { cabeceras: ["Evento", "Publicaciones", "P", "Por revisar"], filas: evsTema.map((e) => [e.titulo, e.publicaciones, e.P, e.por_revisar ? "sí" : "no"]), accion: (_: unknown, i: number) => <AccionTabla onClick={() => abrirFicha(evsTema[i].id)}>Abrir ficha</AccionTabla>, nota: "Mismo conjunto que la gráfica (filtro aplicado)." }
+    : { cabeceras: ["Tema", "Eventos", "Publicaciones", "P mediana", "Por revisar"], filas: temas.map((t) => [nombreTema(t.tema), t.eventos, t.publicaciones, t.P_mediana, t.por_revisar]), accion: (_: unknown, i: number) => <AccionTabla pressed={filtro.temas.includes(temas[i].tema)} onClick={() => onFiltro({ temas: filtro.temas.length === 1 && filtro.temas[0] === temas[i].tema ? [] : [temas[i].tema] })}>Filtrar</AccionTabla>, nota: "Mismo conjunto que la gráfica (filtro aplicado)." }
+  ), [unSoloTema, evsTema, temas, filtro.temas, abrirFicha, onFiltro]);
 
   return (
     <Grafica
       titulo="Mapa de temas"
-      nota={unSoloTema ? `Eventos de ${arbol[0].name}: tamaño, publicaciones; color, puntaje de atención; trama, por revisar. Clic abre la ficha. «Limpiar» vuelve a los temas.` : "Tamaño: publicaciones. Color: puntaje de atención mediano. Trama: por revisar. Clic en un tema filtra el tablero y muestra sus eventos; clic en un evento abre su ficha."}
-      aria={`Mapa de temas con ${arbol.length} temas y ${eventos.length} eventos`}
+      nota={unSoloTema ? `Eventos de ${nombreTema(filtro.temas[0])}: tamaño, publicaciones; color, puntaje de atención (P); borde punteado, por revisar. Clic abre la ficha; «Limpiar» vuelve a los temas.` : "Tamaño: publicaciones. Color: el del tema en todo el tablero. Clic en un tema filtra el tablero y muestra sus eventos."}
+      aria={unSoloTema ? `Mapa de ${evsTema.length} eventos del tema ${nombreTema(filtro.temas[0])}` : `Mapa de ${temas.length} temas con ${eventos.length} eventos`}
       opcion={opcion}
       eventos={eventosGr}
       alto={360}
       tabla={tabla}
+      reemplazar={["series", "visualMap"]}
     />
   );
 }

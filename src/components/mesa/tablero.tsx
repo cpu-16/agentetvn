@@ -1,5 +1,6 @@
 "use client";
-// Tablero: gráficas enlazadas sobre los agregados de /api/tablero. Un filtro compartido (temas, rango, período, medio) gobierna todo.
+// Tablero: gráficas enlazadas sobre los agregados de /api/tablero. Un filtro compartido (temas, rango, período, medio)
+// se aplica a nivel de publicación con `filtrarDatos`; todas las gráficas y tarjetas leen de ese único resultado.
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMesa, horaPanama } from "@/store/mesa";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,7 @@ import { Medios, Procedencias } from "./graficas/MediosProcedencias";
 import { ContextoOficial } from "./graficas/ContextoOficial";
 import { SismosMapa, SismosPorMes } from "./graficas/Sismos";
 import { nombreTema, fmt } from "./graficas/paleta";
-import { FILTRO_VACIO, filtrarEventos, hayFiltro, type Filtro, type Tablero as DatosTablero } from "./graficas/tipos";
+import { FILTRO_VACIO, filtrarDatos, hayFiltro, type Filtro, type Tablero as DatosTablero } from "./graficas/tipos";
 
 const RANGOS: { id: "alto" | "medio" | "bajo"; label: string }[] = [{ id: "alto", label: "Alto" }, { id: "medio", label: "Medio" }, { id: "bajo", label: "Bajo" }];
 const dia = (d?: string) => (d ? new Intl.DateTimeFormat("es-PA", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`)) : "");
@@ -34,23 +35,22 @@ export function Tablero() {
   const setFiltroTablero = useMesa((s) => s.setFiltroTablero);
 
   useEffect(() => {
-    fetch("/api/tablero").then(async (r) => { if (!r.ok) throw new Error(`No se pudo cargar el tablero (${r.status}).`); setDatos(await r.json()); }).catch((e) => setError(e.message));
+    fetch("/api/tablero").then(async (r) => { if (!r.ok) throw new Error(`${r.status}`); setDatos(await r.json()); }).catch((e) => setError(e.message));
   }, []);
 
   const onFiltro = useCallback((f: Partial<Filtro>) => setFiltro((prev) => ({ ...prev, ...f })), []);
   const abrirFicha = useCallback((id: string) => irA("ficha", id), [irA]);
-  const eventos = useMemo(() => (datos ? filtrarEventos(datos.eventos, filtro) : []), [datos, filtro]);
-  const porDia = useMemo(() => {
-    if (!datos) return [];
-    return datos.porDiaTema.filter((d) => (!filtro.desde || d.dia >= filtro.desde) && (!filtro.hasta || d.dia <= filtro.hasta));
-  }, [datos, filtro.desde, filtro.hasta]);
+  // UN solo conjunto filtrado para todo el tablero
+  const agg = useMemo(() => (datos ? filtrarDatos(datos.eventos, filtro, nombreTema) : null), [datos, filtro]);
+  // la línea de tiempo muestra todo el rango de fechas (el período se ve como área seleccionada), con tema/rango/medio aplicados
+  const aggSinPeriodo = useMemo(() => (datos ? filtrarDatos(datos.eventos, { ...filtro, desde: undefined, hasta: undefined }, nombreTema) : null), [datos, filtro]);
+  const aggSinTema = useMemo(() => (datos ? filtrarDatos(datos.eventos, { ...filtro, temas: [], desde: undefined, hasta: undefined }, nombreTema) : null), [datos, filtro]);
 
-  if (error) return <div className="rounded-sm border border-senal/40 bg-white p-6 text-sm" role="alert">No se pudo cargar el tablero. Avisa al equipo técnico. <span className="text-muted-foreground">({error})</span></div>;
-  if (!datos) return <div className="p-6 text-sm text-muted-foreground" aria-busy="true">Cargando el tablero…</div>;
+  if (error) return <div className="rounded-sm border border-senal/40 bg-white p-6 text-sm" role="alert">No se pudo cargar el tablero. Avisa al equipo técnico. <span className="text-muted-foreground">(código {error})</span></div>;
+  if (!datos || !agg || !aggSinPeriodo || !aggSinTema) return <div className="p-6 text-sm text-muted-foreground" aria-busy="true">Cargando el tablero…</div>;
 
-  const mediosDistintos = new Set(eventos.map((e) => e.medio)).size;
-  const suficientes = eventos.filter((e) => e.estado_evidencia === "suficiente").length;
-  const publicaciones = eventos.reduce((s, e) => s + e.publicaciones, 0);
+  const suficientes = agg.eventos.filter((e) => e.estado_evidencia === "suficiente").length;
+  const descripcionFiltro = [filtro.temas.map(nombreTema).join(", "), filtro.rango.length ? `rango ${filtro.rango.join("/")}` : "", filtro.desde || filtro.hasta ? `${dia(filtro.desde)} a ${dia(filtro.hasta)}` : "", filtro.medio ?? ""].filter(Boolean).join("; ");
 
   return (
     <div className="space-y-5">
@@ -59,8 +59,8 @@ export function Tablero() {
           <h1 className="font-display text-[30px] font-semibold leading-none">Tablero de señales</h1>
           <p className="mt-1 text-sm text-muted-foreground">De dónde vienen las señales, cómo se reparten por tema y evidencia, y qué dicen los datos oficiales. Corte {horaPanama(datos.corteUTC)}.</p>
         </div>
-        <button type="button" className="presionable rounded-sm bg-tinta px-3 py-2 text-sm font-medium text-white disabled:opacity-50" disabled={!filtro.temas.length} onClick={() => { setFiltroTablero({ temas: filtro.temas }); irA("agenda"); }}>
-          Ver estos {fmt(eventos.length)} temas en la agenda
+        <button type="button" className="presionable rounded-sm bg-tinta px-3 py-2 text-sm font-medium text-white disabled:opacity-50" disabled={!hayFiltro(filtro) || !agg.eventos.length} onClick={() => { setFiltroTablero({ ids: agg.eventos.map((e) => e.id), descripcion: descripcionFiltro }); irA("agenda"); }}>
+          Ver estos {fmt(agg.eventos.length)} temas en la agenda
         </button>
       </header>
 
@@ -81,20 +81,20 @@ export function Tablero() {
       </section>
 
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-label="Cifras del corte">
-        <Cifra valor={publicaciones} etiqueta="publicaciones" detalle={hayFiltro(filtro) ? `de ${fmt(datos.eventos.reduce((s, e) => s + e.publicaciones, 0))}` : "en el corte"} />
-        <Cifra valor={eventos.length} etiqueta="eventos agrupados" detalle={hayFiltro(filtro) ? `de ${fmt(datos.eventos.length)}` : "un hecho, varias publicaciones"} />
-        <Cifra valor={mediosDistintos} etiqueta="medios principales" detalle="medio de la publicación representante" />
-        <Cifra valor={suficientes} etiqueta="con evidencia suficiente" detalle={`${eventos.length ? Math.round((suficientes / eventos.length) * 100) : 0} % de los eventos`} />
+        <Cifra valor={agg.publicaciones} etiqueta="publicaciones" detalle={hayFiltro(filtro) ? `de ${fmt(datos.publicaciones)}` : "en el corte"} />
+        <Cifra valor={agg.eventos.length} etiqueta="eventos agrupados" detalle={hayFiltro(filtro) ? `de ${fmt(datos.eventos.length)}` : "un hecho, varias publicaciones"} />
+        <Cifra valor={agg.mediosDistintos} etiqueta="medios y agencias distintos" detalle={hayFiltro(filtro) ? "en las publicaciones filtradas" : "una agencia replicada cuenta una vez"} />
+        <Cifra valor={suficientes} etiqueta="con evidencia suficiente" detalle={`${agg.eventos.length ? Math.round((suficientes / agg.eventos.length) * 100) : 0} % de los eventos`} />
       </section>
 
-      <SenalesPorDia datos={porDia} filtro={filtro} onFiltro={onFiltro} />
+      <SenalesPorDia datos={aggSinTema.porDiaTema} filtro={filtro} onFiltro={onFiltro} />
 
       <div className="grid min-w-0 gap-3 lg:grid-cols-2">
-        <MapaTemas eventos={eventos} filtro={filtro} onFiltro={onFiltro} abrirFicha={abrirFicha} />
-        <RelevanciaEvidencia eventos={eventos} abrirFicha={abrirFicha} />
-        <EvidenciaPorTema eventos={eventos} />
-        <Medios medios={datos.medios} filtro={filtro} onFiltro={onFiltro} />
-        <Procedencias procedencias={datos.procedencias} />
+        <MapaTemas temas={agg.temas} eventos={agg.eventos} filtro={filtro} onFiltro={onFiltro} abrirFicha={abrirFicha} />
+        <RelevanciaEvidencia eventos={agg.eventos} abrirFicha={abrirFicha} />
+        <EvidenciaPorTema evidencia={agg.evidencia} />
+        <Medios medios={agg.medios} filtro={filtro} onFiltro={onFiltro} />
+        <Procedencias procedencias={agg.procedencias} />
         <ContextoOficial indicadores={datos.indicadores} />
         <SismosMapa sismos={datos.sismos} />
         <SismosPorMes meses={datos.sismosPorMes} />

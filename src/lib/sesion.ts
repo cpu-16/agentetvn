@@ -50,10 +50,11 @@ export function leerSesion(req: Request): Sesion | null {
   }
 }
 
-/** `secure` cuando la petición es HTTPS (directo o detrás del proxy de Cloudflare) o en producción. */
+/** `secure` solo cuando la petición llega por HTTPS (directo o detrás del proxy de Cloudflare).
+ *  No depende de NODE_ENV: la demo del jurado corre `next start` por http://localhost y el navegador descartaría una cookie `secure`. */
 export function esHttps(req: Request): boolean {
   const proto = req.headers.get("x-forwarded-proto") ?? "";
-  return proto.split(",")[0].trim() === "https" || req.url.startsWith("https://") || process.env.NODE_ENV === "production";
+  return proto.split(",")[0].trim() === "https" || req.url.startsWith("https://");
 }
 
 export function conCookie(res: NextResponse, s: Sesion | null, req: Request): NextResponse {

@@ -24,9 +24,9 @@ interface Mesa {
   agenda: AgendaDatos | null; // una sola carga compartida por portada, agenda y chat
   agendaError: string | null;
   agendaCargando: boolean;
-  filtroTablero: { temas: string[] } | null; // filtro que el Tablero pasa a la Agenda
+  filtroTablero: { ids: string[]; descripcion: string } | null; // conjunto exacto de eventos que el Tablero pasa a la Agenda
   irA: (v: Vista, eventoId?: string) => void;
-  setFiltroTablero: (f: { temas: string[] } | null) => void;
+  setFiltroTablero: (f: { ids: string[]; descripcion: string } | null) => void;
   setSesion: (s: Sesion | null) => void;
   cerrarSesion: (aviso?: string | null) => void;
   setModoConsulta: (m: "embeddings" | "bm25") => void;

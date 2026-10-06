@@ -35,7 +35,7 @@ export function Agenda() {
   const irA = useMesa((s) => s.irA);
   const filtroTablero = useMesa((s) => s.filtroTablero);
   const setFiltroTablero = useMesa((s) => s.setFiltroTablero);
-  const [tema, setTema] = useState(filtroTablero?.temas[0] ?? "todos");
+  const [tema, setTema] = useState("todos");
   const [estado, setEstado] = useState("todos");
   const [q, setQ] = useState("");
   const [verCinco, setVerCinco] = useState(true);
@@ -53,8 +53,9 @@ export function Agenda() {
   const filtrados = useMemo(() => {
     if (!data) return [];
     const t = q.trim().toLowerCase();
-    return data.eventos.filter((e) => (tema === "todos" || e.tema === tema) && (estado === "todos" || e.estado_revision === estado) && (!t || e.titulo.toLowerCase().includes(t) || e.medio.toLowerCase().includes(t)));
-  }, [data, tema, estado, q]);
+    const ids = filtroTablero ? new Set(filtroTablero.ids) : null;
+    return data.eventos.filter((e) => (!ids || ids.has(e.id)) && (tema === "todos" || e.tema === tema) && (estado === "todos" || e.estado_revision === estado) && (!t || e.titulo.toLowerCase().includes(t) || e.medio.toLowerCase().includes(t)));
+  }, [data, tema, estado, q, filtroTablero]);
 
   if (error) return <div className="flex flex-wrap items-center gap-3 rounded-sm border border-senal bg-white p-4 text-sm" role="alert"><p>{error}</p><Button size="sm" variant="outline" onClick={() => cargarAgenda(true)}>Reintentar</Button></div>;
   if (!data) return <p className="p-4 text-sm text-muted-foreground" aria-live="polite">Cargando la agenda…</p>;
@@ -70,9 +71,9 @@ export function Agenda() {
         <div className="mb-2 flex flex-wrap gap-2 text-sm" role="search" aria-label="Filtrar la agenda">
           <label className="sr-only" htmlFor={`${idBase}-q`}>Buscar titular o medio</label>
           <input id={`${idBase}-q`} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar titular o medio" className="h-9 w-full rounded-sm border border-border bg-white px-3 sm:w-64" />
-          {filtroTablero && <button type="button" className="presionable chip tinta" onClick={() => { setFiltroTablero(null); setTema("todos"); }}>Filtro del tablero <span aria-hidden="true">×</span><span className="sr-only">, quitar</span></button>}
+          {filtroTablero && <button type="button" className="presionable chip tinta" title={filtroTablero.descripcion} onClick={() => setFiltroTablero(null)}>Filtro del tablero ({filtroTablero.ids.length} temas) <span aria-hidden="true">×</span><span className="sr-only">, quitar</span></button>}
           <label className="sr-only" htmlFor={`${idBase}-tema`}>Tema</label>
-          <select id={`${idBase}-tema`} value={tema} onChange={(e) => { setTema(e.target.value); if (filtroTablero) setFiltroTablero(null); }} className="h-9 rounded-sm border border-border bg-white px-2">
+          <select id={`${idBase}-tema`} value={tema} onChange={(e) => setTema(e.target.value)} className="h-9 rounded-sm border border-border bg-white px-2">
             <option value="todos">Todos los temas</option>
             {temas.map((t) => <option key={t} value={t}>{TEMA_LABEL[t] ?? t}</option>)}
           </select>

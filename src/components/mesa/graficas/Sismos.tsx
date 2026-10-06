@@ -47,7 +47,7 @@ export function SismosPorMes({ meses }: { meses: Tablero["sismosPorMes"] }) {
   return (
     <Grafica
       titulo="Sismos por mes"
-      nota="Cantidad por mes; sobre cada barra, la magnitud máxima."
+      nota="Cantidad por mes en hora de Panamá; sobre cada barra, la magnitud máxima."
       aria={`Barras de sismos por mes de 2024, ${meses.length} meses`}
       opcion={opcion}
       alto={240}

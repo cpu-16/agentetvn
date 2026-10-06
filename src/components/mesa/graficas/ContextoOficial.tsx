@@ -1,12 +1,13 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Grafica, type Opcion } from "./Grafica";
+import { Grafica, useCompacto, type Opcion } from "./Grafica";
 import { AZUL_TVN, EJE, FUENTE, TOOLTIP, fmt } from "./paleta";
 import type { Tablero } from "./tipos";
 
 const PAIS: Record<string, string> = { PAN: "Panamá", CRI: "Costa Rica", COL: "Colombia", DOM: "Rep. Dominicana", MEX: "México", GTM: "Guatemala" };
 
 export function ContextoOficial({ indicadores }: { indicadores: Tablero["indicadores"] }) {
+  const compacto = useCompacto();
   const [sel, setSel] = useState(indicadores[0]?.indicador_id ?? "");
   const ind = indicadores.find((i) => i.indicador_id === sel) ?? indicadores[0];
   const unidad = ind?.unidad ?? "";
@@ -17,8 +18,8 @@ export function ContextoOficial({ indicadores }: { indicadores: Tablero["indicad
     const anios = ind.series[0]?.puntos.map((p) => p[0]) ?? [];
     const ordenadas = [...ind.series].sort((a) => (a.pais === "PAN" ? 1 : -1)); // Panamá al final = encima
     return {
-      grid: { left: 64, right: 64, top: 40, bottom: 28 },
-      legend: { top: 0, left: 0, icon: "roundRect", itemWidth: 14, itemHeight: 3, textStyle: { fontFamily: FUENTE, fontSize: 11 }, data: ind.series.map((s) => PAIS[s.pais] ?? s.pais) },
+      grid: { left: compacto ? 48 : 64, right: compacto ? 56 : 64, top: compacto ? 44 : 40, bottom: 28 },
+      legend: { top: 0, left: 0, type: compacto ? "scroll" : "plain", icon: "roundRect", itemWidth: 14, itemHeight: 3, textStyle: { fontFamily: FUENTE, fontSize: 11 }, data: ind.series.map((s) => PAIS[s.pais] ?? s.pais) },
       tooltip: { ...TOOLTIP, trigger: "axis", axisPointer: { type: "line", lineStyle: { color: "#9aa4b2" } }, valueFormatter: (v: number | null) => (v === null || v === undefined ? "sin dato" : `${fmt(v, decimales)} ${unidad}`) },
       xAxis: { type: "category", data: anios, boundaryGap: false, ...EJE },
       yAxis: { type: "value", ...EJE, axisLabel: { ...EJE.axisLabel, formatter: (v: number) => (unidad === "personas" ? `${fmt(v / 1e6, 0)} M` : fmt(v, 0)) }, scale: true },
@@ -31,7 +32,7 @@ export function ContextoOficial({ indicadores }: { indicadores: Tablero["indicad
         data: s.puntos.map((p) => p[1]),
       })),
     };
-  }, [ind, unidad, decimales]);
+  }, [ind, unidad, decimales, compacto]);
 
   const tabla = useMemo(() => ind ? { cabeceras: ["Año", ...ind.series.map((s) => PAIS[s.pais] ?? s.pais)], filas: (ind.series[0]?.puntos ?? []).map((p, i) => [p[0], ...ind.series.map((s) => (s.puntos[i][1] === null ? null : fmt(s.puntos[i][1] as number, decimales)))]) } : undefined, [ind, decimales]);
 
