@@ -20,7 +20,7 @@ export function resolverCita(id: string, pubs: Publicacion[], inds: Indicador[],
 export function BotonCita({ id, campo, onAbrir }: { id: string; campo?: string; onAbrir: (id: string) => void }) {
   const corto = id.length > 22 ? `${id.slice(0, 20)}…` : id;
   return (
-    <button type="button" onClick={() => onAbrir(id)} className="ml-1 inline-flex items-center gap-1 rounded-sm border border-acero/40 bg-white px-1.5 py-0.5 align-baseline text-[10.5px] text-acero hover:bg-acero hover:text-white" aria-label={`Ver evidencia ${id}${campo ? `, campo ${campo}` : ""}`}>
+    <button type="button" onClick={() => onAbrir(id)} className="ml-1 inline-flex min-h-9 items-center gap-1 rounded-sm border border-acero/40 bg-white px-2 py-0.5 align-baseline sm:min-h-0 sm:px-1.5 text-[10.5px] text-acero hover:bg-acero hover:text-white" aria-label={`Ver evidencia ${id}${campo ? `, campo ${campo}` : ""}`}>
       <span>Ver evidencia</span>
       <span className="font-mono opacity-70" aria-hidden>{corto}</span>
     </button>
@@ -58,7 +58,7 @@ export function Citas({ id, pubs, inds, sismos, onCerrar }: { id: string | null;
         <DialogHeader>
           <DialogTitle className="titular">Evidencia {id}</DialogTitle>
         </DialogHeader>
-        {!c && <p className="text-sm text-muted-foreground">Esta cita no corresponde a ninguna evidencia del snapshot. Es un error que hay que corregir antes del cierre.</p>}
+        {!c && <p className="text-sm text-muted-foreground">Esta cita no corresponde a ninguna evidencia del corte. Es un error que hay que corregir antes del cierre.</p>}
         {c?.tipo === "noticia" && (
           <div>
             <Fila k="Medio" v={c.n.medio} />

@@ -322,7 +322,7 @@ export function ChatAgente() {
                 onClick={() => { voz.prepararAudio(); void voz.alternar(); }}
               >
                 <Orbe estado={orbe} nivel={voz.nivel} />
-                <span className={cn((celular || tamano === "compacto") && "sr-only")}>{activa ? "Colgar" : "Hablar"}</span>
+                <span className={cn(!celular && tamano === "compacto" && "sr-only")}>{activa ? "Colgar" : "Hablar"}</span>
               </button>
               <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-11 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
             </form>
