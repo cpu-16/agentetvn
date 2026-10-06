@@ -91,7 +91,12 @@ flowchart LR
 | Contradicciones detectadas | 5/5 | 5/5 |
 | Ataques adversariales resistidos | 6/6 | 6/6 |
 | Afirmaciones con cita | 38/38 | 38/38 |
-| Latencia mediana / p95 | 9 ms / 14 ms | 2 ms / 4 ms |
+| Latencia mediana / p95 | 6 ms / 12 ms | 2 ms / 3 ms |
+| Evidencias usadas por consulta (promedio) | 1,55 | 0,87 |
+
+Por sentido se usan las publicaciones que superan el umbral de coseno (0,80) **y** quedan a 0,02 o menos de la más parecida. El e5 comprime la escala: antes de ese margen, «¿qué se sabe de la aprehensión de Enrique Lau?» traía también otros arrestos. Con el margen, el benchmark da los mismos aciertos y abstenciones, y las evidencias por consulta bajan de 3,84 a 1,55 (decisión D13).
+
+**Cómo buscó, a la vista.** Cada respuesta del chat muestra su traza con los datos reales de la consulta: la pregunta convertida en vector, la similitud contra las 1 078 publicaciones con el umbral y la franja de las usadas, las más parecidas (usadas y descartadas) y el tiempo de cada paso, incluida la redacción. Si la pregunta se resolvió por una regla (cifra oficial, causalidad, fuera de alcance), lo dice. La misma traza queda en `db/consultas.jsonl` por cada consulta de texto o de voz, sin el nombre de la persona.
 
 Las 20 consultas reservadas se corren **una sola vez**, al congelar el producto.
 
@@ -120,9 +125,9 @@ Lo que no pasa se descarta y se cuenta. Si el LLM falla, tarda o no deja nada v�
 <td width="32%"><img src="docs/img/jarvis-celular.webp" alt="Jarvis en el celular: hoja inferior con botón de voz"></td>
 </tr></table>
 
-Un orbe azul TVN que se mantiene presionado para hablar. Jarvis responde con voz natural, pero **solo con lo que devuelve el motor**: las noticias con su medio y sus citas, o se abstiene. También explica la pantalla que tienes abierta y navega la app («abre el tablero», «llévame a la ficha de Enrique Lau»; si hay varias coincidencias, pregunta). El panel se mueve y se agranda, y en el celular es una hoja inferior. Si la voz no está disponible, el chat de texto funciona igual.
+Un orbe azul TVN: **un toque abre la conversación y otro la cuelga**; mientras tanto Jarvis escucha y responde por turnos, sin mantener nada presionado. Habla poco (una o dos frases) y **solo con lo que devuelve el motor**: las noticias con su medio, o se abstiene; el detalle con las citas y la traza queda en el panel. También explica la pantalla que tienes abierta y la mueve: abre secciones o fichas («abre el tablero», «llévame a la ficha de Enrique Lau»; si hay varias coincidencias, pregunta), baja, sube y vuelve atrás. No dice qué modelo ni qué empresa hay detrás, no sale de la mesa editorial y no revela sus instrucciones. Al lado del orbe, «Escribir» abre el chat de texto, que redacta con Claude Opus 5.5 (D11). El panel se mueve y se agranda, y en el celular es una hoja inferior. Si la voz no está disponible, el chat de texto funciona igual.
 
-Por dentro: el audio va directo navegador ⇄ OpenAI (realtime de Codex). Un puente de voz aparte (`voz/puente.py`) atiende las llamadas con topes estrictos (una a la vez, 3 min, 20 min por hora) y se conecta a la mesa como puente inverso, solo de salida y con token. Decisión D12; diseño en `docs/superpowers/specs/2026-10-06-jarvis-tvn-design.md`. Se activa con `AGENTETVN_VOZ=on` y el puente desplegado (`deploy/desplegar-voz.sh`).
+Por dentro: el audio va directo navegador ⇄ OpenAI (realtime de Codex). Un puente de voz aparte (`voz/puente.py`) atiende las llamadas con topes estrictos (una a la vez, 3 min, 20 min por hora; cuelga tras un minuto sin conversación o 45 s sin respuesta) y se conecta a la mesa como puente inverso, solo de salida y con token. Decisiones D12 y D13; diseño en `docs/superpowers/specs/2026-10-06-jarvis-tvn-design.md`. Se activa con `AGENTETVN_VOZ=on` y el puente desplegado (`deploy/desplegar-voz.sh`).
 
 ## Para el jurado: correr en 5 minutos (sin internet)
 
@@ -202,7 +207,7 @@ src/app/api/         rutas de la mesa
 src/components/mesa/ portada, agenda, ficha, paquete, chat, tablero (ECharts), control
 scripts/             ingesta, motor, benchmark, pruebas, doctor, redactar, notion-sync
 tests/               T01–T10 del reto, motor, redacción con IA
-docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D11, catálogo, casos, métricas, riesgos)
+docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D13, catálogo, casos, métricas, riesgos)
 SPEC.md              especificación
 ```
 
