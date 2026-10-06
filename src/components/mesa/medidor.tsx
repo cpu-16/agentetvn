@@ -49,7 +49,7 @@ export function Medidor({ P, rango, componentes, grande = false, conDetalle = fa
   return (
     <div className="flex w-full flex-col gap-1">
       <div className="flex items-baseline gap-2">
-        <span className={cn("titular font-semibold leading-none", grande ? "text-4xl" : "text-xl", rango === "alto" && "text-senal")}>{P.toFixed(grande ? 2 : 0)}</span>
+        <span className={cn("titular font-semibold leading-none", grande ? "text-4xl" : "text-xl", rango === "alto" && "text-azul")}>{P.toFixed(grande ? 2 : 0)}</span>
         <span className="text-xs text-muted-foreground">{rango}</span>
       </div>
       {tooltip && !conDetalle ? (
