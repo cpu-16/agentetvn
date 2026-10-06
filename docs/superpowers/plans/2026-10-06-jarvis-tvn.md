@@ -10,11 +10,24 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-06-jarvis-tvn-design.md`
 
+## Revisión 6-oct, 4:40 p. m. · puente inverso en `css-llamada` (manda sobre las tareas 0, 2, 3 y 8)
+
+Ver la revisión de la spec. Cambios concretos:
+
+- **Task 0** se reemplaza por una verificación de solo lectura en `css-llamada` (prox3, CT 130, 192.168.40.230), ya hecha el 6-oct a las 4:30 p. m.: `/usr/local/bin/codex` 0.160.0; `css-codex` activo como root (`HOME=/root`); `auth.json` en `/root/.codex`; puerto 8795 de la CSS; 8796 libre; salida HTTPS a agentetvn.ciberpty.com; 3,4 GB libres. **No hay login nuevo.**
+- **Task 2:** nuevo `src/lib/voz/enlace.ts` (cola de comandos para el puente, long-poll, respuestas por id, `puenteVivo` con 40 s) en lugar de `alPuente`. Rutas nuevas `GET /api/voz/puente/espera` y `POST /api/voz/puente/respuesta` (token). `offer` encola el comando y espera la respuesta (35 s); `colgar` encola `colgar`; `estado` usa `puenteVivo()` y `ocupada`. `herramienta` y `fin` exigen solo el token (llegan por Cloudflare). Pruebas: el «puente» se simula llamando a `espera` y `respuesta` en la misma prueba.
+  - `pedirOferta(sdp: string, persona: string, timeoutMs?: number): Promise<{ ok: true; sdp: string; hilo: string } | { ok: false; status: number; error: string }>`
+  - `pedirColgar(hilo: string, motivo: string): void`
+  - `esperarComando(estado: { ocupada: boolean; seg_hora: number }, ms?: number): Promise<Comando | null>` con `Comando = { tipo: "offer"; id: string; sdp: string; persona: string } | { tipo: "colgar"; hilo: string; motivo: string }`
+  - `recibirRespuesta(id: string, r): void` · `puenteVivo(ahora?: number): boolean` · `estadoPuente()` · `_vaciarEnlace()`
+- **Task 3:** el puente no sirve HTTP. Corre un bucle que hace long-poll a `NEXT_URL/api/voz/puente/espera?ocupada=&seg_hora=`; atiende `offer` en un hilo (mismos topes y misma lógica de `thread/start` y `realtime/start`) y contesta por `/api/voz/puente/respuesta`; `colgar` corta la llamada. El `app-server` se lanza con las banderas de la CSS (`-c web_search="disabled"` y los `--disable`), y `web_search` sale de la config del hilo. `--check` usa un Next falso que implementa `espera`, `respuesta`, `herramienta` y `fin`.
+- **Task 8:** despliegue en `css-llamada` con `deploy/desplegar-voz.sh` (scp a prox3 + `pct push` a `/opt/agentetvn-voz/`, `.env` propio con `VOZ_TOKEN` y `NEXT_URL=https://agentetvn.ciberpty.com`, unidad `agentetvn-voz`, `--check` antes de reiniciar). Después de cada despliegue: `systemctl is-active css-codex css-llamada`, `curl -s -X POST 127.0.0.1:8795/estado` → `ok`, y `journalctl -u css-codex -u agentetvn-voz --since -10min | grep -i "refresh token"` vacío. Reversión: `systemctl disable --now agentetvn-voz && rm -r /opt/agentetvn-voz`.
+
 ## Global Constraints
 
 - Congelamiento: **mié 7-oct-2026 22:00**. Ensayo de voz **mié 18:00**; si falla, `AGENTETVN_VOZ=off` y se entrega el orbe con el chat.
 - No tocar el CT 129, `~/datos/CSS` (solo lectura) ni la instalación de Codex de `css-llamada`.
-- Codex **0.160.0** como binario nativo en `/usr/local/bin/codex` del CT 130 (prox), con **login propio** `codex login --device-auth`. Nunca copiar `auth.json` (el refresh token rota y una de las dos instalaciones cae con «refresh token was already used»).
+- Codex **0.160.0** de `css-llamada` (`/usr/local/bin/codex`, login de la CSS en `/root/.codex`), en un `app-server` propio. **No tocar `css-codex` ni `/opt/llamada`, no actualizar Codex, no copiar `auth.json` a otra máquina.**
 - Realtime `version: "v3"`, transporte `webrtc`, voz `maple` (variable `VOZ`), modelo `gpt-6-luna` con esfuerzo `low`, sin terminal, `web_search` desactivado y **solo 3 herramientas** (`preguntar_corpus`, `explicar_pantalla`, `navegar`) como `dynamicTools` con `deferLoading: false`.
 - Topes en el puente: **1 llamada a la vez, 180 s por llamada, 10 inicios por hora, 1 200 s por hora**. Cuelgue a los **20 s** sin actividad (micrófono suelto, sin herramienta ni audio en curso).
 - Pulsar para hablar. Orbe azul TVN: `#9fd4f5` → `#0077c8` → `#00466f`, filo `#7ee0ff`. Solo se anima `transform` y `opacity`; con `prefers-reduced-motion`, queda quieto y con el estado en texto.
