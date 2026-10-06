@@ -282,3 +282,6 @@ button, [role="button"] { -webkit-tap-highlight-color: transparent; }
   .al-aire::before { animation: none; }
   .presionable:active { transform: none; }
 }
+
+/* espacio para que el botón flotante del agente no tape el último contenido */
+main, .contenido-principal { padding-bottom: 6rem; }

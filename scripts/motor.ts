@@ -71,7 +71,7 @@ const temaDe = new Map<string, { tema: string; confianza: number; por_revisar: b
 for (const n of noticias) {
   const base = temaPorPalabras(`${n.titulo} ${n.descripcion}`);
   const porSeccion = n.seccion ? SECCION_A_TEMA[n.seccion] : undefined;
-  if (porSeccion === "deportes") {
+  if (porSeccion === "deportes" || base === "deportes") { // sección del RSS o vocabulario deportivo inequívoco
     temaDe.set(n.id_noticia, { tema: "deportes", confianza: 1, por_revisar: false });
     continue;
   }

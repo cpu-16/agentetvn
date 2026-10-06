@@ -49,7 +49,7 @@
   },
   "temas": {
     "umbral": 0.8,
-    "margen": 0.015
+    "margen": 0.008
   },
   "consulta": {
     "umbral_coseno": 0.8,

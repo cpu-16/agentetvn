@@ -19,17 +19,18 @@ const dominio = (n: Noticia) => n.medio.toLowerCase().replace(/^www\./, "");
 
 /** ¿La noticia pertenece al evento cuyo representante es `rep`? Compara contra el representante, no en cadena. */
 export function mismoEvento(n: Noticia, rep: Noticia, vecs: Map<string, Float32Array | number[]>, cfg = leerScoring().N): boolean {
+  if (n.sintetica !== rep.sintetica) return false; // los casos sintéticos de prueba nunca se mezclan con noticias reales
   if (n.fecha_publicacion && rep.fecha_publicacion && dias(n.fecha_publicacion, rep.fecha_publicacion) > cfg.ventana_dias) return false;
   const j = jaccard(n.titulo, rep.titulo);
   if (j >= cfg.jaccard_titular) return true;
   // solapamiento fuerte pero no idéntico (p. ej. «3 muertos» vs «5 muertos» del mismo deslizamiento) y ≤ 3 días
-  if (j >= 0.5 && (!n.fecha_publicacion || !rep.fecha_publicacion || dias(n.fecha_publicacion, rep.fecha_publicacion) <= 3)) return true;
+  if (j >= 0.5 && n.fecha_publicacion && rep.fecha_publicacion && dias(n.fecha_publicacion, rep.fecha_publicacion) <= 3) return true;
   const a = vecs.get(n.id_noticia);
   const b = vecs.get(rep.id_noticia);
   if (!a || !b) return false;
   if (coseno(a, b) < cfg.umbral_mismo_evento) return false;
-  // mismo evento semántico solo si además comparten una ventana temporal razonable (si ambas fechas existen ya se verificó)
-  return true;
+  // e5-small comprime los cosenos: «Panamá + acuerdo» de temas distintos pasa de 0.90. Se exige además algo de solapamiento léxico.
+  return j >= 0.2;
 }
 
 /** Procedencias de un conjunto de publicaciones: agencia replicada = una; medios con titular copiado sin atribución = «no verificada». */
