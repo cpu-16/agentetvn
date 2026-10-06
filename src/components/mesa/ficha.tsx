@@ -32,6 +32,8 @@ export function Ficha({ id }: { id: string }) {
   const rol = useRol();
   const reducir = useReducedMotion();
   const [tab, setTab] = useState<"evidencia" | "paquete">(rol === "productor" ? "paquete" : "evidencia");
+  const setPantalla = useMesa((s) => s.setPantalla);
+  useEffect(() => setPantalla({ pestana: tab }), [tab, setPantalla]);
   const tabs = useRef<HTMLButtonElement[]>([]);
 
   const cargar = useCallback(() => {

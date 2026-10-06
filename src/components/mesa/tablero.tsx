@@ -46,11 +46,15 @@ export function Tablero() {
   const aggSinPeriodo = useMemo(() => (datos ? filtrarDatos(datos.eventos, { ...filtro, desde: undefined, hasta: undefined }, nombreTema) : null), [datos, filtro]);
   const aggSinTema = useMemo(() => (datos ? filtrarDatos(datos.eventos, { ...filtro, temas: [], desde: undefined, hasta: undefined }, nombreTema) : null), [datos, filtro]);
 
+  const descripcionFiltro = [filtro.temas.map(nombreTema).join(", "), filtro.rango.length ? `rango ${filtro.rango.join("/")}` : "", filtro.desde || filtro.hasta ? `${dia(filtro.desde)} a ${dia(filtro.hasta)}` : "", filtro.medio ?? ""].filter(Boolean).join("; ");
+  // Jarvis: el filtro que ve la persona («explícame esta pantalla»)
+  const setPantalla = useMesa((s) => s.setPantalla);
+  useEffect(() => setPantalla({ filtroTablero: descripcionFiltro }), [descripcionFiltro, setPantalla]);
+
   if (error) return <div className="rounded-sm border border-senal/40 bg-white p-6 text-sm" role="alert">No se pudo cargar el tablero. Avisa al equipo técnico. <span className="text-muted-foreground">(código {error})</span></div>;
   if (!datos || !agg || !aggSinPeriodo || !aggSinTema) return <div className="p-6 text-sm text-muted-foreground" aria-busy="true">Cargando el tablero…</div>;
 
   const suficientes = agg.eventos.filter((e) => e.estado_evidencia === "suficiente").length;
-  const descripcionFiltro = [filtro.temas.map(nombreTema).join(", "), filtro.rango.length ? `rango ${filtro.rango.join("/")}` : "", filtro.desde || filtro.hasta ? `${dia(filtro.desde)} a ${dia(filtro.hasta)}` : "", filtro.medio ?? ""].filter(Boolean).join("; ");
 
   return (
     <div className="space-y-5">

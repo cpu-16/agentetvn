@@ -25,6 +25,8 @@ interface Mesa {
   agendaError: string | null;
   agendaCargando: boolean;
   filtroTablero: { ids: string[]; descripcion: string } | null; // conjunto exacto de eventos que el Tablero pasa a la Agenda
+  pantalla: { pestana?: "evidencia" | "paquete"; filtrosAgenda?: string; filtroTablero?: string }; // lo que Jarvis necesita para «explícame esta pantalla»
+  setPantalla: (p: Partial<Mesa["pantalla"]>) => void;
   irA: (v: Vista, eventoId?: string) => void;
   setFiltroTablero: (f: { ids: string[]; descripcion: string } | null) => void;
   setSesion: (s: Sesion | null) => void;
@@ -48,6 +50,8 @@ export const useMesa = create<Mesa>()(
       agendaError: null,
       agendaCargando: false,
       filtroTablero: null,
+      pantalla: {},
+      setPantalla: (p) => set((s) => ({ pantalla: { ...s.pantalla, ...p } })),
       setFiltroTablero: (filtroTablero) => set({ filtroTablero }),
       irA: (vista, eventoId) => set((s) => ({ vista, eventoId: eventoId ?? (vista === "ficha" ? s.eventoId : null) })),
       setSesion: (sesion) => set({ sesion, avisoSesion: null }),

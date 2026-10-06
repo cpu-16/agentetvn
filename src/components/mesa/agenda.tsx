@@ -38,6 +38,8 @@ export function Agenda() {
   const [tema, setTema] = useState("todos");
   const [estado, setEstado] = useState("todos");
   const [q, setQ] = useState("");
+  const setPantalla = useMesa((s) => s.setPantalla);
+  useEffect(() => setPantalla({ filtrosAgenda: [tema !== "todos" ? `tema ${tema}` : "", estado !== "todos" ? `estado ${estado}` : "", q.trim() ? `búsqueda «${q.trim()}»` : ""].filter(Boolean).join("; ") }), [tema, estado, q, setPantalla]);
   const [verCinco, setVerCinco] = useState(true);
   const reducir = useReducedMotion();
   const [animarEntrada, setAnimarEntrada] = useState(true); // el escalonado solo la primera vez, no al filtrar
