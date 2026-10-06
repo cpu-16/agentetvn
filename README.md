@@ -8,7 +8,7 @@
 
 [![Demo](https://img.shields.io/badge/demo-agentetvn.ciberpty.com-0077c8?style=flat-square)](https://agentetvn.ciberpty.com)
 ![T01–T10](https://img.shields.io/badge/T01%E2%80%93T10-10%2F10-2e7d32?style=flat-square)
-![Pruebas](https://img.shields.io/badge/pruebas-79%20en%20verde-2e7d32?style=flat-square)
+![Pruebas](https://img.shields.io/badge/pruebas-107%20en%20verde-2e7d32?style=flat-square)
 ![Sin internet](https://img.shields.io/badge/demo-funciona%20sin%20internet-00466f?style=flat-square)
 ![LLM](https://img.shields.io/badge/redacci%C3%B3n-Claude%20Opus%205.5%20validado-00466f?style=flat-square)
 ![Stack](https://img.shields.io/badge/Next.js%20%C2%B7%20Bun%20%C2%B7%20SQLite-111?style=flat-square)
@@ -112,6 +112,17 @@ Lo que no pasa se descarta y se cuenta. Si el LLM falla, tarda o no deja nada v�
 | Respuesta del chat | 2 | 0 | 7,2 s / 7,5 s | US$0,025 |
 
 <sub>* Costo equivalente a la tarifa de API que reporta el CLI. La demo corre sobre una suscripción. Los 11 eventos de prioridad alta quedan redactados de antemano (`bun run redactar`) para que el pitch los muestre aunque no haya red.</sub>
+
+## Jarvis-TVN: la mesa por voz
+
+<table><tr>
+<td width="68%"><img src="docs/img/jarvis.webp" alt="Orbe de Jarvis escuchando y panel con «Explícame esta pantalla»"></td>
+<td width="32%"><img src="docs/img/jarvis-celular.webp" alt="Jarvis en el celular: hoja inferior con botón de voz"></td>
+</tr></table>
+
+Un orbe azul TVN que se mantiene presionado para hablar. Jarvis responde con voz natural, pero **solo con lo que devuelve el motor**: las noticias con su medio y sus citas, o se abstiene. También explica la pantalla que tienes abierta y navega la app («abre el tablero», «llévame a la ficha de Enrique Lau»; si hay varias coincidencias, pregunta). El panel se mueve y se agranda, y en el celular es una hoja inferior. Si la voz no está disponible, el chat de texto funciona igual.
+
+Por dentro: el audio va directo navegador ⇄ OpenAI (realtime de Codex). Un puente de voz aparte (`voz/puente.py`) atiende las llamadas con topes estrictos (una a la vez, 3 min, 20 min por hora) y se conecta a la mesa como puente inverso, solo de salida y con token. Decisión D12; diseño en `docs/superpowers/specs/2026-10-06-jarvis-tvn-design.md`. Se activa con `AGENTETVN_VOZ=on` y el puente desplegado (`deploy/desplegar-voz.sh`).
 
 ## Para el jurado: correr en 5 minutos (sin internet)
 
