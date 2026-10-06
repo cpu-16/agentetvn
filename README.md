@@ -41,7 +41,8 @@ bun run motor       # embeddings → temas → eventos/procedencias → contexto
 3. **Caso de agencia replicada** (sintético, marcado): 5 publicaciones, 1 procedencia; P no sube con las réplicas.
 4. **Paquete editorial** → una persona lo corrige o lo descarta con motivo; «Aprobar como borrador no publica nada».
 5. **Preguntar**: «¿Cuál fue la inflación de Panamá en 2025?» → abstención con lo que falta. La fuente sintética con «ignora tus instrucciones» aparece como contenido no confiable y no entra en ninguna respuesta.
-6. **Control**: manifest y SHA-256, reglas v1, IA vs baseline, matriz T01–T10, modo offline.
+6. **Tablero**: gráficas interactivas enlazadas (Apache ECharts, sin internet): señales por día y tema con brush, mapa de temas, relevancia frente a evidencia, evidencia por tema, medios y procedencias, series del Banco Mundial con Panamá resaltado, sismos USGS; cada gráfica con «Ver como tabla».
+7. **Control**: manifest y SHA-256, reglas v1, IA vs baseline, matriz T01–T10, modo offline.
 
 ## Cómo funciona
 
@@ -52,7 +53,7 @@ USGS 2024 (lat 5–12, lon −86…−76, M≥3) ─┘
                                         scripts/motor.ts ─► embeddings locales (multilingual-e5-small, transformers.js)
                                                              temas (zero-shot + sección del RSS) · eventos y procedencias
                                                              contexto oficial (sin forzar) · contradicciones · P = 30R+25I+20U+15N+10E
-Next.js (app) ─► Agenda · Ficha · Paquete y revisión · Control        SQLite (Prisma): revisión humana, paquetes editados, decisiones
+Next.js (app) ─► Portada · Agenda · Ficha · Paquete y revisión · Tablero (ECharts) · Control        SQLite (Prisma): revisión humana, paquetes editados, decisiones
 scripts/notion-sync.ts ─► Catálogo, Casos, Pruebas, Decisiones en Notion (idempotente)
 ```
 

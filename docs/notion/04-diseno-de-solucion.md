@@ -6,7 +6,7 @@
 Fuentes públicas ─► scripts/ingesta.ts ─► data/processed/ (noticias.csv, indicadores.csv, eventos.geojson, fuentes.json, manifest.json con SHA-256)
                     scripts/motor.ts ─► validación (T01) · detector de inyección · embeddings locales · temas · eventos y procedencias
                                         · contexto oficial · contradicciones · P y estado de evidencia ─► eventos.json, fichas.jsonl
-Next.js (bun) ─► Agenda · Ficha · Paquete y revisión · Control   |   SQLite (Prisma): revisiones, paquetes editados, decisiones
+Next.js (bun) ─► Entrada (PIN) · Portada · Agenda · Ficha · Paquete y revisión · Tablero (ECharts, agregados en /api/tablero) · Control · Chat del agente   |   SQLite (Prisma): revisiones, paquetes editados, decisiones
 scripts/notion-sync.ts ─► bases de Notion (idempotente por id estable)
 ```
 
@@ -39,3 +39,7 @@ Ninguno en la demo (redacción extractiva). Plantillas por tema en `src/lib/moto
 ## Límites
 
 Solo titulares y extractos (no se leyó el artículo); GDELT no da fecha de publicación; el modelo e5-small comprime los cosenos (umbral calibrado con etiquetas); clasificación zero-shot con «por revisar» cuando el margen es chico; evaluación exploratoria (sin editor de TVN).
+
+## Tablero (BI)
+
+Apache ECharts 5 (open source, renderer SVG, sin CDN) con gráficas enlazadas por un filtro compartido (tema, rango, período, medio): señales por día y tema con brush, treemap tema → eventos, dispersión relevancia (R) frente a evidencia (E) con zona «investigar», evidencia por tema, medios y tipos de procedencia, series del Banco Mundial 2010–2024 (6 países, Panamá resaltado, nulos como huecos), sismos USGS 2024 (dispersión lat/lon con la caja de consulta y barras por mes). Agregados calculados en el servidor (`src/lib/motor/tablero.ts`, probado), tooltips con HTML escapado (los titulares son datos no confiables), tabla equivalente por gráfica y `prefers-reduced-motion`.
