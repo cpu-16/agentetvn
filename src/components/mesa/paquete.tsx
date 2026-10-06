@@ -84,14 +84,14 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
         {!p ? (
           <div className="rounded-sm border border-dashed border-border bg-white p-6 text-sm">
             <p className="mb-3">Todavía no hay paquete para este tema. Se compone solo con afirmaciones citadas de las noticias del corte.</p>
-            <Button onClick={() => generar()} disabled={ocupado} variant={rol === "productor" ? "default" : "outline"}>{ocupado ? "Preparando…" : "Generar paquete"}</Button>
-            {ocupado && <p role="status" className="mt-2 text-xs text-muted-foreground">Si redacta la IA, puede tardar hasta un minuto.</p>}
+            <Button onClick={() => generar()} disabled={ocupado} aria-busy={ocupado} variant={rol === "productor" ? "default" : "outline"}>{ocupado ? "Preparando el borrador…" : "Generar paquete"}</Button>
+            {ocupado && <p role="status" className="mt-2 text-xs">Con IA tarda cerca de un minuto. Si sales, el trabajo sigue y queda guardado.</p>}
           </div>
         ) : (
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>{p.modo === "llm" && p.llm ? `Redactado por IA (${p.llm.modelo}) en ${Math.round(p.llm.ms / 1000)} s${p.llm.costo_usd != null ? `, US$${p.llm.costo_usd.toFixed(3)}` : ""}; cada frase validada contra su fuente${p.llm.descartadas.length ? ` (${p.llm.descartadas.length} descartada${p.llm.descartadas.length > 1 ? "s" : ""})` : ""}` : p.modo === "extractivo" ? "Compuesto solo con afirmaciones citadas" : `Modo ${p.modo}`}</span>
-              {ocupado && <span role="status">Preparando el paquete; si redacta la IA, puede tardar hasta un minuto…</span>}
+              <span>{p.modo === "llm" && p.llm ? `Borrador de IA (${p.llm.modelo === "claude-opus-5-5" ? "Claude Opus 5.5" : p.llm.modelo}), listo en ${Math.round(p.llm.ms / 1000)} s. Cada frase que ves se sostuvo en su cita; no sustituye la revisión humana.${p.llm.descartadas.length ? ` ${p.llm.descartadas.length} frase${p.llm.descartadas.length > 1 ? "s no se mostraron porque no coincidían" : " no se mostró porque no coincidía"} con su fuente.` : ""}` : p.modo === "extractivo" ? "Compuesto solo con afirmaciones citadas" : `Modo ${p.modo}`}</span>
+              {ocupado && <span role="status" className="font-medium text-foreground">Preparando el borrador; con IA tarda cerca de un minuto. Si sales, el trabajo sigue y queda guardado.</span>}
               {p.updatedAt && <span>guardado {horaPanama(p.updatedAt)}{p.persona ? ` por ${p.persona}` : ""}</span>}
               <span className="ml-auto flex gap-2">
                 {editando ? <Button size="sm" onClick={guardar} disabled={ocupado}>Guardar edición</Button> : <Button size="sm" variant="outline" onClick={() => setEditando(true)}>Editar</Button>}

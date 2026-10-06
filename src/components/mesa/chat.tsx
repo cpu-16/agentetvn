@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
 interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } } }
+const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null }
 
 const SUGERIDAS: { q: string; etiqueta?: string }[] = [
@@ -60,13 +61,14 @@ export function ChatAgente() {
     if (!pregunta || ocupado) return;
     const id = idExistente ?? Date.now();
     setTurnos((t) => (idExistente ? t.map((x) => (x.id === id ? { ...x, respuesta: null, error: null } : x)) : [...t, { id, pregunta, ambito, respuesta: null, error: null }]));
-    setQ(""); setOcupado(true); setAnuncio("Buscando evidencia");
+    setQ(""); setOcupado(true); setAnuncio("Buscando en las fuentes");
     try {
       const r = await fetchMesa("/api/consulta", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q: pregunta, modo: modoConsulta, eventoId: ambito ?? undefined }) });
       if (!r.ok) throw new Error(r.status === 401 ? "La sesión venció." : `El agente no respondió (error ${r.status}).`);
       const respuesta = (await r.json()) as Respuesta;
       setTurnos((t) => t.map((x) => (x.id === id ? { ...x, respuesta } : x)));
-      setAnuncio(respuesta.abstener ? `Sin respuesta sustentada. ${respuesta.motivo ?? ""}` : `Respuesta con ${respuesta.afirmaciones.length} afirmación(es) citada(s). ${respuesta.afirmaciones.map((a) => a.texto).join(" ")}`);
+      const red = respuesta.redaccion;
+      setAnuncio(respuesta.abstener ? `Sin respuesta sustentada. ${respuesta.motivo ?? ""}` : red ? `Borrador de IA. ${red.frases.map((a) => a.texto).join(" ")}${red.vacios.length ? ` Qué falta en el borrador: ${red.vacios.join("; ")}` : ""}` : `Respuesta con ${respuesta.afirmaciones.length} afirmación(es) citada(s). ${respuesta.afirmaciones.map((a) => a.texto).join(" ")}`);
       const ids = respuesta.evidencias.filter((e) => e.tipo === "noticia").map((e) => e.id);
       if (ids.length || respuesta.evidencias.some((e) => e.tipo === "indicador")) void cargarEvidencia(ids, respuesta.evidencias.filter((e) => e.tipo === "indicador").map((e) => e.id));
     } catch (e) {
@@ -165,7 +167,7 @@ export function ChatAgente() {
                       <button className="presionable mt-1 text-xs underline" onClick={() => preguntar(t.pregunta, t.id)}>Reintentar</button>
                     </div>
                   ) : !t.respuesta ? (
-                    <p className="text-xs text-muted-foreground">Buscando evidencia…</p>
+                    <p className="text-xs text-muted-foreground">Buscando en las fuentes; si redacta la IA, unos segundos más…</p>
                   ) : t.respuesta.abstener ? (
                     <div className="rounded-md border border-border bg-papel px-3 py-2">
                       <p className="font-medium">Sin respuesta sustentada</p>
@@ -176,7 +178,8 @@ export function ChatAgente() {
                     <>
                     {t.respuesta.redaccion && (
                       <div className="space-y-1.5">
-                        <ul className="space-y-1.5">
+                        <p className="text-xs font-medium">Borrador de IA para revisión</p>
+                        <ul className="space-y-1.5" aria-label="Borrador de IA para revisión">
                           {t.respuesta.redaccion.frases.map((a, i) => (
                             <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
                               {a.texto}
@@ -184,11 +187,12 @@ export function ChatAgente() {
                             </li>
                           ))}
                         </ul>
-                        {t.respuesta.redaccion.vacios.length > 0 && <p className="text-xs"><span className="font-medium">Qué falta:</span> {t.respuesta.redaccion.vacios.join("; ")}</p>}
-                        <p className="text-[10.5px] text-muted-foreground">Redactado por IA ({t.respuesta.redaccion.llm.modelo}, {Math.round(t.respuesta.redaccion.llm.ms / 1000)} s); cada frase validada contra su fuente. Evidencia recuperada:</p>
+                        {t.respuesta.redaccion.vacios.length > 0 && <p className="rounded-sm bg-[#fff8e1] px-3 py-1.5 text-xs text-[#7a5600]"><span className="font-medium">Qué falta en el borrador:</span> {t.respuesta.redaccion.vacios.join("; ")}</p>}
+                        <p className="text-xs text-muted-foreground">{nombreModelo(t.respuesta.redaccion.llm.modelo)}, {Math.round(t.respuesta.redaccion.llm.ms / 1000)} s. Cada frase se sostuvo en su cita; no sustituye la revisión humana.</p>
+                        <p className="text-xs font-medium">Afirmaciones recuperadas de las fuentes (no son el borrador):</p>
                       </div>
                     )}
-                    <ul className="space-y-1.5">
+                    <ul className="space-y-1.5" aria-label="Afirmaciones recuperadas de las fuentes">
                       {t.respuesta.afirmaciones.map((a, i) => (
                         <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
                           {a.texto}
@@ -209,7 +213,7 @@ export function ChatAgente() {
             </div>
             <form className="flex items-end gap-2 border-t border-border/60 p-3" onSubmit={(e) => { e.preventDefault(); preguntar(q); }}>
               <textarea ref={entrada} autoFocus value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); preguntar(q); } }} rows={2} placeholder="Escribe tu pregunta" className="min-h-[40px] flex-1 resize-none rounded-sm border border-border bg-white px-3 py-2 text-sm" aria-label="Pregunta para el agente" />
-              <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-10 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "…" : "Preguntar"}</button>
+              <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-10 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
             </form>
           </motion.div>
         )}
