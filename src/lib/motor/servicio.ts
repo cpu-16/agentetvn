@@ -8,7 +8,8 @@ import { fuentesDe, redactarOExtractivo, redactarRespuesta } from "./llm";
 import { validarTransicion } from "./revision";
 import { leerScoring } from "./config";
 import type { EstadoRevision, Evento, Paquete } from "./contrato";
-import { existsSync, readFileSync } from "fs";
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from "fs";
+import { dirname } from "path";
 
 export const snapshot = (): Snapshot => cargarSnapshot(undefined, { verificar: process.env.AGENTETVN_VERIFICAR_MANIFEST !== "0" });
 
@@ -101,7 +102,23 @@ export async function revisar(id: string, nuevo: EstadoRevision, persona: string
   return { ok: true as const, revision: { estado: nuevo, persona, motivo: r.motivo, createdAt: r.createdAt.toISOString() }, nota: "Aprobar como borrador no publica." };
 }
 
-export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string) {
+/** Registro de cada consulta (texto o voz) con sus pasos y tiempos: la traza queda en disco, no solo en la pantalla.
+ *  Sin nombre de la persona. ponytail: JSONL que crece; rotarlo si pasa de unos MB. */
+function registrar(origen: "texto" | "voz", q: string, r: Awaited<ReturnType<typeof consultar>>) {
+  try {
+    const archivo = process.env.AGENTETVN_REGISTRO ?? (process.env.NODE_ENV === "test" ? "/dev/null" : "db/consultas.jsonl"); // como db/llm-intentos.jsonl; las pruebas no ensucian el registro
+    mkdirSync(dirname(archivo), { recursive: true });
+    appendFileSync(archivo, JSON.stringify({ fecha: new Date().toISOString(), origen, q, modo: r.modo, abstener: r.abstener, motivo: r.motivo, regla: r.traza?.regla, evidencias: r.evidencias.map((e) => [e.id, e.score]), sobre_umbral: r.traza?.sobreUmbral, pasos: r.traza?.pasos, ms: r.ms, llm: r.redaccion ? { ...r.redaccion.llm, descartadas: r.redaccion.llm.descartadas?.length ?? 0 } : null }) + "\n");
+  } catch { /* el registro nunca tumba una respuesta */ }
+}
+
+export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto") {
+  const r = await consultaSinRegistro(q, modo, eventoId);
+  registrar(origen, q, r);
+  return r;
+}
+
+async function consultaSinRegistro(q: string, modo?: "embeddings" | "bm25", eventoId?: string) {
   const snap = snapshot();
   const ev = eventoId ? snap.eventos.find((e) => e.id === eventoId) : undefined;
   if (eventoId && !ev) // un tema que no existe no amplía la búsqueda a todo el corpus

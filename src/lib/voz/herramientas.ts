@@ -49,7 +49,7 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   // VOZ_RESPUESTA=extractiva (plan B si la latencia pasa de 15 s): la voz usa el motor sin la redacción de Claude
   const r = process.env.VOZ_RESPUESTA === "extractiva"
     ? await consultar(pregunta, snapshot(), { soloIds: args.eventoId ? snapshot().eventos.find((e) => e.id === args.eventoId)?.ids_noticia : undefined })
-    : await consulta(pregunta, undefined, args.eventoId || undefined);
+    : await consulta(pregunta, undefined, args.eventoId || undefined, "voz");
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
   // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
   if (r.abstener) return `No tengo evidencia para responder eso. ${r.motivo ?? ""}`.trim();

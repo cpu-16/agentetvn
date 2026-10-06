@@ -50,3 +50,18 @@ describe("traza de la búsqueda (lo que dibuja el chat)", () => {
     expect(r.traza!.mejores.filter((m) => m.usada).map((m) => m.id)).toEqual(r.evidencias.map((e) => e.id));
   });
 });
+
+test("cada consulta deja su traza en el registro (origen, pasos, evidencias), sin nombre de la persona", async () => {
+  const { consulta } = await import("../src/lib/motor/servicio");
+  const { readFileSync, rmSync } = await import("fs");
+  const archivo = `/tmp/agentetvn-registro-${process.pid}.jsonl`;
+  process.env.AGENTETVN_REGISTRO = archivo;
+  try {
+    await consulta("Canal de Panamá", "bm25", undefined, "voz");
+    const linea = JSON.parse(readFileSync(archivo, "utf8").trim().split("\n").pop()!);
+    expect(linea.origen).toBe("voz");
+    expect(linea.q).toBe("Canal de Panamá");
+    expect(Array.isArray(linea.pasos)).toBe(true);
+    expect(linea).not.toHaveProperty("persona");
+  } finally { delete process.env.AGENTETVN_REGISTRO; rmSync(archivo, { force: true }); }
+});
