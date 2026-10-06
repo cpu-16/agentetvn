@@ -17,7 +17,8 @@
     "notion:sync": "bun scripts/notion-sync.ts",
     "demo": "bun run doctor && bun run db:push && next start -p 3000",
     "modelo:descargar": "HF_HUB_OFFLINE=0 bun scripts/modelo-descargar.ts",
-    "redactar": "bun scripts/redactar.ts"
+    "redactar": "bun scripts/redactar.ts",
+    "voz:check": "python3 voz/puente.py --check"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans": "^5.3.0",
