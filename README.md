@@ -98,6 +98,8 @@ Por sentido se usan las publicaciones que superan el umbral de coseno (0,80) **y
 
 <img src="docs/img/traza.webp" alt="Traza de una consulta: vector de la pregunta, histograma de similitud con el umbral 0,80 y las dos noticias usadas" width="360" align="right">
 
+**Antes de buscar, un enrutador.** Un saludo, un «gracias», «¿quién eres?», «¿qué puedes hacer?» o «¿de qué trata esto?» se contestan con texto fijo (la pantalla abierta, sin gastar tokens). Si el tema de la pregunta no aparece en ninguna publicación (por ejemplo, un nombre mal oído por la voz), Jarvis se abstiene y lo dice, en vez de devolver lo que «suena parecido». Los títulos que no son noticias (el de la página, Wikipedia, una columna que se repite) no entran como evidencia (D15).
+
 **Cómo buscó, a la vista.** Cada respuesta del chat muestra su traza con los datos reales de la consulta: la pregunta convertida en vector, la similitud contra las 1 078 publicaciones con el umbral y la franja de las usadas, las más parecidas (usadas y descartadas) y el tiempo de cada paso, incluida la redacción. Si la pregunta se resolvió por una regla (cifra oficial, causalidad, fuera de alcance), lo dice. La misma traza queda en `db/consultas.jsonl` por cada consulta de texto o de voz, sin el nombre de la persona.
 
 Las 20 consultas reservadas se corren **una sola vez**, al congelar el producto.
@@ -209,7 +211,7 @@ src/app/api/         rutas de la mesa
 src/components/mesa/ portada, agenda, ficha, paquete, chat, tablero (ECharts), control
 scripts/             ingesta, motor, benchmark, pruebas, doctor, redactar, notion-sync
 tests/               T01–T10 del reto, motor, redacción con IA
-docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D14, catálogo, casos, métricas, riesgos)
+docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D15, catálogo, casos, métricas, riesgos)
 SPEC.md              especificación
 ```
 
