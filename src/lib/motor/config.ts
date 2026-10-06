@@ -5,7 +5,7 @@ export interface Scoring {
   fecha: string;
   pesos: { R: number; I: number; U: number; N: number; E: number };
   R: { geo: number; tema: number; geo_sin_mencion: number };
-  I: { prior: Record<string, number>; peso_prior: number; peso_magnitud: number };
+  I: { prior: Record<string, number>; peso_prior: number; peso_alcance: number; peso_magnitud: number; alcance: Record<"nacional" | "sectorial" | "local" | "comercial" | "desconocido", number> };
   E: { primaria: number; independencia: number; identificable: number; umbral_insuficiente: number };
   U: { tabla_horas: [number, number][]; mas_antigua: number; sin_fecha_publicacion: number };
   N: { umbral_mismo_evento: number; jaccard_titular: number; ventana_dias: number; segunda_ola: number };

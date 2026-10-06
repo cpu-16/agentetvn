@@ -25,9 +25,9 @@ export function parsearRssTvn(xml: string, seccion: string, fechaExtraccion: str
         fecha_deteccion: null,
         fecha_extraccion: fechaExtraccion,
         origen: "tvn_rss",
+        seccion,
       })
-    )
-    .map((n) => ({ ...n, tema: null, seccion_rss: seccion }) as Noticia & { seccion_rss: string });
+    );
 }
 
 export async function ingestarTvn(fechaExtraccion: string, log: (s: string) => void) {

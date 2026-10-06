@@ -19,6 +19,7 @@ export interface Noticia {
   agencia: string | null; // EFE, AFP… si el texto la atribuye
   sintetica: boolean; // casos de prueba creados por el equipo
   no_confiable: boolean; // marcada por el detector de inyección
+  seccion: string | null; // sección del RSS (TVN) o null
 }
 
 export interface Indicador {

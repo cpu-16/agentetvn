@@ -34,8 +34,22 @@ export function componenteR(pubs: Noticia[], tema: string, porRevisar: boolean, 
   return { v: r3(cfg.tema * temaOk + cfg.geo * geo), expl: `${g}; ${t}` };
 }
 
-export function componenteI(tema: string, contexto: EntradaPuntaje["contexto"], indicadores: Indicador[], sismos: Sismo[], cfg: Scoring["I"]): { v: number; expl: string } {
+const NACIONAL = /\b(gobierno|presidente|mulino|asamblea|diputad|ministerio|ministr|mef|inec|css\b|caja de seguro|acp\b|canal de panam|idaan|ensa|naturgy|sinaproc|contralor|procurad|corte suprema|ley\b|decreto|superintendencia|banco nacional|tocumen|metro de panam|meduca|minsa|mici|mida|atp\b|acodeco|asep|anati|migraci[oó]n|elecciones|tribunal electoral)/i;
+const SECTORIAL = /\b(sector|gremio|c[aá]mara de comercio|fedec[aá]maras|apede|sindicato|colegio de|hoteler|naviera|bancos?|aseguradora|productores|transportistas|m[eé]dicos|docentes|provincia|chiriqu[ií]|col[oó]n|veraguas|azuero|bocas del toro|coc[lé]|herrera|los santos|dari[eé]n|comarca)/i;
+const COMERCIAL = /\b(presenta|lanza|lanzamiento|nueva identidad|celebra sus?|aniversario|inaugura su|llega a panam[aá]|de la mano de|motor show|nuevo (modelo|cx|x5|ti)|flota|rent a car|concesionario|promoci[oó]n|descuentos|black weekend|marca)\b/i;
+
+export function alcanceDe(texto: string): keyof Scoring["I"]["alcance"] {
+  if (NACIONAL.test(texto)) return "nacional";
+  if (COMERCIAL.test(texto)) return "comercial";
+  if (SECTORIAL.test(texto)) return "sectorial";
+  if (/\b(barrio|corregimiento|distrito|comunidad|vecinos|alcald[ií]a|junta comunal)\b/i.test(texto)) return "local";
+  return "desconocido";
+}
+
+export function componenteI(tema: string, contexto: EntradaPuntaje["contexto"], indicadores: Indicador[], sismos: Sismo[], cfg: Scoring["I"], texto = ""): { v: number; expl: string } {
   const prior = cfg.prior[tema] ?? 0;
+  const alc = alcanceDe(texto);
+  const alcance = cfg.alcance[alc];
   let magnitud = 0;
   let m = "sin dato oficial ligado";
   const idInd = contexto.indicadores[0];
@@ -58,7 +72,7 @@ export function componenteI(tema: string, contexto: EntradaPuntaje["contexto"], 
     const s = sismos.find((x) => x.id === contexto.sismos[0]);
     if (s) (magnitud = Math.min(1, Math.max(0, (s.magnitude - 3) / 4))), (m = `sismo M${s.magnitude} (es magnitud, no daño)`);
   }
-  return { v: r3(cfg.peso_prior * prior + cfg.peso_magnitud * magnitud), expl: `prior editorial del tema ${tema} = ${prior}; ${m}` };
+  return { v: r3(cfg.peso_prior * prior + cfg.peso_alcance * alcance + cfg.peso_magnitud * magnitud), expl: `prior editorial del tema ${tema} = ${prior}; alcance ${alc} = ${alcance}; ${m}` };
 }
 
 export function componenteU(pubs: Noticia[], corteUTC: string, cfg: Scoring["U"]): { v: number; expl: string } {
@@ -97,7 +111,7 @@ export function rangoDe(P: number, cfg: Scoring["rangos"]): Rango {
 
 export function puntuar(e: EntradaPuntaje, cfg: Scoring = leerScoring()): Componentes & { P: number; rango: Rango; primaria: boolean } {
   const R = componenteR(e.publicaciones, e.tema, e.por_revisar, cfg.R);
-  const I = componenteI(e.tema, e.contexto, e.indicadores, e.sismos, cfg.I);
+  const I = componenteI(e.tema, e.contexto, e.indicadores, e.sismos, cfg.I, e.publicaciones.map((p) => `${p.titulo} ${p.descripcion}`).join(" "));
   const U = componenteU(e.publicaciones, e.corteUTC, cfg.U);
   const N = componenteN(e.novedad, cfg.N);
   const E = componenteE(e.publicaciones, e.procedencias, e.contexto, cfg.E);

@@ -63,6 +63,7 @@ export function validarNoticias(filas: Record<string, unknown>[]): { validas: No
       agencia: str(f.agencia) || null,
       sintetica: bool(f.sintetica),
       no_confiable: bool(f.no_confiable),
+      seccion: str(f.seccion) || null,
     });
   });
   return { validas, errores };

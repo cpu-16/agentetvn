@@ -1,125 +1,125 @@
 {
   "version": "v1",
-  "fecha_corte_UTC": "2026-10-06T15:09:15.239Z",
+  "fecha_corte_UTC": "2026-10-06T15:19:35.959Z",
   "consultas": [
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/nacionales/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 14
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/economia/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 50
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/politica/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/provincias/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/salud/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/tecnologia/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 50
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/deportes/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 21
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/mundo/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/internacionales/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/judicial/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/seguridad/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/sociedad/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "tvn_rss",
       "consulta": "https://www.tvn-2.com/rss/clima/",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 0
     },
     {
       "fuente": "bancomundial",
       "consulta": "https://api.worldbank.org/v2/country/PAN;CRI;COL;DOM;MEX;GTM/indicator/NY.GDP.MKTP.KD.ZG?date=2010:2024&format=json&per_page=200",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 90
     },
     {
       "fuente": "bancomundial",
       "consulta": "https://api.worldbank.org/v2/country/PAN;CRI;COL;DOM;MEX;GTM/indicator/FP.CPI.TOTL.ZG?date=2010:2024&format=json&per_page=200",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 90
     },
     {
       "fuente": "bancomundial",
       "consulta": "https://api.worldbank.org/v2/country/PAN;CRI;COL;DOM;MEX;GTM/indicator/SL.UEM.TOTL.ZS?date=2010:2024&format=json&per_page=200",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 90
     },
     {
       "fuente": "bancomundial",
       "consulta": "https://api.worldbank.org/v2/country/PAN;CRI;COL;DOM;MEX;GTM/indicator/SP.POP.TOTL?date=2010:2024&format=json&per_page=200",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 90
     },
     {
       "fuente": "bancomundial",
       "consulta": "https://api.worldbank.org/v2/country/PAN;CRI;COL;DOM;MEX;GTM/indicator/IT.NET.USER.ZS?date=2010:2024&format=json&per_page=200",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 90
     },
     {
       "fuente": "bancomundial",
       "consulta": "https://api.worldbank.org/v2/country/PAN;CRI;COL;DOM;MEX;GTM/indicator/NE.EXP.GNFS.ZS?date=2010:2024&format=json&per_page=200",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 90
     },
     {
       "fuente": "usgs",
       "consulta": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2025-01-01&minlatitude=5&maxlatitude=12&minlongitude=-86&maxlongitude=-76&minmagnitude=3&orderby=time",
-      "fecha": "2026-10-06T15:09:15.239Z",
+      "fecha": "2026-10-06T15:19:35.959Z",
       "n": 82
     }
   ],
@@ -137,9 +137,9 @@
     "usgs": "dominio público"
   },
   "sha256": {
-    "noticias.csv": "f93bbbe4f02f8a5cea432f28762301cb1ee4da4ca4a49ad5eb06d802f4736800",
-    "indicadores.csv": "0871d7666e663e56cfd2c6d1ae1909cfb1dad923e063fe09cf8965cf6ac8c6ca",
-    "eventos.geojson": "fb0e526b46cfb2f3342f809ff11b8899064f2b7deca70354ae58a46a74ebfa89",
+    "noticias.csv": "2ae5049c02c20aadfc1c4720a99befd9e84efe054a056ac338722f03d61697c4",
+    "indicadores.csv": "9ad896aa1f1d373d16f10b2013084351fe8a4e5cd7479b64bd22cbd51969818f",
+    "eventos.geojson": "3fc4d8812fa084b61b5eb485e0385527b58b7d8cef243b37dce77c4a2cfbb34a",
     "fuentes.json": "6172c64ece0d27a60d770691ecfea7b8a5b0aa13053d4a01093e34771115de86"
   },
   "transformaciones": [

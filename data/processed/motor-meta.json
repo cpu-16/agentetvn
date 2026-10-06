@@ -1,0 +1,23 @@
+{
+  "fecha": "2026-10-06T15:22:05.325Z",
+  "modoIA": "embeddings",
+  "modelo": "Xenova/multilingual-e5-small",
+  "reglas": "v1",
+  "corteUTC": "2026-10-06T15:19:35.959Z",
+  "eventos": 75,
+  "por_tema": {
+    "logistica_canal": 10,
+    "economia": 18,
+    "deportes": 26,
+    "servicios_publicos": 9,
+    "otro": 9,
+    "regulacion": 1,
+    "eventos_naturales": 2
+  },
+  "rangos": {
+    "alto": 10,
+    "medio": 50,
+    "bajo": 15
+  },
+  "ms": 1586
+}

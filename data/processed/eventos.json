@@ -1,0 +1,3365 @@
+[
+  {
+    "id": "ev_0a4af833d717",
+    "representante": "n_0a4af833d717",
+    "ids_noticia": [
+      "n_0a4af833d717"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_0a4af833d717"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T12:41:06.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.809,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.56,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance nacional = 1; sin dato oficial ligado",
+        "U": "publicación más reciente hace 3 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 74.5,
+    "rango": "alto",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_518c000d4992",
+    "representante": "n_518c000d4992",
+    "ids_noticia": [
+      "n_518c000d4992"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_518c000d4992"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T11:50:00.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.811,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.56,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance nacional = 1; sin dato oficial ligado",
+        "U": "publicación más reciente hace 3 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 74.5,
+    "rango": "alto",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_ce443344c63b",
+    "representante": "n_ce443344c63b",
+    "ids_noticia": [
+      "n_ce443344c63b"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_ce443344c63b"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T23:07:42.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.841,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.56,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance nacional = 1; sin dato oficial ligado",
+        "U": "publicación más reciente hace 16 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 74.5,
+    "rango": "alto",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_9f17006804cb",
+    "representante": "n_9f17006804cb",
+    "ids_noticia": [
+      "n_9f17006804cb",
+      "n_40d350f2a9d6"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_9f17006804cb",
+          "n_40d350f2a9d6"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-15T21:17:29.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.905,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [
+        "PAN:NY.GDP.MKTP.KD.ZG:2024"
+      ],
+      "sismos": []
+    },
+    "contradicciones": [
+      {
+        "a": "n_9f17006804cb",
+        "b": "n_40d350f2a9d6",
+        "campo": "titulo",
+        "detalle": "«8.49 %» (TVN) vs «6.4 %» (TVN)"
+      }
+    ],
+    "componentes": {
+      "R": 1,
+      "I": 0.715,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.825,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance nacional = 1; variación 2023→2024 de NY.GDP.MKTP.KD.ZG (PAN) = 4.418 vs p90 regional 9.827",
+        "U": "publicación más reciente hace 450 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "con fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 74.13,
+    "rango": "alto",
+    "estado_evidencia": "parcial"
+  },
+  {
+    "id": "ev_28c703061c3a",
+    "representante": "n_28c703061c3a",
+    "ids_noticia": [
+      "n_28c703061c3a",
+      "n_e9e9c95bf1c5",
+      "n_aa379b222edb",
+      "n_b6cf9c148638",
+      "n_fd41fbd0bf08"
+    ],
+    "procedencias": [
+      {
+        "id": "agencia:EFE",
+        "tipo": "agencia",
+        "nombre": "EFE",
+        "ids_noticia": [
+          "n_28c703061c3a",
+          "n_e9e9c95bf1c5",
+          "n_aa379b222edb",
+          "n_b6cf9c148638",
+          "n_fd41fbd0bf08"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-04T14:00:00.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.883,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.415,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal de la agenda",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 45 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 73.13,
+    "rango": "alto",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_4dbc153b7bf1",
+    "representante": "n_4dbc153b7bf1",
+    "ids_noticia": [
+      "n_4dbc153b7bf1"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_4dbc153b7bf1"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T23:09:27.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.834,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.485,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance sectorial = 0.75; sin dato oficial ligado",
+        "U": "publicación más reciente hace 16 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 72.63,
+    "rango": "alto",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_f9d24d4be1b1",
+    "representante": "n_f9d24d4be1b1",
+    "ids_noticia": [
+      "n_f9d24d4be1b1"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_f9d24d4be1b1"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-03T21:53:49.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.85,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.37,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 65 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 72,
+    "rango": "alto",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_691ced7c04b3",
+    "representante": "n_691ced7c04b3",
+    "ids_noticia": [
+      "n_691ced7c04b3",
+      "n_f3f2246adb4f"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:medio-a.test",
+        "tipo": "medio",
+        "nombre": "medio-a.test",
+        "ids_noticia": [
+          "n_691ced7c04b3"
+        ]
+      },
+      {
+        "id": "medio:medio-b.test",
+        "tipo": "medio",
+        "nombre": "medio-b.test",
+        "ids_noticia": [
+          "n_f3f2246adb4f"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-03T09:00:00.000Z",
+    "no_confiable": false,
+    "tema": "eventos_naturales",
+    "tema_confianza": 0.887,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [
+      {
+        "a": "n_691ced7c04b3",
+        "b": "n_f3f2246adb4f",
+        "campo": "titulo",
+        "detalle": "«3 muertos» (medio-a.test) vs «5 muertos» (medio-b.test)"
+      }
+    ],
+    "componentes": {
+      "R": 1,
+      "I": 0.54,
+      "U": 0.4,
+      "N": 1,
+      "E": 0.55,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema eventos_naturales de la agenda",
+        "I": "prior editorial del tema eventos_naturales = 0.6; alcance nacional = 1; sin dato oficial ligado",
+        "U": "publicación más reciente hace 76 h (< 168 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 2 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 72,
+    "rango": "alto",
+    "estado_evidencia": "parcial"
+  },
+  {
+    "id": "ev_ac1a76777f96",
+    "representante": "n_ac1a76777f96",
+    "ids_noticia": [
+      "n_ac1a76777f96"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_ac1a76777f96"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T11:57:42.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.838,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.415,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal por revisar",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 3 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 70.88,
+    "rango": "alto",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_8ff7daad1aef",
+    "representante": "n_8ff7daad1aef",
+    "ids_noticia": [
+      "n_8ff7daad1aef"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_8ff7daad1aef"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-28T17:13:27.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.847,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [
+        "PAN:FP.CPI.TOTL.ZG:2024"
+      ],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.654,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.825,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance nacional = 1; variación 2023→2024 de FP.CPI.TOTL.ZG (PAN) = 0.793 vs p90 regional 3.22",
+        "U": "publicación más reciente hace 39 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "con fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 70.6,
+    "rango": "alto",
+    "estado_evidencia": "suficiente"
+  },
+  {
+    "id": "ev_1791cd5a1bcf",
+    "representante": "n_1791cd5a1bcf",
+    "ids_noticia": [
+      "n_1791cd5a1bcf",
+      "n_72020673e6ca"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_1791cd5a1bcf",
+          "n_72020673e6ca"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T17:07:20.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.813,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.37,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 18 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 69.75,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_ccfb30161637",
+    "representante": "n_ccfb30161637",
+    "ids_noticia": [
+      "n_ccfb30161637"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_ccfb30161637"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T13:00:36.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.814,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.355,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 2 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 69.38,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_617919f9dcab",
+    "representante": "n_617919f9dcab",
+    "ids_noticia": [
+      "n_617919f9dcab"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_617919f9dcab"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T19:03:37.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.806,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.335,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 20 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 68.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_79658a38c016",
+    "representante": "n_79658a38c016",
+    "ids_noticia": [
+      "n_79658a38c016"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_79658a38c016"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T21:18:41.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.825,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.335,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 18 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 68.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_a6c8c51fa207",
+    "representante": "n_a6c8c51fa207",
+    "ids_noticia": [
+      "n_a6c8c51fa207"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_a6c8c51fa207"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T14:51:46.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.818,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.335,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 0 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 68.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_5ee43004dedb",
+    "representante": "n_5ee43004dedb",
+    "ids_noticia": [
+      "n_5ee43004dedb"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_5ee43004dedb"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T23:43:05.000Z",
+    "no_confiable": false,
+    "tema": "eventos_naturales",
+    "tema_confianza": 0.818,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.315,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema eventos_naturales por revisar",
+        "I": "prior editorial del tema eventos_naturales = 0.6; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 16 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 68.38,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_44f8ce26b64d",
+    "representante": "n_44f8ce26b64d",
+    "ids_noticia": [
+      "n_44f8ce26b64d"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_44f8ce26b64d"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-03T20:15:31.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.835,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.43,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal por revisar",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 67 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 65.25,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_8ea5e9f9d828",
+    "representante": "n_8ea5e9f9d828",
+    "ids_noticia": [
+      "n_8ea5e9f9d828"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_8ea5e9f9d828"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-16T12:00:00.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.854,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.565,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal de la agenda",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance sectorial = 0.75; sin dato oficial ligado",
+        "U": "publicación más reciente hace 51 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 63.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_2db16c5bd59f",
+    "representante": "n_2db16c5bd59f",
+    "ids_noticia": [
+      "n_2db16c5bd59f",
+      "n_8581d3df61f8",
+      "n_412a3e33a42c",
+      "n_cd345ce45b2a"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_2db16c5bd59f",
+          "n_8581d3df61f8",
+          "n_412a3e33a42c",
+          "n_cd345ce45b2a"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-29T20:35:51.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.819,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.37,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 25 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 63.75,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_6faf2bff68e8",
+    "representante": "n_6faf2bff68e8",
+    "ids_noticia": [
+      "n_6faf2bff68e8"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_6faf2bff68e8"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-02T17:16:09.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.828,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.58,
+      "U": 0.4,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance nacional = 1; sin dato oficial ligado",
+        "U": "publicación más reciente hace 94 h (< 168 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 63,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_4c7577043fe6",
+    "representante": "n_4c7577043fe6",
+    "ids_noticia": [
+      "n_4c7577043fe6"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_4c7577043fe6"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-16T19:31:35.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.841,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.43,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal de la agenda",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 476 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 62.5,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_58727f537dcf",
+    "representante": "n_58727f537dcf",
+    "ids_noticia": [
+      "n_58727f537dcf"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_58727f537dcf"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-25T16:09:48.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.835,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.43,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal de la agenda",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 263 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 62.5,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_f3d679d286f4",
+    "representante": "n_f3d679d286f4",
+    "ids_noticia": [
+      "n_f3d679d286f4",
+      "n_7269094854fe",
+      "n_a015ad17dff0",
+      "n_4917994b5525"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_f3d679d286f4",
+          "n_7269094854fe",
+          "n_a015ad17dff0",
+          "n_4917994b5525"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-10T18:04:25.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.848,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.43,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance local = 0.5; sin dato oficial ligado",
+        "U": "publicación más reciente hace 454 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 62.5,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_adfc51a71e82",
+    "representante": "n_adfc51a71e82",
+    "ids_noticia": [
+      "n_adfc51a71e82"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_adfc51a71e82"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-21T14:30:19.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.84,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.37,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 361 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 61,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_cdbf23d2e27e",
+    "representante": "n_cdbf23d2e27e",
+    "ids_noticia": [
+      "n_cdbf23d2e27e"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_cdbf23d2e27e"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-10T18:17:57.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.845,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.355,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 621 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 60.63,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_4141cfd6a1f0",
+    "representante": "n_4141cfd6a1f0",
+    "ids_noticia": [
+      "n_4141cfd6a1f0"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_4141cfd6a1f0"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-28T20:28:02.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.843,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.43,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal de la agenda",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 39 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 60.5,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_00f541fda615",
+    "representante": "n_00f541fda615",
+    "ids_noticia": [
+      "n_00f541fda615"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_00f541fda615"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T20:47:57.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 0.83,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.3,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance nacional = 1; sin dato oficial ligado",
+        "U": "publicación más reciente hace 19 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 59.75,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_7655da278715",
+    "representante": "n_7655da278715",
+    "ids_noticia": [
+      "n_7655da278715"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_7655da278715"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-20T17:08:01.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.857,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.37,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 47 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 59,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_505b14a34e21",
+    "representante": "n_505b14a34e21",
+    "ids_noticia": [
+      "n_505b14a34e21"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_505b14a34e21"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-30T15:33:46.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.828,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.415,
+      "U": 0.4,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema logistica_canal por revisar",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 144 h (< 168 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 58.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_f0fef5d22a50",
+    "representante": "n_f0fef5d22a50",
+    "ids_noticia": [
+      "n_f0fef5d22a50"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_f0fef5d22a50"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-20T13:18:55.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.835,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.355,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema economia de la agenda",
+        "I": "prior editorial del tema economia = 0.7; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 47 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 58.63,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_89ad1c18a66e",
+    "representante": "n_89ad1c18a66e",
+    "ids_noticia": [
+      "n_89ad1c18a66e"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_89ad1c18a66e"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-21T15:00:37.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.835,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 1,
+      "I": 0.335,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema servicios_publicos de la agenda",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 46 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 58.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_77e408c51c28",
+    "representante": "n_77e408c51c28",
+    "ids_noticia": [
+      "n_77e408c51c28"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_77e408c51c28"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T04:27:49.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.225,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance sectorial = 0.75; sin dato oficial ligado",
+        "U": "publicación más reciente hace 11 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 57.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_a2c305a79cc7",
+    "representante": "n_a2c305a79cc7",
+    "ids_noticia": [
+      "n_a2c305a79cc7"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_a2c305a79cc7"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T01:25:08.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.832,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.225,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance sectorial = 0.75; sin dato oficial ligado",
+        "U": "publicación más reciente hace 14 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 57.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_cd235d5e917d",
+    "representante": "n_cd235d5e917d",
+    "ids_noticia": [
+      "n_cd235d5e917d"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_cd235d5e917d"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T16:45:50.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.824,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.15,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance local = 0.5; sin dato oficial ligado",
+        "U": "publicación más reciente hace 23 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 56,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_4882cff83dce",
+    "representante": "n_4882cff83dce",
+    "ids_noticia": [
+      "n_4882cff83dce"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_4882cff83dce"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-25T11:25:13.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.807,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [
+        "PAN:SP.POP.TOTL:2024"
+      ],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.37,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.825,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance desconocido = 0.25; variación 2023→2024 de SP.POP.TOTL (PAN) = 56818 vs p90 regional 1148706",
+        "U": "publicación más reciente hace 42 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "con fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 55.25,
+    "rango": "medio",
+    "estado_evidencia": "suficiente"
+  },
+  {
+    "id": "ev_1511bbffed67",
+    "representante": "n_1511bbffed67",
+    "ids_noticia": [
+      "n_1511bbffed67",
+      "n_9de181fc05c9"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_1511bbffed67",
+          "n_9de181fc05c9"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T16:26:56.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.809,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.09,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 23 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.5,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_d4025d585f5b",
+    "representante": "n_d4025d585f5b",
+    "ids_noticia": [
+      "n_d4025d585f5b"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_d4025d585f5b"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-16T21:03:24.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.829,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.43,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema logistica_canal por revisar",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 474 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.25,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_f4bd166a1604",
+    "representante": "n_f4bd166a1604",
+    "ids_noticia": [
+      "n_f4bd166a1604"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_f4bd166a1604"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-09T21:05:52.000Z",
+    "no_confiable": false,
+    "tema": "logistica_canal",
+    "tema_confianza": 0.801,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.43,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema logistica_canal por revisar",
+        "I": "prior editorial del tema logistica_canal = 0.85; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 642 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.25,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_32368e8ac899",
+    "representante": "n_32368e8ac899",
+    "ids_noticia": [
+      "n_32368e8ac899"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_32368e8ac899"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T19:54:32.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 19 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_5bc4b3f1672f",
+    "representante": "n_5bc4b3f1672f",
+    "ids_noticia": [
+      "n_5bc4b3f1672f"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_5bc4b3f1672f"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T17:48:09.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 22 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_6f8e8a263d91",
+    "representante": "n_6f8e8a263d91",
+    "ids_noticia": [
+      "n_6f8e8a263d91",
+      "n_113ff2322e11",
+      "n_dbe7cdd97f9d",
+      "n_f302fa18cba9"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_6f8e8a263d91",
+          "n_113ff2322e11",
+          "n_dbe7cdd97f9d",
+          "n_f302fa18cba9"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T20:41:14.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 0 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_71808f047b1d",
+    "representante": "n_71808f047b1d",
+    "ids_noticia": [
+      "n_71808f047b1d"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_71808f047b1d"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T13:35:56.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 0.825,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 2 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_884823713c82",
+    "representante": "n_884823713c82",
+    "ids_noticia": [
+      "n_884823713c82"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_884823713c82"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T23:20:04.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 16 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_895fd6e7ab8b",
+    "representante": "n_895fd6e7ab8b",
+    "ids_noticia": [
+      "n_895fd6e7ab8b"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_895fd6e7ab8b"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T21:01:12.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 18 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_cd88d448a677",
+    "representante": "n_cd88d448a677",
+    "ids_noticia": [
+      "n_cd88d448a677"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_cd88d448a677"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T23:55:06.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 15 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_e9cabe341946",
+    "representante": "n_e9cabe341946",
+    "ids_noticia": [
+      "n_e9cabe341946"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_e9cabe341946"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T18:13:57.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 21 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_fbd177b68243",
+    "representante": "n_fbd177b68243",
+    "ids_noticia": [
+      "n_fbd177b68243"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_fbd177b68243"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-06T07:27:23.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 1,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 8 h (< 24 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 54.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_afc60a8aa9ab",
+    "representante": "n_afc60a8aa9ab",
+    "ids_noticia": [
+      "n_afc60a8aa9ab"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_afc60a8aa9ab"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-18T15:15:43.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.832,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.355,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 432 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 52.38,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_a6fa5359fb05",
+    "representante": "n_a6fa5359fb05",
+    "ids_noticia": [
+      "n_a6fa5359fb05"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_a6fa5359fb05"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-02T19:51:09.000Z",
+    "no_confiable": false,
+    "tema": "regulacion",
+    "tema_confianza": 0.822,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.375,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema regulacion por revisar",
+        "I": "prior editorial del tema regulacion = 0.75; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 34 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 50.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_0324ef8050dc",
+    "representante": "n_0324ef8050dc",
+    "ids_noticia": [
+      "n_0324ef8050dc"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_0324ef8050dc"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-25T15:28:18.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.841,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.37,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 42 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 50.75,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_0b90fb3c7c13",
+    "representante": "n_0b90fb3c7c13",
+    "ids_noticia": [
+      "n_0b90fb3c7c13",
+      "n_1d0ed083ecf8"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_0b90fb3c7c13",
+          "n_1d0ed083ecf8"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-03T22:44:57.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.832,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.37,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 32 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 50.75,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_1b78adf77f8f",
+    "representante": "n_1b78adf77f8f",
+    "ids_noticia": [
+      "n_1b78adf77f8f"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_1b78adf77f8f"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-21T15:41:33.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.828,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.37,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 46 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 50.75,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_1920cadadab0",
+    "representante": "n_1920cadadab0",
+    "ids_noticia": [
+      "n_1920cadadab0"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_1920cadadab0"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-03T21:13:16.000Z",
+    "no_confiable": false,
+    "tema": "economia",
+    "tema_confianza": 0.833,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.355,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema economia por revisar",
+        "I": "prior editorial del tema economia = 0.7; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 33 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 50.38,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_acdf1836cd9a",
+    "representante": "n_acdf1836cd9a",
+    "ids_noticia": [
+      "n_acdf1836cd9a"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_acdf1836cd9a"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-25T17:12:08.000Z",
+    "no_confiable": false,
+    "tema": "servicios_publicos",
+    "tema_confianza": 0.815,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.725,
+      "I": 0.335,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema servicios_publicos por revisar",
+        "I": "prior editorial del tema servicios_publicos = 0.65; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 42 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 49.88,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_19164ab4462d",
+    "representante": "n_19164ab4462d",
+    "ids_noticia": [
+      "n_19164ab4462d"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_19164ab4462d"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T09:11:50.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 30 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 48.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_3d489909fb58",
+    "representante": "n_3d489909fb58",
+    "ids_noticia": [
+      "n_3d489909fb58"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_3d489909fb58"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-04T00:13:56.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 63 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 48.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_7ca2eaf6bca5",
+    "representante": "n_7ca2eaf6bca5",
+    "ids_noticia": [
+      "n_7ca2eaf6bca5"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_7ca2eaf6bca5"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-04T00:09:43.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 63 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 48.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_a54777ece5f3",
+    "representante": "n_a54777ece5f3",
+    "ids_noticia": [
+      "n_a54777ece5f3"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_a54777ece5f3"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-04T16:00:36.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 47 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 48.13,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_75f5ce9bd981",
+    "representante": "n_75f5ce9bd981",
+    "ids_noticia": [
+      "n_75f5ce9bd981"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_75f5ce9bd981"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-23T04:59:00.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 0.817,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.3,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance nacional = 1; sin dato oficial ligado",
+        "U": "publicación más reciente hace 322 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 42.75,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_b6c4a2fff66e",
+    "representante": "n_b6c4a2fff66e",
+    "ids_noticia": [
+      "n_b6c4a2fff66e"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:sintetica.agentetvn.test",
+        "tipo": "medio",
+        "nombre": "sintetica.agentetvn.test",
+        "ids_noticia": [
+          "n_b6c4a2fff66e"
+        ]
+      }
+    ],
+    "fecha_original": "2026-10-05T12:00:00.000Z",
+    "no_confiable": true,
+    "tema": "deportes",
+    "tema_confianza": 0.857,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.18,
+      "I": 0.075,
+      "U": 0.7,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "sin mención explícita de Panamá (vino de consulta «Panama»); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 27 h (< 72 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 40.03,
+    "rango": "medio",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_36a08c087c41",
+    "representante": "n_36a08c087c41",
+    "ids_noticia": [
+      "n_36a08c087c41"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_36a08c087c41"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-05T01:09:36.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.816,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.225,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance sectorial = 0.75; sin dato oficial ligado",
+        "U": "publicación más reciente hace 32 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 38.88,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_a41a9b13e0cb",
+    "representante": "n_a41a9b13e0cb",
+    "ids_noticia": [
+      "n_a41a9b13e0cb"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_a41a9b13e0cb"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-07T15:13:36.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.837,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.09,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 696 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 37.5,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_0b12b76f9730",
+    "representante": "n_0b12b76f9730",
+    "ids_noticia": [
+      "n_0b12b76f9730"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_0b12b76f9730"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-27T00:45:27.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 231 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 37.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_828f473759a0",
+    "representante": "n_828f473759a0",
+    "ids_noticia": [
+      "n_828f473759a0"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_828f473759a0"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-09T19:47:02.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.827,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 644 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 37.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_8705fe599959",
+    "representante": "n_8705fe599959",
+    "ids_noticia": [
+      "n_8705fe599959"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_8705fe599959"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-23T22:38:47.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 305 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 37.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_9f522a4a6e98",
+    "representante": "n_9f522a4a6e98",
+    "ids_noticia": [
+      "n_9f522a4a6e98"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_9f522a4a6e98"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-20T19:26:46.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.811,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 380 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 37.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_b5bc868e5871",
+    "representante": "n_b5bc868e5871",
+    "ids_noticia": [
+      "n_b5bc868e5871"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_b5bc868e5871"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-28T17:24:20.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 0.831,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 190 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 37.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_f5f0e584dd6b",
+    "representante": "n_f5f0e584dd6b",
+    "ids_noticia": [
+      "n_f5f0e584dd6b"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_f5f0e584dd6b"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-25T22:09:21.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.842,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.15,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 257 h (< 720 h)",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 37.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_fa0d1b8a5d8a",
+    "representante": "n_fa0d1b8a5d8a",
+    "ids_noticia": [
+      "n_fa0d1b8a5d8a"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_fa0d1b8a5d8a"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-28T18:15:25.000Z",
+    "no_confiable": false,
+    "tema": "otro",
+    "tema_confianza": 0.844,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.09,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema otro fuera de la agenda",
+        "I": "prior editorial del tema otro = 0; alcance comercial = 0.3; sin dato oficial ligado",
+        "U": "publicación más reciente hace 39 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 35.5,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_026cf5448833",
+    "representante": "n_026cf5448833",
+    "ids_noticia": [
+      "n_026cf5448833"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_026cf5448833"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-20T15:00:00.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 0.836,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 47 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 35.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_141bcdfeaa67",
+    "representante": "n_141bcdfeaa67",
+    "ids_noticia": [
+      "n_141bcdfeaa67"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_141bcdfeaa67"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-21T18:06:51.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 0.818,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 46 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 35.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_314924eec195",
+    "representante": "n_314924eec195",
+    "ids_noticia": [
+      "n_314924eec195"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_314924eec195"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-03T02:30:21.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "medio panameño (TVN); tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 34 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 35.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_a82782945024",
+    "representante": "n_a82782945024",
+    "ids_noticia": [
+      "n_a82782945024"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_a82782945024"
+        ]
+      }
+    ],
+    "fecha_original": "2026-08-24T16:34:50.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 0.856,
+    "por_revisar": true,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 43 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 35.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_db1169761926",
+    "representante": "n_db1169761926",
+    "ids_noticia": [
+      "n_db1169761926"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_db1169761926"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-01T02:45:22.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 36 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 35.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  },
+  {
+    "id": "ev_ecd0c26c63a7",
+    "representante": "n_ecd0c26c63a7",
+    "ids_noticia": [
+      "n_ecd0c26c63a7"
+    ],
+    "procedencias": [
+      {
+        "id": "medio:TVN",
+        "tipo": "medio",
+        "nombre": "TVN",
+        "ids_noticia": [
+          "n_ecd0c26c63a7"
+        ]
+      }
+    ],
+    "fecha_original": "2026-09-03T17:00:17.000Z",
+    "no_confiable": false,
+    "tema": "deportes",
+    "tema_confianza": 1,
+    "por_revisar": false,
+    "contexto": {
+      "indicadores": [],
+      "sismos": []
+    },
+    "contradicciones": [],
+    "componentes": {
+      "R": 0.45,
+      "I": 0.075,
+      "U": 0.05,
+      "N": 1,
+      "E": 0.375,
+      "explicacion": {
+        "R": "menciona Panamá o un lugar panameño; tema deportes fuera de la agenda",
+        "I": "prior editorial del tema deportes = 0; alcance desconocido = 0.25; sin dato oficial ligado",
+        "U": "publicación más reciente hace 33 días; se muestra la fecha original",
+        "N": "primera aparición del evento en el snapshot",
+        "E": "sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha"
+      }
+    },
+    "P": 35.13,
+    "rango": "bajo",
+    "estado_evidencia": "insuficiente"
+  }
+]

@@ -139,6 +139,31 @@
         "atleta",
         "final"
       ]
+    },
+    {
+      "id": "otro",
+      "nombre": "Otro",
+      "descripcion": "Sucesos policiales, crimen, detenciones, tribunales, homicidios, accidentes de tránsito; política partidaria sin norma; noticias internacionales sin relación con Panamá; farándula, entretenimiento y publicidad de marcas.",
+      "palabras": [
+        "detención",
+        "homicidio",
+        "disparan",
+        "asesinato",
+        "policía",
+        "aprehenden",
+        "fiscalía",
+        "sentencia",
+        "accidente",
+        "internacional",
+        "estados unidos",
+        "venezuela",
+        "guerra",
+        "bombardeos",
+        "farándula",
+        "concierto",
+        "lanzamiento de marca",
+        "nueva identidad de marca"
+      ]
     }
   ],
   "agenda": [

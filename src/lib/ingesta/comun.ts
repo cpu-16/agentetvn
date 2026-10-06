@@ -24,7 +24,7 @@ export function gdeltFecha(s: string): string | null {
   return m ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}.000Z` : null;
 }
 
-export function nuevaNoticia(p: Omit<Noticia, "id_noticia" | "alcance_texto" | "agencia" | "sintetica" | "no_confiable" | "tema"> & { sintetica?: boolean }): Noticia {
+export function nuevaNoticia(p: Omit<Noticia, "id_noticia" | "alcance_texto" | "agencia" | "sintetica" | "no_confiable" | "tema" | "seccion"> & { sintetica?: boolean; seccion?: string | null }): Noticia {
   const url = normalizarUrl(p.url);
   return {
     ...p,
@@ -35,6 +35,7 @@ export function nuevaNoticia(p: Omit<Noticia, "id_noticia" | "alcance_texto" | "
     agencia: detectarAgencia(`${p.titulo} ${p.descripcion}`),
     sintetica: p.sintetica ?? false,
     no_confiable: false,
+    seccion: p.seccion ?? null,
   };
 }
 
@@ -51,10 +52,10 @@ export async function fetchJson<T>(url: string, intentos = 3): Promise<T> {
   let ultimo: unknown;
   for (let i = 0; i < intentos; i++) {
     try {
-      const r = await fetch(url, { headers: { "User-Agent": "AgenteTVN/0.1 (hackIAthon Panamá; contacto: gilberto@ciberpty.com)" } });
+      const r = await fetch(url, { headers: { "User-Agent": "AgenteTVN/0.1 (hackIAthon Panamá; contacto: gilberto@ciberpty.com)" }, signal: AbortSignal.timeout(90000) });
       const texto = await r.text();
       if (r.status === 429) {
-        await dormir(20000); // GDELT: esperar antes de reintentar
+        await dormir(Number(process.env.GDELT_ESPERA_429_MS ?? 60000)); // GDELT: esperar antes de reintentar
         throw new Error(`HTTP 429: ${texto.slice(0, 80)}`);
       }
       if (!r.ok) throw new Error(`HTTP ${r.status}: ${texto.slice(0, 120)}`);

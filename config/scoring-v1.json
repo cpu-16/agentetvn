@@ -42,14 +42,14 @@
     "sin_fecha_publicacion": 0.2
   },
   "N": {
-    "umbral_mismo_evento": 0.82,
+    "umbral_mismo_evento": 0.9,
     "jaccard_titular": 0.8,
     "ventana_dias": 7,
     "segunda_ola": 0.3
   },
   "temas": {
-    "umbral": 0.78,
-    "margen": 0.03
+    "umbral": 0.8,
+    "margen": 0.015
   },
   "consulta": {
     "umbral_coseno": 0.8,
@@ -81,7 +81,15 @@
       "deportes": 0,
       "otro": 0
     },
-    "peso_prior": 0.6,
-    "peso_magnitud": 0.4
+    "peso_prior": 0.4,
+    "peso_alcance": 0.3,
+    "peso_magnitud": 0.3,
+    "alcance": {
+      "nacional": 1,
+      "sectorial": 0.75,
+      "local": 0.5,
+      "comercial": 0.3,
+      "desconocido": 0.25
+    }
   }
 }
