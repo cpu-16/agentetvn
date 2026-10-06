@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-10-06T15:22:05.325Z",
+  "fecha": "2026-10-06T15:29:11.129Z",
   "modoIA": "embeddings",
   "modelo": "Xenova/multilingual-e5-small",
   "reglas": "v1",
@@ -19,5 +19,5 @@
     "medio": 50,
     "bajo": 15
   },
-  "ms": 1586
+  "ms": 1621
 }

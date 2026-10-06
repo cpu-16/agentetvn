@@ -22,6 +22,12 @@ const log = (s: string) => console.log(`[motor +${((Date.now() - t0) / 1000).toF
 const OUT = process.env.AGENTETVN_DATOS ?? "data/processed";
 const cfg = leerScoring();
 const snap = cargarSnapshot(OUT, { forzar: true });
+// idempotencia: el motor parte del CSV crudo, no de su salida anterior
+{
+  const { validarNoticias } = await import("../src/lib/motor/validar");
+  const { leerCsv } = await import("../src/lib/motor/cargar");
+  snap.noticias = validarNoticias(leerCsv(`${OUT}/noticias.csv`)).validas;
+}
 const corte = snap.manifest.fecha_corte_UTC;
 
 // 1 · calidad (T01)

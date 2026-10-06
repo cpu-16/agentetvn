@@ -30,7 +30,8 @@ escribirJson(`${RAW}/${dia}/tvn_rss.json`, tvn.noticias);
 consultas.push(...tvn.consultas);
 let gdeltNoticias: Noticia[] = [];
 if (!sinGdelt) {
-  const g = await ingestarGdelt(corte, fechaExtraccion, log);
+  const corteHora = new Date(Math.floor(corte.getTime() / 3600000) * 3600000); // ventanas estables dentro de la misma hora → la caché por URL sirve
+  const g = await ingestarGdelt(corteHora, fechaExtraccion, log);
   escribirJson(`${RAW}/${dia}/gdelt.json`, g.noticias);
   consultas.push(...g.consultas);
   gdeltNoticias = g.noticias;
