@@ -49,6 +49,11 @@ export function TrazaBusqueda({ traza, llmMs, abierta }: { traza: Traza; llmMs?:
       <summary className="presionable flex min-h-11 cursor-pointer sm:min-h-9 list-none items-center gap-2 px-3 py-1.5 font-medium text-tinta [&::-webkit-details-marker]:hidden">
         <span className="inline-block size-2 rounded-full bg-azul" aria-hidden />
         <span className="flex-1">{resumen}</span>
+        {emb && h && traza.umbral !== undefined && (
+          <span className="flex h-4 w-16 flex-none items-end gap-px" aria-hidden>
+            {h.cuentas.map((c, i) => <span key={i} className={cn("flex-1", h.desde + ((h.hasta - h.desde) * (i + 1)) / h.cuentas.length > traza.umbral! ? "bg-azul" : "bg-[#b9c7d6]")} style={{ height: `${c ? Math.max(12, Math.sqrt(c / max) * 100) : 0}%` }} />)}
+          </span>
+        )}
         <span className="text-muted-foreground transition-transform group-open:rotate-90" aria-hidden>▸</span>
       </summary>
       <div className="space-y-3 px-3 pb-3">

@@ -47,6 +47,11 @@ describe("rutas de la página", () => {
     expect(await r.text()).toBe("v=0 respuesta");
     const ac = await (await ruta("acciones")).GET(new Request("http://x/api/voz/acciones?hilo=hilo-1", { headers: cookie(ANA) }));
     expect(ac.status).toBe(200);
+    // el registro de turnos: solo el dueño de la llamada y solo turnos válidos
+    const turno = async (quien: string, sesion: Parameters<typeof cookie>[0]) => (await ruta("turno")).POST(new Request("http://x/api/voz/turno?hilo=hilo-1", { method: "POST", headers: { ...cookie(sesion), "content-type": "application/json" }, body: JSON.stringify({ quien, texto: "hola" }) }));
+    expect((await turno("persona", ANA)).status).toBe(200);
+    expect((await turno("sistema", ANA)).status).toBe(400);
+    expect((await turno("persona", BETO)).status).toBe(403);
   });
   test("puente ocupado → 429 con mensaje claro", async () => {
     await pedirEspera();

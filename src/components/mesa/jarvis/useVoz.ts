@@ -81,7 +81,11 @@ export function useVoz(opts: Opts = {}) {
         const rol = (turno.role ?? c.roles[ev.turn_id ?? ""]) === "user" ? "user" : "assistant";
         c.ultima = Date.now();
         emitir({ tipo: ev.type === "turn.created" ? "turno_creado" : "turno_hecho", rol });
-        if (ev.type === "turn.done" && turno.transcript) optsRef.current.onTranscripcion?.(rol === "user" ? "persona" : "jarvis", turno.transcript);
+        if (ev.type === "turn.done" && turno.transcript) {
+          const quien = rol === "user" ? "persona" : "jarvis";
+          optsRef.current.onTranscripcion?.(quien, turno.transcript);
+          if (con.hilo) void fetchMesa(`/api/voz/turno?hilo=${encodeURIComponent(con.hilo)}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ quien, texto: turno.transcript }) }).catch(() => null);
+        }
       };
       await pc.setLocalDescription(await pc.createOffer());
       if (!vigente()) return abortar();

@@ -12,7 +12,7 @@ import { contextoDesdeMesa, explicacionFija } from "@/lib/voz/catalogo";
 import { TrazaBuscando, TrazaBusqueda, type Traza } from "./traza";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza }
+interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; conversacion?: { motivo: string; texto: string; sugerencias: string[] } }
 const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
@@ -113,12 +113,12 @@ export function ChatAgente() {
     setTurnos((t) => (idExistente ? t.map((x) => (x.id === id ? { ...x, respuesta: null, error: null } : x)) : [...t, { id, pregunta, ambito, respuesta: null, error: null }]));
     setQ(""); setOcupado(true); setAnuncio("Buscando en las fuentes");
     try {
-      const r = await fetchMesa("/api/consulta", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q: pregunta, modo: modoConsulta, eventoId: ambito ?? undefined }) });
+      const r = await fetchMesa("/api/consulta", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q: pregunta, modo: modoConsulta, eventoId: ambito ?? undefined, contexto: contextoDesdeMesa(useMesa.getState()) }) });
       if (!r.ok) throw new Error(r.status === 401 ? "La sesión venció." : `El agente no respondió (error ${r.status}).`);
       const respuesta = (await r.json()) as Respuesta;
       setTurnos((t) => t.map((x) => (x.id === id ? { ...x, respuesta } : x)));
       const red = respuesta.redaccion;
-      setAnuncio(respuesta.abstener ? `Sin respuesta sustentada. ${respuesta.motivo ?? ""}` : red ? `Borrador de IA. ${red.frases.map((a) => a.texto).join(" ")}${red.vacios.length ? ` Qué falta en el borrador: ${red.vacios.join("; ")}` : ""}` : `Respuesta con ${respuesta.afirmaciones.length} afirmación(es) citada(s). ${respuesta.afirmaciones.map((a) => a.texto).join(" ")}`);
+      setAnuncio(respuesta.conversacion ? respuesta.conversacion.texto : respuesta.abstener ? `Sin respuesta sustentada. ${respuesta.motivo ?? ""}` : red ? `Borrador de IA. ${red.frases.map((a) => a.texto).join(" ")}${red.vacios.length ? ` Qué falta en el borrador: ${red.vacios.join("; ")}` : ""}` : `Respuesta con ${respuesta.afirmaciones.length} afirmación(es) citada(s). ${respuesta.afirmaciones.map((a) => a.texto).join(" ")}`);
       const ids = respuesta.evidencias.filter((e) => e.tipo === "noticia").map((e) => e.id);
       if (ids.length || respuesta.evidencias.some((e) => e.tipo === "indicador")) void cargarEvidencia(ids, respuesta.evidencias.filter((e) => e.tipo === "indicador").map((e) => e.id));
     } catch (e) {
@@ -234,7 +234,7 @@ export function ChatAgente() {
             )}
             <div className="flex flex-wrap items-center gap-2 border-b border-border/60 px-4 py-2 text-xs">
               <button type="button" className="presionable min-h-11 rounded-full border border-tinta/30 bg-white px-3 py-1 font-medium text-tinta hover:border-tinta sm:min-h-9" onClick={() => turnoVoz("jarvis", explicacionFija(contextoDesdeMesa(useMesa.getState())))}>Explícame esta pantalla</button>
-              <span className="text-muted-foreground">{voz.estado === "no_disponible" ? "Voz no disponible ahora. El chat funciona igual." : activa ? `${ETIQUETA_ORBE[orbe]}. Habla cuando quieras; toca el orbe para colgar.` : celular ? "Toca el orbe para conversar con Jarvis." : "Toca el orbe (o la barra espaciadora) para conversar con Jarvis."}</span>
+              <span className={cn("text-muted-foreground", celular && turnos.length > 0 && !activa && "sr-only")}>{voz.estado === "no_disponible" ? "Voz no disponible ahora. El chat funciona igual." : activa ? `${ETIQUETA_ORBE[orbe]}. Habla cuando quieras; toca el orbe para colgar.` : celular ? "Toca el orbe para conversar con Jarvis." : "Toca el orbe (o la barra espaciadora) para conversar con Jarvis."}</span>
               {activa && <button type="button" className="presionable ml-auto min-h-11 rounded-sm px-3 text-acero underline sm:min-h-0 sm:py-1" onClick={() => voz.colgar("colgó")}>Colgar</button>}
             </div>
             <div className="fino flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3 text-sm">
@@ -267,8 +267,18 @@ export function ChatAgente() {
                   ) : !t.respuesta ? (
                     <TrazaBuscando modo={modoConsulta} />
                   ) : null}
-                  {t.respuesta?.traza && <TrazaBusqueda traza={t.respuesta.traza} llmMs={t.respuesta.redaccion?.llm.ms} abierta={iTurno === turnos.length - 1 || turnos.slice(iTurno + 1).every((x) => x.voz)} />}
-                  {t.error || !t.respuesta ? null : t.respuesta.abstener ? (
+                  {t.respuesta?.traza && !t.respuesta.conversacion && <TrazaBusqueda traza={t.respuesta.traza} llmMs={t.respuesta.redaccion?.llm.ms} abierta={!celular && (iTurno === turnos.length - 1 || turnos.slice(iTurno + 1).every((x) => x.voz))} />}
+                  {t.error || !t.respuesta ? null : t.respuesta.conversacion ? (
+                    <div className="mr-8 rounded-md border border-border bg-white px-3 py-2">
+                      <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis</span>
+                      <p>{t.respuesta.conversacion.texto}</p>
+                      {t.respuesta.conversacion.sugerencias.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {t.respuesta.conversacion.sugerencias.map((s) => <button key={s} className="presionable min-h-11 rounded-full border border-border bg-white px-2.5 py-1 text-left text-xs hover:border-tinta sm:min-h-0" onClick={() => preguntar(s)}>{s}</button>)}
+                        </div>
+                      )}
+                    </div>
+                  ) : t.respuesta.abstener ? (
                     <div className="rounded-md border border-border bg-papel px-3 py-2">
                       <p className="font-medium">Sin respuesta sustentada</p>
                       <p className="text-muted-foreground">{t.respuesta.motivo}</p>
@@ -303,7 +313,7 @@ export function ChatAgente() {
                     </>
                   )}
                   {t.respuesta && t.respuesta.contradicciones.length > 0 && <p className="rounded-sm bg-[#fdecef] px-3 py-1.5 text-xs text-[#9b1526]">{t.respuesta.contradicciones.length} contradicción(es) abierta(s) entre las fuentes: {t.respuesta.contradicciones.map((c) => c.detalle).join("; ")}</p>}
-                  {t.respuesta && <p className="text-[10.5px] text-muted-foreground">{t.respuesta.modo === "embeddings" ? "Por sentido" : "Por palabras"}, {t.respuesta.ms} ms. {t.respuesta.leyenda}</p>}
+                  {t.respuesta && !t.respuesta.conversacion && <p className="text-[10.5px] text-muted-foreground">{t.respuesta.modo === "embeddings" ? "Por sentido" : "Por palabras"}, {t.respuesta.ms} ms. {t.respuesta.leyenda}</p>}
                   {t.respuesta && !t.respuesta.abstener && t.respuesta.evidencias.some((e) => e.tipo === "noticia") && !enFicha && (
                     <button className="presionable text-[11px] text-acero underline" onClick={() => abrirFichaDe(t.respuesta!.evidencias.find((e) => e.tipo === "noticia")!.id)}>Abrir la ficha del primer resultado</button>
                   )}

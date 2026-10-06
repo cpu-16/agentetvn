@@ -38,8 +38,8 @@ export function Entrada() {
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-papel px-4 py-10">
       {/* Haz de tinta y barra roja: se revelan una vez con transform (sin clip-path ni repintados) */}
-      <motion.div aria-hidden className="pointer-events-none absolute left-0 top-0 h-full w-[46%] bg-tinta" style={{ transformOrigin: "left center" }} initial={reducir ? { opacity: 0 } : { transform: "scaleX(0)" }} animate={reducir ? { opacity: 1 } : { transform: "scaleX(1)" }} transition={{ duration: 0.6, ease: EASE_OUT }} />
-      <motion.div aria-hidden className="pointer-events-none absolute left-[46%] top-0 h-full w-2 bg-azul" style={{ transformOrigin: "center top" }} initial={reducir ? { opacity: 0 } : { transform: "scaleY(0)" }} animate={reducir ? { opacity: 1 } : { transform: "scaleY(1)" }} transition={{ duration: 0.6, delay: 0.25, ease: EASE_OUT }} />
+      <motion.div aria-hidden className="pointer-events-none absolute left-0 top-0 h-full w-full bg-tinta md:w-[46%]" style={{ transformOrigin: "left center" }} initial={reducir ? { opacity: 0 } : { transform: "scaleX(0)" }} animate={reducir ? { opacity: 1 } : { transform: "scaleX(1)" }} transition={{ duration: 0.6, ease: EASE_OUT }} />
+      <motion.div aria-hidden className="pointer-events-none absolute left-[46%] top-0 hidden h-full w-2 bg-azul md:block" style={{ transformOrigin: "center top" }} initial={reducir ? { opacity: 0 } : { transform: "scaleY(0)" }} animate={reducir ? { opacity: 1 } : { transform: "scaleY(1)" }} transition={{ duration: 0.6, delay: 0.25, ease: EASE_OUT }} />
 
       <div className="relative grid w-full max-w-5xl gap-10 md:grid-cols-[1fr_1fr] md:items-center">
         <motion.section className="text-white md:pr-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35, delay: 0.35 }}>

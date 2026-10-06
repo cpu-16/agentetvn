@@ -19,6 +19,7 @@ export interface Respuesta {
   ms: number;
   leyenda: string;
   redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: MetaLLM }; // solo en modo online, sobre lo recuperado
+  conversacion?: { motivo: string; texto: string; sugerencias: string[] }; // el enrutador contestó sin buscar
   traza?: Traza; // cómo se buscó: lo dibuja el chat
 }
 /** Traza de la recuperación para mostrarla: vector de la pregunta (primeras 48 dims), distribución de similitudes del corpus,
@@ -57,6 +58,26 @@ function indice(snap: Snapshot): BM25 {
   if (!bm25 || bm25.huella !== snap.huella) bm25 = { idx: indexarBM25(snap.noticias.filter((n) => !n.no_confiable).map((n) => ({ id: n.id_noticia, texto: `${n.titulo} ${n.descripcion}` }))), huella: snap.huella };
   return bm25.idx;
 }
+/** Títulos que no son noticias: el de la página («Preview - …», «X - Noticias de …», Wikipedia) o una sección que el mismo
+ *  medio repite 3 o más veces («Se escucha por ahí»). No entran como evidencia ni en «Cinco para hoy»: con preguntas cortas
+ *  atraían la búsqueda por sentido («hola» → «EL DÍA - Noticias de Bolivia para el mundo»). */
+export const TITULO_DE_PAGINA = /^\s*(preview|vista previa)\s*[-–|]|wikipedia|^[^-–|]{2,40}\s[-–|]\s*noticias de /i;
+const genericos = new WeakMap<object, Set<string>>();
+export function idsGenericos(snap: Pick<Snapshot, "noticias">): Set<string> {
+  let ids = genericos.get(snap);
+  if (ids) return ids;
+  const clave = (n: Noticia) => `${n.medio}|${n.titulo.trim().toLowerCase()}`;
+  const veces = new Map<string, number>();
+  for (const n of snap.noticias) veces.set(clave(n), (veces.get(clave(n)) ?? 0) + 1);
+  ids = new Set(snap.noticias.filter((n) => TITULO_DE_PAGINA.test(n.titulo) || (veces.get(clave(n)) ?? 0) >= 3).map((n) => n.id_noticia));
+  genericos.set(snap, ids);
+  return ids;
+}
+/** ¿La palabra (ya tokenizada) aparece en alguna publicación del corte? */
+export function enCorpus(snap: Snapshot, token: string): boolean {
+  return indice(snap).docs.some((d) => d.tokens.includes(token));
+}
+
 const OTRO_PAIS = /\b(honduras|nicaragua|el salvador|venezuela|ecuador|per[uú]|chile|argentina|brasil|bolivia|uruguay|paraguay|cuba|espa[ñn]a|estados unidos|eeuu|europa|china|rusia|jap[oó]n|canad[aá])\b/i;
 
 /** ¿La consulta pide una cifra de indicador? → {indicador, pais, anio} */
@@ -123,7 +144,8 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   if (cifra) return { ...cifra, traza: porRegla(modo, k, "Pide una cifra oficial: la leí directo de la serie del Banco Mundial, sin búsqueda por sentido.") };
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const pideCantidad = /(?<![\p{L}])(cu[aá]nt[oa]s?|cifra|monto|tasa|porcentaje|cu[aá]l fue el (valor|n[uú]mero|total)|cu[aá]ntos?)/iu.test(q);
-  const permitida = (id: string) => porId.has(id) && !porId.get(id)!.no_confiable && (!opts.soloIds || opts.soloIds.includes(id));
+  const generico = idsGenericos(snap);
+  const permitida = (id: string) => porId.has(id) && !porId.get(id)!.no_confiable && !generico.has(id) && (!opts.soloIds || opts.soloIds.includes(id));
   let candidatos: { id: string; score: number }[] = [];
   let modoEfectivo: Respuesta["modo"] = modo;
   let traza: Traza | undefined;
@@ -176,18 +198,16 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   };
 }
 
-/** Título de la página en vez del titular (asamblea.gob.pa trae «Preview - Asamblea de Panamá»; el titular solo está en la URL). */
-export const TITULO_DE_PAGINA = /^\s*(preview|vista previa)\s*[-–|]/i;
-
 /** CU-01 · los cinco temas que merecen revisión, con razones y vacíos. */
 export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[]; vacios: string[] }[] {
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   // cinco temas distintos para una agenda: máximo dos eventos del mismo tema (el orden sigue siendo por P)
   const porTema = new Map<string, number>();
+  const generico = idsGenericos(snap);
   const elegidos: Evento[] = [];
   for (const e of snap.eventos) {
     if (e.no_confiable || e.tema === "deportes" || e.tema === "otro" || e.ids_noticia.some((i) => porId.get(i)?.sintetica)) continue;
-    if (TITULO_DE_PAGINA.test(porId.get(e.representante)?.titulo ?? "")) continue; // sin titular real no se puede revisar desde la portada
+    if (generico.has(e.representante)) continue; // sin titular real no se puede revisar desde la portada
     if ((porTema.get(e.tema) ?? 0) >= 2) continue;
     porTema.set(e.tema, (porTema.get(e.tema) ?? 0) + 1);
     elegidos.push(e);
