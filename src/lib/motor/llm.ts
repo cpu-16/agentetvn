@@ -23,12 +23,13 @@ const nombres = (t: string) => [...t.matchAll(/(?<![.!?¿¡:]\s|^)(?<=\s|\(|«|�
 const CAUSA = /(debido a|a causa de|por culpa de|provoc[óoa]|ocasion[óoa]|gracias a|como consecuencia|a ra[ií]z de)/i;
 
 /** null si la frase se sostiene en el texto de la fuente; si no, el motivo. */
-export function sostenida(texto: string, fuente: string): string | null {
+export function sostenida(texto: string, fuente: string, { pregunta = false } = {}): string | null {
   const enFuente = new Set(cifras(fuente));
   const falta = cifras(texto).find((c) => !enFuente.has(c));
   if (falta) return `cifra «${falta.replace(/\|/g, ".")}» que no está en la fuente`;
   const f = norm(fuente), palabrasFuente = new Set(sinTildes(fuente).match(/\p{L}+/gu) ?? []);
   if (citasTextuales(texto).some((c) => !f.includes(c))) return "cita textual que no está en la fuente";
+  if (pregunta) return null; // una pregunta de investigación puede nombrar a quién consultar (MP, Contraloría): no afirma nada
   const nombre = nombres(texto).find((n) => !palabrasFuente.has(sinTildes(n)));
   if (nombre) return `nombre «${nombre}» que no está en la fuente`;
   const causa = CAUSA.exec(texto);
@@ -124,8 +125,8 @@ function validarFrases(xs: unknown, fuentes: Map<string, Fuente>, tope: number, 
   return out;
 }
 
-/** Texto libre (título, preguntas, vacíos): sin cita propia, pero sus cifras y citas deben estar en alguna fuente del evento. */
-const libre = (t: unknown, todo: string) => (typeof t === "string" && t.trim() && !sostenida(t, todo) ? t.trim() : null);
+/** Texto libre (título, preguntas, vacíos): sin cita propia, pero lo que afirma debe estar en alguna fuente del evento. */
+const libre = (t: unknown, todo: string, pregunta = false) => (typeof t === "string" && t.trim() && !sostenida(t, todo, { pregunta }) ? t.trim() : null);
 
 export async function redactarPaquete(base: Paquete, fuentes: Fuente[], contexto: string, huella?: string): Promise<Paquete> {
   const usuario = `Evento de la agenda editorial. ${contexto}
@@ -148,8 +149,8 @@ ${fuentes.map((f) => bloqueFuente(f.id, f.campo, f.texto)).join("\n\n")}`;
   const guion = validarFrases(j.guion, porId, 150, descartadas);
   const copy = validarFrases(j.copy, porId, 80, descartadas);
   const todo = fuentes.map((f) => f.texto).join("\n");
-  const preguntas = (Array.isArray(j.preguntas) ? j.preguntas : []).map((q) => libre(q, todo)).filter((q): q is string => !!q).slice(0, 3);
-  const vacios = (Array.isArray(j.vacios) ? j.vacios : []).map((v) => libre(v, todo)).filter((v): v is string => !!v).slice(0, 5);
+  const preguntas = (Array.isArray(j.preguntas) ? j.preguntas : []).map((q) => libre(q, todo, true)).filter((q): q is string => !!q).slice(0, 3);
+  const vacios = (Array.isArray(j.vacios) ? j.vacios : []).map((v) => libre(v, todo, true)).filter((v): v is string => !!v).slice(0, 5);
   const guionFinal = guion.length ? guion : base.guion;
   const pg = palabras(guionFinal.map((a) => a.texto).join(" "));
   return {

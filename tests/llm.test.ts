@@ -36,6 +36,8 @@ describe("validación de frases contra su fuente", () => {
     expect(sostenida("La cifra, según la Contraloría, cerró septiembre.", fuentes[0].texto)).toContain("Contraloría");
     expect(sostenida("La inflación subió debido a los combustibles.", fuentes[0].texto)).toContain("causa");
     expect(sostenida("Se debe confirmar con el INEC.", fuentes[0].texto)).toBeNull(); // «se debe» no es causalidad
+    expect(sostenida("¿Qué dice la Contraloría?", fuentes[0].texto, { pregunta: true })).toBeNull(); // una pregunta puede nombrar a quién consultar
+    expect(sostenida("¿Por qué llegó a 3 %?", fuentes[0].texto, { pregunta: true })).not.toBeNull(); // pero no meter cifras
   });
   test("citas textuales: solo las que están literalmente en la fuente", () => {
     expect(sostenida("TVN tituló «Inflación en Panamá cierra septiembre».", fuentes[0].texto)).toBeNull();
