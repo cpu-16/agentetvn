@@ -131,9 +131,11 @@ export function useVoz(opts: Opts = {}) {
   useEffect(() => {
     const t = window.setInterval(async () => {
       const c = r.current; const hilo = c.con.hilo;
-      if (!hilo || c.sondeando) return;
+      if (!hilo) return;
+      // los plazos se evalúan cada segundo aunque una consulta de acciones siga pendiente (revisión de Codex)
       const motivo = debeColgar({ oculta: document.visibilityState === "hidden", sesionVencida: !useMesa.getState().sesion, msSinActividad: Date.now() - c.ultima, enCurso: c.estado === "pensando" || c.estado === "hablando" });
       if (motivo) { colgar(motivo); optsRef.current.onAviso?.(`Colgué porque ${motivo}. Toca el orbe para hablar otra vez.`); return; }
+      if (c.sondeando) return;
       c.sondeando = true;
       try {
         const res = await fetchMesa(`/api/voz/acciones?hilo=${encodeURIComponent(hilo)}`);
