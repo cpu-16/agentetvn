@@ -2,7 +2,7 @@
 
 Copiloto editorial para TVN Media (reto final del hackIAthon Panamá 2026). Convierte un snapshot público de noticias e indicadores oficiales en una **agenda priorizada**, **fichas de evidencia con citas** y un **paquete editorial** (brief, preguntas, guion, copy) que una persona acepta, corrige o descarta. Nada se publica. Si falta evidencia, el agente se abstiene y dice qué falta.
 
-Equipo ciberpty: Jeffery Gyamerah y Gilberto Valdés.
+Equipo ciberpty: Jeffery Gyamerah y Gilberto Valdés. Demo pública: https://agentetvn.ciberpty.com (misma versión y snapshot que este repo; la demo del pitch corre local y sin internet).
 
 ## Para el jurado: correr en 5 minutos (sin internet)
 

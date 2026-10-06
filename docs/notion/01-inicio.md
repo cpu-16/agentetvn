@@ -14,4 +14,4 @@
 
 **Criterios de éxito:** (1) una persona pasa de la bandeja a un tema con evidencia y brief en menos de 4 minutos; (2) 100 % de las afirmaciones factuales con cita a un ID de evidencia; (3) abstención correcta en ≥80 % de las consultas sin respuesta; (4) 5 medios que replican una agencia cuentan como 1 procedencia; (5) T01–T10 en verde con evidencia.
 
-**Accesos:** repositorio GitHub `cpu-16/agentetvn` (privado; el jurado entra por invitación) · demo local `bun run demo` · URL pública (si se publica): se anota aquí.
+**Accesos:** repositorio GitHub `cpu-16/agentetvn` (privado; el jurado entra por invitación) · demo local `bun run demo` · demo pública https://agentetvn.ciberpty.com (misma versión y snapshot que el repo).
