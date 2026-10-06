@@ -14,3 +14,5 @@ next-env.d.ts
 /.cache-modelos
 data/raw/**/*.html
 .claude
+__pycache__/
+*.pyc
