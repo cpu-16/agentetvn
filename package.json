@@ -61,6 +61,7 @@
     "csv-parse": "^5.6.0",
     "csv-stringify": "^6.5.0",
     "date-fns": "^4.1.0",
+    "echarts": "^5",
     "fast-xml-parser": "^4.5.0",
     "framer-motion": "^12.23.2",
     "lucide-react": "^0.525.0",

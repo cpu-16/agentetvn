@@ -33,7 +33,9 @@ export function Agenda() {
   const error = useMesa((s) => s.agendaError);
   const cargarAgenda = useMesa((s) => s.cargarAgenda);
   const irA = useMesa((s) => s.irA);
-  const [tema, setTema] = useState("todos");
+  const filtroTablero = useMesa((s) => s.filtroTablero);
+  const setFiltroTablero = useMesa((s) => s.setFiltroTablero);
+  const [tema, setTema] = useState(filtroTablero?.temas[0] ?? "todos");
   const [estado, setEstado] = useState("todos");
   const [q, setQ] = useState("");
   const [verCinco, setVerCinco] = useState(true);
@@ -68,8 +70,9 @@ export function Agenda() {
         <div className="mb-2 flex flex-wrap gap-2 text-sm" role="search" aria-label="Filtrar la agenda">
           <label className="sr-only" htmlFor={`${idBase}-q`}>Buscar titular o medio</label>
           <input id={`${idBase}-q`} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar titular o medio" className="h-9 w-full rounded-sm border border-border bg-white px-3 sm:w-64" />
+          {filtroTablero && <button type="button" className="presionable chip tinta" onClick={() => { setFiltroTablero(null); setTema("todos"); }}>Filtro del tablero <span aria-hidden="true">×</span><span className="sr-only">, quitar</span></button>}
           <label className="sr-only" htmlFor={`${idBase}-tema`}>Tema</label>
-          <select id={`${idBase}-tema`} value={tema} onChange={(e) => setTema(e.target.value)} className="h-9 rounded-sm border border-border bg-white px-2">
+          <select id={`${idBase}-tema`} value={tema} onChange={(e) => { setTema(e.target.value); if (filtroTablero) setFiltroTablero(null); }} className="h-9 rounded-sm border border-border bg-white px-2">
             <option value="todos">Todos los temas</option>
             {temas.map((t) => <option key={t} value={t}>{TEMA_LABEL[t] ?? t}</option>)}
           </select>

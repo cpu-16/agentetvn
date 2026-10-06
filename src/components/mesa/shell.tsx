@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { ROLES, SPRING, horaPanama, useMesa } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 
-const NAV: { v: "portada" | "agenda" | "control"; label: string }[] = [
+const NAV: { v: "portada" | "agenda" | "tablero" | "control"; label: string }[] = [
   { v: "portada", label: "Portada" },
   { v: "agenda", label: "Agenda" },
+  { v: "tablero", label: "Tablero" },
   { v: "control", label: "Control" },
 ];
 

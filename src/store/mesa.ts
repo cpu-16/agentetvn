@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AgendaDatos } from "@/components/mesa/tipos";
 
-export type Vista = "portada" | "agenda" | "ficha" | "control";
+export type Vista = "portada" | "agenda" | "tablero" | "ficha" | "control";
 export type Rol = "editor" | "periodista" | "productor";
 export const ROLES: { id: Rol; label: string }[] = [
   { id: "editor", label: "Editor/a" },
@@ -24,7 +24,9 @@ interface Mesa {
   agenda: AgendaDatos | null; // una sola carga compartida por portada, agenda y chat
   agendaError: string | null;
   agendaCargando: boolean;
+  filtroTablero: { temas: string[] } | null; // filtro que el Tablero pasa a la Agenda
   irA: (v: Vista, eventoId?: string) => void;
+  setFiltroTablero: (f: { temas: string[] } | null) => void;
   setSesion: (s: Sesion | null) => void;
   cerrarSesion: (aviso?: string | null) => void;
   setModoConsulta: (m: "embeddings" | "bm25") => void;
@@ -45,6 +47,8 @@ export const useMesa = create<Mesa>()(
       agenda: null,
       agendaError: null,
       agendaCargando: false,
+      filtroTablero: null,
+      setFiltroTablero: (filtroTablero) => set({ filtroTablero }),
       irA: (vista, eventoId) => set((s) => ({ vista, eventoId: eventoId ?? (vista === "ficha" ? s.eventoId : null) })),
       setSesion: (sesion) => set({ sesion, avisoSesion: null }),
       cerrarSesion: (aviso = null) => set({ sesion: null, avisoSesion: aviso, chatAbierto: false, vista: "portada", eventoId: null }),
