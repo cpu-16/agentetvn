@@ -1,3 +1,4 @@
+import { conTraza } from "./tracing";
 // Consulta en español sobre el snapshot (CU-01, CU-04, T06): recuperación semántica (o léxica) → afirmaciones tipadas con cita → abstención explícita.
 import { coseno, DIM, embeber, MODELO, modeloDisponible } from "./embeddings";
 import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
@@ -134,7 +135,7 @@ export const afirmacionesExtracto = (n: Noticia, max = 3): Afirmacion[] =>
     .slice(0, max)
     .map((o) => ({ texto: `Según el extracto de ${n.medio}: ${o.endsWith(".") ? o : o + "."}`, tipo: /\b(dijo|explicó|aseguró|afirmó|señaló|indicó|sostuvo|según)\b/i.test(o) ? ("declaracion" as const) : ("hecho_reportado" as const), evidence_id: n.id_noticia, campo: "descripcion", alcance: "titular_metadatos" as const }));
 
-export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embeddings" | "bm25"; k?: number; soloIds?: string[] } = {}): Promise<Respuesta> {
+async function consultarImpl(q: string, snap: Snapshot, opts: { modo?: "embeddings" | "bm25"; k?: number; soloIds?: string[] } = {}): Promise<Respuesta> {
   const t0 = Date.now();
   const cfg = leerScoring().consulta;
   const k = opts.k ?? cfg.k;
@@ -240,4 +241,8 @@ export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[];
       vacios.push("solo titular/metadatos: falta leer la nota completa");
       return { evento: e, razones, vacios };
     });
+}
+
+export async function consultar(...args: Parameters<typeof consultarImpl>): Promise<Respuesta> {
+  return conTraza("recuperacion", { snapshot: args[1].huella }, () => consultarImpl(...args), "retriever");
 }

@@ -27,7 +27,11 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "types": [
+      "bun-types",
+      "node"
+    ]
   },
   "include": [
     "next-env.d.ts",

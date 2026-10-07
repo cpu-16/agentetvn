@@ -11,7 +11,7 @@ beforeAll(async () => {
   process.env.AGENTETVN_VERIFICAR_MANIFEST = "0";
   process.env.AGENTETVN_MODO = "online";
   process.env.LLM_BASE_URL = `http://127.0.0.1:${srv.port}/v1`;
-  process.env.LLM_REGISTRO = "/dev/null";
+  process.env.LLM_REGISTRO = `${process.env.AGENTETVN_TEST_ROOT}/llm.jsonl`;
   servicio = await import("../src/lib/motor/servicio");
   id = servicio.snapshot().eventos.find((e) => e.rango === "alto" && !e.no_confiable)!.id;
 });

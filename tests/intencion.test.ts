@@ -3,7 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { intencion, temaDesconocido } from "../src/lib/motor/intencion";
 import { tokenizar } from "../src/lib/motor/bm25";
 
-const motivo = (q: string) => { const r = intencion(q, { tokens: tokenizar(q) }); return r.tipo === "consulta" ? "consulta" : r.tipo === "agenda" ? (r.uno ? "agenda:1" : "agenda") : r.motivo; };
+const motivo = (q: string) => { const r = intencion(q, { tokens: tokenizar(q) }); return r.tipo === "consulta" ? "consulta" : r.tipo === "agenda" ? (r.uno ? "agenda:1" : "agenda") : r.tipo === "conversacion" ? r.motivo : r.tipo; };
 
 describe("enrutador del chat", () => {
   test("saludos, gracias, identidad y ayuda se contestan sin buscar", () => {

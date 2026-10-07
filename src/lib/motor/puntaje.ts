@@ -58,7 +58,7 @@ export function componenteI(tema: string, contexto: EntradaPuntaje["contexto"], 
     const serie = indicadores.filter((i) => i.pais_iso3 === pais && i.indicador_id === ind && i.valor !== null).sort((a, b) => b.anio - a.anio);
     if (serie.length >= 2) {
       const delta = Math.abs(serie[0].valor! - serie[1].valor!);
-      const deltas = [];
+      const deltas: number[] = [];
       for (const p of new Set(indicadores.map((i) => i.pais_iso3))) {
         const s = indicadores.filter((i) => i.pais_iso3 === p && i.indicador_id === ind && i.valor !== null).sort((a, b) => a.anio - b.anio);
         for (let k = 1; k < s.length; k++) deltas.push(Math.abs(s[k].valor! - s[k - 1].valor!));

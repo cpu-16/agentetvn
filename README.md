@@ -220,3 +220,7 @@ SPEC.md              especificación
 Decisiones fechadas, con alternativa descartada y motivo: [`docs/notion/02-plan-y-decisiones.md`](docs/notion/02-plan-y-decisiones.md). Diseño, modelo, parámetros y prompts: [`docs/notion/04-diseno-de-solucion.md`](docs/notion/04-diseno-de-solucion.md). Pruebas y métricas: [`docs/notion/06-pruebas-y-metricas.md`](docs/notion/06-pruebas-y-metricas.md).
 
 <div align="center"><sub>hackIAthon Panamá 2026 · Reto «De la señal a la decisión» · TVN Media</sub></div>
+
+## Desarrollo aislado
+
+Ver [pruebas de desarrollo y trazas opcionales](docs/development-checks.md). Para evitar escrituras en la base configurada, usa bun run --no-env-file test y bun run --no-env-file test:acceptance; bun test directo se rechaza. La evidencia de desarrollo se guarda fuera del snapshot congelado y LangSmith permanece deshabilitado por defecto.

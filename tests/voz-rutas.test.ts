@@ -15,7 +15,7 @@ const responder = async (cuerpo: object) => (await ruta("puente/respuesta")).POS
 const ofertar = async (s: typeof ANA) => (await ruta("offer")).POST(new Request("http://x/api/voz/offer", { method: "POST", body: "v=0 oferta", headers: cookie(s) }));
 
 beforeAll(() => {
-  Object.assign(process.env, { AGENTETVN_VERIFICAR_MANIFEST: "0", AGENTETVN_MODO: "online", AGENTETVN_VOZ: "on", VOZ_TOKEN: TOKEN, LLM_BASE_URL: "http://127.0.0.1:1/v1", LLM_REGISTRO: "/dev/null", VOZ_OFERTA_MS: "1500" });
+  Object.assign(process.env, { AGENTETVN_VERIFICAR_MANIFEST: "0", AGENTETVN_MODO: "online", AGENTETVN_VOZ: "on", VOZ_TOKEN: TOKEN, LLM_BASE_URL: "http://127.0.0.1:1/v1", LLM_REGISTRO: `${process.env.AGENTETVN_TEST_ROOT}/llm.jsonl`, VOZ_OFERTA_MS: "1500" });
 });
 afterAll(() => { process.env.AGENTETVN_MODO = "offline"; process.env.AGENTETVN_VOZ = "off"; delete process.env.LLM_BASE_URL; delete process.env.VOZ_OFERTA_MS; });
 beforeEach(() => { _vaciarRegistro(); _vaciarEnlace(); process.env.AGENTETVN_VOZ = "on"; });

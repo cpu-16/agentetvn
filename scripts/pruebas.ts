@@ -3,6 +3,7 @@
 import { execSync } from "child_process";
 import { existsSync, readFileSync } from "fs";
 import { escribirJson } from "../src/lib/ingesta/escribir";
+import { runTests } from "./test-runner";
 
 const PRUEBAS = [
   ["T01", "Archivo con fechas inválidas y nulos", "tests/t01-carga-con-errores.test.ts", "Validar, separar errores y conservar nulos; no bloquear toda la carga."],
@@ -22,15 +23,19 @@ const previas = existsSync("data/processed/pruebas.json") ? (JSON.parse(readFile
 const filas = PRUEBAS.map(([id, nombre, archivo, esperado]) => {
   let salida = "", estado: "pasa" | "falla" = "pasa";
   try {
-    salida = execSync(`bun test ${archivo} 2>&1`, { env: { ...process.env, HF_HUB_OFFLINE: "1" } }).toString();
+    const result = runTests([archivo]);
+    salida = result.output;
+    if (result.status !== 0) estado = "falla";
   } catch (e) {
     estado = "falla";
     salida = (e as { stdout?: Buffer }).stdout?.toString() ?? String(e);
   }
-  const m = /(\d+) pass\n\s*(\d+) fail/.exec(salida);
+  const m = /(\d+) pass\r?\n\s*(\d+) fail/.exec(salida);
   const prev = previas.find((p) => p.id === id);
   const historial = [...(prev?.historial ?? []), `${new Date().toISOString()} ${commit} ${estado}`].slice(-20);
   return { id, nombre, archivo, esperado, estado, resultado: m ? `${m[1]} pasa, ${m[2]} falla` : salida.split("\n").filter((l) => /error|fail/i.test(l))[0]?.slice(0, 200) ?? "sin resumen", commit, fecha: new Date().toISOString(), correccion: prev?.estado === "falla" && estado === "pasa" ? `corregida en ${commit} (antes fallaba)` : (prev?.correccion ?? ""), historial };
 });
-escribirJson("data/processed/pruebas.json", filas);
+// A development run does not rewrite frozen snapshot evidence.
+escribirJson(process.env.AGENTETVN_PRUEBAS_SALIDA ?? "db/pruebas-dev.json", filas);
+process.exitCode = filas.some((f) => f.estado === "falla") ? 1 : 0;
 for (const f of filas) console.log(`${f.estado === "pasa" ? "✔" : "✖"} ${f.id} ${f.nombre}: ${f.resultado}`);
