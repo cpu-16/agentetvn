@@ -1,0 +1,30 @@
+name: Development checks
+on:
+  pull_request:
+  push:
+    branches: [test/challenge-acceptance, feat/banking-briefs]
+permissions:
+  contents: read
+jobs:
+  development:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:../db/build-only.db
+      AGENTETVN_MODO: offline
+      HF_HUB_OFFLINE: '1'
+      AGENTETVN_TRACING: 'off'
+      LANGSMITH_TRACING: 'false'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - run: bun install --frozen-lockfile --ignore-scripts
+      - run: bun run db:generate
+      - run: bun run typecheck
+      - run: bun run lint
+      - run: bun run test
+      - run: bun run test:acceptance
+      - run: bun run test:evaluation
+      - run: bun run build

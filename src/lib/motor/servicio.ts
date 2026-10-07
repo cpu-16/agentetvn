@@ -1,3 +1,4 @@
+import { actualizarTraza, conTraza } from "./tracing";
 // Capa de servicio usada por las rutas API (y por las pruebas sin HTTP).
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
@@ -65,7 +66,7 @@ const enCurso = new Map<string, Promise<Paquete | null>>();
 export function paquete(id: string, persona: string, forzar = false): Promise<Paquete | null> {
   const previa = enCurso.get(id);
   if (previa) return previa;
-  const p = componerPaquete(id, persona, forzar).finally(() => enCurso.delete(id));
+  const p = conTraza("paquete", { modalidad: "tvn", cache: "miss" }, () => componerPaquete(id, persona, forzar)).finally(() => enCurso.delete(id));
   enCurso.set(id, p);
   return p;
 }
@@ -78,8 +79,9 @@ async function componerPaquete(id: string, persona: string, forzar: boolean): Pr
   const existente = forzar ? null : await db.paqueteEditado.findUnique({ where: { eventoId: id } });
   if (existente) {
     const p = JSON.parse(existente.contenido) as Paquete;
-    if (vigente(p, snap)) return p; // si cita una fuente marcada después como no confiable o es de otro snapshot, se regenera
+    if (vigente(p, snap)) { actualizarTraza({ cache: "hit", snapshot: snap.huella }); return p; } // si cita una fuente marcada después como no confiable o es de otro snapshot, se regenera
   }
+  actualizarTraza({ cache: "miss", snapshot: snap.huella });
   const base = generarPaquete(e, snap.noticias, snap.indicadores);
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const contexto = `Tema: ${e.tema}. Prioridad P ${e.P} (${e.rango}). Estado de la evidencia: ${e.estado_evidencia}. ${e.ids_noticia.length} publicación(es); procedencias: ${e.procedencias.map((x) => `${x.nombre} (${x.tipo})`).join(", ")}.${e.contradicciones.length ? ` Contradicciones abiertas: ${e.contradicciones.map((c) => c.detalle).join("; ")}.` : ""}`;
@@ -158,7 +160,7 @@ export function respuestaGuia(i: Extract<Intencion, { tipo: "guia" | "filtro" }>
     traza: { modo, comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: "Guía de la plataforma: muestra la pantalla, sin búsqueda." } } as Awaited<ReturnType<typeof consultar>>;
 }
 
-export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
+async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
   const t0 = Date.now();
   const i = intencion(q, { contexto, tokens: tokenizar(q) });
   const r = (i.tipo === "guia" || i.tipo === "filtro") ? respuestaGuia(i, modo ?? "embeddings", t0)
@@ -166,8 +168,14 @@ export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId
     : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
     : await consultaSinRegistro(q, modo, eventoId, origen === "voz" && process.env.VOZ_RESPUESTA === "extractiva"); // plan B de latencia de la voz
+  r.ms = Date.now() - t0; // full turn, including generation/validation
   registrar(origen, q, r);
   return r;
+}
+
+
+export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
+  return conTraza("consulta", { modalidad: "tvn", origen }, () => consultaImpl(q, modo, eventoId, origen, contexto));
 }
 
 async function consultaSinRegistro(q: string, modo?: "embeddings" | "bm25", eventoId?: string, sinLLM = false) {

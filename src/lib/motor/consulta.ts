@@ -1,3 +1,4 @@
+import { conTraza } from "./tracing";
 // Consulta en español sobre el snapshot (CU-01, CU-04, T06): recuperación semántica (o léxica) → afirmaciones tipadas con cita → abstención explícita.
 import { coseno, DIM, embeber, MODELO, modeloDisponible } from "./embeddings";
 import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
@@ -134,7 +135,7 @@ export const afirmacionesExtracto = (n: Noticia, max = 3): Afirmacion[] =>
     .slice(0, max)
     .map((o) => ({ texto: `Según el extracto de ${n.medio}: ${o.endsWith(".") ? o : o + "."}`, tipo: /\b(dijo|explicó|aseguró|afirmó|señaló|indicó|sostuvo|según)\b/i.test(o) ? ("declaracion" as const) : ("hecho_reportado" as const), evidence_id: n.id_noticia, campo: "descripcion", alcance: "titular_metadatos" as const }));
 
-export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embeddings" | "bm25"; k?: number; soloIds?: string[] } = {}): Promise<Respuesta> {
+async function consultarImpl(q: string, snap: Snapshot, opts: { modo?: "embeddings" | "bm25"; k?: number; soloIds?: string[] } = {}): Promise<Respuesta> {
   const t0 = Date.now();
   const cfg = leerScoring().consulta;
   const k = opts.k ?? cfg.k;
@@ -165,11 +166,11 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   if (usarEmb) {
     try {
       const t1 = Date.now();
-      const [qv] = await embeber([q], "query");
+      const [qv] = await conTraza("vectorizacion", { snapshot: snap.huella }, () => embeber([q], "query"));
       const t2 = Date.now();
       const emb = snap.embeddings!;
-      const todos = emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id))
-        .map((c) => ({ ...c, orden: c.score + (porId.get(c.id)!.medio === "TVN" ? BONO_TVN : 0) })).sort((a, b) => b.orden - a.orden);
+      const todos = await conTraza("recuperacion", { snapshot: snap.huella }, async () => emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id))
+        .map((c) => ({ ...c, orden: c.score + (porId.get(c.id)!.medio === "TVN" ? BONO_TVN : 0) })).sort((a, b) => b.orden - a.orden), "retriever");
       const t3 = Date.now();
       const sobreUmbral = todos.filter((c) => c.score >= cfg.umbral_coseno);
       const mejor = Math.max(...todos.map((c) => c.score)); // el margen se mide contra el coseno real: el bono de TVN solo ordena
@@ -187,7 +188,7 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
     const t1 = Date.now();
     const idx = indice(snap);
     const tokensDe = new Map(idx.docs.map((d) => [d.id, new Set(d.tokens)]));
-    const orden = buscarBM25(idx, q, k * 3).filter((c) => permitida(c.id));
+    const orden = await conTraza("recuperacion", { snapshot: snap.huella, modo: "bm25" }, async () => buscarBM25(idx, q, k * 3).filter((c) => permitida(c.id)), "retriever");
     candidatos = orden.filter((c) => qTokens.filter((t) => tokensDe.get(c.id)?.has(t)).length >= minimo).slice(0, k);
     const usadas = new Set(candidatos.map((c) => c.id));
     traza = { modo: "bm25", comparadas: idx.docs.length, sobreUmbral: candidatos.length, k, mejores: orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })), pasos: [{ paso: "buscar palabras", ms: Date.now() - t1 }] };
@@ -240,4 +241,8 @@ export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[];
       vacios.push("solo titular/metadatos: falta leer la nota completa");
       return { evento: e, razones, vacios };
     });
+}
+
+export async function consultar(...args: Parameters<typeof consultarImpl>): Promise<Respuesta> {
+  return conTraza("consulta", { snapshot: args[1].huella }, () => consultarImpl(...args));
 }

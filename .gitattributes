@@ -1,0 +1,5 @@
+# Preserve the exact bytes covered by snapshot checksums.
+data/processed/noticias.csv -text
+data/processed/indicadores.csv -text
+data/processed/eventos.geojson -text
+data/processed/fuentes.json -text

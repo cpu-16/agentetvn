@@ -39,3 +39,28 @@ model Decision {
   persona     String
   createdAt   DateTime @default(now())
 }
+
+// Separate banking storage: no editorial draft/review is overwritten.
+model BoletinBancario {
+  id        String   @id @default(cuid())
+  eventoId  String   @unique
+  contenido String
+  persona   String
+  updatedAt DateTime @updatedAt
+}
+
+model RevisionBancaria {
+  huella            String
+  boletinVersion    DateTime?
+  contenidoAprobado String?
+  contenidoHash     String?
+  fuentesRevisadas  Boolean  @default(false)
+  id        String   @id @default(cuid())
+  eventoId  String
+  estado    String
+  persona   String
+  motivo    String?
+  createdAt DateTime @default(now())
+
+  @@index([eventoId])
+}

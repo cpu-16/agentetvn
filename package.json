@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "db:push": "prisma db push --accept-data-loss",
     "db:generate": "prisma generate",
-    "test": "bun test tests/",
+    "test": "bun run --no-env-file scripts/test-runner.ts",
+    "test:acceptance": "bun run --no-env-file scripts/pruebas.ts",
+    "typecheck": "tsc --noEmit",
     "doctor": "bun scripts/doctor.ts",
     "ingesta": "bun scripts/ingesta.ts",
     "motor": "bun scripts/motor.ts",
@@ -18,7 +20,8 @@
     "demo": "bun run doctor && bun run db:push && next start -p 3000",
     "modelo:descargar": "HF_HUB_OFFLINE=0 bun scripts/modelo-descargar.ts",
     "redactar": "bun scripts/redactar.ts",
-    "voz:check": "python3 voz/puente.py --check"
+    "voz:check": "python3 voz/puente.py --check",
+    "test:evaluation": "bun run --no-env-file scripts/evaluate-development.ts"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans": "^5.3.0",
@@ -66,6 +69,7 @@
     "echarts": "^5",
     "fast-xml-parser": "^4.5.0",
     "framer-motion": "^12.23.2",
+    "langsmith": "0.10.8",
     "lucide-react": "^0.525.0",
     "next": "^16.1.1",
     "next-themes": "^0.4.6",

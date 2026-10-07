@@ -18,7 +18,7 @@ beforeAll(() => {
   srv = Bun.serve({ port: 0, fetch: () => (llamadas++, Response.json({ model: "claude-opus-5-5", choices: [{ message: { content: respuesta } }], usage: { total_tokens: 900, cost_usd: 0.012 } })) });
   process.env.AGENTETVN_MODO = "online";
   process.env.LLM_BASE_URL = `http://127.0.0.1:${srv.port}/v1`;
-  process.env.LLM_REGISTRO = "/dev/null"; // las pruebas no ensucian el registro de costo medido
+  process.env.LLM_REGISTRO = `${process.env.AGENTETVN_TEST_ROOT}/llm.jsonl`; // las pruebas no ensucian el registro de costo medido
 });
 afterAll(() => {
   srv.stop(true);

@@ -54,7 +54,7 @@ describe("traza de la búsqueda (lo que dibuja el chat)", () => {
 test("cada consulta deja su traza en el registro (origen, pasos, evidencias), sin nombre de la persona", async () => {
   const { consulta } = await import("../src/lib/motor/servicio");
   const { readFileSync, rmSync } = await import("fs");
-  const archivo = `/tmp/agentetvn-registro-${process.pid}.jsonl`;
+  const archivo = `${process.env.AGENTETVN_TEST_ROOT}/registro-${process.pid}.jsonl`;
   process.env.AGENTETVN_REGISTRO = archivo;
   try {
     await consulta("Canal de Panamá", "bm25", undefined, "voz");

@@ -2,13 +2,10 @@
 import { describe, expect, test } from "bun:test";
 import { agruparEventos, procedenciasDe } from "../src/lib/motor/eventos";
 import { n } from "./fixtures/noticias";
+import { replicasEFE } from "./fixtures/replicas";
 
 describe("T02 mismo evento y procedencias", () => {
-  const tres = [
-    n({ id_noticia: "a", titulo: "Canal de Panamá reporta tránsito récord en septiembre", url: "https://m1.com/a", medio: "m1.com", agencia: "EFE" }),
-    n({ id_noticia: "b", titulo: "Canal de Panamá reporta tránsito récord en septiembre", url: "https://m2.com/b", medio: "m2.com", agencia: "EFE" }),
-    n({ id_noticia: "c", titulo: "Canal de Panamá reporta tránsito récord en septiembre (EFE)", url: "https://m3.com/c", medio: "m3.com", agencia: "EFE" }),
-  ];
+  const tres = replicasEFE();
   test("3 publicaciones → 1 evento con 3 fuentes y 1 procedencia (agencia)", () => {
     const ev = agruparEventos(tres, new Map());
     expect(ev).toHaveLength(1);

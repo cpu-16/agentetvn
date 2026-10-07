@@ -167,3 +167,22 @@ export function normalizarUrl(u: string): string {
     return u.trim();
   }
 }
+
+/** Banking has its own draft/review identity; generation never changes human state. */
+export interface BoletinBancario {
+  modalidad: "banca";
+  eventoId: string;
+  huella: string;
+  titulo: string;
+  sectores: string[];
+  horizonte: string;
+  hechos: Afirmacion[];
+  hipotesis: Afirmacion[];
+  faltantes: string[];
+  preguntas: [string, string, string];
+  abstener: boolean;
+  modo: "extractivo";
+  leyenda: string;
+  persona?: string;
+  updatedAt?: string;
+}
