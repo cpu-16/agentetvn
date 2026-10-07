@@ -16,12 +16,14 @@ with sync_playwright() as p:
     pg.get_by_placeholder("Ana Pérez").fill("Prueba voz hablada"); pg.get_by_placeholder("••••••").fill("tvn2026")
     pg.get_by_role("button", name="Entrar a la mesa").click(); pg.wait_for_timeout(3000)
     pg.locator(".jarvis-boton").click()
-    vio_tablero, max_scroll = False, 0
+    vio_tablero, max_scroll, carteles = False, 0, []
     for s in range(int(__import__("os").environ.get("SEG", "130"))):
         pg.wait_for_timeout(1000)
         vio_tablero = vio_tablero or pg.get_by_text("Tablero de señales").count() > 0
         max_scroll = max(max_scroll, pg.evaluate("scrollY"))
         if s in (40, 90): pg.screenshot(path=f"{OUT}/habla-{s}s.png")
+        c = pg.evaluate("document.querySelector('.guia-cartel p')?.innerText || ''")  # lo que la guía muestra en pantalla
+        if c and (not carteles or carteles[-1] != c): carteles.append(c)
     turnos = pg.locator("#chat-agente p.rounded-md").all_inner_texts()
     pg.locator("#chat-agente").screenshot(path=f"{OUT}/habla-panel.png")
     if pg.locator('.jarvis-boton[aria-pressed="true"]').count(): pg.locator(".jarvis-boton").click(); pg.wait_for_timeout(800)  # colgar solo si sigue la llamada
@@ -30,6 +32,7 @@ with sync_playwright() as p:
 print("\n".join(t.replace("\n", ": ", 1) for t in turnos))
 jarvis = [t for t in turnos if t.startswith("Jarvis")]
 print(f"\nvio el tablero: {vio_tablero} · bajó hasta {max_scroll}px · turnos de Jarvis: {len(jarvis)}")
+print("guía en pantalla:", " → ".join(x.replace("\n", " ") for x in carteles))
 malos = [t for t in jarvis if PROHIBIDO.search(t)]
 assert not malos, f"Jarvis nombró un modelo o proveedor: {malos}"
 assert jarvis, "Jarvis no habló"

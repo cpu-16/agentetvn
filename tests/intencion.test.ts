@@ -40,6 +40,8 @@ describe("enrutador del chat", () => {
     expect(tipo("filtra el tablero por economía")).toBe('filtro:{"tipo":"filtroTablero","temas":["economia"]}');
     expect(tipo("muéstrame solo TVN")).toBe('filtro:{"tipo":"filtroTablero","medio":"TVN"}');
     expect(tipo("quita el filtro")).toBe('filtro:{"tipo":"filtroTablero","limpiar":true}');
+    expect(tipo("Quita el tablero por economía")).toBe('filtro:{"tipo":"filtroTablero","temas":["economia"]}'); // lo que oyó la voz
+    expect(tipo("explícame la gráfica de medios")).toBe("guia:tablero-medios");
     for (const q of ["¿Qué evidencia hay sobre Enrique Lau?", "Explícame la noticia de los medios sobre el Canal", "¿Qué dicen los medios de Mulino?"]) expect(tipo(q)).toBe("consulta");
   });
   test("tema desconocido: palabras que no están en ninguna noticia", () => {

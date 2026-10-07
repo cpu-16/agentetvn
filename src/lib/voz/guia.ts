@@ -6,7 +6,7 @@ export type Demo = { tipo: "pestana"; pestana: "evidencia" | "paquete" } | { tip
 export interface Parte { id: string; vista: VistaVoz; ancla: string; titulo: string; texto: string; claves: string[]; demo?: Demo }
 
 export const GUIA: Parte[] = [
-  { id: "portada-cifras", vista: "portada", ancla: "portada-cifras", titulo: "Las cifras del corte", claves: ["cifras", "numeros", "publicaciones", "medios", "temas agrupados", "corte", "reloj"],
+  { id: "portada-cifras", vista: "portada", ancla: "portada-cifras", titulo: "Las cifras del corte", claves: ["cifras", "numeros", "cifras del corte", "temas agrupados", "reloj"],
     texto: "Arriba ves el corte de esta mañana: cuántas publicaciones entraron, en cuántos temas se agruparon y de cuántos medios vienen. Una noticia repetida por varios medios cuenta como un solo tema." },
   { id: "portada-cinco", vista: "portada", ancla: "portada-cinco", titulo: "Cinco para hoy", claves: ["cinco para hoy", "cinco temas", "tarjetas", "portada", "prioridad"],
     texto: "Estos son los cinco temas que más merecen revisión hoy, como máximo dos por tema. El número grande es el puntaje de atención de 0 a 100 y la etiqueta dice si la evidencia alcanza para escribir." },
@@ -26,7 +26,7 @@ export const GUIA: Parte[] = [
     texto: "Cada punto es un tema: a la derecha más relevante, arriba con más evidencia. Lo que queda abajo a la derecha es importante pero todavía flojo de evidencia: ahí hay que verificar." },
   { id: "tablero-evidencia", vista: "tablero", ancla: "tablero-evidencia", titulo: "Estado de evidencia por tema", claves: ["estado de evidencia", "evidencia por tema", "suficiente", "parcial", "insuficiente"],
     texto: "Aquí ves, para cada tema, cuántos eventos tienen evidencia suficiente, parcial o insuficiente. Sirve para saber dónde falta reportería antes de escribir." },
-  { id: "tablero-medios", vista: "tablero", ancla: "tablero-medios", titulo: "Medios con más publicaciones", claves: ["medios", "medio", "tvn", "quien publica", "medios con mas publicaciones"], demo: { tipo: "filtroTablero", medio: "TVN" },
+  { id: "tablero-medios", vista: "tablero", ancla: "tablero-medios", titulo: "Medios con más publicaciones", claves: ["medios", "medio", "grafica de medios", "quien publica", "medios con mas publicaciones"], demo: { tipo: "filtroTablero", medio: "TVN" },
     texto: "Estos son los medios con más publicaciones en el corte. Filtré TVN para mostrarte su cobertura: todo el tablero queda solo con lo que publicó TVN." },
   { id: "tablero-procedencias", vista: "tablero", ancla: "tablero-procedencias", titulo: "Procedencias", claves: ["procedencias", "agencias", "replicas", "origen"], demo: { tipo: "filtroTablero", limpiar: true },
     texto: "Las procedencias separan quién originó la información de quién solo la replicó. Diez medios copiando una agencia cuentan como una sola procedencia, no como diez confirmaciones." },
@@ -74,7 +74,8 @@ export const NOMBRE_TEMA: Record<string, string> = { economia: "Economía", logi
 export function pedidoFiltro(texto: string): Demo | null {
   const t = ` ${norm(texto)} `;
   if (/\b(quita|quitar|limpia|limpiar|borra|borrar|resetea|reinicia)( el| los)? (filtro|filtros)\b/.test(t)) return { tipo: "filtroTablero", limpiar: true };
-  if (!/\b(filtra|filtrar|filtrame|filtralo|muestrame solo|ensename solo|solo lo de|solo las de|solo los de|deja solo)\b/.test(t)) return null;
+  // «filtra…», «muéstrame solo…» o «el tablero / las gráficas por <tema>» (la voz a veces oye «quita el tablero por economía»)
+  if (!/\b(filtra|filtrar|filtrame|filtralo|muestrame solo|ensename solo|solo lo de|solo las de|solo los de|deja solo)\b/.test(t) && !/\b(tablero|graficas) (por|de|con|solo)\b/.test(t)) return null;
   if (/ tvn /.test(t)) return { tipo: "filtroTablero", medio: "TVN" };
   const tema = Object.entries(TEMAS_FILTRO).find(([, cs]) => cs.some((c) => t.includes(` ${c} `)));
   return tema ? { tipo: "filtroTablero", temas: [tema[0]] } : null;
