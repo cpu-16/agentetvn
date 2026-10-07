@@ -7,6 +7,7 @@ import { Chips, type EventoResumen } from "./agenda";
 import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "./citas";
 import { PaqueteYRevision, type Afirmacion, type Paquete, type Revision, type RevisionHist } from "./paquete";
 import { ESTADO_LABEL, SPRING, fetchMesa, horaPanama, useMesa, useRol } from "@/store/mesa";
+import { BancaYRevision } from "./banca";
 import { cn } from "@/lib/utils";
 
 interface Evento extends Omit<EventoResumen, "titulo" | "medio" | "publicaciones" | "estado_revision"> {
@@ -23,6 +24,7 @@ function accionRecomendada(e: Evento): string {
 }
 
 export function Ficha({ id }: { id: string }) {
+  const [modalidad, setModalidad] = useState<"tvn" | "banca">("tvn");
   const [d, setD] = useState<Detalle | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cita, setCita] = useState<string | null>(null);
@@ -78,7 +80,7 @@ export function Ficha({ id }: { id: string }) {
       <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
         <Button variant="ghost" size="sm" onClick={() => irA("agenda")}>Agenda</Button>
         <span className="text-muted-foreground">/ Ficha <span className="font-mono text-xs">{e.id}</span></span>
-        <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">Revisión:
+        <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">Revisión editorial:
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span key={d.revision.estado} className="chip" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} transition={SPRING}>{ESTADO_LABEL[d.revision.estado]}</motion.span>
           </AnimatePresence>
@@ -165,7 +167,15 @@ export function Ficha({ id }: { id: string }) {
             </aside>
           </div>
         ) : (
-          <PaqueteYRevision eventoId={id} paquete={d.paquete} revision={d.revision} historial={d.historial} onCita={setCita} onCambio={cargar} />
+          <div className="space-y-4">
+            <div role="group" aria-label="Modalidad del borrador" className="flex gap-2">
+              <Button size="sm" variant={modalidad === "tvn" ? "default" : "outline"} aria-pressed={modalidad === "tvn"} onClick={() => setModalidad("tvn")}>Editorial TVN</Button>
+              <Button size="sm" variant={modalidad === "banca" ? "default" : "outline"} aria-pressed={modalidad === "banca"} onClick={() => setModalidad("banca")}>Análisis bancario</Button>
+            </div>
+            {modalidad === "tvn"
+              ? <PaqueteYRevision eventoId={id} paquete={d.paquete} revision={d.revision} historial={d.historial} onCita={setCita} onCambio={cargar} />
+              : <BancaYRevision key={id} eventoId={id} onCita={setCita} />}
+          </div>
         )}
       </motion.div>
       </AnimatePresence>

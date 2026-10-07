@@ -11,7 +11,7 @@ export interface Paquete { titulo: string; enfoque: string; brief: Afirmacion[];
 export interface Revision { estado: string; persona: string | null; motivo: string | null; createdAt: string | null }
 export interface RevisionHist { id: string; estado: string; persona: string; motivo: string | null; createdAt: string }
 
-const TRANSICIONES: Record<string, { a: string; label: string; motivo?: boolean; primario?: boolean }[]> = {
+export const TRANSICIONES: Record<string, { a: string; label: string; motivo?: boolean; primario?: boolean }[]> = {
   nuevo: [{ a: "en_revision", label: "Tomar en revisión", primario: true }, { a: "descartado", label: "Descartar", motivo: true }],
   en_revision: [{ a: "aprobado_borrador", label: "Aprobar como borrador", primario: true }, { a: "requiere_evidencia", label: "Pedir evidencia", motivo: true }, { a: "descartado", label: "Descartar", motivo: true }],
   requiere_evidencia: [{ a: "en_revision", label: "Volver a revisión", primario: true }, { a: "descartado", label: "Descartar", motivo: true }],
