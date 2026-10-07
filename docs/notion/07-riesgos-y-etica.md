@@ -13,8 +13,8 @@
 | Sesgo del ranking | Prior editorial por tema declarado y versionado; pesos del reto; cambio exige motivo; Precision@5 contra selección a ciegas | Control, decisiones |
 | Secretos | `.env` ignorado; `.env.example` vacío; nada en Notion ni capturas | `bun run doctor` |
 | Fuera de alcance | No se detecta falsedad, culpabilidad, fraude ni riesgo de crédito; «aprobar como borrador» no publica | Texto fijo en la UI |
-
-Una alerta es una invitación a investigar. La persona revisora conserva la decisión editorial.
 | La voz reformula lo que devuelve la herramienta | La voz solo lee el texto de las herramientas, que viene del motor validado y empieza por el medio («Según TVN…»); el hilo muestra al mismo tiempo la respuesta con sus citas; la revisión humana es obligatoria. Límite: no hay garantía literal del audio | `tests/voz-herramientas.test.ts`, prueba en campo |
 | Consumo de la cuota de voz (compartida con otra demo) | Topes en el puente (1 llamada, 3 min, 10 por hora, 20 min por hora), cuelgue por silencio, pestaña oculta o página abandonada, y cierre a prueba de fallas | `voz/puente.py --check`, `tests/voz-rutas.test.ts` |
 | Acceso a la voz | Todas las rutas de la página exigen la sesión; las del puente, un token interno de 32 hex; el dueño de cada llamada es la sesión que la abrió | `tests/voz-rutas.test.ts` |
+
+Una alerta es una invitación a investigar. La persona revisora conserva la decisión editorial.

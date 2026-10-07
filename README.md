@@ -211,7 +211,7 @@ src/app/api/         rutas de la mesa
 src/components/mesa/ portada, agenda, ficha, paquete, chat, tablero (ECharts), control
 scripts/             ingesta, motor, benchmark, pruebas, doctor, redactar, notion-sync
 tests/               T01–T10 del reto, motor, redacción con IA
-docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D15, catálogo, casos, métricas, riesgos)
+docs/notion/         contenido de las 8 páginas de Notion (decisiones D1–D16, catálogo, casos, métricas, riesgos)
 SPEC.md              especificación
 ```
 
