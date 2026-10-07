@@ -27,13 +27,13 @@ const QUE_ES = /\b(de que (se )?trata|que es|para que sirve|como funciona|que ha
 // La agenda del día: «¿cuál es la noticia del día?», «¿qué temas hay hoy?», «¿qué es lo más importante?», «los cinco temas».
 const AGENDA = /\b(noticias? (del dia|de hoy|principal(es)?|mas importantes?|destacadas?)|(temas|titulares|titulos) (del dia|de hoy|principales|mas importantes|destacados)|(lo mas importante|lo principal|lo destacado)( de| del)? ?(hoy|dia)?|cinco temas|5 temas|que (temas|noticias) (hay|tenemos|merecen)|que merece(n)? (revision|atencion)|agenda (del dia|de hoy)|(de que|que) se (habla|esta hablando) hoy|que (paso|pasa) hoy|que hay (hoy|de nuevo))\b/;
 // «¿Por qué…?» va a la regla de causalidad del motor y «la de ayer» no es la agenda de hoy (revisión de Codex).
-const CAUSA_U_OTRO_DIA = /\b(por que|porque|causa|culpa|ayer|anoche|antier|antes de ayer|semana|mes|ano|pasad[oa]s?|anterior|manana)\b|\d/;
+const CAUSA_U_OTRO_DIA = /\b(por que|porque|causa|culpa|ayer|anoche|antier|antes de ayer|semana|mes|ano|pasad[oa]s?|anterior|manana)\b|\b(19|20)\d{2}\b|\b\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\b|\b\d{1,2}\/\d{1,2}\b/; // años y fechas, no cantidades («5 temas»)
 const UNA = /\b(la noticia|el tema|lo mas importante|lo principal)\b/;
 // «Explícame esto» dicho a su manera: habla de lo que tiene delante y no trae un tema propio.
 const DELANTE = /\b(esto|aqui|aca|esta pantalla|esta seccion|esta pagina|lo que veo|lo que estoy viendo)\b/;
 const PAL_PLATAFORMA = new Set("agentetvn agente tvn plataforma app aplicacion herramienta sistema mesa editorial funciona sirve hace consiste va".split(" "));
 const PAL_AGENDA = new Set("noticia noticias dia hoy tema temas titulares titulos importante importantes principal principales destacado destacada destacados destacadas cinco merecen merece revision atencion agenda habla hablando lo mas nuevo tenemos top".split(" "));
-const RELLENO = new Set("me te nos mi tu yo le les usted porfa porfavor necesito quiero puedes podrias explicar expliques explicame explica trata tratan esto aqui aca pantalla seccion pagina vale bueno pero entonces significa muestra veo viendo estoy hecho dime cuentame sobre favor oye jarvis ok bien mira".split(" "));
+const RELLENO = new Set("dame muestrame ensename listame me te nos mi tu yo le les usted porfa porfavor necesito quiero puedes podrias explicar expliques explicame explica trata tratan esto aqui aca pantalla seccion pagina vale bueno pero entonces significa muestra veo viendo estoy hecho dime cuentame sobre favor oye jarvis ok bien mira".split(" "));
 
 export function intencion(q: string, opts: { contexto?: ContextoPantalla | null; tokens?: string[] } = {}): Intencion {
   const t = norm(q);
