@@ -90,7 +90,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
         ) : (
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>{p.modo === "llm" && p.llm ? `Borrador de IA (${p.llm.modelo === "claude-opus-5-5" ? "Claude Opus 5.5" : p.llm.modelo}), listo en ${Math.round(p.llm.ms / 1000)} s. Cada frase que ves se sostuvo en su cita; no sustituye la revisión humana.${p.llm.descartadas.length ? ` ${p.llm.descartadas.length} frase${p.llm.descartadas.length > 1 ? "s no se mostraron porque no coincidían" : " no se mostró porque no coincidía"} con su fuente.` : ""}` : p.modo === "extractivo" ? "Compuesto solo con afirmaciones citadas" : `Modo ${p.modo}`}</span>
+              <span>{p.modo === "llm" && p.llm ? `Borrador de IA, listo en ${Math.round(p.llm.ms / 1000)} s. Cada frase que ves se sostuvo en su cita; no sustituye la revisión humana.${p.llm.descartadas.length ? ` ${p.llm.descartadas.length} frase${p.llm.descartadas.length > 1 ? "s no se mostraron porque no coincidían" : " no se mostró porque no coincidía"} con su fuente.` : ""}` : p.modo === "extractivo" ? "Compuesto solo con afirmaciones citadas" : `Modo ${p.modo}`}</span>
               {ocupado && <span role="status" className="font-medium text-foreground">Preparando el borrador; con IA tarda cerca de un minuto. Si sales, el trabajo sigue y queda guardado.</span>}
               {p.updatedAt && <span>guardado {horaPanama(p.updatedAt)}{p.persona ? ` por ${p.persona}` : ""}</span>}
               <span className="ml-auto flex gap-2">

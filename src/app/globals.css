@@ -359,4 +359,5 @@ main, .contenido-principal { padding-bottom: 6rem; }
 .guia-foco { outline: 3px solid var(--azul); outline-offset: 6px; border-radius: 6px; animation: guia-pulso 1.6s ease-out 3; }
 @keyframes guia-pulso { 0% { box-shadow: 0 0 0 0 rgba(0,119,200,.45); } 100% { box-shadow: 0 0 0 18px rgba(0,119,200,0); } }
 @media (prefers-reduced-motion: reduce) { .guia-foco { animation: none; } }
-.guia-cartel { position: fixed; z-index: 45; left: 50%; top: 76px; transform: translateX(-50%); width: min(560px, calc(100vw - 32px)); }
+/* centrado con márgenes, sin transform: la animación de entrada usa transform y lo pisaba (en el celular quedaba cortado) */
+.guia-cartel { position: fixed; z-index: 45; left: 16px; right: 16px; top: 76px; margin-inline: auto; max-width: 560px; }

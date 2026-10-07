@@ -15,7 +15,6 @@ import type { Guia } from "@/lib/motor/consulta";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
 interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; guia?: Guia; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; agenda?: { uno: boolean; texto: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
-const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
 /** Sugerencias del panel vacío según el rol: el editor decide qué se cubre, el periodista verifica y el productor arma la pieza. */
@@ -408,7 +407,7 @@ function RespuestaClara({ r, onCita, onFicha }: { r: Respuesta; onCita: (id: str
       {vacios.length > 0 && <p className="mt-2 text-xs text-[#7a5600]"><span className="font-medium">Lo que la fuente no dice:</span> {vacios[0].replace(/[.;\s]+$/, "")}.</p>}
       <div className="mt-2 flex flex-wrap items-center gap-2">
         {onFicha && r.evidencias.some((e) => e.tipo === "noticia") && <button className="presionable min-h-9 rounded-full border border-tinta/30 bg-white px-3 text-xs font-medium text-tinta hover:border-tinta" onClick={onFicha}>Abrir la ficha →</button>}
-        <span className="text-[10.5px] text-muted-foreground">{r.redaccion ? <span title={`${nombreModelo(r.redaccion.llm.modelo)}, ${Math.round(r.redaccion.llm.ms / 1000)} s`}>Borrador de IA, solo con estas fuentes. Revísalo antes de usarlo.</span> : "Tomado de las fuentes, sin redacción de IA."}</span>
+        <span className="text-[10.5px] text-muted-foreground">{r.redaccion ? "Borrador de IA, solo con estas fuentes. Revísalo antes de usarlo." : "Tomado de las fuentes, sin redacción de IA."}</span>
       </div>
     </div>
   );
