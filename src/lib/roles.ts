@@ -6,7 +6,7 @@ export type RolMesa = "editor" | "periodista" | "productor";
 /** Lo que el filtro necesita de un evento de la agenda (el resumen de /api/agenda lo trae completo). */
 export interface EventoMesa {
   id: string; titulo: string; P: number; rango: string; estado_evidencia: string; estado_revision: string;
-  contradicciones: unknown[]; no_confiable: boolean; sintetica?: boolean;
+  contradicciones: unknown[]; no_confiable: boolean; sintetica?: boolean; revisable?: boolean; // revisable: la regla de «Cinco para hoy»
 }
 
 export const MESA: Record<RolMesa, { titulo: string; bajada: string; accion: string; pestana: "evidencia" | "paquete"; vacio: string }> = {
@@ -34,7 +34,7 @@ const ORDEN: Record<RolMesa, Record<string, number>> = {
 export function tocaA(rol: RolMesa, eventos: EventoMesa[], max = 5): EventoMesa[] {
   const orden = ORDEN[rol];
   const entra = (e: EventoMesa) => {
-    if (e.sintetica || e.no_confiable || !(e.estado_revision in orden)) return false;
+    if (e.sintetica || e.no_confiable || e.revisable === false || !(e.estado_revision in orden)) return false;
     if (rol === "periodista") return e.estado_revision === "requiere_evidencia" || e.estado_evidencia !== "suficiente" || e.contradicciones.length > 0;
     if (rol === "productor") return e.estado_evidencia !== "insuficiente" && !e.contradicciones.length; // con qué escribir y sin versiones en disputa
     return true;

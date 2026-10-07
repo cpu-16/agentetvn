@@ -2,7 +2,7 @@ import { actualizarTraza, conTraza } from "./tracing";
 // Capa de servicio usada por las rutas API (y por las pruebas sin HTTP).
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
-import { afirmacionNoticia, cincoTemas, consultar, LEYENDA } from "./consulta";
+import { afirmacionNoticia, cincoTemas, consultar, idsGenericos, LEYENDA } from "./consulta";
 import { intencion, type Intencion } from "./intencion";
 import { NOMBRE_TEMA, parte, RECORRIDO_GUIA } from "../voz/guia";
 import { tokenizar } from "./bm25";
@@ -30,9 +30,11 @@ export async function agenda() {
   const ultimo = new Map<string, EstadoRevision>();
   for (const r of estados) ultimo.set(r.eventoId, r.estado as EstadoRevision);
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+  const generico = idsGenericos(snap);
   const resumen = (e: Evento) => {
     const rep = porId.get(e.representante);
-    return { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica), estado_revision: ultimo.get(e.id) ?? ("nuevo" as EstadoRevision), publicaciones: e.ids_noticia.length };
+    // revisable: misma regla que «Cinco para hoy» (sin título de página como «Preview - …», ni deportes u otros): la usan las mesas por rol
+    return { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica), estado_revision: ultimo.get(e.id) ?? ("nuevo" as EstadoRevision), publicaciones: e.ids_noticia.length, revisable: !generico.has(e.representante) && e.tema !== "deportes" && e.tema !== "otro" };
   };
   return { corteUTC: snap.manifest.fecha_corte_UTC, version: snap.manifest.version, resumen: resumenCorte(snap), eventos: snap.eventos.map(resumen), cinco: cincoTemas(snap).map((c) => ({ ...c, evento: resumen(c.evento) })) };
 }
@@ -149,7 +151,7 @@ async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number)
   const snap = snapshot();
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const a = await agenda();
-  const falta = new Map(a.cinco.map((c) => [c.evento.id, c.vacios[0] ?? null]));
+  const falta = new Map(a.cinco.map((c) => [c.evento.id, c.vacios.length ? c.vacios.join(", ") : null]));
   const items = tocaA(rol, a.eventos).map((e) => {
     const ev = a.eventos.find((x) => x.id === e.id)!;
     const n = ev.ids_noticia.map((i) => porId.get(i)).find((x) => x?.medio === "TVN") ?? porId.get(ev.representante)!;
@@ -179,6 +181,7 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
   const e = snap.eventos.find((x) => x.id === id);
   const n = cinco.findIndex((c) => c.evento.id === id);
   const nombre = n >= 0 ? `el tema ${NUM[n]}` : "este tema";
+  const deNombre = nombre.startsWith("el ") ? `del ${nombre.slice(3)}` : `de ${nombre}`;
   const base = respuestaGuia({ tipo: "guia", parte: i.tipo === "verificar" ? "ficha-evidencia" : "ficha-paquete" }, modo, t0);
   if (!e) return { ...base, guia: undefined, conversacion: { motivo: i.tipo, texto: "Ese número no está en «Cinco para hoy». Dime del uno al cinco o abre la ficha del tema.", sugerencias: [] } } as R;
   const titulo = snap.noticias.find((x) => x.id_noticia === e.representante)?.titulo ?? "";
@@ -188,12 +191,14 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
   if (i.tipo === "verificar") {
     const falta = extractivo.verificaciones.filter((v) => !v.startsWith("Leer la nota completa") && !v.startsWith("Guion incompleto")).slice(0, 3);
     const preguntas = (guardado?.preguntas.length ? guardado.preguntas : extractivo.preguntas).slice(0, 3);
-    texto = `De ${nombre}, «${titulo}»: evidencia ${e.estado_evidencia} y ${Math.round(e.P)} de 100. ${falta.length ? `Falta verificar: ${falta.join(" ")}` : "No hay vacíos marcados, pero todo se basa en titulares y metadatos: leer la nota completa."} Para investigar: ${preguntas.join(" ")}`;
+    texto = `${deNombre[0].toUpperCase()}${deNombre.slice(1)}, «${titulo}»: evidencia ${e.estado_evidencia} y ${Math.round(e.P)} de 100. ${falta.length ? `Falta verificar: ${falta.join(" ")}` : "No hay vacíos marcados, pero todo se basa en titulares y metadatos: leer la nota completa."} Para investigar: ${preguntas.join(" ")}`;
   } else {
     const titulos = guardado?.titulos?.length ? guardado.titulos : null;
     texto = titulos
       ? `Propuestas de titular para ${nombre}: ${titulos.map((t, k) => `${k + 1}, «${t}»`).join("; ")}. Cada una se sostiene en las fuentes del tema y pasa por revisión; el resumen web, el guion y el copy están en Paquete y revisión.`
-      : `Todavía no se generó el paquete con IA de ${nombre}. El titular base es «${guardado?.titulo || extractivo.titulo}». En Paquete y revisión, «Generar paquete» propone tres titulares, el resumen web, el guion y el copy, cada frase con su cita.`;
+      : guardado?.modo === "llm"
+      ? `El paquete con IA ${deNombre} propone el titular «${guardado.titulo}». Se generó antes de las propuestas múltiples: «Regenerar», en Paquete y revisión, agrega tres titulares con su cita.`
+      : `Todavía no se generó el paquete con IA ${deNombre}. El titular base es «${guardado?.titulo || extractivo.titulo}». En Paquete y revisión, «Generar paquete» propone tres titulares, el resumen web, el guion y el copy, cada frase con su cita.`;
   }
   return { ...base, guia: { ...base.guia!, eventoId: e.id, texto }, conversacion: { motivo: i.tipo, texto, sugerencias: i.tipo === "verificar" ? ["Prepárame los titulares de este tema", "¿Qué me toca hoy?"] : ["¿Qué falta verificar de este tema?", "¿Qué me toca hoy?"] },
     traza: { ...base.traza!, regla: i.tipo === "verificar" ? "Lo que falta sale de la evidencia del tema (procedencias, contradicciones, estado); las preguntas, del paquete." : "Los titulares salen del paquete del tema, validados contra sus fuentes." } } as R;

@@ -21,7 +21,7 @@ export function MesaRol({ data }: { data: AgendaDatos }) {
   const reducir = useReducedMotion();
   const m = MESA[rol];
   const lista = tocaA(rol, data.eventos);
-  const falta = new Map(data.cinco.map((c) => [c.evento.id, c.vacios[0]]));
+  const falta = new Map(data.cinco.map((c) => [c.evento.id, c.vacios.join(", ")]));
   const porId = new Map(data.eventos.map((e) => [e.id, e]));
   const abrir = (id: string) => irA("ficha", id); // la ficha abre en la pestaña del rol (MESA[rol].pestana)
 
