@@ -10,7 +10,7 @@ import type { ContextoPantalla } from "../voz/catalogo";
 import { generarPaquete } from "./paquete";
 import { resumenCorte } from "./tablero";
 import { MESA, accionSugerida, tocaA, type RolMesa } from "../roles";
-import { fuentesDe, redactarOExtractivo, redactarRespuesta } from "./llm";
+import { fuentesDe, llmActivo, redactarOExtractivo, redactarRespuesta } from "./llm";
 import { validarTransicion } from "./revision";
 import { leerScoring } from "./config";
 import type { EstadoRevision, Evento, Paquete } from "./contrato";
@@ -177,7 +177,7 @@ async function paqueteGuardado(id: string, snap: Snapshot): Promise<Paquete | nu
 async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titulares" }>, contexto: ContextoPantalla | null | undefined, eventoId: string | undefined, modo: "embeddings" | "bm25", t0: number): Promise<R> {
   const snap = snapshot();
   const cinco = cincoTemas(snap);
-  const id = i.n !== null ? cinco[i.n]?.evento.id : (contexto?.vista === "ficha" && contexto.eventoId) || eventoId || cinco[0]?.evento.id;
+  const id = i.n !== null ? cinco[i.n]?.evento.id /* -1 o fuera de rango: no hay tema */ : (contexto?.vista === "ficha" && contexto.eventoId) || eventoId || cinco[0]?.evento.id;
   const e = snap.eventos.find((x) => x.id === id);
   const n = cinco.findIndex((c) => c.evento.id === id);
   const nombre = n >= 0 ? `el tema ${NUM[n]}` : "este tema";
@@ -198,7 +198,9 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
       ? `Propuestas de titular para ${nombre}: ${titulos.map((t, k) => `${k + 1}, «${t}»`).join("; ")}. Cada una se sostiene en las fuentes del tema y pasa por revisión; el resumen web, el guion y el copy están en Paquete y revisión.`
       : guardado?.modo === "llm"
       ? `El paquete con IA ${deNombre} propone el titular «${guardado.titulo}». Se generó antes de las propuestas múltiples: «Regenerar», en Paquete y revisión, agrega tres titulares con su cita.`
-      : `Todavía no se generó el paquete con IA ${deNombre}. El titular base es «${guardado?.titulo || extractivo.titulo}». En Paquete y revisión, «Generar paquete» propone tres titulares, el resumen web, el guion y el copy, cada frase con su cita.`;
+      : !llmActivo()
+      ? `Sin internet el paquete es extractivo: el titular base ${deNombre} es «${guardado?.titulo || extractivo.titulo}». Las propuestas de titular con IA necesitan el modo en línea.`
+      : `Todavía no hay paquete con IA ${deNombre}. El titular base es «${guardado?.titulo || extractivo.titulo}». En Paquete y revisión, «${guardado ? "Regenerar" : "Generar paquete"}» propone tres titulares, el resumen web, el guion y el copy, cada frase con su cita.`;
   }
   return { ...base, guia: { ...base.guia!, eventoId: e.id, texto }, conversacion: { motivo: i.tipo, texto, sugerencias: i.tipo === "verificar" ? ["Prepárame los titulares de este tema", "¿Qué me toca hoy?"] : ["¿Qué falta verificar de este tema?", "¿Qué me toca hoy?"] },
     traza: { ...base.traza!, regla: i.tipo === "verificar" ? "Lo que falta sale de la evidencia del tema (procedencias, contradicciones, estado); las preguntas, del paquete." : "Los titulares salen del paquete del tema, validados contra sus fuentes." } } as R;

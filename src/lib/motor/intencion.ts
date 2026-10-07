@@ -32,11 +32,12 @@ const VERIFICAR_RE = /\b(que (falta|hay que|debo|tengo que|queda por) (verificar
 const TITULARES_RE = /\b(titulares|titulos|titular|titulo)\b/;
 const PIDE_TITULARES = /\b(prepara|preparame|propon|proponme|propones|sugiere|sugiereme|sugieres|dame|genera|generame|hazme|haz|escribe|escribeme|redacta|redactame|ideas|opciones|propuestas|alternativas)\b/;
 const NUMERO: Record<string, number> = { uno: 0, "1": 0, primero: 0, primer: 0, primera: 0, dos: 1, "2": 1, segundo: 1, segunda: 1, tres: 2, "3": 2, tercero: 2, tercer: 2, tercera: 2, cuatro: 3, "4": 3, cuarto: 3, cuarta: 3, cinco: 4, "5": 4, quinto: 4, quinta: 4 };
-const PAL_TEMA_N = new Set("tema numero noticia ficha este esta ese esa del de la el los las para uno primero primer primera dos segundo segunda tres tercero tercer tercera cuatro cuarto cuarta cinco quinto quinta 1 2 3 4 5 verificar comprobar confirmar chequear falta hay que debo tengo queda por pendientes le titulares titulos titular titulo prepara preparame propon proponme propones sugiere sugiereme sugieres dame genera generame hazme haz escribe escribeme redacta redactame ideas opciones propuestas alternativas unos unas tres web redes".split(" "));
+const PAL_TEMA_N = new Set("seis siete ocho nueve diez 6 7 8 9 10 tema numero noticia ficha este esta ese esa del de la el los las para uno primero primer primera dos segundo segunda tres tercero tercer tercera cuatro cuarto cuarta cinco quinto quinta 1 2 3 4 5 verificar comprobar confirmar chequear falta hay que debo tengo queda por pendientes le titulares titulos titular titulo prepara preparame propon proponme propones sugiere sugiereme sugieres dame genera generame hazme haz escribe escribeme redacta redactame ideas opciones propuestas alternativas unos unas tres web redes".split(" "));
 /** «del tema uno», «la noticia número dos», «el primer tema» → 0, 1, 0; null si no nombra un número de tema («dos titulares» no cuenta). */
 const numeroTema = (t: string) => {
   const m = /\b(?:tema|noticia|ficha)(?: numero)? (\S+)/.exec(t) ?? /\b(primer|primero|primera|segundo|segunda|tercer|tercero|tercera|cuarto|cuarta|quinto|quinta) (?:tema|noticia)\b/.exec(t);
-  return m && m[1] in NUMERO ? NUMERO[m[1]] : null;
+  if (!m) return null;
+  return m[1] in NUMERO ? NUMERO[m[1]] : /^(\d+|seis|siete|ocho|nueve|diez|sexto|septimo|octavo|noveno|decimo)$/.test(m[1]) ? -1 : null; // -1: nombra un tema que no está entre los cinco
 };
 
 /** Palabras de pregunta que no dicen de qué tema se trata (ya tokenizadas: sin tildes ni mayúsculas). */
@@ -81,7 +82,7 @@ export function intencion(q: string, opts: { contexto?: ContextoPantalla | null;
   if (AYUDA.test(t)) return charla("ayuda", `${QUE_HAGO} Puedes preguntarme por un tema, una persona, un lugar o un indicador de Panamá, y también qué significa la pantalla que tienes abierta.`);
   if (MESA_RE.test(t) && soloCon(PAL_MESA)) return { tipo: "mesa" };
   if (VERIFICAR_RE.test(t) && soloCon(PAL_TEMA_N)) return { tipo: "verificar", n: numeroTema(t) };
-  if (TITULARES_RE.test(t) && PIDE_TITULARES.test(t) && soloCon(PAL_TEMA_N)) return { tipo: "titulares", n: numeroTema(t) };
+  if (TITULARES_RE.test(t) && PIDE_TITULARES.test(t) && !AGENDA.test(t) && soloCon(PAL_TEMA_N)) return { tipo: "titulares", n: numeroTema(t) }; // «dame los titulares de hoy» es la agenda
   const rol = queHaceRol(t);
   if (rol && soloCon(PAL_ROL)) return charla("ayuda", rol, ["Hazme un recorrido por la plataforma", "¿Cuál es la noticia del día?"]);
   if (QUE_HAGO_AQUI.test(t)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), ["Hazme un recorrido por la plataforma"]);

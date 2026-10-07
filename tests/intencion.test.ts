@@ -26,6 +26,8 @@ describe("enrutador del chat", () => {
     expect(tipo("Prepárame los titulares del tema número cinco")).toBe("titulares:4");
     expect(tipo("propón dos titulares para el tema tres")).toBe("titulares:2");
     expect(tipo("titulares del día")).toBe("agenda");
+    expect(tipo("Dame los titulares de hoy")).toBe("agenda"); // revisión de Codex
+    expect(tipo("¿Qué falta verificar del tema 6?")).toBe("verificar:-1");
     for (const q of ["¿Qué falta verificar sobre Enrique Lau?", "dame titulares sobre el canal", "¿Qué titulares hay hoy?", "qué me toca investigar del caso Odebrecht"]) expect(tipo(q)).toBe("consulta");
   });
   test("el rol que se elige al entrar se explica sin buscar; una noticia sobre un periodista sí se busca", () => {

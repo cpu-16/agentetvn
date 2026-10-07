@@ -317,7 +317,7 @@ export function ChatAgente() {
                         {t.respuesta.agenda.items.map((x, i) => (
                           <li key={x.eventoId}>
                             <button className="presionable flex w-full items-start gap-2 rounded-md border border-border bg-papel/60 px-2.5 py-2 text-left hover:border-tinta" onClick={() => { if (celular) setChatAbierto(false); irA("ficha", x.eventoId); }}>
-                              <span className="mt-0.5 flex size-6 flex-none items-center justify-center rounded-full bg-tinta text-[11px] font-semibold text-white">{i + 1}</span>
+                              <span className="mt-0.5 flex size-6 flex-none items-center justify-center rounded-full bg-tinta text-[11px] font-semibold text-white">{t.respuesta?.agenda?.encabezado ? "•" : i + 1 /* la mesa no numera: «tema uno» es el de «Cinco para hoy» */}</span>
                               <span className="min-w-0 flex-1">
                                 <span className="block text-sm font-medium leading-snug">{x.titulo}</span>
                                 <span className="mt-0.5 block text-[11px] text-muted-foreground"><span className={cn(x.medio === "TVN" && "font-semibold text-azul")}>{x.medio}</span> · atención {x.P}/100 · evidencia {x.evidencia}{x.publicaciones > 1 ? ` · ${x.publicaciones} publicaciones` : ""}</span>

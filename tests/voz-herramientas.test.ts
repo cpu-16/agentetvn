@@ -93,7 +93,8 @@ describe("herramientas", () => {
     sacarAcciones("h1");
     expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar del tema uno?" })).toContain("Para investigar:");
     expect(sacarAcciones("h1").find((a) => a.tipo === "guia")).toMatchObject({ parte: "ficha-evidencia", vista: "ficha" });
-    expect(await h.preguntarCorpus("h1", { pregunta: "Prepárame los titulares del tema dos" })).toContain("el tema dos");
+    expect(await h.preguntarCorpus("h1", { pregunta: "Prepárame los titulares del tema dos" })).toContain("del tema dos");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar del tema seis?" })).toContain("no está en «Cinco para hoy»");
   });
   test("explicar_pantalla con una parte concreta la muestra en la página", async () => {
     sacarAcciones("h1");
