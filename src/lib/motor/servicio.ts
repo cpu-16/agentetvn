@@ -123,7 +123,7 @@ function agendaDelDia(uno: boolean, modo: "embeddings" | "bm25", t0: number) {
   const items = cincoTemas(snap).map(({ evento: e, razones, vacios }) => {
     const tvn = e.ids_noticia.map((i) => porId.get(i)).find((n) => n?.medio === "TVN");
     const n = tvn ?? porId.get(e.representante)!;
-    return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: e.P, rango: e.rango, evidencia: e.estado_evidencia, razon: razones[0], falta: vacios[0] ?? null, publicaciones: e.ids_noticia.length };
+    return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: Math.round(e.P), rango: e.rango, evidencia: e.estado_evidencia, razon: razones[0], falta: vacios[0] ?? null, publicaciones: e.ids_noticia.length };
   });
   const lista = uno ? items.slice(0, 1) : items;
   const [a, b, c] = items;
