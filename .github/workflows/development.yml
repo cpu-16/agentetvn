@@ -2,7 +2,8 @@ name: Development checks
 on:
   pull_request:
   push:
-    branches: [test/challenge-acceptance, feat/banking-briefs]
+    branches: [main, test/challenge-acceptance, feat/banking-briefs]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
