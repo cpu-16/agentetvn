@@ -1,6 +1,6 @@
 # Plan y decisiones · AgenteTVN (registro durante la ejecución)
 
-Equipo ciberpty: Jeffery Gyamerah (documentación, Notion, difusión, revisión editorial) · Gilberto Valdés (construcción). Hora de Panamá (UTC−5).
+Equipo ciberpty: Jeffery Gyamerah (documentación, Notion, difusión, revisión editorial) · Gilberto Ramos (construcción). Hora de Panamá (UTC−5).
 
 ## Decisiones
 

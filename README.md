@@ -8,12 +8,12 @@
 
 [![Demo](https://img.shields.io/badge/demo-agentetvn.ciberpty.com-0077c8?style=flat-square)](https://agentetvn.ciberpty.com)
 ![T01–T10](https://img.shields.io/badge/T01%E2%80%93T10-10%2F10-2e7d32?style=flat-square)
-![Pruebas](https://img.shields.io/badge/pruebas-107%20en%20verde-2e7d32?style=flat-square)
+![Pruebas](https://img.shields.io/badge/pruebas-165%20en%20verde-2e7d32?style=flat-square)
 ![Sin internet](https://img.shields.io/badge/demo-funciona%20sin%20internet-00466f?style=flat-square)
 ![LLM](https://img.shields.io/badge/redacci%C3%B3n-Claude%20Opus%205.5%20validado-00466f?style=flat-square)
 ![Stack](https://img.shields.io/badge/Next.js%20%C2%B7%20Bun%20%C2%B7%20SQLite-111?style=flat-square)
 
-Reto final del **hackIAthon Panamá 2026** · Equipo **ciberpty**: Jeffery Gyamerah y Gilberto Valdés
+Reto final del **hackIAthon Panamá 2026** · Equipo **ciberpty**: Jeffery Gyamerah y Gilberto Ramos
 
 <img src="docs/img/portada.webp" alt="Portada «Al aire»: la mesa de la mañana con 1 071 publicaciones, 774 temas agrupados, 286 medios y los cinco temas para hoy" width="100%">
 

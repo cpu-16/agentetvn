@@ -1,6 +1,6 @@
 # Inicio del reto · AgenteTVN
 
-**Equipo:** ciberpty — Jeffery Gyamerah (documentación, Notion, difusión, revisión editorial) y Gilberto Valdés (construcción).
+**Equipo:** ciberpty — Jeffery Gyamerah (documentación, Notion, difusión, revisión editorial) y Gilberto Ramos (construcción).
 **Modalidad:** TVN · editorial (principal). Sin modalidad bancaria.
 **Reto:** «De la señal a la decisión», hackIAthon Panamá 2026, TVN Media.
 
