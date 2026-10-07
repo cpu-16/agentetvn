@@ -111,6 +111,7 @@ export interface Evento {
 
 export interface Paquete {
   titulo: string;
+  titulos?: string[]; // propuestas de titular para el productor digital (solo con IA, validadas contra las fuentes)
   enfoque: string;
   brief: Afirmacion[]; // ≤250 palabras en total
   preguntas: string[]; // 3

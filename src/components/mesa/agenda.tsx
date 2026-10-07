@@ -68,7 +68,7 @@ export function Agenda() {
       <section data-guia="agenda-lista" aria-labelledby={`${idBase}-titulo`}>
         <div className="mb-3 flex flex-wrap items-end gap-3">
           <h1 id={`${idBase}-titulo`} className="text-2xl font-semibold">Agenda del día</h1>
-          <p className="text-sm text-muted-foreground">{data.eventos.length} temas ordenados por puntaje de atención. Corte de esta mañana: {horaPanama(data.corteUTC)}</p>
+          <p className="text-sm text-muted-foreground">{data.eventos.length} temas ordenados por puntaje de atención. Datos al {horaPanama(data.corteUTC)}</p>
         </div>
         <div data-guia="agenda-filtros" className="mb-2 flex flex-wrap gap-2 text-sm" role="search" aria-label="Filtrar la agenda">
           <label className="sr-only" htmlFor={`${idBase}-q`}>Buscar titular o medio</label>

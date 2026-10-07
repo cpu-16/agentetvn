@@ -14,14 +14,14 @@ import { cancelarGuia, mostrarGuia } from "./jarvis/guia";
 import type { Guia } from "@/lib/motor/consulta";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; guia?: Guia; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; agenda?: { uno: boolean; texto: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
+interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; guia?: Guia; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; agenda?: { uno: boolean; texto: string; encabezado?: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
 /** Sugerencias del panel vacío según el rol: el editor decide qué se cubre, el periodista verifica y el productor arma la pieza. */
 const SUGERIDAS: Record<string, { q: string }[]> = {
-  editor: [{ q: "¿Cuál es la noticia del día?" }, { q: "¿Qué cinco temas merecen revisión hoy?" }, { q: "Hazme un recorrido por la plataforma" }],
-  periodista: [{ q: "¿Qué se sabe de la aprehensión de Enrique Lau?" }, { q: "Muéstrame la evidencia de la ficha" }, { q: "¿Cuál fue la inflación de Panamá en 2025?" }],
-  productor: [{ q: "Enséñame el borrador del tema número uno" }, { q: "Filtra el tablero por economía" }, { q: "Hazme un recorrido por la plataforma" }],
+  editor: [{ q: "¿Qué me toca hoy?" }, { q: "¿Cuál es la noticia del día?" }, { q: "Hazme un recorrido por la plataforma" }],
+  periodista: [{ q: "¿Qué me toca hoy?" }, { q: "¿Qué falta verificar del tema uno?" }, { q: "¿Qué se sabe de la aprehensión de Enrique Lau?" }],
+  productor: [{ q: "¿Qué me toca hoy?" }, { q: "Prepárame los titulares del tema uno" }, { q: "Enséñame el borrador del tema número uno" }],
 };
 const QUE_HACE: Record<string, string> = { editor: "Como editor/a: decides qué se cubre hoy y apruebas borradores.", periodista: "Como periodista: verificas qué dice cada fuente y qué falta.", productor: "Como productor/a: preparas el paquete para TV, web y redes." };
 
@@ -136,6 +136,14 @@ export function ChatAgente() {
       if (gen === generacion.current) setOcupado(false);
     }
   };
+
+  // Pregunta que llega de otra pantalla (la mesa del rol en la portada)
+  const preguntaPendiente = useMesa((s) => s.preguntaPendiente);
+  useEffect(() => {
+    if (!preguntaPendiente || ocupado) return;
+    useMesa.getState().pedirAlChat(null);
+    void preguntar(preguntaPendiente);
+  }, [preguntaPendiente, ocupado]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Evidencia para las citas: los eventos salen de la agenda ya cargada (caché del store); solo se piden las fichas necesarias.
   const cargarEvidencia = async (idsNoticia: string[], idsInd: string[]) => {
@@ -302,8 +310,8 @@ export function ChatAgente() {
                     </div>
                   ) : t.respuesta.agenda ? (
                     <div className="mr-4 rounded-md border border-border bg-white px-3 py-2.5">
-                      <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis · agenda de hoy</span>
-                      <p className="leading-relaxed">{t.respuesta.agenda.uno ? "La que más merece revisión hoy:" : "Hoy la mesa prioriza estos temas:"}</p>
+                      <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis · {t.respuesta.agenda.encabezado ? "tu mesa" : "agenda de hoy"}</span>
+                      <p className="leading-relaxed">{t.respuesta.agenda.encabezado ? `${t.respuesta.agenda.encabezado}:` : t.respuesta.agenda.uno ? "La que más merece revisión hoy:" : "Hoy la mesa prioriza estos temas:"}</p>
                       <p className="mt-0.5 text-[11px] text-muted-foreground">El puntaje mide atención, no verdad; la evidencia dice si ya se puede escribir.</p>
                       <ol className="mt-2 space-y-1.5">
                         {t.respuesta.agenda.items.map((x, i) => (
@@ -313,6 +321,7 @@ export function ChatAgente() {
                               <span className="min-w-0 flex-1">
                                 <span className="block text-sm font-medium leading-snug">{x.titulo}</span>
                                 <span className="mt-0.5 block text-[11px] text-muted-foreground"><span className={cn(x.medio === "TVN" && "font-semibold text-azul")}>{x.medio}</span> · atención {x.P}/100 · evidencia {x.evidencia}{x.publicaciones > 1 ? ` · ${x.publicaciones} publicaciones` : ""}</span>
+                                {t.respuesta?.agenda?.encabezado && <span className="mt-0.5 block text-[11px]">{x.razon}</span>}
                               </span>
                               <span className="mt-0.5 text-xs text-acero" aria-hidden>→</span>
                             </button>

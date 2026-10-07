@@ -10,8 +10,10 @@ const contextoValido = (c: unknown): ContextoPantalla | null => {
 };
 export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
-  if (!leerSesion(req)) return sinSesion(); // el chat también exige la sesión de la mesa (y en modo online consume el LLM)
+  const s = leerSesion(req);
+  if (!s) return sinSesion(); // el chat también exige la sesión de la mesa (y en modo online consume el LLM)
   const body = await req.json().catch(() => ({}));
   if (!body.q?.trim()) return NextResponse.json({ error: "q obligatoria" }, { status: 400 });
-  return NextResponse.json(await consulta(String(body.q).slice(0, 500), body.modo, body.eventoId, "texto", contextoValido(body.contexto)));
+  const c = contextoValido(body.contexto);
+  return NextResponse.json(await consulta(String(body.q).slice(0, 500), body.modo, body.eventoId, "texto", { ...(c ?? { vista: "portada" }), rol: s.rol })); // el rol sale de la sesión
 }

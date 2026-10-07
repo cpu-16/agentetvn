@@ -147,12 +147,13 @@ async function redactarPaqueteImpl(base: Paquete, fuentes: Fuente[], contexto: s
   const usuario = `Evento de la agenda editorial. ${contexto}
 Tarea: redacta el paquete editorial con estas partes:
 - "titulo": título propuesto, máximo 15 palabras.
+- "titulos": 3 propuestas de titular distintas para web y redes (máximo 12 palabras cada una), con un ángulo distinto cada una, solo con lo que dicen las fuentes.
 - "brief": 4 a 8 frases, máximo 250 palabras en total: qué se sabe, quién lo reporta, el contexto oficial si hay y qué no coincide.
 - "guion": guion para leer al aire en 45 a 60 segundos (110 a 150 palabras), frases cortas.
 - "copy": texto para redes, máximo 80 palabras.
 - "preguntas": exactamente 3 preguntas de investigación para el periodista.
 - "vacios": lo que falta verificar antes de publicar.
-Formato: {"titulo": "...", "brief": [{"texto": "...", "tipo": "...", "evidence_id": "..."}], "guion": [mismo formato], "copy": [mismo formato], "preguntas": ["...", "...", "..."], "vacios": ["..."]}
+Formato: {"titulo": "...", "titulos": ["...", "...", "..."], "brief": [{"texto": "...", "tipo": "...", "evidence_id": "..."}], "guion": [mismo formato], "copy": [mismo formato], "preguntas": ["...", "...", "..."], "vacios": ["..."]}
 
 ${fuentes.map((f) => bloqueFuente(f.id, f.campo, f.texto)).join("\n\n")}`;
   const r = await llamarLLM(SISTEMA, usuario);
@@ -166,11 +167,14 @@ ${fuentes.map((f) => bloqueFuente(f.id, f.campo, f.texto)).join("\n\n")}`;
   const todo = fuentes.map((f) => f.texto).join("\n");
   const preguntas = (Array.isArray(j.preguntas) ? j.preguntas : []).map((q) => libre(q, todo, true)).filter((q): q is string => !!q).slice(0, 3);
   const vacios = (Array.isArray(j.vacios) ? j.vacios : []).map((v) => libre(v, todo)).filter((v): v is string => !!v).slice(0, 5);
+  // propuestas del productor digital: cada una pasa el mismo filtro que el título (lo que afirma debe estar en alguna fuente)
+  const titulos = [...new Set((Array.isArray(j.titulos) ? j.titulos : []).map((t) => libre(t, todo)).filter((t): t is string => !!t && t.split(/\s+/).length <= 16))].slice(0, 3);
   const guionFinal = guion.length ? guion : base.guion;
   const pg = palabras(guionFinal.map((a) => a.texto).join(" "));
   return {
     ...base,
     titulo: libre(j.titulo, todo) ?? base.titulo,
+    ...(titulos.length ? { titulos } : {}),
     brief,
     guion: guionFinal,
     copy: copy.length ? copy : base.copy,

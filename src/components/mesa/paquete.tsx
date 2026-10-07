@@ -7,7 +7,7 @@ import { BotonCita } from "./citas";
 import { cn } from "@/lib/utils";
 
 export interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-export interface Paquete { titulo: string; enfoque: string; brief: Afirmacion[]; preguntas: string[]; verificaciones: string[]; guion: Afirmacion[]; copy: Afirmacion[]; leyenda: string; modo: string; persona?: string; updatedAt?: string; llm?: { modelo: string; ms: number; costo_usd: number | null; descartadas: string[] } }
+export interface Paquete { titulo: string; titulos?: string[]; enfoque: string; brief: Afirmacion[]; preguntas: string[]; verificaciones: string[]; guion: Afirmacion[]; copy: Afirmacion[]; leyenda: string; modo: string; persona?: string; updatedAt?: string; llm?: { modelo: string; ms: number; costo_usd: number | null; descartadas: string[] } }
 export interface Revision { estado: string; persona: string | null; motivo: string | null; createdAt: string | null }
 export interface RevisionHist { id: string; estado: string; persona: string; motivo: string | null; createdAt: string }
 
@@ -102,12 +102,26 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
               <h3 className="text-sm text-muted-foreground">Título propuesto</h3>
               {editando ? <input value={p.titulo} onChange={(e) => setP({ ...p, titulo: e.target.value })} className="w-full rounded-sm border border-border bg-white p-2 text-lg" /> : <p className="titular text-xl font-semibold">{p.titulo}</p>}
             </div>
+            {!!p.titulos?.length && (
+              <div className={cn("rounded-sm border p-3", rol === "productor" ? "border-azul bg-[#eef6fc]" : "border-border")}>
+                <h3 className="text-sm font-medium">Propuestas de titular para web y redes</h3>
+                <p className="text-[11px] text-muted-foreground">La IA propone; cada una se comprobó contra las fuentes del tema. Elige una y guárdala: sigue sujeta a revisión.</p>
+                <ol className="mt-2 space-y-1.5">
+                  {p.titulos.map((t) => (
+                    <li key={t} className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="titular flex-1 font-semibold">{t}</span>
+                      <Button size="sm" variant="outline" className="presionable h-7 px-2 text-xs" disabled={ocupado || p.titulo === t} onClick={() => { setP({ ...p, titulo: t }); setEditando(true); }}>{p.titulo === t ? "En uso" : "Usar"}</Button>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
             <div>
               <h3 className="text-sm text-muted-foreground">Enfoque de interés público</h3>
               {editando ? <textarea value={p.enfoque} onChange={(e) => setP({ ...p, enfoque: e.target.value })} rows={2} className="w-full rounded-sm border border-border bg-white p-2 text-sm" /> : <p className="text-sm">{p.enfoque}</p>}
             </div>
             <div>
-              <h3 className="mb-1 text-sm text-muted-foreground">Brief ({palabras(p.brief)} de 250 palabras)</h3>
+              <h3 className="mb-1 text-sm text-muted-foreground">Brief y resumen web ({palabras(p.brief)} de 250 palabras)</h3>
               <Afirmaciones lista={p.brief} onCita={onCita} editable={editando} onCambio={cambiarLista("brief")} />
             </div>
             <div>
@@ -123,7 +137,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
               <Afirmaciones lista={p.guion} onCita={onCita} editable={editando} onCambio={cambiarLista("guion")} />
             </div>
             <div>
-              <h3 className="mb-1 text-sm text-muted-foreground">Texto para redes ({palabras(p.copy)} de 80 palabras)</h3>
+              <h3 className="mb-1 text-sm text-muted-foreground">Copy para redes ({palabras(p.copy)} de 80 palabras)</h3>
               <Afirmaciones lista={p.copy} onCita={onCita} editable={editando} onCambio={cambiarLista("copy")} />
             </div>
             <p className="rounded-sm bg-[#fff8e1] px-3 py-2 text-xs text-[#7a5600]">{p.leyenda}</p>

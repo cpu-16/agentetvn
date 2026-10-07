@@ -9,6 +9,7 @@ import { tokenizar } from "./bm25";
 import type { ContextoPantalla } from "../voz/catalogo";
 import { generarPaquete } from "./paquete";
 import { resumenCorte } from "./tablero";
+import { MESA, accionSugerida, tocaA, type RolMesa } from "../roles";
 import { fuentesDe, redactarOExtractivo, redactarRespuesta } from "./llm";
 import { validarTransicion } from "./revision";
 import { leerScoring } from "./config";
@@ -140,6 +141,64 @@ function agendaDelDia(uno: boolean, modo: "embeddings" | "bm25", t0: number) {
   } as Awaited<ReturnType<typeof consultar>>;
 }
 
+type R = Awaited<ReturnType<typeof consultar>>;
+const NUM = ["uno", "dos", "tres", "cuatro", "cinco"];
+
+/** «¿Qué me toca hoy?»: la mesa del rol, con el mismo filtro que la portada (src/lib/roles.ts). */
+async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number): Promise<R> {
+  const snap = snapshot();
+  const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+  const a = await agenda();
+  const falta = new Map(a.cinco.map((c) => [c.evento.id, c.vacios[0] ?? null]));
+  const items = tocaA(rol, a.eventos).map((e) => {
+    const ev = a.eventos.find((x) => x.id === e.id)!;
+    const n = ev.ids_noticia.map((i) => porId.get(i)).find((x) => x?.medio === "TVN") ?? porId.get(ev.representante)!;
+    const razon = rol === "periodista" ? (falta.get(e.id) ? `Falta: ${falta.get(e.id)}` : accionSugerida(e)) : rol === "productor" ? "Listo para armar: titulares, resumen web, guion y copy con su cita." : accionSugerida(e);
+    return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: Math.round(e.P), rango: e.rango, evidencia: e.estado_evidencia, razon, falta: falta.get(e.id) ?? null, publicaciones: ev.ids_noticia.length };
+  });
+  const m = MESA[rol], [x, y, z] = items;
+  const texto = !x ? m.vacio : `${m.titulo}: ${items.length} tema${items.length === 1 ? "" : "s"}. Empieza por «${x.titulo}», con ${x.P} de 100 y evidencia ${x.evidencia}. ${x.razon}${y ? ` Le sigue${z ? "n" : ""} «${y.titulo}»${z ? ` y «${z.titulo}»` : ""}.` : ""}`;
+  return { abstener: false, agenda: { uno: false, texto, items, encabezado: m.titulo }, afirmaciones: items.map((i) => afirmacionNoticia(porId.get(i.idNoticia)!)),
+    evidencias: items.map((i) => ({ id: i.idNoticia, tipo: "noticia" as const, resumen: `${i.medio} · ${i.titulo}`, score: 1 })), contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA,
+    traza: { modo, comparadas: a.eventos.length, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `La mesa del rol (${rol}) sale de los estados de revisión y de la evidencia de cada tema, no de la búsqueda por sentido.` } } as R;
+}
+
+/** El paquete guardado del tema (con IA, si se generó), o null. */
+async function paqueteGuardado(id: string, snap: Snapshot): Promise<Paquete | null> {
+  const g = await db.paqueteEditado.findUnique({ where: { eventoId: id } });
+  if (!g) return null;
+  const p = JSON.parse(g.contenido) as Paquete;
+  return vigente(p, snap) ? p : null;
+}
+
+/** «¿Qué falta verificar del tema uno?» y «prepárame los titulares»: responde desde el paquete del tema y lo muestra en su ficha. */
+async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titulares" }>, contexto: ContextoPantalla | null | undefined, eventoId: string | undefined, modo: "embeddings" | "bm25", t0: number): Promise<R> {
+  const snap = snapshot();
+  const cinco = cincoTemas(snap);
+  const id = i.n !== null ? cinco[i.n]?.evento.id : (contexto?.vista === "ficha" && contexto.eventoId) || eventoId || cinco[0]?.evento.id;
+  const e = snap.eventos.find((x) => x.id === id);
+  const n = cinco.findIndex((c) => c.evento.id === id);
+  const nombre = n >= 0 ? `el tema ${NUM[n]}` : "este tema";
+  const base = respuestaGuia({ tipo: "guia", parte: i.tipo === "verificar" ? "ficha-evidencia" : "ficha-paquete" }, modo, t0);
+  if (!e) return { ...base, guia: undefined, conversacion: { motivo: i.tipo, texto: "Ese número no está en «Cinco para hoy». Dime del uno al cinco o abre la ficha del tema.", sugerencias: [] } } as R;
+  const titulo = snap.noticias.find((x) => x.id_noticia === e.representante)?.titulo ?? "";
+  const extractivo = generarPaquete(e, snap.noticias, snap.indicadores);
+  const guardado = await paqueteGuardado(e.id, snap);
+  let texto: string;
+  if (i.tipo === "verificar") {
+    const falta = extractivo.verificaciones.filter((v) => !v.startsWith("Leer la nota completa") && !v.startsWith("Guion incompleto")).slice(0, 3);
+    const preguntas = (guardado?.preguntas.length ? guardado.preguntas : extractivo.preguntas).slice(0, 3);
+    texto = `De ${nombre}, «${titulo}»: evidencia ${e.estado_evidencia} y ${Math.round(e.P)} de 100. ${falta.length ? `Falta verificar: ${falta.join(" ")}` : "No hay vacíos marcados, pero todo se basa en titulares y metadatos: leer la nota completa."} Para investigar: ${preguntas.join(" ")}`;
+  } else {
+    const titulos = guardado?.titulos?.length ? guardado.titulos : null;
+    texto = titulos
+      ? `Propuestas de titular para ${nombre}: ${titulos.map((t, k) => `${k + 1}, «${t}»`).join("; ")}. Cada una se sostiene en las fuentes del tema y pasa por revisión; el resumen web, el guion y el copy están en Paquete y revisión.`
+      : `Todavía no se generó el paquete con IA de ${nombre}. El titular base es «${guardado?.titulo || extractivo.titulo}». En Paquete y revisión, «Generar paquete» propone tres titulares, el resumen web, el guion y el copy, cada frase con su cita.`;
+  }
+  return { ...base, guia: { ...base.guia!, eventoId: e.id, texto }, conversacion: { motivo: i.tipo, texto, sugerencias: i.tipo === "verificar" ? ["Prepárame los titulares de este tema", "¿Qué me toca hoy?"] : ["¿Qué falta verificar de este tema?", "¿Qué me toca hoy?"] },
+    traza: { ...base.traza!, regla: i.tipo === "verificar" ? "Lo que falta sale de la evidencia del tema (procedencias, contradicciones, estado); las preguntas, del paquete." : "Los titulares salen del paquete del tema, validados contra sus fuentes." } } as R;
+}
+
 /** Guía de la plataforma y filtros del tablero: texto fijo + lo que la página debe mostrar (sin búsqueda ni LLM). */
 export function respuestaGuia(i: Extract<Intencion, { tipo: "guia" | "filtro" }>, modo: "embeddings" | "bm25", t0 = Date.now()) {
   let texto: string, guia: NonNullable<Awaited<ReturnType<typeof consultar>>["guia"]>;
@@ -165,6 +224,8 @@ async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: 
   const i = intencion(q, { contexto, tokens: tokenizar(q) });
   const r = (i.tipo === "guia" || i.tipo === "filtro") ? respuestaGuia(i, modo ?? "embeddings", t0)
     : i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
+    : i.tipo === "mesa" ? await mesaDelRol(contexto?.rol ?? "editor", modo ?? "embeddings", t0)
+    : i.tipo === "verificar" || i.tipo === "titulares" ? await trabajoDelTema(i, contexto, eventoId, modo ?? "embeddings", t0)
     : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
     : await consultaSinRegistro(q, modo, eventoId, origen === "voz" && process.env.VOZ_RESPUESTA === "extractiva"); // plan B de latencia de la voz

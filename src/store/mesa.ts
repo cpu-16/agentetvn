@@ -36,6 +36,9 @@ interface Mesa {
   cerrarSesion: (aviso?: string | null) => void;
   setModoConsulta: (m: "embeddings" | "bm25") => void;
   setChatAbierto: (a: boolean) => void;
+  /** Pregunta que otra pantalla le pasa al chat («¿Qué me toca hoy?» desde la mesa del rol); el chat la envía y la limpia. */
+  preguntaPendiente: string | null;
+  pedirAlChat: (q: string | null) => void;
   cargarAgenda: (forzar?: boolean) => Promise<AgendaDatos | null>;
   actualizarEstadoEvento: (id: string, estado: string) => void;
 }
@@ -49,6 +52,8 @@ export const useMesa = create<Mesa>()(
       avisoSesion: null,
       modoConsulta: "embeddings",
       chatAbierto: false,
+      preguntaPendiente: null,
+      pedirAlChat: (q) => set(q ? { preguntaPendiente: q, chatAbierto: true } : { preguntaPendiente: null }),
       agenda: null,
       agendaError: null,
       agendaCargando: false,

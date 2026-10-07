@@ -3,7 +3,7 @@
 import type { ContextoPantalla, VistaVoz } from "./catalogo";
 
 export type Accion = { tipo: "navegar"; vista: VistaVoz; eventoId?: string } | { tipo: "desplazar"; direccion: "arriba" | "abajo" | "inicio" | "final" } | { tipo: "atras" } | ({ tipo: "guia" } & import("../motor/consulta").Guia) | { tipo: "mostrar"; pregunta: string; respuesta: unknown } | { tipo: "colgada"; motivo: string };
-interface Llamada { persona: string; desde: string; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number; sondeo: number; turnos?: number; recorrido?: number }
+interface Llamada { persona: string; desde: string; rol?: ContextoPantalla["rol"]; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number; sondeo: number; turnos?: number; recorrido?: number }
 const g = globalThis as unknown as { __vozLlamadas?: Map<string, Llamada>; __vozUltimoPaso?: { paso: number; en: number } };
 const llamadas = (g.__vozLlamadas ??= new Map<string, Llamada>());
 
@@ -13,7 +13,9 @@ export const abrirLlamada = (hilo: string, persona: string, desde: string) => { 
 export const existeLlamada = (hilo: string) => { barrer(); return llamadas.has(hilo); };
 export const esDueno = (hilo: string, persona: string, desde: string) => { const l = llamadas.get(hilo); return !!l && l.persona === persona && l.desde === desde; };
 export const guardarContexto = (hilo: string, c: ContextoPantalla) => { const l = llamadas.get(hilo); if (l) l.contexto = c; };
-export const contextoDe = (hilo: string) => llamadas.get(hilo)?.contexto ?? null;
+/** El contexto de pantalla de la llamada con el rol de la sesión (el rol lo fija la ruta de la oferta, no la página). */
+export const contextoDe = (hilo: string): ContextoPantalla | null => { const l = llamadas.get(hilo); return l?.contexto ? { ...l.contexto, rol: l.rol } : l?.rol ? { vista: "portada", rol: l.rol } : null; };
+export const fijarRol = (hilo: string, rol: ContextoPantalla["rol"]) => { const l = llamadas.get(hilo); if (l) l.rol = rol; };
 export const encolar = (hilo: string, a: Accion) => void llamadas.get(hilo)?.acciones.push(a);
 export const sacarAcciones = (hilo: string): Accion[] => { const l = llamadas.get(hilo); if (!l) return []; l.sondeo = Date.now(); const a = l.acciones; l.acciones = []; return a; };
 /** La página consulta acciones cada segundo; si lleva más de 15 s sin hacerlo (cerró la pestaña, se cayó el navegador), está abandonada. */

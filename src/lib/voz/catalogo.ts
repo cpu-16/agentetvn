@@ -1,7 +1,7 @@
 // Qué es cada pantalla, en texto fijo: «Explícame esta pantalla» lo muestra sin llamar a ningún modelo (0 tokens).
 // Lo usan el panel (cliente) y la herramienta explicar_pantalla (servidor): sin imports de servidor.
 export type VistaVoz = "portada" | "agenda" | "tablero" | "ficha" | "control";
-export interface ContextoPantalla { vista: VistaVoz; eventoId?: string | null; pestana?: "evidencia" | "paquete"; filtrosAgenda?: string; filtroTablero?: string }
+export interface ContextoPantalla { vista: VistaVoz; eventoId?: string | null; pestana?: "evidencia" | "paquete"; filtrosAgenda?: string; filtroTablero?: string; rol?: "editor" | "periodista" | "productor" } // rol: de la sesión, nunca del cliente
 
 const TEXTO: Record<string, string> = {
   portada: "Estás en la portada, la mesa de la mañana. Arriba ves cuántas publicaciones entraron en el corte, cuántos temas se agruparon y de cuántos medios vienen. Abajo están los cinco temas que merecen revisión hoy: el puntaje ordena, pero la evidencia decide si se puede escribir. Nada se publica desde aquí.",

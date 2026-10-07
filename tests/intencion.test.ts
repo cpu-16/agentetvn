@@ -18,6 +18,16 @@ describe("enrutador del chat", () => {
     expect(motivo("¿Qué estoy viendo?")).toBe("pantalla");
     for (const q of ["Estoy aquí, qué se hace?", "¿qué hago aquí?", "y qué se hace"]) expect(motivo(q)).toBe("pantalla"); // prueba de Gilberto, 6-oct
   });
+  test("la mesa del rol y el trabajo de un tema no buscan; las preguntas con tema propio sí (7-oct)", () => {
+    const tipo = (q: string) => { const r = intencion(q, { tokens: tokenizar(q) }); return r.tipo === "verificar" || r.tipo === "titulares" ? `${r.tipo}:${r.n}` : r.tipo; };
+    for (const q of ["¿Qué me toca hoy?", "¿qué tengo pendiente?", "¿Por dónde empiezo?"]) expect(tipo(q)).toBe("mesa");
+    expect(tipo("¿Qué falta verificar del tema uno?")).toBe("verificar:0");
+    expect(tipo("qué falta verificar")).toBe("verificar:null");
+    expect(tipo("Prepárame los titulares del tema número cinco")).toBe("titulares:4");
+    expect(tipo("propón dos titulares para el tema tres")).toBe("titulares:2");
+    expect(tipo("titulares del día")).toBe("agenda");
+    for (const q of ["¿Qué falta verificar sobre Enrique Lau?", "dame titulares sobre el canal", "¿Qué titulares hay hoy?", "qué me toca investigar del caso Odebrecht"]) expect(tipo(q)).toBe("consulta");
+  });
   test("el rol que se elige al entrar se explica sin buscar; una noticia sobre un periodista sí se busca", () => {
     for (const q of ["¿Qué hace un periodista?", "yo entro como productora, ¿qué hago?", "soy editor, ¿qué hago?"]) expect(motivo(q)).toBe("ayuda");
     expect(motivo("¿Cuáles son los cinco temas de hoy?")).toBe("agenda"); // por voz iba a la búsqueda (7-oct)

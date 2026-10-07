@@ -60,6 +60,7 @@ describe("herramientas", () => {
   });
   test("recorrido guiado: cada «siguiente» muestra una parte (navega, resalta, demuestra) hasta terminar", () => {
     expect(h.navegar("h1", { destino: "recorrido" })).toContain("Empecemos. Arriba ves el corte");
+    expect(h.navegar("h1", { destino: "siguiente" })).toContain("Esta es tu mesa");
     expect(h.navegar("h1", { destino: "siguiente" })).toContain("cinco temas");
     for (let i = 0; i < 20; i++) if (h.navegar("h1", { destino: "siguiente" }).includes("recorrido completo")) break;
     const acciones = sacarAcciones("h1") as unknown as { tipo: string; parte?: string; demo?: { tipo: string } }[];
@@ -69,7 +70,7 @@ describe("herramientas", () => {
   });
   test("el tope de minutos corta a mitad del recorrido: «sigue» en la llamada nueva retoma donde iba (prueba de Gilberto, 6-oct)", () => {
     h.navegar("h1", { destino: "recorrido" });
-    for (let i = 0; i < 8; i++) h.navegar("h1", { destino: "siguiente" }); // va por tablero-medios (paso 9 de 12)
+    for (let i = 0; i < 9; i++) h.navegar("h1", { destino: "siguiente" }); // va por tablero-medios (paso 10 de 13)
     abrirLlamada("h2", "Ana", "2026-10-06T10:00:00Z"); sacarAcciones("h1");
     expect(h.navegar("h2", { destino: "siguiente" })).toStartWith("Seguimos donde quedamos. Cada punto es un tema");
     expect(sacarAcciones("h2")).toMatchObject([{ tipo: "guia", parte: "tablero-relevancia" }]);
@@ -82,6 +83,17 @@ describe("herramientas", () => {
     expect(await h.explicarPantalla("h1", { sobre: "qué hace un periodista" })).toContain("Como periodista verificas");
     expect(await h.explicarPantalla("h1", { sobre: "los borradores" })).toContain("Paquete y revisión");
     expect(sacarAcciones("h1")).toMatchObject([{ tipo: "guia", parte: "ficha-paquete" }]);
+  });
+  test("la voz responde según el rol de la sesión: «¿qué me toca hoy?» y el trabajo de un tema (7-oct)", async () => {
+    const { fijarRol } = await import("../src/lib/voz/registro");
+    fijarRol("h1", "periodista");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Qué falta verificar:");
+    fijarRol("h1", "productor");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Listos para armar la pieza:");
+    sacarAcciones("h1");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar del tema uno?" })).toContain("Para investigar:");
+    expect(sacarAcciones("h1").find((a) => a.tipo === "guia")).toMatchObject({ parte: "ficha-evidencia", vista: "ficha" });
+    expect(await h.preguntarCorpus("h1", { pregunta: "Prepárame los titulares del tema dos" })).toContain("el tema dos");
   });
   test("explicar_pantalla con una parte concreta la muestra en la página", async () => {
     sacarAcciones("h1");

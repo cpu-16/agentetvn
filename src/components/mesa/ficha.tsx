@@ -8,6 +8,7 @@ import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "
 import { PaqueteYRevision, type Afirmacion, type Paquete, type Revision, type RevisionHist } from "./paquete";
 import { ESTADO_LABEL, SPRING, fetchMesa, horaPanama, useMesa, useRol } from "@/store/mesa";
 import { BancaYRevision } from "./banca";
+import { MESA } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
 interface Evento extends Omit<EventoResumen, "titulo" | "medio" | "publicaciones" | "estado_revision"> {
@@ -33,7 +34,7 @@ export function Ficha({ id }: { id: string }) {
   const actualizarEstadoEvento = useMesa((s) => s.actualizarEstadoEvento);
   const rol = useRol();
   const reducir = useReducedMotion();
-  const [tab, setTab] = useState<"evidencia" | "paquete">(rol === "productor" ? "paquete" : "evidencia");
+  const [tab, setTab] = useState<"evidencia" | "paquete">(MESA[rol].pestana); // editor decide y productor arma en el paquete; periodista verifica
   const setPantalla = useMesa((s) => s.setPantalla);
   useEffect(() => setPantalla({ pestana: tab }), [tab, setPantalla]);
   // Jarvis puede cambiar de pestaña para mostrar el borrador o la evidencia (guía y recorrido)

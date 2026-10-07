@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { leerSesion, sinSesion } from "@/lib/sesion";
 import { estadoPuente, ofertaPendiente, pedirOferta, puenteVivo } from "@/lib/voz/enlace";
+import { fijarRol } from "@/lib/voz/registro";
 import { motivoInactiva, vozActiva } from "@/lib/voz/puente";
 export const dynamic = "force-dynamic";
 const NO_DISPONIBLE = "La voz no está disponible ahora. Puedes escribir tu pregunta.";
@@ -15,5 +16,6 @@ export async function POST(req: Request) {
   if (estadoPuente().ocupada || ofertaPendiente()) return NextResponse.json({ error: OCUPADA }, { status: 429 }); // sin encolar: el puente no acumula trabajo
   const r = await pedirOferta(sdp, s.nombre, s.desde);
   if (!r.ok) return NextResponse.json({ error: r.status === 429 ? OCUPADA : NO_DISPONIBLE }, { status: r.status === 429 ? 429 : 503 });
+  fijarRol(r.hilo, s.rol); // Jarvis responde «¿qué me toca hoy?» según el rol con que se entró
   return new Response(r.sdp, { headers: { "content-type": "application/sdp", "x-hilo": r.hilo } });
 }

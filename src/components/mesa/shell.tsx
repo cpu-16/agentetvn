@@ -35,12 +35,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <a href="#contenido" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-sm focus:bg-white focus:px-3 focus:py-2 focus:text-sm">Ir al contenido</a>
       <header className="vidrio-tinta sticky top-0 z-40 text-white">
         <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 lg:px-8">
-          <button className="presionable flex items-center gap-2.5 text-left" onClick={() => irA("portada")} aria-label="AgenteTVN, ir a la portada">
+          <button className="presionable flex items-center gap-3 text-left" onClick={() => irA("portada")} aria-label="AgenteTVN de TVN Media, ir a la portada">
+            {/* el logo completo en blanco: el círculo de 28 px se perdía sobre la barra azul (pedido de Gilberto, 7-oct) */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/marca/tvn-circulo.png" alt="TVN" width={28} height={28} className="h-7 w-7 rounded-full ring-2 ring-white/80" />
+            <img src="/marca/tvn-media-blanco.png" alt="TVN Media" width={82} height={36} className="h-9 w-auto" />
+            <span className="h-8 w-px bg-white/30" aria-hidden />
             <span>
               <span className="titular block text-lg font-bold leading-none">AgenteTVN</span>
-              <span className="block text-[11px] text-white/70">Mesa editorial para TVN Media</span>
+              <span className="block text-[11px] text-white/70">Mesa editorial asistida</span>
             </span>
           </button>
           <nav className="relative flex items-center gap-1 text-sm" aria-label="Secciones">
@@ -52,7 +54,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-3 text-xs text-white/75">
-            {corteUTC && <span className="hidden md:inline">Corte de esta mañana: {horaPanama(corteUTC)}{version ? ` (${version})` : ""}</span>}
+            {corteUTC && <span className="hidden md:inline">Datos al {horaPanama(corteUTC)}{version ? ` (${version})` : ""}</span>}
             {sesion && (
               <span className="flex items-center gap-2">
                 <span className="hidden sm:inline">{sesion.nombre}, {ROLES.find((r) => r.id === sesion.rol)?.label.toLowerCase()}</span>

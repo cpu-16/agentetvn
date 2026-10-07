@@ -23,7 +23,7 @@ export interface Respuesta {
   redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: MetaLLM }; // solo en modo online, sobre lo recuperado
   conversacion?: { motivo: string; texto: string; sugerencias: string[] }; // el enrutador contestó sin buscar
   guia?: Guia; // una parte de la pantalla que hay que mostrar (navegar, bajar, resaltar, demostrar)
-  agenda?: { uno: boolean; texto: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] };
+  agenda?: { uno: boolean; texto: string; encabezado?: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] };
   traza?: Traza; // cómo se buscó: lo dibuja el chat
 }
 /** Traza de la recuperación para mostrarla: vector de la pregunta (primeras 48 dims), distribución de similitudes del corpus,

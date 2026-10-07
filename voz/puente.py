@@ -20,7 +20,7 @@ APAGAR = ["shell_tool", "unified_exec", "apps", "plugins", "computer_use", "imag
 VACIA = tempfile.mkdtemp(prefix="voz-agentetvn-")
 
 HERRAMIENTAS = {
-    "preguntar_corpus": ("Busca en las noticias y datos oficiales del corte de hoy y devuelve la respuesta con su medio (TVN primero), o el motivo si no hay evidencia. Úsala para CUALQUIER pregunta sobre noticias, cifras, temas o personas, y también para «la noticia del día», «los temas de hoy», «qué es lo más importante» o «los cinco temas», y para filtrar el tablero («filtra por economía», «muéstrame solo TVN», «quita el filtro»: pásalo tal cual).",
+    "preguntar_corpus": ("Busca en las noticias y datos oficiales del corte de hoy y devuelve la respuesta con su medio (TVN primero), o el motivo si no hay evidencia. Úsala para CUALQUIER pregunta sobre noticias, cifras, temas o personas, y también para «la noticia del día», «los temas de hoy», «qué es lo más importante» o «los cinco temas», «qué me toca hoy» (según el rol de quien llama), «qué falta verificar del tema uno», «prepárame los titulares del tema dos», y para filtrar el tablero («filtra por economía», «muéstrame solo TVN», «quita el filtro»: pásalo tal cual).",
                          {"pregunta": "string", "eventoId": "string"}, ["pregunta"]),
     "explicar_pantalla": ("Explica y MUESTRA en la página lo que la persona pide: «explícame esto», «qué estoy viendo» (sin sobre); una parte concreta con sobre=<sus palabras>, p. ej. sobre='la gráfica de publicaciones por tema', 'los filtros', 'el borrador', 'las cinco para hoy', 'los medios', 'las pruebas' (la página baja hasta esa parte, la resalta y hace la demostración); sobre='plataforma' para qué es AgenteTVN.",
                           {"sobre": "string"}, []),
@@ -60,7 +60,9 @@ REGLA_CODEX = ("Eres el cerebro de Jarvis, el asistente de voz de AgenteTVN. " +
                "está/dónde veo/dónde se crea X» (los borradores, los filtros…) → explicar_pantalla con sobre=X; una parte concreta («explícame esa gráfica», «muéstrame los filtros», «enséñame el "
                "borrador») → explicar_pantalla con sobre=<sus palabras>; «filtra por…», «quita el filtro» → preguntar_corpus con la "
                "frase; «qué es AgenteTVN», «para qué sirve la plataforma» → explicar_pantalla con "
-               "sobre='plataforma'; «la noticia del día», «los temas de hoy», noticias, cifras, personas o temas → preguntar_corpus; "
+               "sobre='plataforma'; «la noticia del día», «los temas de hoy», noticias, cifras, personas o temas → preguntar_corpus; «qué me toca hoy», "
+               "«qué falta verificar del tema uno», «prepárame los titulares del tema dos» → preguntar_corpus con la frase tal cual "
+               "(el sistema sabe el rol de quien llama); "
                "abrir una sección o ficha, subir, bajar, volver → navegar; «hagamos un recorrido» → navegar con destino='recorrido', y "
                "«sí», «sigue», «dale», «siguiente» durante un recorrido, y «sigue donde ibas» aunque sea otra llamada → navegar con "
                "destino='siguiente'. Nunca contestes que no puedes "

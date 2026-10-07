@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { animate, motion, useInView, useReducedMotion } from "framer-motion";
 import { Medidor } from "./medidor";
+import { MesaRol } from "./mesa-rol";
 import { Chips } from "./agenda";
 import { itemEscalonado } from "./motion";
 import { SPRING, horaPanama, useMesa } from "@/store/mesa";
@@ -74,7 +75,7 @@ export function Portada() {
             <div>
               <span className="al-aire text-white/90">Al aire</span>
               <h1 className="titular mt-3 text-4xl font-bold leading-[0.95] tracking-[-0.02em] sm:text-6xl">La mesa de la mañana</h1>
-              <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">Las señales del día ordenadas por puntaje de atención, con la evidencia que las respalda y lo que todavía falta comprobar. {data && <span>Corte de esta mañana: {horaPanama(data.corteUTC)}</span>}</p>
+              <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">Las señales del día ordenadas por puntaje de atención, con la evidencia que las respalda y lo que todavía falta comprobar. {data && <span>Datos al {horaPanama(data.corteUTC)} (corte congelado del reto).</span>}</p>
             </div>
             <Reloj />
           </div>
@@ -105,6 +106,8 @@ export function Portada() {
           )
         )}
       </section>
+
+      {data && !error && <MesaRol data={data} />}
 
       <section data-guia="portada-cinco" aria-labelledby="cinco-titulo">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
