@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { Client } from "langsmith";
 import { _clienteTrazaPruebas, conTraza, flushTracing, sanitizarTraza } from "../src/lib/motor/tracing";
 
-const keys = ["AGENTETVN_MODO", "AGENTETVN_TRACING", "AGENTETVN_TRACE_APPROVED", "LANGSMITH_API_KEY"];
+const keys = ["AGENTETVN_MODO", "AGENTETVN_TRACING", "AGENTETVN_TRACE_APPROVED", "LANGSMITH_API_KEY", "LANGSMITH_RUNS_ENDPOINTS", "GITHUB_SHA"];
 let previous: Record<string, string | undefined>;
 let created: Record<string, unknown>[];
 let updated: Record<string, unknown>[];
@@ -55,6 +55,23 @@ describe("optional server tracing", () => {
     const start = Date.now();
     expect(await flushTracing(20)).toBe(false);
     expect(Date.now() - start).toBeLessThan(300);
+  });
+  test("inherited replicas and SDK runtime never escape the approved transport", async () => {
+    process.env.LANGSMITH_RUNS_ENDPOINTS = JSON.stringify([{ api_url: "https://unapproved.invalid", api_key: "private-replica-key" }]);
+    process.env.GITHUB_SHA = "private-release-identity";
+    const options: unknown[] = [];
+    mock.createRun = async (run, endpoint) => { created.push(structuredClone(run) as unknown as Record<string, unknown>); options.push(endpoint); };
+    _clienteTrazaPruebas(mock);
+    await conTraza("consulta", { modalidad: "tvn" }, async () => ({ modo: "bm25", ms: 2 }));
+    expect(created).toHaveLength(1);
+    expect(options).toEqual([undefined]);
+    const extra = created[0].extra as Record<string, unknown>;
+    expect(extra).toEqual({ metadata: { modalidad: "tvn" } });
+    const payload = JSON.stringify([...created, ...updated]);
+    expect(payload).not.toContain("runtime");
+    expect(payload).not.toContain("private-release-identity");
+    expect(payload).not.toContain("unapproved.invalid");
+    expect(payload).not.toContain("private-replica-key");
   });
   test("metadata accepts only bounded technical fields", () => {
     expect(sanitizarTraza({ modo: "bm25", tokens: 9, commit: "58449b389b85", secret: "x", tokens_bad: -1, snapshot: "a private identity", q: "question" }))

@@ -26,11 +26,37 @@ export function tracingActivo() {
 }
 let client: Client | undefined;
 let testClient: Client | undefined;
+const NAMES = new Set(["consulta", "recuperacion", "paquete", "llm", "validacion-paquete", "validacion-respuesta", "boletin-bancario"]);
+/** SDK-generated runtime, events, serialized data and endpoint overrides are never transported. */
+function transporteSeguro(value: unknown) {
+  const run = value as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const key of ["id", "parent_run_id", "trace_id"]) {
+    if (typeof run[key] === "string" && /^[a-f0-9-]{36}$/.test(run[key])) out[key] = run[key];
+  }
+  for (const key of ["start_time", "end_time"]) {
+    if (typeof run[key] === "number" && Number.isFinite(run[key])) out[key] = run[key];
+  }
+  if (typeof run.dotted_order === "string" && /^[0-9TZ.a-f-]+$/.test(run.dotted_order)) out.dotted_order = run.dotted_order;
+  if ("name" in run) out.name = NAMES.has(String(run.name)) ? run.name : "operacion";
+  if (["chain", "retriever", "llm"].includes(String(run.run_type))) out.run_type = run.run_type;
+  if ("session_name" in run) out.session_name = "AgenteTVN";
+  if ("inputs" in run) out.inputs = {};
+  if ("outputs" in run) out.outputs = sanitizarTraza((run.outputs ?? {}) as Record<string, unknown>);
+  const extra = run.extra as { metadata?: Record<string, unknown> } | undefined;
+  out.extra = { metadata: sanitizarTraza(extra?.metadata ?? {}) };
+  out.tags = ["prompt-rules-v1", "evaluator-dev-v1"];
+  return out;
+}
 function protegerCliente(value: Client) {
   for (const key of ["createRun", "updateRun", "flush"] as const) {
     const original = value[key].bind(value);
     Object.assign(value, { [key]: async (...args: unknown[]) => {
-      try { return await (original as (...xs: unknown[]) => Promise<unknown>)(...args); }
+      try {
+        const safe = key === "createRun" ? [transporteSeguro(args[0])]
+          : key === "updateRun" ? [args[0], transporteSeguro(args[1])] : [];
+        return await (original as (...xs: unknown[]) => Promise<unknown>)(...safe);
+      }
       catch { throw new Error("Tracing transport unavailable"); }
     } });
   }
@@ -64,7 +90,7 @@ export async function conTraza<T>(name: string, metadata: Record<string, unknown
   };
   try {
     await traceable(execute, { name, run_type: runType, client: cliente(), tracingEnabled: true,
-      project_name: process.env.LANGSMITH_PROJECT || "AgenteTVN",
+      replicas: [], project_name: "AgenteTVN",
       metadata: sanitizarTraza({ ...metadata, commit: process.env.AGENTETVN_COMMIT }),
       tags: ["prompt-rules-v1", "evaluator-dev-v1"], processInputs: () => ({}), processOutputs: sanitizarTraza })();
   } catch { /* Observability cannot fail or repeat the application operation. */ }

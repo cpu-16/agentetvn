@@ -29,3 +29,17 @@ test("a failing assertion produces a failing command exit", () => {
     expect(new TextDecoder().decode(result.stdout)).toContain("1 fail");
   } finally { rmSync(file); }
 });
+
+test("loopback redirects cannot escape the offline network boundary", async () => {
+  let reached = false;
+  const server = Bun.serve({ port: 0, hostname: "127.0.0.1", fetch(req) {
+    if (new URL(req.url).pathname === "/redirect") return Response.redirect(server.url + "target");
+    reached = true;
+    return new Response("unexpected");
+  } });
+  try {
+    await expect(fetch(server.url + "redirect", { redirect: "follow" })).rejects.toThrow();
+    expect(reached).toBe(false);
+    expect(() => fetch("https://example.invalid")).toThrow("External network disabled");
+  } finally { server.stop(true); }
+});
