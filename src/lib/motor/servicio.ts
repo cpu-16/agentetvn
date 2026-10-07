@@ -159,7 +159,7 @@ async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number)
     return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: Math.round(e.P), rango: e.rango, evidencia: e.estado_evidencia, razon, falta: falta.get(e.id) ?? null, publicaciones: ev.ids_noticia.length };
   });
   const m = MESA[rol], [x, y, z] = items;
-  const texto = !x ? m.vacio : `${m.titulo}: ${items.length} tema${items.length === 1 ? "" : "s"}. Empieza por «${x.titulo}», con ${x.P} de 100 y evidencia ${x.evidencia}. ${x.razon}${y ? ` Le sigue${z ? "n" : ""} «${y.titulo}»${z ? ` y «${z.titulo}»` : ""}.` : ""}`;
+  const texto = !x ? m.vacio : `${m.titulo}: ${items.length} tema${items.length === 1 ? "" : "s"}. Empieza por «${x.titulo}», con ${x.P} de 100 y evidencia ${x.evidencia}. ${x.razon.replace(/\.?$/, ".")}${y ? ` Le sigue${z ? "n" : ""} «${y.titulo}»${z ? ` y «${z.titulo}»` : ""}.` : ""}`;
   return { abstener: false, agenda: { uno: false, texto, items, encabezado: m.titulo }, afirmaciones: items.map((i) => afirmacionNoticia(porId.get(i.idNoticia)!)),
     evidencias: items.map((i) => ({ id: i.idNoticia, tipo: "noticia" as const, resumen: `${i.medio} · ${i.titulo}`, score: 1 })), contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA,
     traza: { modo, comparadas: a.eventos.length, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `La mesa del rol (${rol}) sale de los estados de revisión y de la evidencia de cada tema, no de la búsqueda por sentido.` } } as R;

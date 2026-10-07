@@ -69,9 +69,9 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   const r = await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo));
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
   // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
-  if (r.guia) { encolar(hilo, { tipo: "guia", ...r.guia }); return r.conversacion?.texto ?? ""; }
+  if (r.guia) { encolar(hilo, { tipo: "guia", ...r.guia }); const t = r.conversacion?.texto ?? ""; return r.conversacion?.motivo === "verificar" ? `${palabras(t, 40)} El detalle quedó en la ficha.` : t; }
   if (r.conversacion) return r.conversacion.motivo === "plataforma" ? PLATAFORMA_CORTA : r.conversacion.texto;
-  if (r.agenda) return r.agenda.texto;
+  if (r.agenda) return r.agenda.encabezado ? `${palabras(r.agenda.texto, 30)} La lista quedó en el panel.` : r.agenda.texto; // la mesa del rol, corta para la voz
   if (r.abstener) return `No tengo evidencia para responder eso. ${r.motivo ?? ""}`.trim();
   const frases = (r.redaccion?.frases ?? r.afirmaciones).map((a) => a.texto);
   return `${palabras(frases.slice(0, 2).join(" "), 45)} El detalle con las citas quedó en el panel.`;
