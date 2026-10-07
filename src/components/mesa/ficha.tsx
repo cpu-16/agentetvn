@@ -34,6 +34,11 @@ export function Ficha({ id }: { id: string }) {
   const [tab, setTab] = useState<"evidencia" | "paquete">(rol === "productor" ? "paquete" : "evidencia");
   const setPantalla = useMesa((s) => s.setPantalla);
   useEffect(() => setPantalla({ pestana: tab }), [tab, setPantalla]);
+  // Jarvis puede cambiar de pestaña para mostrar el borrador o la evidencia (guía y recorrido)
+  // (estado derivado durante el render, no en un efecto; las órdenes anteriores a montar la ficha no se aplican)
+  const orden = useMesa((s) => s.orden);
+  const [ordenVista, setOrdenVista] = useState(() => orden?.n ?? 0);
+  if (orden && orden.n !== ordenVista) { setOrdenVista(orden.n); if (orden.tipo === "pestana") setTab(orden.pestana); }
   const tabs = useRef<HTMLButtonElement[]>([]);
 
   const cargar = useCallback(() => {
@@ -84,7 +89,7 @@ export function Ficha({ id }: { id: string }) {
       <div className="mt-2"><Chips e={resumen} /></div>
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <div role="tablist" aria-label="Secciones de la ficha" className="relative inline-flex h-9 rounded-sm border border-border bg-white p-0.5">
+        <div data-guia="ficha-pestanas" role="tablist" aria-label="Secciones de la ficha" className="relative inline-flex h-9 rounded-sm border border-border bg-white p-0.5">
           {(["evidencia", "paquete"] as const).map((t, i) => (
             <button key={t} ref={(el) => { if (el) tabs.current[i] = el; }} id={`tab-${t}`} role="tab" aria-selected={tab === t} aria-controls={`panel-${t}`} tabIndex={tab === t ? 0 : -1} onKeyDown={(e) => teclaTab(e, i)} onClick={() => setTab(t)} className={cn("presionable relative rounded-sm px-3 text-sm", tab === t ? "font-medium text-white" : "text-muted-foreground")}>
               {tab === t && <motion.span layoutId="tab-ficha" className="absolute inset-0 rounded-sm bg-tinta" transition={SPRING} aria-hidden />}
@@ -95,7 +100,7 @@ export function Ficha({ id }: { id: string }) {
         <Button size="sm" variant={rol === "periodista" ? "default" : "outline"} className="presionable" onClick={() => setChatAbierto(true)}>Preguntar sobre este tema</Button>
       </div>
       <AnimatePresence mode="wait" initial={false}>
-      <motion.div key={tab} id={`panel-${tab}`} role="tabpanel" aria-labelledby={`tab-${tab}`} className="mt-4" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-2px)" }} transition={{ duration: 0.18 }}>
+      <motion.div key={tab} id={`panel-${tab}`} data-guia={`ficha-${tab}`} role="tabpanel" aria-labelledby={`tab-${tab}`} className="mt-4" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-2px)" }} transition={{ duration: 0.18 }}>
         {tab === "evidencia" ? (
           <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
             <section className="space-y-6">

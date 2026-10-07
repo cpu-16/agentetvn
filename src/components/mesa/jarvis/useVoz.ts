@@ -9,8 +9,9 @@ import { fetchMesa, useMesa } from "@/store/mesa";
 import { contextoDesdeMesa } from "@/lib/voz/catalogo";
 import { debeColgar, siguiente, vozActiva, type EstadoVoz, type EventoVoz } from "./maquina";
 import { esCelular } from "./panel";
+import type { Guia } from "@/lib/motor/consulta";
 
-type Opts = { onTranscripcion?: (quien: "persona" | "jarvis", texto: string) => void; onMostrar?: (pregunta: string, respuesta: unknown) => void; onAviso?: (texto: string) => void };
+type Opts = { onTranscripcion?: (quien: "persona" | "jarvis", texto: string) => void; onMostrar?: (pregunta: string, respuesta: unknown) => void; onAviso?: (texto: string) => void; onGuia?: (g: Guia) => void };
 interface Conexion { pc?: RTCPeerConnection; mic?: MediaStream; ctx?: AudioContext; raf?: number; hilo?: string }
 
 /** Cierra TODO lo de una conexión (micrófono, contexto, animación, WebRTC). Idempotente. */
@@ -153,6 +154,7 @@ export function useVoz(opts: Opts = {}) {
           if (a.tipo === "navegar") { useMesa.getState().irA(a.vista as never, a.eventoId); window.scrollTo({ top: 0 }); if (esCelular(window.innerWidth)) useMesa.getState().setChatAbierto(false); }
           if (a.tipo === "atras" && anterior.current) { useMesa.getState().irA(anterior.current.vista as never, anterior.current.eventoId ?? undefined); window.scrollTo({ top: 0 }); }
           if (a.tipo === "desplazar") desplazar(a.direccion);
+          if (a.tipo === "guia") optsRef.current.onGuia?.(a as unknown as Guia);
           if (a.tipo === "mostrar") optsRef.current.onMostrar?.(a.pregunta ?? "", a.respuesta);
           if (a.tipo === "colgada") { colgar(a.motivo); optsRef.current.onAviso?.(`La llamada terminó: ${a.motivo}. Toca el orbe para hablar otra vez.`); return; }
         }

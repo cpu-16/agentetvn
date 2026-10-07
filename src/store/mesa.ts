@@ -27,6 +27,9 @@ interface Mesa {
   filtroTablero: { ids: string[]; descripcion: string } | null; // conjunto exacto de eventos que el Tablero pasa a la Agenda
   pantalla: { pestana?: "evidencia" | "paquete"; filtrosAgenda?: string; filtroTablero?: string }; // lo que Jarvis necesita para «explícame esta pantalla»
   setPantalla: (p: Partial<Mesa["pantalla"]>) => void;
+  /** Órdenes de Jarvis a una pantalla (demostraciones de la guía): cambiar de pestaña o filtrar el tablero. `n` cambia en cada orden. */
+  orden: ({ n: number } & ({ tipo: "pestana"; pestana: "evidencia" | "paquete" } | { tipo: "filtroTablero"; temas?: string[]; medio?: string; limpiar?: boolean })) | null;
+  ordenar: (o: { tipo: "pestana"; pestana: "evidencia" | "paquete" } | { tipo: "filtroTablero"; temas?: string[]; medio?: string; limpiar?: boolean }) => void;
   irA: (v: Vista, eventoId?: string) => void;
   setFiltroTablero: (f: { ids: string[]; descripcion: string } | null) => void;
   setSesion: (s: Sesion | null) => void;
@@ -52,6 +55,8 @@ export const useMesa = create<Mesa>()(
       filtroTablero: null,
       pantalla: {},
       setPantalla: (p) => set((s) => ({ pantalla: { ...s.pantalla, ...p } })),
+      orden: null,
+      ordenar: (o) => set((s) => ({ orden: { ...o, n: (s.orden?.n ?? 0) + 1 } as Mesa["orden"] })),
       setFiltroTablero: (filtroTablero) => set({ filtroTablero }),
       irA: (vista, eventoId) => set((s) => ({ vista, eventoId: eventoId ?? (vista === "ficha" ? s.eventoId : null) })),
       setSesion: (sesion) => set({ sesion, avisoSesion: null }),

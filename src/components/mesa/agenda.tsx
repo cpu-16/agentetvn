@@ -65,12 +65,12 @@ export function Agenda() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-      <section aria-labelledby={`${idBase}-titulo`}>
+      <section data-guia="agenda-lista" aria-labelledby={`${idBase}-titulo`}>
         <div className="mb-3 flex flex-wrap items-end gap-3">
           <h1 id={`${idBase}-titulo`} className="text-2xl font-semibold">Agenda del día</h1>
           <p className="text-sm text-muted-foreground">{data.eventos.length} temas ordenados por puntaje de atención. Corte de esta mañana: {horaPanama(data.corteUTC)}</p>
         </div>
-        <div className="mb-2 flex flex-wrap gap-2 text-sm" role="search" aria-label="Filtrar la agenda">
+        <div data-guia="agenda-filtros" className="mb-2 flex flex-wrap gap-2 text-sm" role="search" aria-label="Filtrar la agenda">
           <label className="sr-only" htmlFor={`${idBase}-q`}>Buscar titular o medio</label>
           <input id={`${idBase}-q`} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar titular o medio" className="h-9 w-full rounded-sm border border-border bg-white px-3 sm:w-64" />
           {filtroTablero && <button type="button" className="presionable chip tinta" title={filtroTablero.descripcion} onClick={() => setFiltroTablero(null)}>Filtro del tablero ({filtroTablero.ids.length} temas) <span aria-hidden="true">×</span><span className="sr-only">, quitar</span></button>}

@@ -68,7 +68,7 @@ export function Portada() {
 
   return (
     <div className="space-y-8">
-      <section className="sangrado -mt-5 bg-tinta px-4 pb-8 pt-8 text-white lg:px-8" aria-busy={cargando}>
+      <section data-guia="portada-cifras" className="sangrado -mt-5 bg-tinta px-4 pb-8 pt-8 text-white lg:px-8" aria-busy={cargando}>
         <div className="mx-auto max-w-[1336px]">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div>
@@ -106,7 +106,7 @@ export function Portada() {
         )}
       </section>
 
-      <section aria-labelledby="cinco-titulo">
+      <section data-guia="portada-cinco" aria-labelledby="cinco-titulo">
         <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="rotulo rotulo-tinta mb-2 inline-block">Cinco temas para la agenda de Panamá</p>

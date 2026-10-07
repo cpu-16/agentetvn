@@ -58,13 +58,22 @@ describe("herramientas", () => {
     h.navegar("h1", { destino: "agenda" }); sacarAcciones("h1");
     expect(contextoDe("h1")?.filtrosAgenda).toBe("tema economía");
   });
-  test("recorrido guiado: empieza en la portada y «siguiente» abre y explica cada sección hasta Control", () => {
-    expect(h.navegar("h1", { destino: "recorrido" })).toContain("Estás en la portada");
-    for (const v of ["agenda", "tablero", "Control"]) expect(h.navegar("h1", { destino: "siguiente" })).toContain(v);
-    expect(h.navegar("h1", { destino: "siguiente" })).toContain("Ese fue el recorrido");
-    expect(sacarAcciones("h1").map((a) => (a as { vista?: string }).vista)).toEqual(["portada", "agenda", "tablero", "control"]);
+  test("recorrido guiado: cada «siguiente» muestra una parte (navega, resalta, demuestra) hasta terminar", () => {
+    expect(h.navegar("h1", { destino: "recorrido" })).toContain("Empecemos. Arriba ves el corte");
+    expect(h.navegar("h1", { destino: "siguiente" })).toContain("cinco temas");
+    for (let i = 0; i < 20; i++) if (h.navegar("h1", { destino: "siguiente" }).includes("recorrido completo")) break;
+    const acciones = sacarAcciones("h1") as unknown as { tipo: string; parte?: string; demo?: { tipo: string } }[];
+    expect(acciones[0]).toMatchObject({ tipo: "guia", parte: "portada-cifras" });
+    expect(acciones.some((a) => a.parte === "ficha-paquete" && a.demo?.tipo === "pestana")).toBe(true);
+    expect(acciones.some((a) => a.parte === "tablero-temas" && a.demo?.tipo === "filtroTablero")).toBe(true);
+  });
+  test("explicar_pantalla con una parte concreta la muestra en la página", async () => {
+    sacarAcciones("h1");
+    expect(await h.explicarPantalla("h1", { sobre: "la gráfica de publicaciones por tema" })).toContain("Economía");
+    expect(sacarAcciones("h1")).toMatchObject([{ tipo: "guia", parte: "tablero-temas", vista: "tablero" }]);
   });
   test("abrir una sección devuelve su explicación; explicar_pantalla sabe qué es la plataforma", async () => {
+    sacarAcciones("h1");
     expect(h.navegar("h1", { destino: "agenda" })).toContain("Estás en la agenda");
     sacarAcciones("h1");
     expect(await h.explicarPantalla("h1", { sobre: "plataforma" })).toContain("AgenteTVN es la mesa editorial");

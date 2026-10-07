@@ -30,6 +30,18 @@ describe("enrutador del chat", () => {
     for (const q of ["¿Por qué la noticia del día merece atención?", "La noticia del día de ayer", "¿Cuál fue la noticia del día en 2025?", "La noticia del día del 3 de octubre"]) expect(motivo(q)).toBe("consulta"); // causalidad y otros días: al motor
     for (const q of ["Noticias de hoy sobre el Canal de Panamá", "¿Qué es la plataforma de vacunación del Minsa?", "Explícame la aprehensión de Enrique Lau", "¿Qué pasó hoy con el agua en Changuinola?"]) expect(motivo(q)).toBe("consulta");
   });
+  test("guía: explicar o mostrar una parte, recorrido y filtros del tablero; con tema propio sigue siendo consulta", () => {
+    const tipo = (q: string) => { const r = intencion(q, { tokens: tokenizar(q) }); return r.tipo === "guia" ? `guia:${r.parte}` : r.tipo === "filtro" ? `filtro:${JSON.stringify(r.demo)}` : r.tipo; };
+    expect(tipo("explícame esa gráfica de publicaciones por tema")).toBe("guia:tablero-temas");
+    expect(tipo("muéstrame los filtros de la agenda")).toBe("guia:agenda-filtros");
+    expect(tipo("enséñame el borrador")).toBe("guia:ficha-paquete");
+    expect(tipo("hazme un recorrido por la plataforma")).toBe("guia:portada-cifras");
+    expect(tipo("__guia:tablero-medios")).toBe("guia:tablero-medios");
+    expect(tipo("filtra el tablero por economía")).toBe('filtro:{"tipo":"filtroTablero","temas":["economia"]}');
+    expect(tipo("muéstrame solo TVN")).toBe('filtro:{"tipo":"filtroTablero","medio":"TVN"}');
+    expect(tipo("quita el filtro")).toBe('filtro:{"tipo":"filtroTablero","limpiar":true}');
+    for (const q of ["¿Qué evidencia hay sobre Enrique Lau?", "Explícame la noticia de los medios sobre el Canal", "¿Qué dicen los medios de Mulino?"]) expect(tipo(q)).toBe("consulta");
+  });
   test("tema desconocido: palabras que no están en ninguna noticia", () => {
     const enCorpus = (x: string) => ["lau", "enrique", "canal", "panama"].includes(x);
     expect(temaDesconocido(tokenizar("¿Qué pasó con el Nickelau?"), enCorpus)).toBe("nickelau");

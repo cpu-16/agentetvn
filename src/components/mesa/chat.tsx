@@ -10,9 +10,11 @@ import { useVoz } from "./jarvis/useVoz";
 import { clasesPanel, esCelular, type TamanoPanel } from "./jarvis/panel";
 import { contextoDesdeMesa, explicacionFija } from "@/lib/voz/catalogo";
 import { TrazaBuscando, TrazaBusqueda, type Traza } from "./traza";
+import { mostrarGuia } from "./jarvis/guia";
+import type { Guia } from "@/lib/motor/consulta";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; agenda?: { uno: boolean; texto: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
+interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; guia?: Guia; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; agenda?: { uno: boolean; texto: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
 const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
@@ -50,7 +52,12 @@ export function ChatAgente() {
     onTranscripcion: (quien, texto) => turnoVoz(quien, texto),
     onMostrar: (pregunta, respuesta) => setTurnos((t) => [...t, { id: Date.now() + Math.random(), pregunta: `🎙 ${pregunta}`, ambito: null, respuesta: respuesta as Respuesta, error: null }]),
     onAviso: (texto) => { setAnuncio(texto); turnoVoz("sistema", texto); },
+    onGuia: (g) => { setCartel({ ...g, desdeChat: false }); void mostrarGuia(g); },
   });
+  // Cartel de la guía: título y explicación de la parte que se está mostrando, encima de la página
+  const [cartel, setCartel] = useState<(Guia & { desdeChat: boolean }) | null>(null);
+  /** Empieza de cero: borra la conversación, cuelga la voz si estaba y quita el cartel. */
+  const nuevaConversacion = () => { if (vozActiva(voz.estado)) voz.colgar("nueva conversación"); setTurnos([]); setCartel(null); setAnuncio("Conversación nueva."); setQ(""); };
   const arrastrable = !celular && tamano !== "amplio";
   // ponytail: la posición arrastrada vuelve al rincón al cambiar de tamaño o recargar; guardarla en sessionStorage si se pide
   useEffect(() => {
@@ -97,17 +104,18 @@ export function ChatAgente() {
   // Muestra el inicio del último turno (la pregunta y debajo cómo buscó), no el final de la respuesta.
   useEffect(() => { (fin.current?.previousElementSibling ?? fin.current)?.scrollIntoView({ block: "start", behavior: reducir ? "auto" : "smooth" }); }, [turnos, reducir]);
 
-  const preguntar = async (texto: string, idExistente?: number) => {
+  const preguntar = async (texto: string, idExistente?: number, mostrar?: string) => {
     const pregunta = texto.trim();
     if (!pregunta || ocupado) return;
     const id = idExistente ?? Date.now();
-    setTurnos((t) => (idExistente ? t.map((x) => (x.id === id ? { ...x, respuesta: null, error: null } : x)) : [...t, { id, pregunta, ambito, respuesta: null, error: null }]));
+    setTurnos((t) => (idExistente ? t.map((x) => (x.id === id ? { ...x, respuesta: null, error: null } : x)) : [...t, { id, pregunta: mostrar ?? pregunta, ambito, respuesta: null, error: null }]));
     setQ(""); setOcupado(true); setAnuncio("Buscando en las fuentes");
     try {
       const r = await fetchMesa("/api/consulta", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q: pregunta, modo: modoConsulta, eventoId: ambito ?? undefined, contexto: contextoDesdeMesa(useMesa.getState()) }) });
       if (!r.ok) throw new Error(r.status === 401 ? "La sesión venció." : `El agente no respondió (error ${r.status}).`);
       const respuesta = (await r.json()) as Respuesta;
       setTurnos((t) => t.map((x) => (x.id === id ? { ...x, respuesta } : x)));
+      if (respuesta.guia) { setCartel({ ...respuesta.guia, desdeChat: true }); void mostrarGuia(respuesta.guia); }
       const red = respuesta.redaccion;
       setAnuncio(respuesta.conversacion ? respuesta.conversacion.texto : respuesta.abstener ? `Sin respuesta sustentada. ${respuesta.motivo ?? ""}` : red ? `Borrador de IA. ${red.frases.map((a) => a.texto).join(" ")}${red.vacios.length ? ` Qué falta en el borrador: ${red.vacios.join("; ")}` : ""}` : `Respuesta con ${respuesta.afirmaciones.length} afirmación(es) citada(s). ${respuesta.afirmaciones.map((a) => a.texto).join(" ")}`);
       const ids = respuesta.evidencias.filter((e) => e.tipo === "noticia").map((e) => e.id);
@@ -215,6 +223,7 @@ export function ChatAgente() {
                     ))}
                   </div>
                 )}
+                <button type="button" className={cn("presionable rounded-sm px-1.5 py-1 text-xs text-acero hover:bg-papel", celular && "h-11 min-w-11")} onClick={nuevaConversacion} disabled={!turnos.length && !activa} title="Borrar la conversación y empezar de cero" aria-label="Nueva conversación">↺ Nueva</button>
                 <button type="button" className={cn("presionable rounded-sm px-1.5 py-1 text-xs text-muted-foreground hover:bg-papel", celular && "h-11 min-w-11")} onClick={() => setChatAbierto(false)} aria-label="Cerrar el agente">✕</button>
               </div>
             </div>
@@ -263,6 +272,13 @@ export function ChatAgente() {
                     <div className="mr-8 rounded-md border border-border bg-white px-3 py-2">
                       <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis</span>
                       <p>{t.respuesta.conversacion.texto}</p>
+                      {t.respuesta.guia && (
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                          {t.respuesta.guia.paso && <span className="text-[11px] text-muted-foreground">Paso {t.respuesta.guia.paso} de {t.respuesta.guia.total}</span>}
+                          <button className="presionable min-h-9 rounded-full border border-border bg-white px-2.5 text-xs hover:border-tinta" onClick={() => { setCartel({ ...t.respuesta!.guia!, desdeChat: true }); void mostrarGuia(t.respuesta!.guia!); }}>Mostrar de nuevo</button>
+                          {t.respuesta.guia.siguiente && <button className="presionable min-h-9 rounded-full bg-tinta px-3 text-xs font-medium text-white" onClick={() => preguntar(`__guia:${t.respuesta!.guia!.siguiente}`, undefined, `Siguiente: ${t.respuesta!.guia!.siguienteTitulo}`)}>Siguiente: {t.respuesta.guia.siguienteTitulo} →</button>}
+                        </div>
+                      )}
                       {t.respuesta.conversacion.sugerencias.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {t.respuesta.conversacion.sugerencias.map((s) => <button key={s} className="presionable min-h-11 rounded-full border border-border bg-white px-2.5 py-1 text-left text-xs hover:border-tinta sm:min-h-0" onClick={() => preguntar(s)}>{s}</button>)}
@@ -323,6 +339,22 @@ export function ChatAgente() {
               <button type="submit" disabled={ocupado || !q.trim()} className="presionable h-11 rounded-sm bg-azul px-3 text-sm font-medium text-white disabled:opacity-50" aria-busy={ocupado}>{ocupado ? "Buscando…" : "Preguntar"}</button>
             </form>
           </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {cartel && (
+          <motion.div key={`${cartel.parte ?? cartel.titulo}-${cartel.paso ?? 0}`} className="guia-cartel rounded-md border border-azul/30 bg-white px-4 py-3 text-sm shadow-[0_18px_40px_-18px_rgba(0,70,111,.55)]" role="status" aria-live="polite"
+            initial={reducir ? { opacity: 0 } : { opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+            <div className="flex items-start gap-3">
+              <span className="mt-1 inline-block size-2.5 flex-none rounded-full bg-azul" aria-hidden />
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-tinta">{cartel.titulo}{cartel.paso ? <span className="ml-2 text-xs font-normal text-muted-foreground">paso {cartel.paso} de {cartel.total}</span> : null}</p>
+                {cartel.texto && <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">{cartel.texto}</p>}
+                {cartel.desdeChat && cartel.siguiente && <button className="presionable mt-2 min-h-9 rounded-full bg-tinta px-3 text-xs font-medium text-white" onClick={() => preguntar(`__guia:${cartel.siguiente}`, undefined, `Siguiente: ${cartel.siguienteTitulo}`)}>Siguiente: {cartel.siguienteTitulo} →</button>}
+              </div>
+              <button className="presionable -mr-1 min-h-9 min-w-9 rounded-sm text-muted-foreground hover:bg-papel" onClick={() => setCartel(null)} aria-label="Cerrar la explicación">✕</button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -2,7 +2,7 @@
 // (cada route.ts se empaqueta aparte). ponytail: un solo proceso; si hubiera varios, pasar a SQLite.
 import type { ContextoPantalla, VistaVoz } from "./catalogo";
 
-export type Accion = { tipo: "navegar"; vista: VistaVoz; eventoId?: string } | { tipo: "desplazar"; direccion: "arriba" | "abajo" | "inicio" | "final" } | { tipo: "atras" } | { tipo: "mostrar"; pregunta: string; respuesta: unknown } | { tipo: "colgada"; motivo: string };
+export type Accion = { tipo: "navegar"; vista: VistaVoz; eventoId?: string } | { tipo: "desplazar"; direccion: "arriba" | "abajo" | "inicio" | "final" } | { tipo: "atras" } | ({ tipo: "guia" } & import("../motor/consulta").Guia) | { tipo: "mostrar"; pregunta: string; respuesta: unknown } | { tipo: "colgada"; motivo: string };
 interface Llamada { persona: string; desde: string; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number; sondeo: number; turnos?: number; recorrido?: number }
 const g = globalThis as unknown as { __vozLlamadas?: Map<string, Llamada> };
 const llamadas = (g.__vozLlamadas ??= new Map<string, Llamada>());

@@ -126,7 +126,8 @@ export function Control() {
 }
 
 function Seccion({ titulo, children }: { titulo: string; children: React.ReactNode }) {
-  return <section className="border-t border-tinta pt-3"><h2 className="mb-2 text-lg font-semibold">{titulo}</h2>{children}</section>;
+  const guia = titulo.startsWith("Datos del corte") ? "control-datos" : titulo.startsWith("Reglas de puntaje") ? "control-reglas" : titulo.startsWith("Búsqueda por sentido") ? "control-ia" : titulo.startsWith("Pruebas de aceptación") ? "control-pruebas" : titulo.startsWith("Decisiones") ? "control-decisiones" : undefined;
+  return <section data-guia={guia} className="border-t border-tinta pt-3"><h2 className="mb-2 text-lg font-semibold">{titulo}</h2>{children}</section>;
 }
 function Tabla({ filas }: { filas: [string, string][] }) {
   return <dl className="grid gap-x-4 gap-y-1 text-sm sm:grid-cols-[220px_1fr]">{filas.map(([k, v]) => <div key={k} className="contents"><dt className="text-muted-foreground">{k}</dt><dd className="break-all">{v}</dd></div>)}</dl>;

@@ -20,11 +20,11 @@ APAGAR = ["shell_tool", "unified_exec", "apps", "plugins", "computer_use", "imag
 VACIA = tempfile.mkdtemp(prefix="voz-agentetvn-")
 
 HERRAMIENTAS = {
-    "preguntar_corpus": ("Busca en las noticias y datos oficiales del corte de hoy y devuelve la respuesta con su medio (TVN primero), o el motivo si no hay evidencia. Úsala para CUALQUIER pregunta sobre noticias, cifras, temas o personas, y también para «la noticia del día», «los temas de hoy», «qué es lo más importante» o «los cinco temas».",
+    "preguntar_corpus": ("Busca en las noticias y datos oficiales del corte de hoy y devuelve la respuesta con su medio (TVN primero), o el motivo si no hay evidencia. Úsala para CUALQUIER pregunta sobre noticias, cifras, temas o personas, y también para «la noticia del día», «los temas de hoy», «qué es lo más importante» o «los cinco temas», y para filtrar el tablero («filtra por economía», «muéstrame solo TVN», «quita el filtro»: pásalo tal cual).",
                          {"pregunta": "string", "eventoId": "string"}, ["pregunta"]),
-    "explicar_pantalla": ("Explica lo que la persona tiene delante: «explícame esto», «qué es esto», «de qué trata», «qué estoy viendo», «qué significa». Con sobre='plataforma' explica qué es AgenteTVN y para qué sirve («de qué trata AgenteTVN», «para qué sirve esta plataforma»).",
+    "explicar_pantalla": ("Explica y MUESTRA en la página lo que la persona pide: «explícame esto», «qué estoy viendo» (sin sobre); una parte concreta con sobre=<sus palabras>, p. ej. sobre='la gráfica de publicaciones por tema', 'los filtros', 'el borrador', 'las cinco para hoy', 'los medios', 'las pruebas' (la página baja hasta esa parte, la resalta y hace la demostración); sobre='plataforma' para qué es AgenteTVN.",
                           {"sobre": "string"}, []),
-    "navegar": ("Mueve la pantalla de la persona; úsala (no explicar_pantalla) cuando diga baja, más abajo, sigue, sube, al final, al principio, regresa o atrás, o cuando pida ir a una sección. destino: portada, agenda, tablero, control o ficha para abrir una sección (el sistema devuelve su explicación: léela); arriba, abajo, inicio o final para mover la página; atras para volver; recorrido para empezar un recorrido guiado por portada, agenda, tablero y Control; siguiente para pasar a la próxima sección del recorrido cuando la persona diga sí, dale, sigue o siguiente. Para una ficha, pasa en 'consulta' las palabras del titular que dijo la persona.",
+    "navegar": ("Mueve la pantalla de la persona; úsala (no explicar_pantalla) cuando diga baja, más abajo, sigue, sube, al final, al principio, regresa o atrás, o cuando pida ir a una sección. destino: portada, agenda, tablero, control o ficha para abrir una sección (el sistema devuelve su explicación: léela); arriba, abajo, inicio o final para mover la página; atras para volver; recorrido para empezar un recorrido guiado (la página va mostrando y resaltando cada parte: cifras, cinco para hoy, agenda, ficha y borrador, gráficas del tablero con demostraciones, Control); siguiente para pasar a la próxima parte cuando la persona diga sí, dale, sigue, ok o siguiente. Para una ficha, pasa en 'consulta' las palabras del titular que dijo la persona.",
                 {"destino": "string", "consulta": "string", "eventoId": "string"}, ["destino"]),
 }
 SPECS = [{"type": "function", "name": n, "description": d, "deferLoading": False,
@@ -53,7 +53,9 @@ REGLA_VOZ = ("Hablas español de Panamá, con acento panameño natural y tuteo (
              "ser de TVN. Si hay silencio, espera callado: no rellenes.")
 REGLA_CODEX = ("Eres el cerebro de Jarvis, el asistente de voz de AgenteTVN. " + PLATAFORMA + " No oyes la conversación: la voz te "
                "pasa lo que pide la persona. Usa SIEMPRE una herramienta y elige así: «explícame esto», «qué es esto», «de qué trata», "
-               "«qué estoy viendo» → explicar_pantalla; «qué es AgenteTVN», «para qué sirve la plataforma» → explicar_pantalla con "
+               "«qué estoy viendo» → explicar_pantalla; una parte concreta («explícame esa gráfica», «muéstrame los filtros», «enséñame el "
+               "borrador») → explicar_pantalla con sobre=<sus palabras>; «filtra por…», «quita el filtro» → preguntar_corpus con la "
+               "frase; «qué es AgenteTVN», «para qué sirve la plataforma» → explicar_pantalla con "
                "sobre='plataforma'; «la noticia del día», «los temas de hoy», noticias, cifras, personas o temas → preguntar_corpus; "
                "abrir una sección o ficha, subir, bajar, volver → navegar; «hagamos un recorrido» → navegar con destino='recorrido', y "
                "«sí», «sigue», «dale», «siguiente» durante un recorrido → navegar con destino='siguiente'. Nunca contestes que no puedes "

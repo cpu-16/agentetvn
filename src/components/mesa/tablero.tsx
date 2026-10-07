@@ -39,6 +39,11 @@ export function Tablero() {
   }, []);
 
   const onFiltro = useCallback((f: Partial<Filtro>) => setFiltro((prev) => ({ ...prev, ...f })), []);
+  // Jarvis filtra el tablero para demostrar cómo cambian las gráficas («filtra por economía», recorrido)
+  // (estado derivado durante el render, no en un efecto; las órdenes anteriores a montar el tablero no se aplican)
+  const orden = useMesa((s) => s.orden);
+  const [ordenVista, setOrdenVista] = useState(() => orden?.n ?? 0);
+  if (orden && orden.n !== ordenVista) { setOrdenVista(orden.n); if (orden.tipo === "filtroTablero") setFiltro(orden.limpiar ? FILTRO_VACIO : { ...FILTRO_VACIO, temas: orden.temas ?? [], medio: orden.medio }); }
   const abrirFicha = useCallback((id: string) => irA("ficha", id), [irA]);
   // UN solo conjunto filtrado para todo el tablero
   const agg = useMemo(() => (datos ? filtrarDatos(datos.eventos, filtro, nombreTema) : null), [datos, filtro]);
@@ -68,7 +73,7 @@ export function Tablero() {
         </button>
       </header>
 
-      <section aria-label="Filtros activos" className="flex flex-wrap items-center gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm">
+      <section data-guia="tablero-filtros" aria-label="Filtros activos" className="flex flex-wrap items-center gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm">
         <span className="text-muted-foreground">Rango</span>
         {RANGOS.map((r) => {
           const activo = filtro.rango.includes(r.id);
@@ -84,7 +89,7 @@ export function Tablero() {
         {hayFiltro(filtro) && <button type="button" className="presionable ml-auto text-xs text-acero underline" onClick={() => setFiltro(FILTRO_VACIO)}>Limpiar</button>}
       </section>
 
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-label="Cifras del corte">
+      <section data-guia="tablero-cifras" className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-label="Cifras del corte">
         <Cifra valor={agg.publicaciones} etiqueta="publicaciones" detalle={hayFiltro(filtro) ? `de ${fmt(datos.publicaciones)}` : "en el corte"} />
         <Cifra valor={agg.eventos.length} etiqueta="eventos agrupados" detalle={hayFiltro(filtro) ? `de ${fmt(datos.eventos.length)}` : "un hecho, varias publicaciones"} />
         <Cifra valor={agg.mediosDistintos} etiqueta="medios distintos" detalle={`${fmt(agg.agenciasDistintas)} agencia${agg.agenciasDistintas === 1 ? "" : "s"} identificada${agg.agenciasDistintas === 1 ? "" : "s"} en los textos${hayFiltro(filtro) ? ", en lo filtrado" : ""}`} />
@@ -95,17 +100,17 @@ export function Tablero() {
         Fuera del tablero: {fmt(datos.calidad.sinteticas)} publicaciones de casos de prueba sintéticos{datos.calidad.noConfiablesReales ? ` y ${fmt(datos.calidad.noConfiablesReales)} reales marcadas como no confiables` : ""}. En la agenda aparecen marcadas.
       </p>
 
-      <SenalesPorDia datos={aggSinTema.porDiaTema} filtro={filtro} onFiltro={onFiltro} porDeteccion={aggSinTema.porDeteccion} total={aggSinTema.publicaciones} />
+      <div data-guia="tablero-dias"><SenalesPorDia datos={aggSinTema.porDiaTema} filtro={filtro} onFiltro={onFiltro} porDeteccion={aggSinTema.porDeteccion} total={aggSinTema.publicaciones} /></div>
 
       <div className="grid min-w-0 gap-3 lg:grid-cols-2">
-        <MapaTemas temas={agg.temas} eventos={agg.eventos} filtro={filtro} onFiltro={onFiltro} abrirFicha={abrirFicha} />
-        <RelevanciaEvidencia eventos={agg.eventos} abrirFicha={abrirFicha} />
-        <EvidenciaPorTema evidencia={agg.evidencia} />
-        <Medios medios={agg.medios} filtro={filtro} onFiltro={onFiltro} />
-        <Procedencias procedencias={agg.procedencias} />
-        <ContextoOficial indicadores={datos.indicadores} />
-        <SismosMapa sismos={datos.sismos} />
-        <SismosPorMes meses={datos.sismosPorMes} />
+        <div data-guia="tablero-temas" className="min-w-0"><MapaTemas temas={agg.temas} eventos={agg.eventos} filtro={filtro} onFiltro={onFiltro} abrirFicha={abrirFicha} /></div>
+        <div data-guia="tablero-relevancia" className="min-w-0"><RelevanciaEvidencia eventos={agg.eventos} abrirFicha={abrirFicha} /></div>
+        <div data-guia="tablero-evidencia" className="min-w-0"><EvidenciaPorTema evidencia={agg.evidencia} /></div>
+        <div data-guia="tablero-medios" className="min-w-0"><Medios medios={agg.medios} filtro={filtro} onFiltro={onFiltro} /></div>
+        <div data-guia="tablero-procedencias" className="min-w-0"><Procedencias procedencias={agg.procedencias} /></div>
+        <div data-guia="tablero-contexto" className="min-w-0"><ContextoOficial indicadores={datos.indicadores} /></div>
+        <div data-guia="tablero-sismos" className="min-w-0"><SismosMapa sismos={datos.sismos} /></div>
+        <div data-guia="tablero-sismos-mes" className="min-w-0"><SismosPorMes meses={datos.sismosPorMes} /></div>
       </div>
 
       <section aria-label="Calidad del corte" className="grid grid-cols-2 gap-3 md:grid-cols-5">

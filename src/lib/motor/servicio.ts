@@ -2,7 +2,8 @@
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
 import { afirmacionNoticia, cincoTemas, consultar, LEYENDA } from "./consulta";
-import { intencion } from "./intencion";
+import { intencion, type Intencion } from "./intencion";
+import { NOMBRE_TEMA, parte, RECORRIDO_GUIA } from "../voz/guia";
 import { tokenizar } from "./bm25";
 import type { ContextoPantalla } from "../voz/catalogo";
 import { generarPaquete } from "./paquete";
@@ -137,10 +138,31 @@ function agendaDelDia(uno: boolean, modo: "embeddings" | "bm25", t0: number) {
   } as Awaited<ReturnType<typeof consultar>>;
 }
 
+/** Guía de la plataforma y filtros del tablero: texto fijo + lo que la página debe mostrar (sin búsqueda ni LLM). */
+export function respuestaGuia(i: Extract<Intencion, { tipo: "guia" | "filtro" }>, modo: "embeddings" | "bm25", t0 = Date.now()) {
+  let texto: string, guia: NonNullable<Awaited<ReturnType<typeof consultar>>["guia"]>;
+  if (i.tipo === "filtro") {
+    const d = i.demo as { limpiar?: boolean; medio?: string; temas?: string[] };
+    texto = d.limpiar ? "Listo, quité los filtros del tablero: vuelves a ver todo el corte."
+      : d.medio ? "Listo, dejé el tablero solo con lo que publicó TVN. Mira cómo cambian las cifras y las gráficas; di «quita el filtro» para volver."
+      : `Listo, filtré el tablero por ${NOMBRE_TEMA[d.temas?.[0] ?? ""] ?? d.temas?.[0]}. Mira cómo cambian las cifras y las gráficas; di «quita el filtro» para volver.`;
+    guia = { vista: "tablero", ancla: "tablero-cifras", demo: i.demo, titulo: "Filtro del tablero", texto };
+  } else {
+    const p = parte(i.parte)!;
+    const idx = RECORRIDO_GUIA.indexOf(p.id);
+    const sig = i.recorrido && idx >= 0 ? parte(RECORRIDO_GUIA[idx + 1] ?? "") : undefined;
+    texto = `${p.texto}${i.recorrido && !sig ? " Ese fue el recorrido." : ""}`;
+    guia = { texto, parte: p.id, vista: p.vista, eventoId: p.vista === "ficha" ? cincoTemas(snapshot())[0]?.evento.id : undefined, ancla: p.ancla, demo: p.demo, titulo: p.titulo, siguiente: sig?.id, siguienteTitulo: sig?.titulo, paso: i.recorrido && idx >= 0 ? idx + 1 : undefined, total: i.recorrido ? RECORRIDO_GUIA.length : undefined };
+  }
+  return { abstener: false, conversacion: { motivo: "guia", texto, sugerencias: [] }, guia, afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA,
+    traza: { modo, comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: "Guía de la plataforma: muestra la pantalla, sin búsqueda." } } as Awaited<ReturnType<typeof consultar>>;
+}
+
 export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
   const t0 = Date.now();
   const i = intencion(q, { contexto, tokens: tokenizar(q) });
-  const r = i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
+  const r = (i.tipo === "guia" || i.tipo === "filtro") ? respuestaGuia(i, modo ?? "embeddings", t0)
+    : i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
     : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
     : await consultaSinRegistro(q, modo, eventoId, origen === "voz" && process.env.VOZ_RESPUESTA === "extractiva"); // plan B de latencia de la voz
