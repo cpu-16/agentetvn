@@ -108,6 +108,22 @@ export function ChatAgente() {
   // Muestra el inicio del último turno (la pregunta y debajo cómo buscó), no el final de la respuesta.
   useEffect(() => { (fin.current?.previousElementSibling ?? fin.current)?.scrollIntoView({ block: "start", behavior: reducir ? "auto" : "smooth" }); }, [turnos, reducir]);
 
+  // Evidencia para las citas: los eventos salen de la agenda ya cargada (caché del store); solo se piden las fichas necesarias.
+  const cargarEvidencia = async (idsNoticia: string[], idsInd: string[]) => {
+    try {
+      const a = await useMesa.getState().cargarAgenda();
+      const yaCargadas = new Set(evidencia.pubs.map((p) => p.id_noticia));
+      const faltan = idsNoticia.filter((i) => !yaCargadas.has(i));
+      const eventos = a ? a.eventos.filter((e) => e.ids_noticia.some((i) => faltan.includes(i))).slice(0, 5) : [];
+      const detalles = await Promise.all(eventos.map((e) => fetchMesa(`/api/eventos/${e.id}`).then((r) => (r.ok ? r.json() : null))));
+      const validos = detalles.filter(Boolean) as { publicaciones: Publicacion[]; indicadores: Indicador[]; sismos: Sismo[] }[];
+      const pubs = validos.flatMap((d) => d.publicaciones);
+      const inds = validos.flatMap((d) => d.indicadores);
+      const extra: Indicador[] = idsInd.filter((id) => !inds.some((i) => `${i.pais_iso3}:${i.indicador_id}:${i.anio}` === id)).map((id) => { const [pais, ind, anio] = id.split(":"); return { pais_iso3: pais, indicador_id: ind, anio: Number(anio), valor: null, unidad: "", fuente_url: `https://api.worldbank.org/v2/country/${pais}/indicator/${ind}?date=${anio}&format=json`, fecha_extraccion: "", licencia: "CC BY 4.0 (Banco Mundial)" }; });
+      setEvidencia((v) => ({ pubs: [...v.pubs, ...pubs], inds: [...v.inds, ...inds, ...extra], sismos: [...v.sismos, ...validos.flatMap((d) => d.sismos)] }));
+    } catch { /* la cita mostrará «no corresponde» si no se pudo cargar */ }
+  };
+
   const preguntar = async (texto: string, idExistente?: number, mostrar?: string) => {
     const pregunta = texto.trim();
     if (!pregunta || ocupado) return;
@@ -142,24 +158,9 @@ export function ChatAgente() {
   useEffect(() => {
     if (!preguntaPendiente || ocupado) return;
     useMesa.getState().pedirAlChat(null);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- la pregunta llega del store (otra pantalla); lanzarla es justo la sincronización que toca aquí
     void preguntar(preguntaPendiente);
   }, [preguntaPendiente, ocupado]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Evidencia para las citas: los eventos salen de la agenda ya cargada (caché del store); solo se piden las fichas necesarias.
-  const cargarEvidencia = async (idsNoticia: string[], idsInd: string[]) => {
-    try {
-      const a = await useMesa.getState().cargarAgenda();
-      const yaCargadas = new Set(evidencia.pubs.map((p) => p.id_noticia));
-      const faltan = idsNoticia.filter((i) => !yaCargadas.has(i));
-      const eventos = a ? a.eventos.filter((e) => e.ids_noticia.some((i) => faltan.includes(i))).slice(0, 5) : [];
-      const detalles = await Promise.all(eventos.map((e) => fetchMesa(`/api/eventos/${e.id}`).then((r) => (r.ok ? r.json() : null))));
-      const validos = detalles.filter(Boolean) as { publicaciones: Publicacion[]; indicadores: Indicador[]; sismos: Sismo[] }[];
-      const pubs = validos.flatMap((d) => d.publicaciones);
-      const inds = validos.flatMap((d) => d.indicadores);
-      const extra: Indicador[] = idsInd.filter((id) => !inds.some((i) => `${i.pais_iso3}:${i.indicador_id}:${i.anio}` === id)).map((id) => { const [pais, ind, anio] = id.split(":"); return { pais_iso3: pais, indicador_id: ind, anio: Number(anio), valor: null, unidad: "", fuente_url: `https://api.worldbank.org/v2/country/${pais}/indicator/${ind}?date=${anio}&format=json`, fecha_extraccion: "", licencia: "CC BY 4.0 (Banco Mundial)" }; });
-      setEvidencia((v) => ({ pubs: [...v.pubs, ...pubs], inds: [...v.inds, ...inds, ...extra], sismos: [...v.sismos, ...validos.flatMap((d) => d.sismos)] }));
-    } catch { /* la cita mostrará «no corresponde» si no se pudo cargar */ }
-  };
 
   const abrirFichaDe = (idNoticia: string) => {
     const ev = useMesa.getState().agenda?.eventos.find((e) => e.ids_noticia.includes(idNoticia));
