@@ -27,5 +27,9 @@ export function contextoDesdeMesa(s: { vista: VistaVoz; eventoId: string | null;
 /** Qué es la plataforma: lo saben el chat (texto fijo) y la voz (instrucciones y herramienta). Sin imports de servidor. */
 export const PLATAFORMA = "AgenteTVN es la mesa de la mañana de TVN Media. Pone primero las noticias de TVN, las cruza con otros medios y con datos oficiales, y ordena qué revisar hoy. Cada borrador lleva su cita y una persona lo aprueba. Portada, Agenda, Tablero y Control están en la barra de arriba.";
 export const PLATAFORMA_CORTA = "AgenteTVN es la mesa editorial asistida de TVN Media: junta las noticias del día, con TVN primero, y los datos oficiales, las ordena por importancia y prepara borradores con citas para que una persona decida. Tiene Portada, Agenda, Fichas de cada tema, Tablero y Control.";
+/** Qué hace cada rol (el que se elige al entrar): lo dicen el panel del chat, el enrutador y la voz. */
+export const QUE_HACE: Record<string, string> = { editor: "Como editor o editora decides qué se cubre hoy y apruebas los borradores.", periodista: "Como periodista verificas, en la ficha de cada tema, qué dice cada fuente y qué falta.", productor: "Como productor o productora preparas el paquete para TV, web y redes, en Paquete y revisión de la ficha." };
+/** El texto del rol que nombra la frase («¿qué hace un periodista?»), o null. Sin tildes ni mayúsculas. */
+export const queHaceRol = (t: string) => { const r = /\b(editor|periodista|productor)a?s?\b/.exec(t); return r ? `${QUE_HACE[r[1]]} Ningún rol publica: aprobar deja un borrador.` : null; };
 /** Orden del recorrido guiado por voz. */
 export const RECORRIDO: VistaVoz[] = ["portada", "agenda", "tablero", "control"];

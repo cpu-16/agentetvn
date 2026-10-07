@@ -1,9 +1,9 @@
 // Las 3 herramientas de Jarvis-TVN. Corren en Next con el motor de siempre: la voz nunca consulta datos por su cuenta.
 import { consulta, estadoDe, respuestaGuia, snapshot } from "../motor/servicio";
 import { tokenizar } from "../motor/bm25";
-import { explicacionFija, PLATAFORMA_CORTA, type VistaVoz } from "./catalogo";
+import { explicacionFija, PLATAFORMA_CORTA, queHaceRol, type VistaVoz } from "./catalogo";
 import { buscarParte, RECORRIDO_GUIA } from "./guia";
-import { contextoDe, encolar, guardarContexto, pasoRecorrido } from "./registro";
+import { contextoDe, encolar, guardarContexto, pasoRecorrido, pasoRetomable } from "./registro";
 
 const DESTINOS: VistaVoz[] = ["portada", "agenda", "tablero", "control", "ficha"];
 const NOMBRE: Record<VistaVoz, string> = { portada: "la portada", agenda: "la agenda", tablero: "el tablero", control: "Control", ficha: "la ficha" };
@@ -41,12 +41,12 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
   // Recorrido guiado: «recorrido» empieza; «siguiente» pasa a la próxima parte: la página navega, baja hasta esa parte,
   // la resalta y hace la demostración (cambiar de pestaña, filtrar el tablero). El paso se guarda en la llamada.
   if (pedido === "recorrido" || pedido === "siguiente") {
-    const previo = pasoRecorrido(hilo);
+    const enEsta = pasoRecorrido(hilo), previo = enEsta ?? pasoRetomable(); // la llamada anterior se cortó a mitad: se retoma
     if (pedido === "siguiente" && previo === undefined) return "No estamos en un recorrido. ¿Quieres que te muestre la plataforma parte por parte?";
     const i = pedido === "recorrido" ? 0 : previo! + 1;
     if (i >= RECORRIDO_GUIA.length) { pasoRecorrido(hilo, null); return "Ese fue el recorrido completo. Si quieres, te digo la noticia del día o abro la ficha de un tema."; }
     pasoRecorrido(hilo, i);
-    return `${i === 0 ? "Empecemos. " : ""}${mostrarParte(hilo, RECORRIDO_GUIA[i], true)}${i + 1 < RECORRIDO_GUIA.length ? " ¿Seguimos?" : " Ese fue el recorrido."}`;
+    return `${i === 0 ? "Empecemos. " : enEsta === undefined ? "Seguimos donde quedamos. " : ""}${mostrarParte(hilo, RECORRIDO_GUIA[i], true)}${i + 1 < RECORRIDO_GUIA.length ? " ¿Seguimos?" : " Ese fue el recorrido."}`;
   }
   const destino = pedido as VistaVoz;
   if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema, subir o bajar la página y volver atrás.`;
@@ -80,9 +80,15 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
 /** Para la voz: las dos primeras frases del texto fijo (el panel muestra el texto completo con «Explícame esta pantalla»). */
 
 export async function explicarPantalla(hilo: string, args: { sobre?: string } = {}): Promise<string> {
-  if (String(args.sobre ?? "").toLowerCase().startsWith("plataforma")) return PLATAFORMA_CORTA;
+  const sobre = String(args.sobre ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (sobre.startsWith("plataforma")) return PLATAFORMA_CORTA;
+  const rol = queHaceRol(sobre); // «yo entro como periodista, ¿qué hago?»
+  if (rol) return rol;
   const p = args.sobre ? buscarParte(args.sobre, contextoDe(hilo)?.vista) : null; // «explícame la gráfica de medios»: la muestra y la explica
   if (p) return mostrarParte(hilo, p.id);
+  // «explícame la parte de Control»: una sección entera sin parte propia → la abre y la explica
+  const seccion = DESTINOS.find((d) => d !== "ficha" && new RegExp(`\\b${d}\\b`).test(sobre));
+  if (seccion) return navegar(hilo, { destino: seccion });
   const c = contextoDe(hilo) ?? { vista: "portada" as const };
   const fijo = dosFrases(explicacionFija(c));
   if (c.vista === "ficha" && c.eventoId) {

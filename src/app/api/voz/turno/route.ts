@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const hilo = new URL(req.url).searchParams.get("hilo") ?? "";
   if (!esDueno(hilo, s.nombre, s.desde)) return NextResponse.json({ error: "no es tu llamada" }, { status: 403 });
   if (Number(req.headers.get("content-length") ?? 0) > 4000) return NextResponse.json({ error: "turno demasiado largo" }, { status: 413 });
-  if (!contarTurno(hilo)) return NextResponse.json({ error: "demasiados turnos" }, { status: 429 }); // una llamada de 3 min no da para más
+  if (!contarTurno(hilo)) return NextResponse.json({ error: "demasiados turnos" }, { status: 429 }); // una llamada de 5 min no da para más
   const crudo = await req.text();
   if (Buffer.byteLength(crudo) > 4000) return NextResponse.json({ error: "turno demasiado largo" }, { status: 413 });
   let b: { quien?: unknown; texto?: unknown } | null = null;

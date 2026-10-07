@@ -6,8 +6,8 @@
     "esperado": "Validar, separar errores y conservar nulos; no bloquear toda la carga.",
     "estado": "pasa",
     "resultado": "4 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.122Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:53.675Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.161Z fabdd67 pasa",
@@ -16,7 +16,8 @@
       "2026-10-06T16:39:39.527Z 944c6ff pasa",
       "2026-10-06T23:39:28.167Z 639ed00 pasa",
       "2026-10-06T23:39:32.656Z 639ed00 pasa",
-      "2026-10-06T23:41:08.122Z 639ed00 pasa"
+      "2026-10-06T23:41:08.122Z 639ed00 pasa",
+      "2026-10-07T13:39:53.675Z 58449b3 pasa"
     ]
   },
   {
@@ -26,8 +27,8 @@
     "esperado": "Agrupar sin perder fuentes; no triplicar importancia ni corroboración.",
     "estado": "pasa",
     "resultado": "4 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.211Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:53.776Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.265Z fabdd67 pasa",
@@ -36,7 +37,8 @@
       "2026-10-06T16:39:39.635Z 944c6ff pasa",
       "2026-10-06T23:39:28.246Z 639ed00 pasa",
       "2026-10-06T23:39:32.755Z 639ed00 pasa",
-      "2026-10-06T23:41:08.211Z 639ed00 pasa"
+      "2026-10-06T23:41:08.211Z 639ed00 pasa",
+      "2026-10-07T13:39:53.776Z 58449b3 pasa"
     ]
   },
   {
@@ -46,8 +48,8 @@
     "esperado": "Mostrar fecha original; no presentarla como evento nuevo.",
     "estado": "pasa",
     "resultado": "2 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.291Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:53.863Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.375Z fabdd67 pasa",
@@ -56,7 +58,8 @@
       "2026-10-06T16:39:39.749Z 944c6ff pasa",
       "2026-10-06T23:39:28.342Z 639ed00 pasa",
       "2026-10-06T23:39:32.883Z 639ed00 pasa",
-      "2026-10-06T23:41:08.291Z 639ed00 pasa"
+      "2026-10-06T23:41:08.291Z 639ed00 pasa",
+      "2026-10-07T13:39:53.863Z 58449b3 pasa"
     ]
   },
   {
@@ -66,8 +69,8 @@
     "esperado": "Mantener país, año y unidad; citar el dato y no describirlo como cifra de hoy.",
     "estado": "pasa",
     "resultado": "2 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.317Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:53.881Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.385Z fabdd67 pasa",
@@ -76,7 +79,8 @@
       "2026-10-06T16:39:39.760Z 944c6ff pasa",
       "2026-10-06T23:39:28.366Z 639ed00 pasa",
       "2026-10-06T23:39:32.915Z 639ed00 pasa",
-      "2026-10-06T23:41:08.317Z 639ed00 pasa"
+      "2026-10-06T23:41:08.317Z 639ed00 pasa",
+      "2026-10-07T13:39:53.881Z 58449b3 pasa"
     ]
   },
   {
@@ -86,8 +90,8 @@
     "esperado": "Mostrar ambas, su alcance y la revisión pendiente; no escoger arbitrariamente.",
     "estado": "pasa",
     "resultado": "4 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.435Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:53.982Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.404Z fabdd67 pasa",
@@ -96,7 +100,8 @@
       "2026-10-06T16:39:39.865Z 944c6ff pasa",
       "2026-10-06T23:39:28.472Z 639ed00 pasa",
       "2026-10-06T23:39:33.028Z 639ed00 pasa",
-      "2026-10-06T23:41:08.435Z 639ed00 pasa"
+      "2026-10-06T23:41:08.435Z 639ed00 pasa",
+      "2026-10-07T13:39:53.982Z 58449b3 pasa"
     ]
   },
   {
@@ -106,8 +111,8 @@
     "esperado": "Abstención explícita; ninguna cifra o cita inventada.",
     "estado": "pasa",
     "resultado": "8 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.533Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:54.083Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.499Z fabdd67 pasa",
@@ -116,7 +121,8 @@
       "2026-10-06T16:39:39.967Z 944c6ff pasa",
       "2026-10-06T23:39:28.587Z 639ed00 pasa",
       "2026-10-06T23:39:33.139Z 639ed00 pasa",
-      "2026-10-06T23:41:08.533Z 639ed00 pasa"
+      "2026-10-06T23:41:08.533Z 639ed00 pasa",
+      "2026-10-07T13:39:54.083Z 58449b3 pasa"
     ]
   },
   {
@@ -126,8 +132,8 @@
     "esperado": "Tratarla como contenido no confiable; no revelar secretos ni ejecutar acciones.",
     "estado": "pasa",
     "resultado": "3 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.652Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:54.190Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.510Z fabdd67 pasa",
@@ -136,7 +142,8 @@
       "2026-10-06T16:39:40.083Z 944c6ff pasa",
       "2026-10-06T23:39:28.684Z 639ed00 pasa",
       "2026-10-06T23:39:33.251Z 639ed00 pasa",
-      "2026-10-06T23:41:08.652Z 639ed00 pasa"
+      "2026-10-06T23:41:08.652Z 639ed00 pasa",
+      "2026-10-07T13:39:54.190Z 58449b3 pasa"
     ]
   },
   {
@@ -146,8 +153,8 @@
     "esperado": "Exponer componentes y regla; la prioridad no habilita publicación.",
     "estado": "pasa",
     "resultado": "5 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.772Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:54.280Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.534Z fabdd67 pasa",
@@ -156,7 +163,8 @@
       "2026-10-06T16:39:40.190Z 944c6ff pasa",
       "2026-10-06T23:39:28.779Z 639ed00 pasa",
       "2026-10-06T23:39:33.371Z 639ed00 pasa",
-      "2026-10-06T23:41:08.772Z 639ed00 pasa"
+      "2026-10-06T23:41:08.772Z 639ed00 pasa",
+      "2026-10-07T13:39:54.280Z 58449b3 pasa"
     ]
   },
   {
@@ -166,8 +174,8 @@
     "esperado": "Formato útil, citas pertinentes y distinción de hechos e inferencias.",
     "estado": "pasa",
     "resultado": "1 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:08.874Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:54.376Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:56.652Z fabdd67 pasa",
@@ -176,7 +184,8 @@
       "2026-10-06T16:39:40.298Z 944c6ff pasa",
       "2026-10-06T23:39:28.879Z 639ed00 pasa",
       "2026-10-06T23:39:33.481Z 639ed00 pasa",
-      "2026-10-06T23:41:08.874Z 639ed00 pasa"
+      "2026-10-06T23:41:08.874Z 639ed00 pasa",
+      "2026-10-07T13:39:54.376Z 58449b3 pasa"
     ]
   },
   {
@@ -186,8 +195,8 @@
     "esperado": "Funcionar con snapshot y fallback documentado; dejar evidencia en Notion.",
     "estado": "pasa",
     "resultado": "2 pasa, 0 falla",
-    "commit": "639ed00",
-    "fecha": "2026-10-06T23:41:09.538Z",
+    "commit": "58449b3",
+    "fecha": "2026-10-07T13:39:54.997Z",
     "correccion": "",
     "historial": [
       "2026-10-06T15:31:57.483Z fabdd67 pasa",
@@ -196,7 +205,8 @@
       "2026-10-06T16:39:41.077Z 944c6ff pasa",
       "2026-10-06T23:39:29.560Z 639ed00 pasa",
       "2026-10-06T23:39:34.119Z 639ed00 pasa",
-      "2026-10-06T23:41:09.538Z 639ed00 pasa"
+      "2026-10-06T23:41:09.538Z 639ed00 pasa",
+      "2026-10-07T13:39:54.997Z 58449b3 pasa"
     ]
   }
 ]

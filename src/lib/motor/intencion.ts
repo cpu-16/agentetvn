@@ -1,7 +1,7 @@
 // Enrutador del chat (el «router» que pidió Jeff): antes de buscar, decide si lo escrito es una consulta sobre las noticias
 // o una conversación (saludo, gracias, quién eres, ayuda, «de qué trata esto»). Lo conversacional se
 // contesta con texto fijo: no busca, no llama al LLM y no gasta tokens. Reglas a propósito: predecibles y auditables.
-import { explicacionFija, PLATAFORMA, type ContextoPantalla } from "../voz/catalogo";
+import { explicacionFija, PLATAFORMA, queHaceRol, type ContextoPantalla } from "../voz/catalogo";
 import { buscarParte, pedidoFiltro, RECORRIDO_GUIA, type Demo } from "../voz/guia";
 
 export type Intencion = { tipo: "consulta" } | { tipo: "agenda"; uno: boolean } | { tipo: "guia"; parte: string; recorrido?: boolean } | { tipo: "filtro"; demo: Demo } | { tipo: "conversacion"; motivo: "saludo" | "gracias" | "identidad" | "ayuda" | "pantalla" | "plataforma"; texto: string; sugerencias: string[] };
@@ -18,6 +18,11 @@ const GRACIAS = new RegExp(`${PRE}(gracias|muchas gracias|mil gracias|ok|okay|ok
 const IDENTIDAD = new RegExp(`${PRE}(quien eres( tu)?|que eres( tu)?|como te llamas|que modelo (eres|usas|utilizas)|que (ia|inteligencia artificial) (eres|usas|utilizas)|quien te (hizo|creo|programo|entreno))( jarvis)?$`);
 const AYUDA = new RegExp(`${PRE}(ayuda|help|que puedes hacer|en que (me )?(puedes )?ayudar(me)?|como funcionas|como te uso|que (te )?puedo preguntar(te)?|para que sirves)( jarvis)?$`);
 const PANTALLA = new RegExp(`${PRE}(esto |esta pantalla |esta seccion |esta pagina )?(de que (se )?trata|que es esto|esto que es|que estoy viendo|que significa esto|que significa esta (pantalla|seccion|pagina)|explicame (esto|esta pantalla|la pantalla|esta seccion|esta pagina)|que hay aqui|que muestra esta pantalla)( (esto|esta pantalla|esta seccion|esta pagina|aqui))?$`);
+
+// «Estoy aquí, ¿qué se hace?» (sin tema): es la pantalla que tiene abierta.
+const QUE_HAGO_AQUI = new RegExp(`${PRE}(ya )?(estoy (aqui|aca) )?(y )?(que se hace|que hago|que tengo que hacer|que debo hacer)( (aqui|aca))?$`);
+// «¿Qué hace un periodista?», «yo entro como productor, ¿qué hago?»: el rol que se elige al entrar.
+const PAL_ROL = new Set("editor editora periodista productor productora editores periodistas productores rol mi como soy entro entre yo un una que hace hago hacer debo tengo funcion sirve para creo es lo".split(" "));
 
 /** Palabras de pregunta que no dicen de qué tema se trata (ya tokenizadas: sin tildes ni mayúsculas). */
 const DE_PREGUNTA = new Set("paso pasa ocurrio ocurre sabe saben dijo dicen dice hay hubo noticia noticias informacion tema temas cual cuales quien quienes donde cuando como hoy ayer ultimo ultima ultimos ultimas nuevo nueva reporta reportan explica explicame cuentame dime puedes quiero saber mas acerca".split(" "));
@@ -59,6 +64,9 @@ export function intencion(q: string, opts: { contexto?: ContextoPantalla | null;
   if (GRACIAS.test(t)) return charla("gracias", "Con gusto. Si quieres, pregúntame por otro tema del corte.");
   if (IDENTIDAD.test(t)) return charla("identidad", `Soy Jarvis, el agente de la mesa editorial de TVN. ${QUE_HAGO} No publico ni apruebo nada: eso lo decide una persona.`);
   if (AYUDA.test(t)) return charla("ayuda", `${QUE_HAGO} Puedes preguntarme por un tema, una persona, un lugar o un indicador de Panamá, y también qué significa la pantalla que tienes abierta.`);
+  const rol = queHaceRol(t);
+  if (rol && soloCon(PAL_ROL)) return charla("ayuda", rol, ["Hazme un recorrido por la plataforma", "¿Cuál es la noticia del día?"]);
+  if (QUE_HAGO_AQUI.test(t)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), ["Hazme un recorrido por la plataforma"]);
   if (PANTALLA.test(t) || (DELANTE.test(t) && QUE_ES.test(t) && sinTema)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), SUGERENCIAS.slice(0, 1));
   if (PLATAFORMA_RE.test(t) && (QUE_ES.test(t) || toks.length <= 3) && soloCon(PAL_PLATAFORMA)) return charla("plataforma", PLATAFORMA, ["¿Qué cinco temas merecen revisión hoy?", "¿Cuál es la noticia del día?"]);
   if (AGENDA.test(t) && soloCon(PAL_AGENDA) && !CAUSA_U_OTRO_DIA.test(t)) return { tipo: "agenda", uno: UNA.test(t) && !/cinco|5 |temas|noticias/.test(t) };

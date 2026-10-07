@@ -56,7 +56,7 @@ export function buscarParte(texto: string, vistaActual?: string): Parte | null {
   const t = ` ${norm(texto)} `;
   let mejor: { p: Parte; largo: number } | null = null;
   for (const p of GUIA) for (const c of p.claves) {
-    if (!t.includes(` ${c} `) && !t.includes(` ${c}s `)) continue;
+    if (!t.includes(` ${c} `) && !t.includes(` ${c}s `) && !t.includes(` ${c}es `)) continue; // «los borradores»
     const largo = c.length + (p.vista === vistaActual ? 0.5 : 0);
     if (!mejor || largo > mejor.largo) mejor = { p, largo };
   }

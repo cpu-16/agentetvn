@@ -67,6 +67,22 @@ describe("herramientas", () => {
     expect(acciones.some((a) => a.parte === "ficha-paquete" && a.demo?.tipo === "pestana")).toBe(true);
     expect(acciones.some((a) => a.parte === "tablero-temas" && a.demo?.tipo === "filtroTablero")).toBe(true);
   });
+  test("el tope de minutos corta a mitad del recorrido: «sigue» en la llamada nueva retoma donde iba (prueba de Gilberto, 6-oct)", () => {
+    h.navegar("h1", { destino: "recorrido" });
+    for (let i = 0; i < 8; i++) h.navegar("h1", { destino: "siguiente" }); // va por tablero-medios (paso 9 de 12)
+    abrirLlamada("h2", "Ana", "2026-10-06T10:00:00Z"); sacarAcciones("h1");
+    expect(h.navegar("h2", { destino: "siguiente" })).toStartWith("Seguimos donde quedamos. Cada punto es un tema");
+    expect(sacarAcciones("h2")).toMatchObject([{ tipo: "guia", parte: "tablero-relevancia" }]);
+    expect(h.navegar("h2", { destino: "siguiente" })).not.toContain("Seguimos donde quedamos");
+  });
+  test("«explícame la parte de Control» abre Control; los roles y «dónde están los borradores» (prueba de Gilberto, 6-oct)", async () => {
+    sacarAcciones("h1");
+    expect(await h.explicarPantalla("h1", { sobre: "la parte de control" })).toContain("Estás en Control");
+    expect(sacarAcciones("h1")).toEqual([{ tipo: "navegar", vista: "control" }]);
+    expect(await h.explicarPantalla("h1", { sobre: "qué hace un periodista" })).toContain("Como periodista verificas");
+    expect(await h.explicarPantalla("h1", { sobre: "los borradores" })).toContain("Paquete y revisión");
+    expect(sacarAcciones("h1")).toMatchObject([{ tipo: "guia", parte: "ficha-paquete" }]);
+  });
   test("explicar_pantalla con una parte concreta la muestra en la página", async () => {
     sacarAcciones("h1");
     expect(await h.explicarPantalla("h1", { sobre: "la gráfica de publicaciones por tema" })).toContain("Economía");
