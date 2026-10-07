@@ -3,7 +3,7 @@
 import type { ContextoPantalla, VistaVoz } from "./catalogo";
 
 export type Accion = { tipo: "navegar"; vista: VistaVoz; eventoId?: string } | { tipo: "desplazar"; direccion: "arriba" | "abajo" | "inicio" | "final" } | { tipo: "atras" } | { tipo: "mostrar"; pregunta: string; respuesta: unknown } | { tipo: "colgada"; motivo: string };
-interface Llamada { persona: string; desde: string; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number; sondeo: number; turnos?: number }
+interface Llamada { persona: string; desde: string; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number; sondeo: number; turnos?: number; recorrido?: number }
 const g = globalThis as unknown as { __vozLlamadas?: Map<string, Llamada> };
 const llamadas = (g.__vozLlamadas ??= new Map<string, Llamada>());
 
@@ -20,5 +20,7 @@ export const sacarAcciones = (hilo: string): Accion[] => { const l = llamadas.ge
 export const abandonada = (hilo: string, ahora = Date.now()) => { const l = llamadas.get(hilo); return !!l && ahora - l.sondeo > 15_000; };
 /** Tope de turnos registrados por llamada (una llamada de 3 min no pasa de unas decenas). */
 export const contarTurno = (hilo: string, max = 120) => { const l = llamadas.get(hilo); if (!l) return false; l.turnos = (l.turnos ?? 0) + 1; return l.turnos <= max; };
+/** Paso del recorrido guiado de la llamada (undefined si no hay recorrido). Con `nuevo`, lo fija. */
+export const pasoRecorrido = (hilo: string, nuevo?: number | null) => { const l = llamadas.get(hilo); if (!l) return undefined; if (nuevo !== undefined) l.recorrido = nuevo ?? undefined; return l.recorrido; };
 export const cerrarLlamada = (hilo: string) => void llamadas.delete(hilo);
 export const _vaciarRegistro = () => llamadas.clear();

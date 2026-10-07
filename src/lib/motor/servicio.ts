@@ -143,12 +143,12 @@ export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId
   const r = i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
     : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
-    : await consultaSinRegistro(q, modo, eventoId);
+    : await consultaSinRegistro(q, modo, eventoId, origen === "voz" && process.env.VOZ_RESPUESTA === "extractiva"); // plan B de latencia de la voz
   registrar(origen, q, r);
   return r;
 }
 
-async function consultaSinRegistro(q: string, modo?: "embeddings" | "bm25", eventoId?: string) {
+async function consultaSinRegistro(q: string, modo?: "embeddings" | "bm25", eventoId?: string, sinLLM = false) {
   const snap = snapshot();
   const ev = eventoId ? snap.eventos.find((e) => e.id === eventoId) : undefined;
   if (eventoId && !ev) // un tema que no existe no amplía la búsqueda a todo el corpus
@@ -156,6 +156,7 @@ async function consultaSinRegistro(q: string, modo?: "embeddings" | "bm25", even
   const soloIds = ev?.ids_noticia;
   const r = await consultar(q, snap, { modo, soloIds });
   if (r.abstener) return r; // las abstenciones son deterministas: nunca pasan por el LLM
+  if (sinLLM) return r;
   const redaccion = await redactarRespuesta(q, fuentesDe(r.afirmaciones, new Map(snap.noticias.map((n) => [n.id_noticia, n]))));
   return redaccion ? { ...r, redaccion } : r;
 }

@@ -278,7 +278,8 @@ export function ChatAgente() {
                   ) : t.respuesta.agenda ? (
                     <div className="mr-4 rounded-md border border-border bg-white px-3 py-2.5">
                       <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis · agenda de hoy</span>
-                      <p className="leading-relaxed">{t.respuesta.agenda.texto}</p>
+                      <p className="leading-relaxed">{t.respuesta.agenda.uno ? "La que más merece revisión hoy:" : "Hoy la mesa prioriza estos temas:"}</p>
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">El puntaje mide atención, no verdad; la evidencia dice si ya se puede escribir.</p>
                       <ol className="mt-2 space-y-1.5">
                         {t.respuesta.agenda.items.map((x, i) => (
                           <li key={x.eventoId}>
@@ -293,15 +294,15 @@ export function ChatAgente() {
                           </li>
                         ))}
                       </ol>
-                      <p className="mt-2 text-[11px] text-muted-foreground">Toca un tema para abrir su ficha. El puntaje mide atención, no verdad: la evidencia decide si se puede escribir.</p>
+                      <p className="mt-2 text-[11px] text-muted-foreground">Toca un tema para abrir su ficha.</p>
                     </div>
                   ) : (
                     <RespuestaClara r={t.respuesta} onCita={setCita} onFicha={enFicha ? undefined : () => abrirFichaDe(t.respuesta!.evidencias.find((e) => e.tipo === "noticia")!.id)} />
                   )}
                   {/* la traza va después de la respuesta: primero lo que sirve, después cómo se buscó */}
-                  {t.respuesta?.traza && !t.respuesta.conversacion && <TrazaBusqueda traza={t.respuesta.traza} llmMs={t.respuesta.redaccion?.llm.ms} abierta={!celular && (iTurno === turnos.length - 1 || turnos.slice(iTurno + 1).every((x) => x.voz))} />}
+                  {t.respuesta?.traza && !t.respuesta.conversacion && !(celular && t.respuesta.traza.regla) && <TrazaBusqueda traza={t.respuesta.traza} llmMs={t.respuesta.redaccion?.llm.ms} abierta={!celular && (iTurno === turnos.length - 1 || turnos.slice(iTurno + 1).every((x) => x.voz))} />}
                   {t.respuesta && t.respuesta.contradicciones.length > 0 && <p className="rounded-sm bg-[#fdecef] px-3 py-1.5 text-xs text-[#9b1526]">{t.respuesta.contradicciones.length} contradicción(es) abierta(s) entre las fuentes: {t.respuesta.contradicciones.map((c) => c.detalle).join("; ")}</p>}
-                  {t.respuesta && !t.respuesta.conversacion && <p className="text-[10.5px] text-muted-foreground">{t.respuesta.leyenda}</p>}
+                  {t.respuesta && !t.respuesta.conversacion && turnos.slice(iTurno + 1).every((x) => x.voz) && <p className="text-[10.5px] text-muted-foreground">Solo titulares y datos del corte; no se leyó la nota completa.</p>}
                 </div>
               ))}
               <div ref={fin} />
@@ -347,11 +348,10 @@ function RespuestaClara({ r, onCita, onFicha }: { r: Respuesta; onCita: (id: str
         {frases.map((f, i) => (
           <span key={i}>
             {f.texto}{TIPO[f.tipo] && <span className="ml-1 text-[10.5px] text-muted-foreground">({TIPO[f.tipo]})</span>}
-            <button type="button" onClick={() => onCita(f.evidence_id)} className="presionable mx-0.5 inline-flex min-h-6 min-w-6 items-center justify-center rounded-full border border-acero/40 bg-white px-1 align-text-top text-[10.5px] font-semibold text-acero hover:bg-acero hover:text-white" aria-label={`Ver la fuente ${n.get(f.evidence_id)}`}>{n.get(f.evidence_id)}</button>{" "}
+            {frases[i + 1]?.evidence_id !== f.evidence_id && <button type="button" onClick={() => onCita(f.evidence_id)} className="presionable mx-0.5 inline-flex min-h-6 min-w-6 items-center justify-center rounded-full border border-acero/40 bg-white px-1 align-text-top text-[10.5px] font-semibold text-acero hover:bg-acero hover:text-white" aria-label={`Ver la fuente ${n.get(f.evidence_id)}`}>{n.get(f.evidence_id)}</button>}{" "}
           </span>
         ))}
       </p>
-      {vacios.length > 0 && <p className="mt-2 rounded-sm bg-[#fff8e1] px-2.5 py-1.5 text-xs text-[#7a5600]"><span className="font-medium">Falta verificar:</span> {vacios.slice(0, 2).map((v) => v.replace(/[.;\s]+$/, "")).join("; ")}.</p>}
       <p className="mt-2.5 text-[11px] font-medium text-muted-foreground">Fuentes</p>
       <ol className="mt-1 space-y-1">
         {fuentes.map((f) => (
@@ -363,9 +363,10 @@ function RespuestaClara({ r, onCita, onFicha }: { r: Respuesta; onCita: (id: str
           </li>
         ))}
       </ol>
+      {vacios.length > 0 && <p className="mt-2 text-xs text-[#7a5600]"><span className="font-medium">Lo que la fuente no dice:</span> {vacios[0].replace(/[.;\s]+$/, "")}.</p>}
       <div className="mt-2 flex flex-wrap items-center gap-2">
         {onFicha && r.evidencias.some((e) => e.tipo === "noticia") && <button className="presionable min-h-9 rounded-full border border-tinta/30 bg-white px-3 text-xs font-medium text-tinta hover:border-tinta" onClick={onFicha}>Abrir la ficha →</button>}
-        <span className="text-[10.5px] text-muted-foreground">{r.redaccion ? `Redactado por IA (${nombreModelo(r.redaccion.llm.modelo)}, ${Math.round(r.redaccion.llm.ms / 1000)} s) solo con estas fuentes; revísalo antes de usarlo.` : "Afirmaciones tomadas de las fuentes, sin redacción de IA."}</span>
+        <span className="text-[10.5px] text-muted-foreground">{r.redaccion ? <span title={`${nombreModelo(r.redaccion.llm.modelo)}, ${Math.round(r.redaccion.llm.ms / 1000)} s`}>Borrador de IA, solo con estas fuentes. Revísalo antes de usarlo.</span> : "Tomado de las fuentes, sin redacción de IA."}</span>
       </div>
     </div>
   );

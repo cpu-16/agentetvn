@@ -27,6 +27,7 @@ describe("enrutador del chat", () => {
     for (const q of ["¿Qué cinco temas merecen revisión hoy?", "¿Qué temas hay hoy?", "¿De qué se habla hoy?", "noticias de hoy"]) expect(motivo(q)).toBe("agenda");
   });
   test("con tema propio siguen siendo consultas aunque se parezcan", () => {
+    for (const q of ["¿Por qué la noticia del día merece atención?", "La noticia del día de ayer", "¿Cuál fue la noticia del día en 2025?"]) expect(motivo(q)).toBe("consulta"); // causalidad y otros días: al motor
     for (const q of ["Noticias de hoy sobre el Canal de Panamá", "¿Qué es la plataforma de vacunación del Minsa?", "Explícame la aprehensión de Enrique Lau", "¿Qué pasó hoy con el agua en Changuinola?"]) expect(motivo(q)).toBe("consulta");
   });
   test("tema desconocido: palabras que no están en ninguna noticia", () => {

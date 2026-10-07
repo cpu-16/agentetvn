@@ -159,7 +159,7 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
   let candidatos: { id: string; score: number }[] = [];
   let modoEfectivo: Respuesta["modo"] = modo;
   let traza: Traza | undefined;
-  const mejores = (orden: { id: string; score: number }[], usadas: number) => orden.slice(0, k + 3).map((c, i) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: i < usadas }));
+  const mejores = (orden: { id: string; score: number }[], usadas: Set<string>) => orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })); // por pertenencia (revisión de Codex)
   if (usarEmb) {
     try {
       const t1 = Date.now();
@@ -173,7 +173,7 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
       const mejor = Math.max(...todos.map((c) => c.score)); // el margen se mide contra el coseno real: el bono de TVN solo ordena
       candidatos = sobreUmbral.filter((c) => c.score >= mejor - MARGEN_COSENO).slice(0, k);
       traza = { modo: "embeddings", modelo: MODELO, dim: DIM, vector: Array.from(qv.slice(0, 48), (x) => Math.round(x * 1000) / 1000), comparadas: todos.length, umbral: cfg.umbral_coseno, margen: MARGEN_COSENO, sobreUmbral: sobreUmbral.length, k,
-        histograma: histograma(todos.map((c) => c.score)), mejores: mejores(todos, candidatos.length), pasos: [{ paso: "vectorizar", ms: t2 - t1 }, { paso: "comparar", ms: t3 - t2 }] };
+        histograma: histograma(todos.map((c) => c.score)), mejores: mejores(todos, new Set(candidatos.map((c) => c.id))), pasos: [{ paso: "vectorizar", ms: t2 - t1 }, { paso: "comparar", ms: t3 - t2 }] };
     } catch {
       modoEfectivo = "bm25"; // modelo presente pero no cargable: fallback documentado (T10)
     }

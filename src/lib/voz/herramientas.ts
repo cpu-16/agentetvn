@@ -1,9 +1,8 @@
 // Las 3 herramientas de Jarvis-TVN. Corren en Next con el motor de siempre: la voz nunca consulta datos por su cuenta.
 import { consulta, estadoDe, snapshot } from "../motor/servicio";
-import { consultar } from "../motor/consulta";
 import { tokenizar } from "../motor/bm25";
 import { explicacionFija, PLATAFORMA_CORTA, RECORRIDO, type VistaVoz } from "./catalogo";
-import { contextoDe, encolar, guardarContexto } from "./registro";
+import { contextoDe, encolar, guardarContexto, pasoRecorrido } from "./registro";
 
 const DESTINOS: VistaVoz[] = ["portada", "agenda", "tablero", "control", "ficha"];
 const NOMBRE: Record<VistaVoz, string> = { portada: "la portada", agenda: "la agenda", tablero: "el tablero", control: "Control", ficha: "la ficha" };
@@ -33,18 +32,19 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
   if (pedido === "atras") { encolar(hilo, { tipo: "atras" }); return "Listo, volví a la pantalla anterior."; }
   // Recorrido guiado: «recorrido» empieza en la portada; «siguiente» pasa a la próxima sección y la explica.
   if (pedido === "recorrido" || pedido === "siguiente") {
-    const actual = contextoDe(hilo)?.vista ?? "portada";
-    const i = pedido === "recorrido" ? 0 : RECORRIDO.indexOf(actual as VistaVoz) + 1;
-    if (i >= RECORRIDO.length) return "Ese fue el recorrido: portada, agenda, tablero y Control. Si quieres, abro la ficha de un tema.";
+    const previo = pasoRecorrido(hilo);
+    if (pedido === "siguiente" && previo === undefined) return "No estamos en un recorrido. ¿Quieres que te muestre la plataforma sección por sección?";
+    const i = pedido === "recorrido" ? 0 : previo! + 1; // el paso se guarda en la llamada: no depende de la pantalla
+    if (i >= RECORRIDO.length) { pasoRecorrido(hilo, null); return "Ese fue el recorrido: portada, agenda, tablero y Control. Si quieres, abro la ficha de un tema."; }
     const v = RECORRIDO[i];
+    pasoRecorrido(hilo, i);
     encolar(hilo, { tipo: "navegar", vista: v });
-    guardarContexto(hilo, { vista: v }); // la próxima «siguiente» parte de aquí aunque la página tarde en avisar
     const sigue = RECORRIDO[i + 1];
     return `${i === 0 ? "Empecemos. " : ""}${dosFrases(explicacionFija({ vista: v }))}${sigue ? ` ¿Seguimos con ${NOMBRE[sigue]}?` : " Ese es el final del recorrido."}`;
   }
   const destino = pedido as VistaVoz;
   if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema, subir o bajar la página y volver atrás.`;
-  if (destino !== "ficha") { encolar(hilo, { tipo: "navegar", vista: destino }); guardarContexto(hilo, { vista: destino }); return `Listo, abrí ${NOMBRE[destino]}. ${dosFrases(explicacionFija({ vista: destino }))}`; }
+  if (destino !== "ficha") { encolar(hilo, { tipo: "navegar", vista: destino }); if (contextoDe(hilo)?.vista !== destino) guardarContexto(hilo, { vista: destino }); return `Listo, abrí ${NOMBRE[destino]}. ${dosFrases(explicacionFija({ vista: destino }))}`; }
   const snap = snapshot();
   if (args.eventoId && snap.eventos.some((e) => e.id === args.eventoId)) { encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: args.eventoId }); return "Listo, abrí la ficha."; }
   const r = buscarEventos(args.consulta ?? "");
@@ -59,9 +59,8 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   if (!pregunta) return "No escuché la pregunta. ¿Me la repites?";
   if (args.eventoId && !snapshot().eventos.some((e) => e.id === args.eventoId)) return "Ese tema no está en el corte de hoy, así que no puedo responder sobre él.";
   // VOZ_RESPUESTA=extractiva (plan B si la latencia pasa de 15 s): la voz usa el motor sin la redacción de Claude
-  const r = process.env.VOZ_RESPUESTA === "extractiva"
-    ? await consultar(pregunta, snapshot(), { soloIds: args.eventoId ? snapshot().eventos.find((e) => e.id === args.eventoId)?.ids_noticia : undefined })
-    : await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo));
+  // VOZ_RESPUESTA=extractiva solo apaga la redacción con LLM; el enrutador (agenda, plataforma) sigue igual (revisión de Codex)
+  const r = await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo));
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
   // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
   if (r.conversacion) return r.conversacion.motivo === "plataforma" ? PLATAFORMA_CORTA : r.conversacion.texto;

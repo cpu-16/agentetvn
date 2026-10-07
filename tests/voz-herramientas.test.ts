@@ -1,7 +1,7 @@
 // Jarvis-TVN · herramientas de la voz: catálogo fijo, registro por dueño, corpus sin ampliar, navegar sin adivinar.
 import { beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import { contextoDesdeMesa, explicacionFija } from "../src/lib/voz/catalogo";
-import { _vaciarRegistro, abrirLlamada, encolar, esDueno, guardarContexto, sacarAcciones } from "../src/lib/voz/registro";
+import { _vaciarRegistro, abrirLlamada, contextoDe, encolar, esDueno, guardarContexto, sacarAcciones } from "../src/lib/voz/registro";
 
 let h: typeof import("../src/lib/voz/herramientas");
 let servicio: typeof import("../src/lib/motor/servicio");
@@ -50,6 +50,13 @@ describe("herramientas", () => {
     expect(sacarAcciones("h1")).toEqual([{ tipo: "desplazar", direccion: "abajo" }, { tipo: "desplazar", direccion: "arriba" }, { tipo: "desplazar", direccion: "final" }, { tipo: "atras" }]);
     for (const raro of ["constructor", "__proto__", "toString"]) expect(h.navegar("h1", { destino: raro })).toContain("No puedo abrir"); // lista cerrada (revisión de Codex)
     expect(sacarAcciones("h1")).toHaveLength(0);
+  });
+  test("«siguiente» sin recorrido no abre nada; navegar a la sección abierta no borra sus filtros (revisión de Codex)", () => {
+    expect(h.navegar("h1", { destino: "siguiente" })).toContain("No estamos en un recorrido");
+    expect(sacarAcciones("h1")).toHaveLength(0);
+    guardarContexto("h1", { vista: "agenda", filtrosAgenda: "tema economía" });
+    h.navegar("h1", { destino: "agenda" }); sacarAcciones("h1");
+    expect(contextoDe("h1")?.filtrosAgenda).toBe("tema economía");
   });
   test("recorrido guiado: empieza en la portada y «siguiente» abre y explica cada sección hasta Control", () => {
     expect(h.navegar("h1", { destino: "recorrido" })).toContain("Estás en la portada");
