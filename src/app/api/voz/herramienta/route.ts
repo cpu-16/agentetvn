@@ -10,6 +10,6 @@ export async function POST(req: Request) {
   if (!["preguntar_corpus", "explicar_pantalla", "navegar"].includes(String(nombre))) return NextResponse.json({ error: `herramienta no permitida: ${String(nombre)}` }, { status: 400 });
   if (!hilo || !existeLlamada(hilo)) return NextResponse.json({ texto: "La llamada ya terminó." }, { status: 404 });
   const a = args ?? {};
-  const texto = nombre === "preguntar_corpus" ? await preguntarCorpus(hilo, a) : nombre === "explicar_pantalla" ? await explicarPantalla(hilo) : navegar(hilo, a);
+  const texto = nombre === "preguntar_corpus" ? await preguntarCorpus(hilo, a) : nombre === "explicar_pantalla" ? await explicarPantalla(hilo, a) : navegar(hilo, a);
   return NextResponse.json({ texto });
 }

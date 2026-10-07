@@ -1,8 +1,9 @@
 // Capa de servicio usada por las rutas API (y por las pruebas sin HTTP).
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
-import { cincoTemas, consultar, LEYENDA } from "./consulta";
+import { afirmacionNoticia, cincoTemas, consultar, LEYENDA } from "./consulta";
 import { intencion } from "./intencion";
+import { tokenizar } from "./bm25";
 import type { ContextoPantalla } from "../voz/catalogo";
 import { generarPaquete } from "./paquete";
 import { resumenCorte } from "./tablero";
@@ -114,10 +115,33 @@ function registrar(origen: "texto" | "voz", q: string, r: Awaited<ReturnType<typ
   } catch { /* el registro nunca tumba una respuesta */ }
 }
 
+/** «¿Cuál es la noticia del día?» / «¿qué cinco temas merecen revisión?»: sale de «Cinco para hoy» (el puntaje del motor),
+ *  no de la búsqueda por sentido. TVN primero: si un tema tiene cobertura de TVN, se nombra a TVN. */
+function agendaDelDia(uno: boolean, modo: "embeddings" | "bm25", t0: number) {
+  const snap = snapshot();
+  const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+  const items = cincoTemas(snap).map(({ evento: e, razones, vacios }) => {
+    const tvn = e.ids_noticia.map((i) => porId.get(i)).find((n) => n?.medio === "TVN");
+    const n = tvn ?? porId.get(e.representante)!;
+    return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: e.P, rango: e.rango, evidencia: e.estado_evidencia, razon: razones[0], falta: vacios[0] ?? null, publicaciones: e.ids_noticia.length };
+  });
+  const lista = uno ? items.slice(0, 1) : items;
+  const [a, b, c] = items;
+  const texto = !a ? "Hoy no hay temas con puntaje suficiente en el corte." : uno
+    ? `La que más merece revisión hoy es «${a.titulo}», de ${a.medio}, con ${a.P} de 100 de atención y evidencia ${a.evidencia}.`
+    : `Hoy la mesa prioriza ${items.length} temas. El primero es «${a.titulo}», de ${a.medio}, con ${a.P} de 100${b ? `; le siguen «${b.titulo}»${c ? ` y «${c.titulo}»` : ""}` : ""}.`;
+  return {
+    abstener: false, agenda: { uno, texto, items: lista }, afirmaciones: lista.map((x) => afirmacionNoticia(porId.get(x.idNoticia)!)),
+    evidencias: lista.map((x) => ({ id: x.idNoticia, tipo: "noticia" as const, resumen: `${x.medio} · ${x.titulo}`, score: 1 })), contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA,
+    traza: { modo, comparadas: snap.eventos.length, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: "La agenda del día sale del puntaje de atención del motor («Cinco para hoy»), no de la búsqueda por sentido." },
+  } as Awaited<ReturnType<typeof consultar>>;
+}
+
 export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
   const t0 = Date.now();
-  const i = intencion(q, { contexto });
-  const r = i.tipo === "conversacion"
+  const i = intencion(q, { contexto, tokens: tokenizar(q) });
+  const r = i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
+    : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
     : await consultaSinRegistro(q, modo, eventoId);
   registrar(origen, q, r);

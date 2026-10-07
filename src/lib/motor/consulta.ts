@@ -21,6 +21,7 @@ export interface Respuesta {
   leyenda: string;
   redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: MetaLLM }; // solo en modo online, sobre lo recuperado
   conversacion?: { motivo: string; texto: string; sugerencias: string[] }; // el enrutador contestó sin buscar
+  agenda?: { uno: boolean; texto: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] };
   traza?: Traza; // cómo se buscó: lo dibuja el chat
 }
 /** Traza de la recuperación para mostrarla: vector de la pregunta (primeras 48 dims), distribución de similitudes del corpus,
@@ -40,6 +41,9 @@ const porRegla = (modo: Traza["modo"], k: number, regla: string): Traza => ({ mo
  *  abstenciones 6/7 (0 indebidas), adversarial 6/6 y citas 38/38; evidencias por consulta de 3,84 a 1,55. Fuera del JSON
  *  de reglas para no cambiar la huella del motor v1. */
 export const MARGEN_COSENO = 0.02;
+/** TVN es el cliente: a igual parecido, su nota va primero. Bono pequeño (la mitad del margen) solo para ordenar y para el
+ *  margen; el umbral se aplica al coseno real. EXP_BONO_TVN solo para medir. */
+export const BONO_TVN = Number(process.env.EXP_BONO_TVN ?? 0.01);
 const r3 = (x: number) => Math.round(x * 1000) / 1000;
 export function histograma(scores: number[], bins = 28): Traza["histograma"] {
   if (!scores.length) return undefined;
@@ -162,10 +166,11 @@ export async function consultar(q: string, snap: Snapshot, opts: { modo?: "embed
       const [qv] = await embeber([q], "query");
       const t2 = Date.now();
       const emb = snap.embeddings!;
-      const todos = emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id)).sort((a, b) => b.score - a.score);
+      const todos = emb.ids.map((id, i) => ({ id, score: coseno(qv, emb.vectores[i]) })).filter((c) => permitida(c.id))
+        .map((c) => ({ ...c, orden: c.score + (porId.get(c.id)!.medio === "TVN" ? BONO_TVN : 0) })).sort((a, b) => b.orden - a.orden);
       const t3 = Date.now();
       const sobreUmbral = todos.filter((c) => c.score >= cfg.umbral_coseno);
-      candidatos = sobreUmbral.filter((c) => c.score >= todos[0].score - MARGEN_COSENO).slice(0, k);
+      candidatos = sobreUmbral.filter((c) => c.orden >= todos[0].orden - MARGEN_COSENO).slice(0, k);
       traza = { modo: "embeddings", modelo: MODELO, dim: DIM, vector: Array.from(qv.slice(0, 48), (x) => Math.round(x * 1000) / 1000), comparadas: todos.length, umbral: cfg.umbral_coseno, margen: MARGEN_COSENO, sobreUmbral: sobreUmbral.length, k,
         histograma: histograma(todos.map((c) => c.score)), mejores: mejores(todos, candidatos.length), pasos: [{ paso: "vectorizar", ms: t2 - t1 }, { paso: "comparar", ms: t3 - t2 }] };
     } catch {

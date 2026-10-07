@@ -51,6 +51,23 @@ describe("herramientas", () => {
     for (const raro of ["constructor", "__proto__", "toString"]) expect(h.navegar("h1", { destino: raro })).toContain("No puedo abrir"); // lista cerrada (revisión de Codex)
     expect(sacarAcciones("h1")).toHaveLength(0);
   });
+  test("recorrido guiado: empieza en la portada y «siguiente» abre y explica cada sección hasta Control", () => {
+    expect(h.navegar("h1", { destino: "recorrido" })).toContain("Estás en la portada");
+    for (const v of ["agenda", "tablero", "Control"]) expect(h.navegar("h1", { destino: "siguiente" })).toContain(v);
+    expect(h.navegar("h1", { destino: "siguiente" })).toContain("Ese fue el recorrido");
+    expect(sacarAcciones("h1").map((a) => (a as { vista?: string }).vista)).toEqual(["portada", "agenda", "tablero", "control"]);
+  });
+  test("abrir una sección devuelve su explicación; explicar_pantalla sabe qué es la plataforma", async () => {
+    expect(h.navegar("h1", { destino: "agenda" })).toContain("Estás en la agenda");
+    sacarAcciones("h1");
+    expect(await h.explicarPantalla("h1", { sobre: "plataforma" })).toContain("AgenteTVN es la mesa editorial");
+  });
+  test("preguntar_corpus: «¿cuál es la noticia del día?» sale de la agenda del motor, no de la búsqueda", async () => {
+    const t = await h.preguntarCorpus("h1", { pregunta: "¿Cuál es la noticia del día?" });
+    const primero = servicio.snapshot().eventos.length > 0;
+    expect(primero && t.startsWith("La que más merece revisión hoy es «")).toBe(true);
+    sacarAcciones("h1");
+  });
   test("ficha por titular: única → abre; ninguna → no abre; empate → opciones sin abrir", () => {
     const snap = servicio.snapshot();
     const tituloDe = (id: string) => snap.noticias.find((n) => n.id_noticia === id)!.titulo;

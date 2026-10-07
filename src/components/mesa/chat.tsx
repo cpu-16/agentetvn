@@ -12,7 +12,7 @@ import { contextoDesdeMesa, explicacionFija } from "@/lib/voz/catalogo";
 import { TrazaBuscando, TrazaBusqueda, type Traza } from "./traza";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; conversacion?: { motivo: string; texto: string; sugerencias: string[] } }
+interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; agenda?: { uno: boolean; texto: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
 const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
@@ -62,14 +62,6 @@ export function ChatAgente() {
   const orbe = estadoOrbe(voz.estado);
   const activa = vozActiva(voz.estado);
   /** Un toque al orbe: habla o cuelga. En escritorio abre el panel para ver la conversación; en el celular deja la pantalla libre. */
-  // El lector de pantalla oye cada cambio de estado de la voz (revisión de Cursor).
-  const estadoAnterior = useRef(voz.estado);
-  useEffect(() => {
-    if (estadoAnterior.current === voz.estado) return;
-    const antes = estadoAnterior.current; estadoAnterior.current = voz.estado;
-    if (voz.estado === "inactiva") { if (antes !== "no_disponible") setAnuncio("Llamada terminada."); }
-    else setAnuncio(`${ETIQUETA_ORBE[orbe]}.`);
-  }, [voz.estado, orbe]);
   const tocarOrbe = () => { voz.prepararAudio(); if (!activa && !celular) setChatAbierto(true); void voz.alternar(); };
   const enFicha = vista === "ficha" && !!eventoId;
   const ambito = enFicha && soloTema ? eventoId : null;
@@ -174,6 +166,7 @@ export function ChatAgente() {
         </button>
       </div>
       <p className="solo-lector" aria-live="polite" aria-atomic="true">{anuncio}</p>
+      <p className="solo-lector" aria-live="polite" aria-atomic="true">{activa ? `Voz: ${ETIQUETA_ORBE[orbe]}.` : ""}</p>{/* el lector oye cada cambio de estado de la voz (revisión de Cursor) */}
       <AnimatePresence>
         {chatAbierto && (
           <motion.div
@@ -282,41 +275,28 @@ export function ChatAgente() {
                       <p className="text-muted-foreground">{t.respuesta.motivo}</p>
                       {t.respuesta.faltante && <p className="mt-1"><span className="font-medium">Qué falta:</span> {t.respuesta.faltante}</p>}
                     </div>
-                  ) : (
-                    <>
-                    {t.respuesta.evidencias.some((e) => e.tipo === "noticia") && !enFicha && (
-                      <button className="presionable min-h-9 rounded-full border border-tinta/30 bg-white px-3 text-xs font-medium text-tinta hover:border-tinta" onClick={() => abrirFichaDe(t.respuesta!.evidencias.find((e) => e.tipo === "noticia")!.id)}>Abrir la ficha →</button>
-                    )}
-                    {t.respuesta.redaccion && (
-                      <div className="space-y-1.5">
-                        <p className="text-xs font-medium">Borrador de IA para revisión</p>
-                        <ul className="space-y-1.5" aria-label="Borrador de IA para revisión">
-                          {t.respuesta.redaccion.frases.map((a, i) => (
-                            <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
-                              {a.texto}
-                              <BotonCita id={a.evidence_id} campo={a.campo} onAbrir={setCita} />
-                            </li>
-                          ))}
-                        </ul>
-                        {t.respuesta.redaccion.vacios.length > 0 && <p className="rounded-sm bg-[#fff8e1] px-3 py-1.5 text-xs text-[#7a5600]"><span className="font-medium">Qué falta en el borrador:</span> {t.respuesta.redaccion.vacios.map((v) => v.replace(/[.;\s]+$/, "")).join("; ")}.</p>}
-                        <p className="text-xs text-muted-foreground">{nombreModelo(t.respuesta.redaccion.llm.modelo)}, {Math.round(t.respuesta.redaccion.llm.ms / 1000)} s. Cada frase se sostuvo en su cita; no sustituye la revisión humana.</p>
-                      </div>
-                    )}
-                    {/* Con borrador, las afirmaciones recuperadas quedan plegadas: el borrador ya cita las mismas fuentes */}
-                    <details className="group" open={!t.respuesta.redaccion}>
-                      <summary className={cn("presionable min-h-9 cursor-pointer list-none py-1 text-xs font-medium [&::-webkit-details-marker]:hidden", !t.respuesta.redaccion && "sr-only")}>
-                        <span className="mr-1 inline-block transition-transform group-open:rotate-90" aria-hidden>▸</span>Ver las {t.respuesta.afirmaciones.length} afirmaciones recuperadas de las fuentes (no son el borrador)
-                      </summary>
-                      <ul className="space-y-1.5" aria-label="Afirmaciones recuperadas de las fuentes">
-                        {t.respuesta.afirmaciones.map((a, i) => (
-                          <li key={i} className={cn("rounded-r-sm bg-white px-3 py-2", `tipo-${a.tipo}`)}>
-                            {a.texto}
-                            <BotonCita id={a.evidence_id} campo={a.campo} onAbrir={setCita} />
+                  ) : t.respuesta.agenda ? (
+                    <div className="mr-4 rounded-md border border-border bg-white px-3 py-2.5">
+                      <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis · agenda de hoy</span>
+                      <p className="leading-relaxed">{t.respuesta.agenda.texto}</p>
+                      <ol className="mt-2 space-y-1.5">
+                        {t.respuesta.agenda.items.map((x, i) => (
+                          <li key={x.eventoId}>
+                            <button className="presionable flex w-full items-start gap-2 rounded-md border border-border bg-papel/60 px-2.5 py-2 text-left hover:border-tinta" onClick={() => { if (celular) setChatAbierto(false); irA("ficha", x.eventoId); }}>
+                              <span className="mt-0.5 flex size-6 flex-none items-center justify-center rounded-full bg-tinta text-[11px] font-semibold text-white">{i + 1}</span>
+                              <span className="min-w-0 flex-1">
+                                <span className="block text-sm font-medium leading-snug">{x.titulo}</span>
+                                <span className="mt-0.5 block text-[11px] text-muted-foreground"><span className={cn(x.medio === "TVN" && "font-semibold text-azul")}>{x.medio}</span> · atención {x.P}/100 · evidencia {x.evidencia}{x.publicaciones > 1 ? ` · ${x.publicaciones} publicaciones` : ""}</span>
+                              </span>
+                              <span className="mt-0.5 text-xs text-acero" aria-hidden>→</span>
+                            </button>
                           </li>
                         ))}
-                      </ul>
-                    </details>
-                    </>
+                      </ol>
+                      <p className="mt-2 text-[11px] text-muted-foreground">Toca un tema para abrir su ficha. El puntaje mide atención, no verdad: la evidencia decide si se puede escribir.</p>
+                    </div>
+                  ) : (
+                    <RespuestaClara r={t.respuesta} onCita={setCita} onFicha={enFicha ? undefined : () => abrirFichaDe(t.respuesta!.evidencias.find((e) => e.tipo === "noticia")!.id)} />
                   )}
                   {/* la traza va después de la respuesta: primero lo que sirve, después cómo se buscó */}
                   {t.respuesta?.traza && !t.respuesta.conversacion && <TrazaBusqueda traza={t.respuesta.traza} llmMs={t.respuesta.redaccion?.llm.ms} abierta={!celular && (iTurno === turnos.length - 1 || turnos.slice(iTurno + 1).every((x) => x.voz))} />}
@@ -347,5 +327,46 @@ export function ChatAgente() {
       </AnimatePresence>
       <Citas id={cita} pubs={evidencia.pubs} inds={evidencia.inds} sismos={evidencia.sismos} onCerrar={() => setCita(null)} />
     </>
+  );
+}
+
+/** Respuesta en un párrafo directo con citas numeradas y, debajo, sus fuentes (TVN primero). Las frases que no son un hecho
+ *  reportado (declaración, inferencia, hipótesis) lo dicen. Lo que falta verificar, corto. */
+const TIPO: Record<string, string> = { declaracion: "declaración", inferencia: "inferencia", hipotesis: "por verificar" };
+function RespuestaClara({ r, onCita, onFicha }: { r: Respuesta; onCita: (id: string) => void; onFicha?: () => void }) {
+  const frases = r.redaccion?.frases ?? r.afirmaciones;
+  const ids = [...new Set([...frases.map((f) => f.evidence_id), ...r.evidencias.map((e) => e.id)])];
+  const resumen = new Map(r.evidencias.map((e) => [e.id, e.resumen]));
+  const fuentes = ids.map((id) => ({ id, texto: resumen.get(id) ?? id })).sort((a, b) => Number(b.texto.startsWith("TVN ·")) - Number(a.texto.startsWith("TVN ·")));
+  const n = new Map(fuentes.map((f, i) => [f.id, i + 1]));
+  const vacios = r.redaccion?.vacios ?? [];
+  return (
+    <div className="mr-4 rounded-md border border-border bg-white px-3 py-2.5">
+      <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis</span>
+      <p className="leading-relaxed">
+        {frases.map((f, i) => (
+          <span key={i}>
+            {f.texto}{TIPO[f.tipo] && <span className="ml-1 text-[10.5px] text-muted-foreground">({TIPO[f.tipo]})</span>}
+            <button type="button" onClick={() => onCita(f.evidence_id)} className="presionable mx-0.5 inline-flex min-h-6 min-w-6 items-center justify-center rounded-full border border-acero/40 bg-white px-1 align-text-top text-[10.5px] font-semibold text-acero hover:bg-acero hover:text-white" aria-label={`Ver la fuente ${n.get(f.evidence_id)}`}>{n.get(f.evidence_id)}</button>{" "}
+          </span>
+        ))}
+      </p>
+      {vacios.length > 0 && <p className="mt-2 rounded-sm bg-[#fff8e1] px-2.5 py-1.5 text-xs text-[#7a5600]"><span className="font-medium">Falta verificar:</span> {vacios.slice(0, 2).map((v) => v.replace(/[.;\s]+$/, "")).join("; ")}.</p>}
+      <p className="mt-2.5 text-[11px] font-medium text-muted-foreground">Fuentes</p>
+      <ol className="mt-1 space-y-1">
+        {fuentes.map((f) => (
+          <li key={f.id}>
+            <button type="button" onClick={() => onCita(f.id)} className="presionable flex w-full items-start gap-2 rounded-sm px-1 py-1 text-left text-xs hover:bg-papel">
+              <span className="mt-px flex size-5 flex-none items-center justify-center rounded-full border border-acero/40 text-[10.5px] font-semibold text-acero">{n.get(f.id)}</span>
+              <span className="min-w-0 flex-1"><span className={cn("font-medium", f.texto.startsWith("TVN ·") && "text-azul")}>{f.texto.split(" · ")[0]}</span>{f.texto.includes(" · ") && <span className="text-muted-foreground"> · {f.texto.split(" · ").slice(1).join(" · ")}</span>}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        {onFicha && r.evidencias.some((e) => e.tipo === "noticia") && <button className="presionable min-h-9 rounded-full border border-tinta/30 bg-white px-3 text-xs font-medium text-tinta hover:border-tinta" onClick={onFicha}>Abrir la ficha →</button>}
+        <span className="text-[10.5px] text-muted-foreground">{r.redaccion ? `Redactado por IA (${nombreModelo(r.redaccion.llm.modelo)}, ${Math.round(r.redaccion.llm.ms / 1000)} s) solo con estas fuentes; revísalo antes de usarlo.` : "Afirmaciones tomadas de las fuentes, sin redacción de IA."}</span>
+      </div>
+    </div>
   );
 }

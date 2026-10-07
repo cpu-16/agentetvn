@@ -2,8 +2,8 @@
 import { consulta, estadoDe, snapshot } from "../motor/servicio";
 import { consultar } from "../motor/consulta";
 import { tokenizar } from "../motor/bm25";
-import { explicacionFija, type VistaVoz } from "./catalogo";
-import { contextoDe, encolar } from "./registro";
+import { explicacionFija, PLATAFORMA_CORTA, RECORRIDO, type VistaVoz } from "./catalogo";
+import { contextoDe, encolar, guardarContexto } from "./registro";
 
 const DESTINOS: VistaVoz[] = ["portada", "agenda", "tablero", "control", "ficha"];
 const NOMBRE: Record<VistaVoz, string> = { portada: "la portada", agenda: "la agenda", tablero: "el tablero", control: "Control", ficha: "la ficha" };
@@ -24,15 +24,27 @@ export function buscarEventos(texto: string, max = 3) {
     .map(({ id, titulo, score }) => ({ id, titulo, score }));
 }
 
+const dosFrases = (t: string) => t.split(/(?<=\.)\s+/).slice(0, 2).join(" ");
 const MOVER = { arriba: "Subí la página.", abajo: "Bajé la página.", inicio: "Volví al inicio de la página.", final: "Bajé hasta el final." } as const;
 
 export function navegar(hilo: string, args: { destino?: string; consulta?: string; eventoId?: string }): string {
   const pedido = String(args.destino ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
   if (Object.hasOwn(MOVER, pedido)) { encolar(hilo, { tipo: "desplazar", direccion: pedido as keyof typeof MOVER }); return MOVER[pedido as keyof typeof MOVER]; }
   if (pedido === "atras") { encolar(hilo, { tipo: "atras" }); return "Listo, volví a la pantalla anterior."; }
+  // Recorrido guiado: «recorrido» empieza en la portada; «siguiente» pasa a la próxima sección y la explica.
+  if (pedido === "recorrido" || pedido === "siguiente") {
+    const actual = contextoDe(hilo)?.vista ?? "portada";
+    const i = pedido === "recorrido" ? 0 : RECORRIDO.indexOf(actual as VistaVoz) + 1;
+    if (i >= RECORRIDO.length) return "Ese fue el recorrido: portada, agenda, tablero y Control. Si quieres, abro la ficha de un tema.";
+    const v = RECORRIDO[i];
+    encolar(hilo, { tipo: "navegar", vista: v });
+    guardarContexto(hilo, { vista: v }); // la próxima «siguiente» parte de aquí aunque la página tarde en avisar
+    const sigue = RECORRIDO[i + 1];
+    return `${i === 0 ? "Empecemos. " : ""}${dosFrases(explicacionFija({ vista: v }))}${sigue ? ` ¿Seguimos con ${NOMBRE[sigue]}?` : " Ese es el final del recorrido."}`;
+  }
   const destino = pedido as VistaVoz;
   if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema, subir o bajar la página y volver atrás.`;
-  if (destino !== "ficha") { encolar(hilo, { tipo: "navegar", vista: destino }); return `Listo, abrí ${NOMBRE[destino]}.`; }
+  if (destino !== "ficha") { encolar(hilo, { tipo: "navegar", vista: destino }); guardarContexto(hilo, { vista: destino }); return `Listo, abrí ${NOMBRE[destino]}. ${dosFrases(explicacionFija({ vista: destino }))}`; }
   const snap = snapshot();
   if (args.eventoId && snap.eventos.some((e) => e.id === args.eventoId)) { encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: args.eventoId }); return "Listo, abrí la ficha."; }
   const r = buscarEventos(args.consulta ?? "");
@@ -52,16 +64,17 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
     : await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo));
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
   // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
-  if (r.conversacion) return r.conversacion.texto;
+  if (r.conversacion) return r.conversacion.motivo === "plataforma" ? PLATAFORMA_CORTA : r.conversacion.texto;
+  if (r.agenda) return r.agenda.texto;
   if (r.abstener) return `No tengo evidencia para responder eso. ${r.motivo ?? ""}`.trim();
   const frases = (r.redaccion?.frases ?? r.afirmaciones).map((a) => a.texto);
   return `${palabras(frases.slice(0, 2).join(" "), 45)} El detalle con las citas quedó en el panel.`;
 }
 
 /** Para la voz: las dos primeras frases del texto fijo (el panel muestra el texto completo con «Explícame esta pantalla»). */
-const dosFrases = (t: string) => t.split(/(?<=\.)\s+/).slice(0, 2).join(" ");
 
-export async function explicarPantalla(hilo: string): Promise<string> {
+export async function explicarPantalla(hilo: string, args: { sobre?: string } = {}): Promise<string> {
+  if (String(args.sobre ?? "").toLowerCase().startsWith("plataforma")) return PLATAFORMA_CORTA;
   const c = contextoDe(hilo) ?? { vista: "portada" as const };
   const fijo = dosFrases(explicacionFija(c));
   if (c.vista === "ficha" && c.eventoId) {

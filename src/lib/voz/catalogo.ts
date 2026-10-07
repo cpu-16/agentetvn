@@ -23,3 +23,9 @@ export function contextoDesdeMesa(s: { vista: VistaVoz; eventoId: string | null;
   if (s.vista === "tablero" && s.pantalla.filtroTablero) c.filtroTablero = s.pantalla.filtroTablero;
   return c;
 }
+
+/** Qué es la plataforma: lo saben el chat (texto fijo) y la voz (instrucciones y herramienta). Sin imports de servidor. */
+export const PLATAFORMA = "AgenteTVN es la mesa editorial asistida de TVN Media. Cada mañana junta las noticias públicas del corte, con TVN primero y además otros medios de Panamá y la región, y los datos oficiales del Banco Mundial y del USGS; las agrupa en temas y les da un puntaje de atención de 0 a 100. Tiene cinco partes: la Portada con los cinco temas que merecen revisión hoy, la Agenda con todos los temas ordenados por puntaje, la Ficha de cada tema con su evidencia y los borradores para TV, web y redes, el Tablero con las gráficas del corte y Control con las fuentes, las reglas y las pruebas. Todo sale con su cita o dice qué falta, y nada se publica sin que una persona lo apruebe.";
+export const PLATAFORMA_CORTA = "AgenteTVN es la mesa editorial asistida de TVN Media: junta las noticias del día, con TVN primero, y los datos oficiales, las ordena por importancia y prepara borradores con citas para que una persona decida. Tiene Portada, Agenda, Fichas de cada tema, Tablero y Control.";
+/** Orden del recorrido guiado por voz. */
+export const RECORRIDO: VistaVoz[] = ["portada", "agenda", "tablero", "control"];
