@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useDragControls, useReducedMotion } from "framer-motion";
 import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "./citas";
-import { SPRING_PANEL, fetchMesa, useMesa } from "@/store/mesa";
+import { SPRING_PANEL, fetchMesa, useMesa, useRol } from "@/store/mesa";
 import { cn } from "@/lib/utils";
 import { ETIQUETA_ORBE, Orbe } from "./jarvis/orbe";
 import { estadoOrbe, vozActiva } from "./jarvis/maquina";
@@ -18,16 +18,19 @@ interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afi
 const nombreModelo = (m: string) => (m === "claude-opus-5-5" ? "Claude Opus 5.5" : m);
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
-const SUGERIDAS: { q: string; etiqueta?: string }[] = [
-  { q: "¿Qué cinco temas merecen revisión hoy?" },
-  { q: "¿Qué se sabe de la aprehensión de Enrique Lau?" },
-  { q: "¿Cuál fue la inflación de Panamá en 2025?" },
-];
+/** Sugerencias del panel vacío según el rol: el editor decide qué se cubre, el periodista verifica y el productor arma la pieza. */
+const SUGERIDAS: Record<string, { q: string }[]> = {
+  editor: [{ q: "¿Cuál es la noticia del día?" }, { q: "¿Qué cinco temas merecen revisión hoy?" }, { q: "Hazme un recorrido por la plataforma" }],
+  periodista: [{ q: "¿Qué se sabe de la aprehensión de Enrique Lau?" }, { q: "Muéstrame la evidencia de la ficha" }, { q: "¿Cuál fue la inflación de Panamá en 2025?" }],
+  productor: [{ q: "Enséñame el borrador del tema número uno" }, { q: "Filtra el tablero por economía" }, { q: "Hazme un recorrido por la plataforma" }],
+};
+const QUE_HACE: Record<string, string> = { editor: "Como editor/a: decides qué se cubre hoy y apruebas borradores.", periodista: "Como periodista: verificas qué dice cada fuente y qué falta.", productor: "Como productor/a: preparas el paquete para TV, web y redes." };
 
 export function ChatAgente() {
   const chatAbierto = useMesa((s) => s.chatAbierto);
   const setChatAbierto = useMesa((s) => s.setChatAbierto);
   const modoConsulta = useMesa((s) => s.modoConsulta);
+  const rol = useRol();
   const setModoConsulta = useMesa((s) => s.setModoConsulta);
   const vista = useMesa((s) => s.vista);
   const eventoId = useMesa((s) => s.eventoId);
@@ -241,11 +244,12 @@ export function ChatAgente() {
             <div className="fino flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3 text-sm">
               {turnos.length === 0 && (
                 <div>
-                  <p className="text-muted-foreground">Escribe abajo o toca «Hablar». Te respondo con citas de las noticias y los datos oficiales del corte, o te digo qué falta.</p>
+                  <p className="text-muted-foreground">Escribe abajo o toca «Hablar». Te respondo con citas de las noticias y los datos oficiales del corte, o te digo qué falta. También te muestro la plataforma: pídeme un recorrido o que te explique una gráfica.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{QUE_HACE[rol]}</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {SUGERIDAS.map((s) => (
+                    {(SUGERIDAS[rol] ?? SUGERIDAS.editor).map((s) => (
                       <button key={s.q} className="presionable min-h-11 rounded-full border border-border bg-white px-2.5 py-1 text-left text-xs hover:border-tinta sm:min-h-0" onClick={() => preguntar(s.q)}>
-                        {s.q}{s.etiqueta && <span className="ml-1 text-[10px] text-muted-foreground">({s.etiqueta})</span>}
+                        {s.q}
                       </button>
                     ))}
                   </div>
