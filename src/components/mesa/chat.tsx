@@ -94,7 +94,7 @@ export function ChatAgente() {
     const fuera = (e: PointerEvent) => {
       if (tamano !== "compacto") return; // en lateral y amplio el panel acompaña la pantalla: un clic afuera no lo cierra
       const t = e.target as Node;
-      if (panel.current && !panel.current.contains(t) && !(t as HTMLElement).closest?.(".jarvis-dock,[role=dialog]")) setChatAbierto(false);
+      if (panel.current && !panel.current.contains(t) && !(t as HTMLElement).closest?.(".jarvis-dock,.guia-cartel,[role=dialog]")) setChatAbierto(false);
     };
     window.addEventListener("keydown", tecla);
     window.addEventListener("pointerdown", fuera);
