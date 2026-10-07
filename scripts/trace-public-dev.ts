@@ -1,7 +1,7 @@
 // Explicit, one-shot public development connection check; never imported by the app.
 import { Client } from "langsmith";
 import { getCurrentRunTree } from "langsmith/traceable";
-import { conTraza, flushTracing, sanitizarTraza } from "../src/lib/motor/tracing";
+import { conTraza, flushTracing, payloadTecnicoPersistido } from "../src/lib/motor/tracing";
 import { cargarSnapshot } from "../src/lib/motor/cargar";
 import { cincoTemas } from "../src/lib/motor/consulta";
 
@@ -23,7 +23,7 @@ async function main() {
     id = getCurrentRunTree().id;
     // CU-01: Which five topics merit review and why? Same deterministic evidence core as the agenda.
     const items = cincoTemas(snap);
-    return { modo: "extractivo", afirmaciones: items.map((x) => x.evento), abstener: items.length === 0 };
+    return { modo: "extractivo", afirmaciones: items.map((x) => x.evento), evidencias: [...new Set(items.flatMap(x => x.evento.ids_noticia))], abstener: items.length === 0 };
   });
   if (!await flushTracing(1000) || !id) throw new Error("Trace transport not confirmed");
   const reader = new Client({ apiKey: process.env.LANGSMITH_API_KEY, apiUrl: "https://api.smith.langchain.com",
@@ -34,13 +34,13 @@ async function main() {
   for (let attempt = 0; attempt < 4; attempt++) {
     try { run = await reader.readRun(id); break; } catch { await Bun.sleep(500); }
   }
-  if (!run?.end_time || run.error || !run.app_path) throw new Error("Persisted completed run not confirmed");
+  if (!run?.end_time || run.error) throw new Error("Persisted completed run not confirmed");
   const inputs = run.inputs ?? {}, outputs = run.outputs ?? {}, extra = run.extra ?? {};
-  if (Object.keys(inputs).length || JSON.stringify(outputs) !== JSON.stringify(sanitizarTraza(outputs)) ||
-    Object.keys(extra).some((k) => k !== "metadata") ||
-    JSON.stringify(extra.metadata ?? {}) !== JSON.stringify(sanitizarTraza(extra.metadata ?? {})))
-    throw new Error("Persisted payload violated technical-only policy");
-  console.log(JSON.stringify({ verified: true, runId: run.id, runUrl: "https://smith.langchain.com" + run.app_path,
+  if (!payloadTecnicoPersistido(run)) throw new Error("Persisted payload violated technical-only policy");
+  const project = await reader.readProject({ projectName: "AgenteTVN" });
+  const runUrl = await reader.getRunUrl({ run, projectOpts: { projectId: project.id } });
+  if (!runUrl.includes("/p/" + project.id + "/r/" + run.id)) throw new Error("Persisted run project mismatch");
+  console.log(JSON.stringify({ verified: true, runId: run.id, runUrl, projectVerified: true,
     case: "CU-01", questionUploaded: false, evidenceUploaded: false, outputTextUploaded: false,
     modelCalls: 0, inputs, outputs, metadata: extra.metadata }));
 }

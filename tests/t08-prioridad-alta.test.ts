@@ -3,6 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { ordenar, puntuar } from "../src/lib/motor/puntaje";
 import { estadoEvidencia } from "../src/lib/motor/evidencia";
 import { n } from "./fixtures/noticias";
+import { agendaFixture } from "./fixtures/agenda";
 
 describe("T08 prioridad alta", () => {
   const corte = "2026-10-06T12:00:00.000Z";
@@ -27,9 +28,7 @@ describe("T08 prioridad alta", () => {
   });
   test("CU-01: cinco temas con máximo dos por tema, sin sintéticos ni deportes", async () => {
     const { cincoTemas } = await import("../src/lib/motor/consulta");
-    const mk = (id: string, tema: string, P: number): import("../src/lib/motor/contrato").Evento => ({ id, representante: id, ids_noticia: [id], procedencias: [], tema, tema_confianza: 1, por_revisar: false, fecha_original: null, contexto: { indicadores: [], sismos: [] }, contradicciones: [], componentes: { R: 1, I: 1, U: 1, N: 1, E: 1, explicacion: { R: "", I: "", U: "", N: "", E: "" } }, P, rango: "alto", estado_evidencia: "parcial", no_confiable: false });
-    const eventos = [mk("a", "economia", 90), mk("b", "economia", 89), mk("c", "economia", 88), mk("d", "deportes", 87), mk("e", "turismo", 86), mk("f", "regulacion", 85), mk("g", "turismo", 84), mk("h", "economia", 83)];
-    const snap = { eventos, noticias: eventos.map((e) => n({ id_noticia: e.id, url: `https://x.com/${e.id}`, titulo: `Titular ${e.id}` })) } as unknown as import("../src/lib/motor/cargar").Snapshot;
+    const snap = agendaFixture();
     expect(cincoTemas(snap).map((c) => c.evento.id)).toEqual(["a", "b", "e", "f", "g"]);
   });
   test("un título de página («Preview - Asamblea de Panamá») no entra en los cinco temas", async () => {

@@ -1,6 +1,9 @@
+import { traceable } from "langsmith/traceable";
+import { technicalTarget, technicalExamples, technicalFeedback } from "../scripts/evaluation/technical";
+import { verifyHierarchy, type VerifiedSpan } from "../scripts/evaluation/verify";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { Client, overrideFetchImplementation } from "langsmith";
-import { _clienteTrazaPruebas, conTraza, flushTracing, sanitizarTraza } from "../src/lib/motor/tracing";
+import { _clienteTrazaPruebas, conTraza, flushTracing, sanitizarTraza, payloadTecnicoPersistido } from "../src/lib/motor/tracing";
 
 const keys = ["AGENTETVN_MODO", "AGENTETVN_TRACING", "AGENTETVN_TRACE_APPROVED", "LANGSMITH_API_KEY", "LANGSMITH_RUNS_ENDPOINTS", "GITHUB_SHA", "LANGSMITH_TRACING_MODE", "OTEL_ENABLED"];
 let previous: Record<string, string | undefined>;
@@ -111,5 +114,58 @@ describe("optional server tracing", () => {
   test("metadata accepts only bounded technical fields", () => {
     expect(sanitizarTraza({ modo: "bm25", tokens: 9, commit: "58449b389b85", secret: "x", tokens_bad: -1, snapshot: "a private identity", q: "question" }))
       .toEqual({ modo: "bm25", tokens: 9, commit: "58449b389b85" });
+  });
+});
+
+
+describe("development experiment hierarchy and privacy", () => {
+  test("one actual root per case has the executed child stages, with independently verified counts", async () => {
+    const project = "AgenteTVN-dev-abcdefabcdef-20261007T120000";
+    // Fresh scoped transport: do not wrap the normal-project mock a second time.
+    mock = new Client({ apiKey: "test-only-key", manualFlushMode: true, fetchImplementation: (() => { throw new Error("No cloud calls in tests"); }) as unknown as typeof fetch });
+    mock.createRun = async run => { created.push(structuredClone(run) as unknown as Record<string, unknown>); };
+    mock.updateRun = async (id, run) => { updated.push({ id, ...structuredClone(run) }); };
+    mock.flush = async () => {};
+    _clienteTrazaPruebas(mock, project);
+    const expected: { id: string; exampleId: string; caseId: string }[] = [];
+    for (const caseId of ["CU01", "CU05", "JURY-ABSTENTION", "JURY-LEXICAL"]) {
+      const input = technicalExamples().find(e => e.inputs.case_id === caseId)!.inputs;
+      const id = crypto.randomUUID(), exampleId = crypto.randomUUID();
+      const outputs = await traceable(technicalTarget, { id, reference_example_id: exampleId, name: "evaluacion-desarrollo", client: mock, tracingEnabled: true, replicas: [], project_name: project, processInputs: () => ({}), processOutputs: sanitizarTraza })(input);
+      expect(technicalFeedback(outputs)[0].score).toBe(true);
+      if (caseId === "CU01") expect(outputs).toMatchObject({ afirmaciones: 5, evidencias: 5 });
+      expected.push({ id, exampleId, caseId });
+    }
+    const persisted: VerifiedSpan[] = created.map(r => ({ ...r, ...updated.filter(u => u.id === r.id).at(-1), session_id: "test-project" })) as unknown as VerifiedSpan[];
+    const verified = verifyHierarchy(persisted, expected, "test-project");
+    expect(verified).toMatchObject({ verified: true, roots: 4 });
+    expect(verified.children).toBeGreaterThan(4);
+    const abstentionId = expected.find(e => e.caseId === "JURY-ABSTENTION")!.id;
+    expect(persisted.some(r => r.trace_id === abstentionId && r.name === "recuperacion")).toBe(false);
+    const lexicalId = expected.find(e => e.caseId === "JURY-LEXICAL")!.id;
+    expect(persisted.some(r => r.trace_id === lexicalId && r.name === "recuperacion")).toBe(true);
+    const extraRoot = { ...persisted[0], id: crypto.randomUUID(), parent_run_id: null };
+    expect(verifyHierarchy([...persisted, extraRoot], expected, "test-project").verified).toBe(false);
+    expect(verifyHierarchy(persisted.filter(r => r.name !== "agenda"), expected, "test-project").violations).toContain("executed_stage_mismatch");
+    expect(created.every(r => r.session_name === project)).toBe(true);
+    const payload = JSON.stringify([...created, ...updated]);
+    expect(payload).not.toContain("Titular candidato");
+    expect(payload).not.toContain("ajusta tránsitos");
+    expect(payload).not.toContain("Inflación en Panamá");
+    expect(created.every(r => Object.keys(r.inputs as object).length === 0)).toBe(true);
+  });
+  test("SDK depth is numeric technical metadata; text, runtime and unknown fields are rejected", () => {
+    expect(payloadTecnicoPersistido({ inputs: {}, outputs: { evidencias: 5 }, extra: { metadata: { ls_run_depth: 0 } } })).toBe(true);
+    for (const value of ["0", -1, "private-text"]) expect(payloadTecnicoPersistido({ extra: { metadata: { ls_run_depth: value } } })).toBe(false);
+    expect(payloadTecnicoPersistido({ inputs: { question: "private" } })).toBe(false);
+    expect(payloadTecnicoPersistido({ extra: { runtime: {}, metadata: {} } })).toBe(false);
+    expect(payloadTecnicoPersistido({ outputs: { content: "private" } })).toBe(false);
+  });
+  test("empty evidence denominators stay unscored; contradictory counters cannot create feedback", () => {
+    const outputs = { resultado: "ok", checks_total: 2, checks_passed: 2, citation_total: 0, citation_existing: 0, citation_supported: 0 };
+    expect(technicalFeedback(outputs).map(f => f.score ?? f.value)).toEqual([true, "not_applicable", "not_applicable"]);
+    expect(() => technicalFeedback({ ...outputs, citation_total: 1, citation_supported: 2 })).toThrow("Invalid citation counters");
+    expect(() => technicalFeedback({ ...outputs, checks_total: 0 })).toThrow("Invalid contract counters");
+    expect(technicalExamples().every(e => Object.keys(e.inputs).sort().join() === "case_id,fixture_hash")).toBe(true);
   });
 });
