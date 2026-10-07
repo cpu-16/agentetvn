@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────
-// notion-sync · sube catálogo, casos, pruebas y decisiones a Notion como bases de datos (idempotente por id_estable).
+// notion-sync · sube las páginas de docs/notion/*.md (idempotente por título, ver notion-paginas.ts) y catálogo, casos,
+//   pruebas y decisiones a Notion como bases de datos (idempotente por id_estable).
 //   NOTION_TOKEN y NOTION_ROOT_PAGE en .env (nunca en el repo). Si fallan, se registra y Jeff carga a mano desde docs/notion/.
 //   bun run notion:sync
 // ─────────────────────────────────────────────────────────────
@@ -7,6 +8,7 @@ import { Client } from "@notionhq/client";
 import { existsSync, readFileSync } from "fs";
 import { cargarSnapshot } from "../src/lib/motor/cargar";
 import { db } from "../src/lib/db";
+import { subirPaginas } from "./notion-paginas";
 
 const token = process.env.NOTION_TOKEN;
 const root = process.env.NOTION_ROOT_PAGE;
@@ -40,6 +42,8 @@ async function upsert(dbId: string, idEstable: string, props: Record<string, unk
 const snap = cargarSnapshot("data/processed", { forzar: true });
 let errores = 0;
 const intentar = async (nombre: string, fn: () => Promise<void>) => { try { await fn(); log(`${nombre}: ok`); } catch (e) { errores++; log(`${nombre}: ERROR ${(e as Error).message.slice(0, 160)}`); } };
+
+await intentar("Páginas de documentación", () => subirPaginas(notion, root, "docs/notion", log));
 
 await intentar("Catálogo de datos", async () => {
   const id = await base("Catálogo de datos", { Fuente: { select: {} }, URL: { url: {} }, Extracción: { rich_text: {} }, Cobertura: { rich_text: {} }, Licencia: { rich_text: {} }, SHA256: { rich_text: {} }, Registros: { number: {} } });
