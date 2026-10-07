@@ -89,7 +89,7 @@ export function Ficha({ id }: { id: string }) {
       <div className="mt-2"><Chips e={resumen} /></div>
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <div data-guia="ficha-pestanas" role="tablist" aria-label="Secciones de la ficha" className="relative inline-flex h-9 rounded-sm border border-border bg-white p-0.5">
+        <div data-guia="ficha-pestanas" data-evento={id} role="tablist" aria-label="Secciones de la ficha" className="relative inline-flex h-9 rounded-sm border border-border bg-white p-0.5">
           {(["evidencia", "paquete"] as const).map((t, i) => (
             <button key={t} ref={(el) => { if (el) tabs.current[i] = el; }} id={`tab-${t}`} role="tab" aria-selected={tab === t} aria-controls={`panel-${t}`} tabIndex={tab === t ? 0 : -1} onKeyDown={(e) => teclaTab(e, i)} onClick={() => setTab(t)} className={cn("presionable relative rounded-sm px-3 text-sm", tab === t ? "font-medium text-white" : "text-muted-foreground")}>
               {tab === t && <motion.span layoutId="tab-ficha" className="absolute inset-0 rounded-sm bg-tinta" transition={SPRING} aria-hidden />}

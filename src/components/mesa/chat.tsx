@@ -10,7 +10,7 @@ import { useVoz } from "./jarvis/useVoz";
 import { clasesPanel, esCelular, type TamanoPanel } from "./jarvis/panel";
 import { contextoDesdeMesa, explicacionFija } from "@/lib/voz/catalogo";
 import { TrazaBuscando, TrazaBusqueda, type Traza } from "./traza";
-import { mostrarGuia } from "./jarvis/guia";
+import { cancelarGuia, mostrarGuia } from "./jarvis/guia";
 import type { Guia } from "@/lib/motor/consulta";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
@@ -60,7 +60,9 @@ export function ChatAgente() {
   // Cartel de la guía: título y explicación de la parte que se está mostrando, encima de la página
   const [cartel, setCartel] = useState<(Guia & { desdeChat: boolean }) | null>(null);
   /** Empieza de cero: borra la conversación, cuelga la voz si estaba y quita el cartel. */
-  const nuevaConversacion = () => { if (vozActiva(voz.estado)) voz.colgar("nueva conversación"); setTurnos([]); setCartel(null); setAnuncio("Conversación nueva."); setQ(""); };
+  const generacion = useRef(0); // «Nueva» invalida lo que esté en camino (consulta y guía)
+  const enCurso = useRef<AbortController | null>(null);
+  const nuevaConversacion = () => { generacion.current++; enCurso.current?.abort(); cancelarGuia(); if (vozActiva(voz.estado)) voz.colgar("nueva conversación"); setTurnos([]); setCartel(null); setOcupado(false); setAnuncio("Conversación nueva."); setQ(""); };
   const arrastrable = !celular && tamano !== "amplio";
   // ponytail: la posición arrastrada vuelve al rincón al cambiar de tamaño o recargar; guardarla en sessionStorage si se pide
   useEffect(() => {
@@ -113,10 +115,13 @@ export function ChatAgente() {
     const id = idExistente ?? Date.now();
     setTurnos((t) => (idExistente ? t.map((x) => (x.id === id ? { ...x, respuesta: null, error: null } : x)) : [...t, { id, pregunta: mostrar ?? pregunta, ambito, respuesta: null, error: null }]));
     setQ(""); setOcupado(true); setAnuncio("Buscando en las fuentes");
+    const gen = generacion.current;
+    const ctrl = (enCurso.current = new AbortController());
     try {
-      const r = await fetchMesa("/api/consulta", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q: pregunta, modo: modoConsulta, eventoId: ambito ?? undefined, contexto: contextoDesdeMesa(useMesa.getState()) }) });
+      const r = await fetchMesa("/api/consulta", { signal: ctrl.signal, method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q: pregunta, modo: modoConsulta, eventoId: ambito ?? undefined, contexto: contextoDesdeMesa(useMesa.getState()) }) });
       if (!r.ok) throw new Error(r.status === 401 ? "La sesión venció." : `El agente no respondió (error ${r.status}).`);
       const respuesta = (await r.json()) as Respuesta;
+      if (gen !== generacion.current) return; // llegó después de «Nueva conversación»
       setTurnos((t) => t.map((x) => (x.id === id ? { ...x, respuesta } : x)));
       if (respuesta.guia) { setCartel({ ...respuesta.guia, desdeChat: true }); void mostrarGuia(respuesta.guia); }
       const red = respuesta.redaccion;
@@ -124,11 +129,12 @@ export function ChatAgente() {
       const ids = respuesta.evidencias.filter((e) => e.tipo === "noticia").map((e) => e.id);
       if (ids.length || respuesta.evidencias.some((e) => e.tipo === "indicador")) void cargarEvidencia(ids, respuesta.evidencias.filter((e) => e.tipo === "indicador").map((e) => e.id));
     } catch (e) {
+      if (gen !== generacion.current) return;
       const msg = e instanceof TypeError ? "No hubo conexión con el agente. Revisa la red e intenta otra vez." : (e as Error).message;
       setTurnos((t) => t.map((x) => (x.id === id ? { ...x, error: msg } : x)));
       setAnuncio(`Error: ${msg}`);
     } finally {
-      setOcupado(false);
+      if (gen === generacion.current) setOcupado(false);
     }
   };
 
