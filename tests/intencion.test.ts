@@ -20,6 +20,7 @@ describe("enrutador del chat", () => {
   });
   test("el rol que se elige al entrar se explica sin buscar; una noticia sobre un periodista sí se busca", () => {
     for (const q of ["¿Qué hace un periodista?", "yo entro como productora, ¿qué hago?", "soy editor, ¿qué hago?"]) expect(motivo(q)).toBe("ayuda");
+    expect(motivo("¿Cuáles son los cinco temas de hoy?")).toBe("agenda"); // por voz iba a la búsqueda (7-oct)
     for (const q of ["¿Qué pasó con el periodista agredido en Colón?", "¿qué dijo el productor de la feria?"]) expect(motivo(q)).toBe("consulta");
   });
   test("preguntas con tema propio NO se interceptan (revisión de Codex)", () => {

@@ -25,7 +25,7 @@ const QUE_HAGO_AQUI = new RegExp(`${PRE}(ya )?(estoy (aqui|aca) )?(y )?(que se h
 const PAL_ROL = new Set("editor editora periodista productor productora editores periodistas productores rol mi como soy entro entre yo un una que hace hago hacer debo tengo funcion sirve para creo es lo".split(" "));
 
 /** Palabras de pregunta que no dicen de qué tema se trata (ya tokenizadas: sin tildes ni mayúsculas). */
-const DE_PREGUNTA = new Set("paso pasa ocurrio ocurre sabe saben dijo dicen dice hay hubo noticia noticias informacion tema temas cual cuales quien quienes donde cuando como hoy ayer ultimo ultima ultimos ultimas nuevo nueva reporta reportan explica explicame cuentame dime puedes quiero saber mas acerca".split(" "));
+const DE_PREGUNTA = new Set("son es fue fueron paso pasa ocurrio ocurre sabe saben dijo dicen dice hay hubo noticia noticias informacion tema temas cual cuales quien quienes donde cuando como hoy ayer ultimo ultima ultimos ultimas nuevo nueva reporta reportan explica explicame cuentame dime puedes quiero saber mas acerca".split(" "));
 
 // La plataforma: «¿de qué trata AgenteTVN?», «¿para qué sirve esta plataforma?», «¿cómo funciona esto?».
 const PLATAFORMA_RE = /\b(agente ?tvn|agentetvn|esta plataforma|la plataforma|esta app|la app|esta aplicacion|la aplicacion|esta herramienta|este sistema|la mesa editorial|esta mesa)\b/;
