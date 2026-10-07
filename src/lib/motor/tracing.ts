@@ -26,6 +26,7 @@ export function tracingActivo() {
 }
 let client: Client | undefined;
 let testClient: Client | undefined;
+let pendingFlush: Promise<boolean> | undefined;
 const NAMES = new Set(["consulta", "recuperacion", "paquete", "llm", "validacion-paquete", "validacion-respuesta", "boletin-bancario"]);
 /** SDK-generated runtime, events, serialized data and endpoint overrides are never transported. */
 function transporteSeguro(value: unknown) {
@@ -65,7 +66,7 @@ function protegerCliente(value: Client) {
 function cliente() {
   if (testClient) return testClient;
   return client ??= protegerCliente(new Client({ apiKey: process.env.LANGSMITH_API_KEY, apiUrl: ENDPOINT,
-    hideInputs: sanitizarTraza, hideOutputs: sanitizarTraza, hideMetadata: sanitizarTraza,
+    tracingMode: "langsmith", hideInputs: sanitizarTraza, hideOutputs: sanitizarTraza, hideMetadata: sanitizarTraza,
     anonymizer: sanitizarTraza, omitTracedRuntimeInfo: true, disablePromptCache: true,
     timeout_ms: 500, callerOptions: { maxRetries: 0 }, manualFlushMode: true,
     maxIngestMemoryBytes: 1_000_000, blockOnRootRunFinalization: false, debug: false }));
@@ -103,12 +104,15 @@ export async function flushTracing(timeoutMs = 500): Promise<boolean> {
   if (!tracingActivo() || (!client && !testClient)) return true;
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    return await Promise.race([cliente().flush().then(() => true).catch(() => false),
+    const pending = pendingFlush ??= cliente().flush().then(() => true).catch(() => false)
+      .finally(() => { pendingFlush = undefined; });
+    return await Promise.race([pending,
       new Promise<boolean>((resolve) => { timer = setTimeout(() => resolve(false), Math.min(1000, Math.max(1, timeoutMs))); })]);
   } finally { if (timer) clearTimeout(timer); }
 }
 export function _clienteTrazaPruebas(value?: Client) {
   if (process.env.NODE_ENV !== "test") throw new Error("Test client only available in tests");
+  pendingFlush = undefined;
   testClient = value ? protegerCliente(value) : undefined;
 }
 

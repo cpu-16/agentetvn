@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { Client } from "langsmith";
+import { Client, overrideFetchImplementation } from "langsmith";
 import { _clienteTrazaPruebas, conTraza, flushTracing, sanitizarTraza } from "../src/lib/motor/tracing";
 
-const keys = ["AGENTETVN_MODO", "AGENTETVN_TRACING", "AGENTETVN_TRACE_APPROVED", "LANGSMITH_API_KEY", "LANGSMITH_RUNS_ENDPOINTS", "GITHUB_SHA"];
+const keys = ["AGENTETVN_MODO", "AGENTETVN_TRACING", "AGENTETVN_TRACE_APPROVED", "LANGSMITH_API_KEY", "LANGSMITH_RUNS_ENDPOINTS", "GITHUB_SHA", "LANGSMITH_TRACING_MODE", "OTEL_ENABLED"];
 let previous: Record<string, string | undefined>;
 let created: Record<string, unknown>[];
 let updated: Record<string, unknown>[];
@@ -48,9 +48,11 @@ describe("optional server tracing", () => {
   });
   test("SDK failure never repeats an operation; flush is bounded", async () => {
     mock.createRun = async () => { throw new Error("simulated network failure"); };
+    _clienteTrazaPruebas(mock);
     let calls = 0;
     expect(await conTraza("root", {}, async () => ++calls)).toBe(1);
     expect(calls).toBe(1);
+    await flushTracing();
     mock.flush = async () => new Promise<void>(() => {});
     const start = Date.now();
     expect(await flushTracing(20)).toBe(false);
@@ -72,6 +74,39 @@ describe("optional server tracing", () => {
     expect(payload).not.toContain("private-release-identity");
     expect(payload).not.toContain("unapproved.invalid");
     expect(payload).not.toContain("private-replica-key");
+  });
+  test("concurrent flush callers await the same in-flight sender", async () => {
+    let calls = 0;
+    let release: (() => void) | undefined;
+    mock.flush = async () => { calls++; await new Promise<void>((resolve) => { release = resolve; }); };
+    const first = flushTracing(300), second = flushTracing(300);
+    release!();
+    expect(await Promise.all([first, second])).toEqual([true, true]);
+    expect(calls).toBe(1);
+  });
+  test("production client pins LangSmith transport despite inherited OpenTelemetry settings", async () => {
+    process.env.LANGSMITH_TRACING_MODE = "otel";
+    process.env.OTEL_ENABLED = "true";
+    delete process.env.LANGSMITH_RUNS_ENDPOINTS;
+    _clienteTrazaPruebas();
+    const fetchKey = Symbol.for("ls:fetch_implementation");
+    const previousFetch = Reflect.get(globalThis, fetchKey);
+    const urls: string[] = [];
+    overrideFetchImplementation(async (input: string | URL | Request) => {
+      const url = input instanceof Request ? input.url : String(input);
+      urls.push(url);
+      return new Response(url.endsWith("/info") ? JSON.stringify({ version: "0.12.0", batch_ingest_config: { use_multipart_endpoint: false } }) : "{}",
+        { status: 200, headers: { "content-type": "application/json" } });
+    });
+    try {
+      expect(await conTraza("consulta", { modalidad: "tvn" }, async () => 42)).toBe(42);
+      expect(await flushTracing(1000)).toBe(true);
+      expect(urls.some((url) => url.includes("/runs"))).toBe(true);
+      expect(urls.every((url) => new URL(url).origin === "https://api.smith.langchain.com")).toBe(true);
+    } finally {
+      if (previousFetch) overrideFetchImplementation(previousFetch);
+      else Reflect.deleteProperty(globalThis, fetchKey);
+    }
   });
   test("metadata accepts only bounded technical fields", () => {
     expect(sanitizarTraza({ modo: "bm25", tokens: 9, commit: "58449b389b85", secret: "x", tokens_bad: -1, snapshot: "a private identity", q: "question" }))
