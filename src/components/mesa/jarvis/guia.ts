@@ -23,6 +23,13 @@ export async function mostrarGuia(g: Guia) {
   const mia = ++ejecucion;
   const s = useMesa.getState();
   if (g.vista !== s.vista || (g.eventoId && g.eventoId !== s.eventoId)) s.irA(g.vista as never, g.eventoId);
+  // Si la persona se va a otra pantalla mientras la guía espera, la guía se cancela (aunque después vuelva) — revisión de Codex
+  const soltar = useMesa.subscribe((st, prev) => { if ((st.vista !== prev.vista || st.eventoId !== prev.eventoId) && (st.vista !== g.vista || (!!g.eventoId && st.eventoId !== g.eventoId)) && mia === ejecucion) ejecucion++; });
+  try { await ejecutar(g, mia); } finally { soltar(); }
+}
+
+async function ejecutar(g: Guia, mia: number) {
+  const s = useMesa.getState();
   if (esCelular(window.innerWidth)) s.setChatAbierto(false); // en el celular la hoja taparía lo que se muestra
   const vigente = () => mia === ejecucion && useMesa.getState().vista === g.vista && (!g.eventoId || useMesa.getState().eventoId === g.eventoId);
   if (g.demo) {

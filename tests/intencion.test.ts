@@ -42,6 +42,8 @@ describe("enrutador del chat", () => {
     expect(tipo("quita el filtro")).toBe('filtro:{"tipo":"filtroTablero","limpiar":true}');
     expect(tipo("Quita el tablero por economía")).toBe('filtro:{"tipo":"filtroTablero","temas":["economia"]}'); // lo que oyó la voz
     expect(tipo("explícame la gráfica de medios")).toBe("guia:tablero-medios");
+    expect(tipo("Explícame la gráfica de inflación")).toBe("guia:tablero-contexto");
+    expect(tipo("Explícame la gráfica del PIB")).toBe("guia:tablero-contexto");
     for (const q of ["¿Cómo se filtra el agua?", "Muéstrame solo las noticias de TVN sobre Enrique Lau", "Explícame el desempleo", "¿Qué significa inflación?"]) expect(tipo(q)).toBe("consulta"); // revisión de Codex
     for (const q of ["¿Qué evidencia hay sobre Enrique Lau?", "Explícame la noticia de los medios sobre el Canal", "¿Qué dicen los medios de Mulino?"]) expect(tipo(q)).toBe("consulta");
   });

@@ -30,7 +30,7 @@ export const GUIA: Parte[] = [
     texto: "Estos son los medios con más publicaciones en el corte. Filtré TVN para mostrarte su cobertura: todo el tablero queda solo con lo que publicó TVN." },
   { id: "tablero-procedencias", vista: "tablero", ancla: "tablero-procedencias", titulo: "Procedencias", claves: ["procedencias", "agencias", "replicas", "origen"], demo: { tipo: "filtroTablero", limpiar: true },
     texto: "Las procedencias separan quién originó la información de quién solo la replicó. Diez medios copiando una agencia cuentan como una sola procedencia, no como diez confirmaciones." },
-  { id: "tablero-contexto", vista: "tablero", ancla: "tablero-contexto", titulo: "Contexto oficial del Banco Mundial", claves: ["banco mundial", "grafica del banco mundial", "indicadores del banco mundial", "contexto oficial"],
+  { id: "tablero-contexto", vista: "tablero", ancla: "tablero-contexto", titulo: "Contexto oficial del Banco Mundial", claves: ["banco mundial", "grafica del banco mundial", "indicadores del banco mundial", "contexto oficial", "grafica de inflacion", "grafica del pib", "grafica de pib", "grafica de desempleo", "grafica de indicadores"],
     texto: "Estos son los indicadores oficiales del Banco Mundial para Panamá y la región. Son contexto histórico anual, no una medición de hoy." },
   { id: "tablero-sismos", vista: "tablero", ancla: "tablero-sismos", titulo: "Sismos del USGS", claves: ["mapa de sismos", "grafica de sismos", "sismos del usgs", "usgs"],
     texto: "El mapa muestra los sismos de 2024 en la región según el USGS. Si una noticia habla de un sismo, aquí se contrasta con el registro oficial." },
