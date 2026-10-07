@@ -128,10 +128,18 @@ export function actualizarTraza(metadata: Record<string, unknown>) {
 }
 
 /** Validate persisted technical fields, including the SDK/server's numeric depth counter. */
-export function payloadTecnicoPersistido(run: { inputs?: Record<string, unknown> | null; outputs?: Record<string, unknown> | null; extra?: { metadata?: Record<string, unknown> } & Record<string, unknown> | null }) {
- const inputs = run.inputs ?? {}, outputs = run.outputs ?? {}, extra = run.extra ?? {};
- return Object.keys(inputs).length === 0 && JSON.stringify(outputs) === JSON.stringify(sanitizarTraza(outputs)) &&
-  Object.keys(extra).every(k => k === "metadata") && JSON.stringify(extra.metadata ?? {}) === JSON.stringify(sanitizarTraza(extra.metadata ?? {}));
+export function payloadTecnicoPersistido(run: { inputs?: Record<string, unknown> | null; outputs?: Record<string, unknown> | null; extra?: { metadata?: Record<string, unknown> } & Record<string, unknown> | null; reference_example_id?: string | null }, exampleProvenance?: "synthetic" | "public_snapshot") {
+  const inputs = run.inputs ?? {}, outputs = run.outputs ?? {}, extra = run.extra ?? {};
+  const metadata = { ...(extra.metadata ?? {}) };
+  // Server-enriched example metadata is checked only on referenced evaluation roots.
+  // These fields remain forbidden by the outbound sanitizer.
+  if (exampleProvenance && /^[a-f0-9-]{36}$/.test(run.reference_example_id ?? "")) {
+    if (metadata.ls_example_provenance !== exampleProvenance || metadata.ls_example_version !== "evaluator-dev-v1" ||
+      JSON.stringify(metadata.ls_example_dataset_split) !== '["base"]') return false;
+    delete metadata.ls_example_provenance; delete metadata.ls_example_version; delete metadata.ls_example_dataset_split;
+  }
+  return Object.keys(inputs).length === 0 && JSON.stringify(outputs) === JSON.stringify(sanitizarTraza(outputs)) &&
+    Object.keys(extra).every(k => k === "metadata") && JSON.stringify(metadata) === JSON.stringify(sanitizarTraza(metadata));
 }
 
 /** A separately approved development experiment; never enables application tracing implicitly. */

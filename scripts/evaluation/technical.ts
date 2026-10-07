@@ -49,3 +49,11 @@ export function technicalFeedback(outputs: Record<string, unknown>): EvaluationR
     total ? { key: "citation_field_constraints", score: supported / total } : { key: "citation_field_constraints", value: "not_applicable" },
   ];
 }
+
+/** The service stores fractional feedback at finite decimal precision; binary scores stay exact. */
+export function feedbackMatches(expected: EvaluationResult, actual: { key: string; score?: number | boolean | null; value?: unknown }) {
+  if (actual.key !== expected.key) return false;
+  if (expected.score === undefined) return actual.value === expected.value;
+  if (typeof expected.score !== "number" || Number.isInteger(expected.score)) return Number(actual.score) === Number(expected.score);
+  return typeof actual.score === "number" && Math.abs(actual.score - expected.score) <= 5e-5;
+}

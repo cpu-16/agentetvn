@@ -25,7 +25,7 @@ if (!process.argv.includes("--worker")) {
  }) as typeof fetch;
  const { withDevelopmentExperiment, sanitizarTraza } = await import("../src/lib/motor/tracing");
  const { traceable } = await import("langsmith/traceable");
- const { technicalExamples, technicalTarget, technicalFeedback } = await import("./evaluation/technical");
+ const { technicalExamples, technicalTarget, technicalFeedback, feedbackMatches } = await import("./evaluation/technical");
  const { verifyHierarchy } = await import("./evaluation/verify");
  const { randomUUID } = await import("node:crypto");
  const stamp = new Date().toISOString().replace(/[-:.Z]/g, "");
@@ -65,17 +65,19 @@ if (!process.argv.includes("--worker")) {
    await client.updateProject(project.id, { endTime: new Date().toISOString(), metadata: { commit, version: "evaluator-dev-v1" } });
    let spans: import("langsmith/schemas").Run[] = [];
    for (let attempt = 0; attempt < 6; attempt++) {
-    spans = []; for await (const run of client.listRuns({ projectId: project.id, limit: 500 })) spans.push(run);
+    spans = []; for await (const run of client.listRuns({ projectId: project.id })) { spans.push(run); if (spans.length > 500) throw new Error("Unexpected development span count"); }
     const verified = verifyHierarchy(spans, expected, project.id);
     report.hierarchy = verified; save(); if (verified.verified) break;
     await new Promise(resolve => setTimeout(resolve, 1000));
    }
    const hierarchy = verifyHierarchy(spans, expected, project.id);
    const persisted = await client.readProject({ projectId: project.id });
+   const recorded: import("langsmith/schemas").Feedback[] = [];
+   for await (const f of client.listFeedback({ runIds: expected.map(e => e.id) })) recorded.push(f);
    let persistedFeedback = 0;
-   for (const row of rows) for (const [index, feedbackId] of (row.feedbackIds as string[]).entries()) {
-    const f = await client.readFeedback(feedbackId), expected = (row.feedback as { key: string; score?: number | boolean | null; value?: unknown }[])[index];
-    if (f.run_id !== row.runId || f.key !== expected.key || (expected.score !== undefined ? Number(f.score) !== Number(expected.score) : f.value !== expected.value)) throw new Error("Persisted feedback mismatch");
+   for (const row of rows) for (const wanted of row.feedback as import("langsmith/evaluation").EvaluationResult[]) {
+    const actual = recorded.find(f => f.run_id === row.runId && f.key === wanted.key);
+    if (!actual || !feedbackMatches(wanted, actual)) throw new Error("Persisted feedback mismatch");
     persistedFeedback++;
    }
    report.hierarchy = hierarchy; report.referenceDatasetVerified = persisted.reference_dataset_id === dataset.id;

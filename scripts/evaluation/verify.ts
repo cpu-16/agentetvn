@@ -17,7 +17,7 @@ export function expectedStages(caseId: string) {
   editorial: ["paquete", "validacion-evidencia"],
   figure: c.expected.contextRequired ? [] : ["indicador", "validacion-evidencia"],
   replicas: ["agrupacion", "agrupacion"],
-  abstention: ["consulta", "validacion-evidencia"], injection: ["consulta", "validacion-evidencia"],
+  abstention: ["consulta", "validacion-evidencia"], injection: ["consulta", "recuperacion", "validacion-evidencia"],
   lexical: ["consulta", "recuperacion", "validacion-evidencia"], "existing-test": ["pruebas-desarrollo"],
  };
  if (!specific[c.operation]) throw new Error("No automatic stage contract for this case");
@@ -32,7 +32,9 @@ export function verifyHierarchy(runs: VerifiedSpan[], expected: ExpectedRoot[], 
  for (const r of runs) {
   if (r.session_id !== projectId) violations.push("wrong_project");
   if (!r.end_time || r.error) violations.push("incomplete_or_error");
-  if (!payloadTecnicoPersistido(r)) violations.push("nontechnical_payload");
+  const expectedRoot = !r.parent_run_id ? expected.find(e => e.id === r.id) : undefined;
+  const provenance = expectedRoot ? resolveCase({ caseId: expectedRoot.caseId }).provenance : undefined;
+  if (!payloadTecnicoPersistido(r, provenance === "manual_pending" ? undefined : provenance)) violations.push("nontechnical_payload");
   if (r.parent_run_id && (!ids.has(r.parent_run_id) || !expected.some(e => e.id === r.trace_id))) violations.push("broken_parentage");
  }
  for (const e of expected) {

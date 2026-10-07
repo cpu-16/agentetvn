@@ -1,5 +1,5 @@
 import { traceable } from "langsmith/traceable";
-import { technicalTarget, technicalExamples, technicalFeedback } from "../scripts/evaluation/technical";
+import { technicalTarget, technicalExamples, technicalFeedback, feedbackMatches } from "../scripts/evaluation/technical";
 import { verifyHierarchy, type VerifiedSpan } from "../scripts/evaluation/verify";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { Client, overrideFetchImplementation } from "langsmith";
@@ -128,7 +128,7 @@ describe("development experiment hierarchy and privacy", () => {
     mock.flush = async () => {};
     _clienteTrazaPruebas(mock, project);
     const expected: { id: string; exampleId: string; caseId: string }[] = [];
-    for (const caseId of ["CU01", "CU05", "JURY-ABSTENTION", "JURY-LEXICAL"]) {
+    for (const caseId of ["CU01", "CU05", "JURY-ABSTENTION", "JURY-INJECTION", "JURY-LEXICAL"]) {
       const input = technicalExamples().find(e => e.inputs.case_id === caseId)!.inputs;
       const id = crypto.randomUUID(), exampleId = crypto.randomUUID();
       const outputs = await traceable(technicalTarget, { id, reference_example_id: exampleId, name: "evaluacion-desarrollo", client: mock, tracingEnabled: true, replicas: [], project_name: project, processInputs: () => ({}), processOutputs: sanitizarTraza })(input);
@@ -136,9 +136,9 @@ describe("development experiment hierarchy and privacy", () => {
       if (caseId === "CU01") expect(outputs).toMatchObject({ afirmaciones: 5, evidencias: 5 });
       expected.push({ id, exampleId, caseId });
     }
-    const persisted: VerifiedSpan[] = created.map(r => ({ ...r, ...updated.filter(u => u.id === r.id).at(-1), session_id: "test-project" })) as unknown as VerifiedSpan[];
+    const persisted: VerifiedSpan[] = created.map(r => ({ ...r, ...updated.filter(u => u.id === r.id).at(-1), session_id: "test-project", ...(!r.parent_run_id ? { extra: { metadata: { ...((r.extra as { metadata?: object })?.metadata ?? {}), ls_example_provenance: "synthetic", ls_example_version: "evaluator-dev-v1", ls_example_dataset_split: ["base"] } } } : {}) })) as unknown as VerifiedSpan[];
     const verified = verifyHierarchy(persisted, expected, "test-project");
-    expect(verified).toMatchObject({ verified: true, roots: 4 });
+    expect(verified).toMatchObject({ verified: true, roots: 5 });
     expect(verified.children).toBeGreaterThan(4);
     const abstentionId = expected.find(e => e.caseId === "JURY-ABSTENTION")!.id;
     expect(persisted.some(r => r.trace_id === abstentionId && r.name === "recuperacion")).toBe(false);
@@ -160,12 +160,21 @@ describe("development experiment hierarchy and privacy", () => {
     expect(payloadTecnicoPersistido({ inputs: { question: "private" } })).toBe(false);
     expect(payloadTecnicoPersistido({ extra: { runtime: {}, metadata: {} } })).toBe(false);
     expect(payloadTecnicoPersistido({ outputs: { content: "private" } })).toBe(false);
+    const enriched = { reference_example_id: crypto.randomUUID(), extra: { metadata: { ls_example_provenance: "synthetic", ls_example_version: "evaluator-dev-v1", ls_example_dataset_split: ["base"] } } };
+    expect(payloadTecnicoPersistido(enriched)).toBe(false);
+    expect(payloadTecnicoPersistido(enriched, "synthetic")).toBe(true);
+    expect(payloadTecnicoPersistido(enriched, "public_snapshot")).toBe(false);
+    expect(payloadTecnicoPersistido({ ...enriched, extra: { metadata: { ...enriched.extra.metadata, ls_example_version: "private-text" } } }, "synthetic")).toBe(false);
+    expect(sanitizarTraza(enriched.extra.metadata)).toEqual({});
   });
   test("empty evidence denominators stay unscored; contradictory counters cannot create feedback", () => {
     const outputs = { resultado: "ok", checks_total: 2, checks_passed: 2, citation_total: 0, citation_existing: 0, citation_supported: 0 };
     expect(technicalFeedback(outputs).map(f => f.score ?? f.value)).toEqual([true, "not_applicable", "not_applicable"]);
     expect(() => technicalFeedback({ ...outputs, citation_total: 1, citation_supported: 2 })).toThrow("Invalid citation counters");
     expect(() => technicalFeedback({ ...outputs, checks_total: 0 })).toThrow("Invalid contract counters");
+    expect(feedbackMatches({ key: "support", score: 2/3 }, { key: "support", score: 0.6667 })).toBe(true);
+    expect(feedbackMatches({ key: "contract", score: true }, { key: "contract", score: 0.99999 })).toBe(false);
+    expect(feedbackMatches({ key: "support", score: 2/3 }, { key: "support", score: 0.9 })).toBe(false);
     expect(technicalExamples().every(e => Object.keys(e.inputs).sort().join() === "case_id,fixture_hash")).toBe(true);
   });
 });
