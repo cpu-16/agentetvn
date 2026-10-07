@@ -22,7 +22,7 @@ export const GUIA: Parte[] = [
     texto: "Esta línea de tiempo cuenta las publicaciones por día y por tema. Si arrastras sobre ella eliges un período, y todo el tablero se ajusta a esas fechas." },
   { id: "tablero-temas", vista: "tablero", ancla: "tablero-temas", titulo: "Publicaciones por tema", claves: ["publicaciones por tema", "grafica de temas", "por tema", "mapa de temas", "temas"], demo: { tipo: "filtroTablero", temas: ["economia"] },
     texto: "Esta gráfica reparte las publicaciones por tema. Para mostrarte, filtré Economía: mira cómo cambian las cifras y todas las gráficas; tocas otro tema o Limpiar para volver." },
-  { id: "tablero-relevancia", vista: "tablero", ancla: "tablero-relevancia", titulo: "Relevancia frente a evidencia", claves: ["relevancia", "relevancia frente a evidencia", "dispersion", "puntos"],
+  { id: "tablero-relevancia", vista: "tablero", ancla: "tablero-relevancia", titulo: "Relevancia frente a evidencia", claves: ["relevancia", "relevancia frente a evidencia", "dispersion", "puntos"], demo: { tipo: "filtroTablero", limpiar: true },
     texto: "Cada punto es un tema: a la derecha más relevante, arriba con más evidencia. Lo que queda abajo a la derecha es importante pero todavía flojo de evidencia: ahí hay que verificar." },
   { id: "tablero-evidencia", vista: "tablero", ancla: "tablero-evidencia", titulo: "Estado de evidencia por tema", claves: ["estado de evidencia", "evidencia por tema", "suficiente", "parcial", "insuficiente"],
     texto: "Aquí ves, para cada tema, cuántos eventos tienen evidencia suficiente, parcial o insuficiente. Sirve para saber dónde falta reportería antes de escribir." },
