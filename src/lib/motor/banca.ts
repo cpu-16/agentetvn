@@ -59,6 +59,8 @@ const esquema = z.object({
   faltantes: z.array(texto).min(1).max(6), preguntas: z.tuple([texto, texto, texto]),
   abstener: z.boolean(), modo: z.literal("extractivo"), leyenda: z.literal(LEYENDA),
 });
+// El reto pide un boletín de entorno, nunca consejo de compra, venta o inversión (revisión de Cursor, 7-oct)
+const CONSEJO = /\b(compren|comprar|vendan|vender|inviert[ae]n?|invertir|conviene (comprar|vender|invertir|entrar|salir)|recomendamos|recomiendo|recomendaci[oó]n de (compra|venta|inversi[oó]n)|sobreponderar|infraponderar|tomar ganancias)\b/i;
 export function validarBoletin(value: unknown, ev: Evento, noticias: Noticia[], indicadores: Indicador[], huella: string):
   { ok: true; boletin: BoletinBancario } | { ok: false; error: string } {
   const parsed = esquema.safeParse(value);
@@ -85,6 +87,11 @@ export function validarBoletin(value: unknown, ev: Evento, noticias: Noticia[], 
   const libres = [b.titulo, ...b.sectores, b.horizonte, ...b.faltantes, ...b.preguntas, b.leyenda];
   if (libres.some((t) => esNoConfiable(t).no_confiable)) return { ok: false, error: "El boletín contiene instrucciones no permitidas." };
   const todo = [...fuentes.values()].map((f) => f.texto).join("\n");
+  // El título y los hechos pueden citar lo que dice la fuente («quiero invertir en Panamá»); lo demás no puede aconsejar
+  const consejo = (t: string) => { const m = CONSEJO.exec(t); return m ? m[0].toLowerCase() : null; };
+  const ajeno = (t: string) => { const m = consejo(t); return !!m && !todo.toLowerCase().includes(m); };
+  if (libres.slice(1).some(consejo) || b.hipotesis.some((a) => consejo(a.texto)) || ajeno(b.titulo) || b.hechos.some((a) => ajeno(a.texto)))
+    return { ok: false, error: "El boletín no puede recomendar compra, venta ni inversión." };
   const normal = (t: string) => t.trim().toLowerCase().replace(/\s+/g, " ");
   if (sostenida(b.titulo, todo) || (b.abstener ? b.titulo !== "Sin evidencia confiable"
     : !pubs.some((n) => normal(n.titulo).includes(normal(b.titulo)))))
