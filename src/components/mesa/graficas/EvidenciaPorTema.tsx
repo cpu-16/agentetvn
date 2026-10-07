@@ -38,12 +38,12 @@ export function EvidenciaPorTema({ evidencia }: { evidencia: Agregados["evidenci
     })),
   }), [filas, compacto]);
 
-  const tabla = useMemo(() => ({ cabeceras: ["Tema", "Eventos", "Insuficiente", "Parcial", "Suficiente"], filas: filas.map((f) => [nombreTema(f.tema), f.total, f.n[0], f.n[1], f.n[2]]), nota: "Conteos enteros del mismo conjunto que la gráfica." }), [filas]);
+  const tabla = useMemo(() => ({ cabeceras: ["Tema", "Eventos", "Insuficiente", "Parcial", "Suficiente"], filas: filas.map((f) => [nombreTema(f.tema), f.total, f.n[0], f.n[1], f.n[2]]), nota: "Conteos enteros del mismo conjunto que la gráfica. El estado es del evento completo, aunque se filtre por un medio." }), [filas]);
 
   return (
     <Grafica
       titulo="Estado de evidencia por tema"
-      nota="Porcentaje de eventos por estado. El puntaje ordena; la evidencia decide si se puede escribir."
+      nota="Porcentaje dentro de cada tema, sobre los eventos del filtro (sin casos de prueba). Insuficiente casi siempre es una sola fuente sin fuente primaria: una pista para reportear, no una noticia descartada."
       aria={`Barras apiladas del estado de evidencia en ${filas.length} temas`}
       opcion={opcion}
       alto={Math.max(220, 40 + filas.length * 34)}

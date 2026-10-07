@@ -142,7 +142,7 @@ export function Agenda() {
               ))}
             </ol>
           )}
-          <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">Cinco temas para la agenda de Panamá (CU-01). El puntaje ordena; la evidencia decide si se puede escribir.</p>
+          <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">Cinco temas para la agenda de Panamá (CU-01). El puntaje ordena; la evidencia dice qué falta verificar antes de afirmar el hecho.</p>
         </div>
       </aside>
     </div>

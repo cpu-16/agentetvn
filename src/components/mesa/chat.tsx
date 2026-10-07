@@ -313,7 +313,7 @@ export function ChatAgente() {
                     <div className="mr-4 rounded-md border border-border bg-white px-3 py-2.5">
                       <span className="mb-0.5 block text-[11px] font-medium text-muted-foreground">Jarvis · {t.respuesta.agenda.encabezado ? "tu mesa" : "agenda de hoy"}</span>
                       <p className="leading-relaxed">{t.respuesta.agenda.encabezado ? `${t.respuesta.agenda.encabezado}:` : t.respuesta.agenda.uno ? "La que más merece revisión hoy:" : "Hoy la mesa prioriza estos temas:"}</p>
-                      <p className="mt-0.5 text-[11px] text-muted-foreground">El puntaje mide atención, no verdad; la evidencia dice si ya se puede escribir.</p>
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">El puntaje mide atención, no verdad; la evidencia dice qué falta verificar antes de afirmar el hecho.</p>
                       <ol className="mt-2 space-y-1.5">
                         {t.respuesta.agenda.items.map((x, i) => (
                           <li key={x.eventoId}>

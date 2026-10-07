@@ -114,7 +114,7 @@ export function Portada() {
           <div>
             <p className="rotulo rotulo-tinta mb-2 inline-block">Cinco temas para la agenda de Panamá</p>
             <h2 id="cinco-titulo" className="titular text-2xl font-semibold">Cinco para hoy</h2>
-            <p className="text-sm text-muted-foreground">Qué cinco temas merecen revisión para la agenda de Panamá, y por qué. El puntaje ordena; la evidencia decide si se puede escribir.</p>
+            <p className="text-sm text-muted-foreground">Qué cinco temas merecen revisión para la agenda de Panamá, y por qué. El puntaje ordena; la evidencia dice qué falta verificar antes de afirmar el hecho.</p>
           </div>
           <Button className="presionable bg-azul text-white hover:bg-[#005fa3]" onClick={() => irA("agenda")}>Abrir la agenda</Button>
         </div>
