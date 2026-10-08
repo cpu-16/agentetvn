@@ -126,11 +126,11 @@ export function Ficha({ id }: { id: string }) {
                 <ul className="space-y-2">
                   {e.procedencias.map((p) => (
                     <li key={p.id} className={cn("rounded-sm bg-white p-3 text-sm", p.tipo === "no_verificada" && "border border-ambar")}>
-                      <p className="font-medium">{p.tipo === "agencia" ? `Agencia ${p.nombre}` : p.tipo === "no_verificada" ? "Independencia no verificada" : p.tipo === "primaria" ? `Fuente primaria ${p.nombre}` : `Medio ${nombreMedio(p.nombre) === p.nombre ? p.nombre : `${nombreMedio(p.nombre)} (${p.nombre})`}`} <span className="text-muted-foreground">({p.ids_noticia.length})</span></p>
+                      <p className="font-medium">{p.tipo === "agencia" ? `Agencia ${p.nombre}` : p.tipo === "no_verificada" ? "Independencia no verificada" : p.tipo === "primaria" ? `Fuente primaria ${p.nombre}` : `Medio ${nombreMedio(p.nombre)}`} <span className="text-muted-foreground">({p.ids_noticia.length})</span></p>
                       <ul className="mt-1 space-y-1 text-xs">
                         {p.ids_noticia.map((nid) => {
                           const n = porId.get(nid);
-                          return n ? <li key={nid}>{n.medio}: {n.titulo} <BotonCita id={nid} onAbrir={setCita} />{n.no_confiable && <span className="chip rojo ml-1">no confiable</span>}</li> : null;
+                          return n ? <li key={nid}>{nombreMedio(n.medio)}: {n.titulo} <BotonCita id={nid} onAbrir={setCita} />{n.no_confiable && <span className="chip rojo ml-1">no confiable</span>}</li> : null;
                         })}
                       </ul>
                     </li>

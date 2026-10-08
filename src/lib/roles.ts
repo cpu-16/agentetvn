@@ -12,7 +12,7 @@ export interface EventoMesa {
 
 export const MESA: Record<RolMesa, { titulo: string; bajada: string; accion: string; pestana: "evidencia" | "paquete"; vacio: string }> = {
   editor: { titulo: "Tu cola de decisión", bajada: "Decides qué se cubre hoy: revisas la evidencia, tomas el tema, pides evidencia al periodista o descartas, y apruebas el borrador. Aprobar no publica.", accion: "Decidir", pestana: "evidencia", vacio: "No queda nada por decidir en el corte." },
-  periodista: { titulo: "Qué falta verificar", bajada: "Verificas antes de que se escriba: temas importantes con evidencia insuficiente o parcial, versiones que no coinciden y lo que el editor te devolvió.", accion: "Verificar", pestana: "evidencia", vacio: "Nada pendiente de verificar en el corte." },
+  periodista: { titulo: "Qué falta verificar", bajada: "Verificas antes de que se escriba: temas importantes con evidencia insuficiente o parcial, versiones que no coinciden y lo que el editor te pidió verificar. Al terminar se lo devuelves con lo que encontraste.", accion: "Verificar", pestana: "evidencia", vacio: "Nada pendiente de verificar en el corte." },
   productor: { titulo: "Listos para armar la pieza", bajada: "Preparas el paquete para TV, web y redes: propuestas de titular, resumen web, guion de 45 a 60 segundos y copy, cada frase con su cita. Cuando la dejas armada, marcas «Pieza lista» y sale de tu cola.", accion: "Armar la pieza", pestana: "paquete", vacio: "Todavía no hay temas con evidencia para armar." },
   analista: { titulo: "Señales para el boletín de entorno", bajada: "Lees la agenda con lente de banca: temas de economía, logística y Canal, turismo y regulación, ordenados por el mismo puntaje de atención. Para cada uno armas un boletín de entorno con sectores, horizonte y preguntas de seguimiento, cada frase con su cita.", accion: "Armar boletín", pestana: "paquete", vacio: "No hay temas económicos en el corte." },
 };
@@ -28,7 +28,7 @@ export function accionSugerida(e: EventoMesa): string {
 
 const ORDEN: Record<RolMesa, Record<string, number>> = {
   editor: { en_revision: 0, nuevo: 1 }, // primero lo que espera su aprobación
-  periodista: { requiere_evidencia: 0, en_revision: 1, nuevo: 2 }, // primero lo que el editor le devolvió
+  periodista: { requiere_evidencia: 0, nuevo: 1 }, // primero lo que el editor le pidió; lo que devolvió al editor sale de su cola
   productor: { aprobado_borrador: 0, en_revision: 1, nuevo: 2 }, // primero lo que el editor ya aprobó para adaptar a formatos; «pieza lista» sale
   analista: { nuevo: 0, en_revision: 0, requiere_evidencia: 0, aprobado_borrador: 0, pieza_lista: 0 }, // su revisión (la del boletín) es aparte: manda el puntaje
 };
@@ -40,7 +40,7 @@ export function tocaA(rol: RolMesa, eventos: EventoMesa[], max = 5): EventoMesa[
   const orden = ORDEN[rol];
   const entra = (e: EventoMesa) => {
     if (e.sintetica || e.no_confiable || e.revisable === false || !(e.estado_revision in orden)) return false;
-    if (rol === "periodista") return e.estado_revision === "requiere_evidencia" || e.estado_evidencia !== "suficiente" || e.contradicciones.length > 0;
+    if (rol === "periodista") return e.estado_revision === "requiere_evidencia" || e.estado_evidencia !== "suficiente" || e.contradicciones.length > 0; // «nuevo» con algo que verificar
     if (rol === "productor") return e.estado_evidencia !== "insuficiente" && !e.contradicciones.length; // con qué escribir y sin versiones en disputa
     if (rol === "analista") return TEMAS_BANCA.includes(e.tema ?? "") && !e.por_revisar; // tema dudoso del clasificador: no entra a la banca
     return true;

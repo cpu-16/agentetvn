@@ -121,6 +121,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
   const [abierta, setAbierta] = useState({ decidir: rol !== "productor", produccion: rol === "productor" });
   const irA = useMesa((s) => s.irA);
   const nombre = persona.trim();
+  const editar = () => { setEditando(true); setAbierta({ decidir: true, produccion: true }); }; // lo que se edita tiene que verse
   const actualizarEstadoEvento = useMesa((s) => s.actualizarEstadoEvento);
   const sinRed = "No hubo conexión. Revisa la red e intenta otra vez.";
 
@@ -169,7 +170,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
               {ocupado && <span role="status" className="font-medium text-foreground">Preparando el borrador; con IA tarda cerca de un minuto. Si sales, el trabajo sigue y queda guardado.</span>}
               {p.updatedAt && <span>guardado {horaPanama(p.updatedAt)}{p.persona ? ` por ${p.persona}` : ""}</span>}
               <span className="ml-auto flex gap-2">
-                {editando ? <Button size="sm" onClick={guardar} disabled={ocupado}>Guardar edición</Button> : <Button size="sm" variant="outline" onClick={() => setEditando(true)}>Editar</Button>}
+                {editando ? <Button size="sm" onClick={guardar} disabled={ocupado}>Guardar edición</Button> : <Button size="sm" variant="outline" onClick={editar}>Editar</Button>}
                 <Button size="sm" variant="ghost" onClick={() => generar(true)} disabled={ocupado}>Regenerar</Button>
               </span>
             </div>
@@ -178,7 +179,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
               {editando ? <input value={p.titulo} onChange={(e) => setP({ ...p, titulo: e.target.value })} className="w-full rounded-sm border border-border bg-white p-2 text-lg" /> : <p className="titular text-xl font-semibold">{p.titulo}</p>}
             </div>
             <Leyenda />
-            <Seccion titulo="Para decidir" detalle="enfoque, brief, preguntas y verificaciones pendientes" abierta={editando || abierta.decidir} onToggle={(v) => setAbierta((a) => ({ ...a, decidir: v }))}>
+            <Seccion titulo="Para decidir" detalle="enfoque, brief, preguntas y verificaciones pendientes" abierta={abierta.decidir} onToggle={(v) => setAbierta((a) => ({ ...a, decidir: v }))}>
               <div>
                 <h3 className="text-sm text-muted-foreground">Enfoque de interés público</h3>
                 {editando ? <textarea value={p.enfoque} onChange={(e) => setP({ ...p, enfoque: e.target.value })} rows={2} className="w-full rounded-sm border border-border bg-white p-2 text-sm" /> : <p className="text-sm">{p.enfoque}</p>}
@@ -197,7 +198,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
                 <ul className="list-disc space-y-1 pl-5 text-sm">{p.verificaciones.map((v, i) => <li key={i}>{v}</li>)}</ul>
               </div>
             </Seccion>
-            <Seccion titulo="Material para producción" detalle="titulares, guion para leer al aire y copy para redes" abierta={editando || abierta.produccion} onToggle={(v) => setAbierta((a) => ({ ...a, produccion: v }))}>
+            <Seccion titulo="Material para producción" detalle="titulares, guion para leer al aire y copy para redes" abierta={abierta.produccion} onToggle={(v) => setAbierta((a) => ({ ...a, produccion: v }))}>
               {!!p.titulos?.length && (
                 <div className={cn("rounded-sm border p-3", rol === "productor" ? "border-azul bg-[#eef6fc]" : "border-border bg-white")}>
                   <h3 className="text-sm font-medium">Propuestas de titular para web y redes</h3>
@@ -206,7 +207,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
                     {p.titulos.map((t) => (
                       <li key={t} className="flex flex-wrap items-center gap-2 text-sm">
                         <span className="titular flex-1 font-semibold">{t}</span>
-                        <Button size="sm" variant="outline" className="presionable h-7 px-2 text-xs" disabled={ocupado || p.titulo === t} onClick={() => { setP({ ...p, titulo: t }); setEditando(true); }}>{p.titulo === t ? "En uso" : "Usar"}</Button>
+                        <Button size="sm" variant="outline" className="presionable h-7 px-2 text-xs" disabled={ocupado || p.titulo === t} onClick={() => { setP({ ...p, titulo: t }); editar(); }}>{p.titulo === t ? "En uso" : "Usar"}</Button>
                       </li>
                     ))}
                   </ol>

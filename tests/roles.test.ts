@@ -13,8 +13,8 @@ describe("mesa por rol", () => {
   test("editor: primero lo que espera su aprobación; nada descartado, aprobado ni sintético", () => {
     expect(tocaA("editor", corte).map((e) => e.id)).toEqual(["c", "a", "h", "b"]);
   });
-  test("periodista: primero lo que el editor devolvió; solo lo que tiene algo que verificar", () => {
-    expect(tocaA("periodista", corte).map((e) => e.id)).toEqual(["e", "c", "a", "h"]);
+  test("periodista: primero lo que el editor le pidió; solo lo que tiene algo que verificar; lo que ya devolvió sale", () => {
+    expect(tocaA("periodista", corte).map((e) => e.id)).toEqual(["e", "a", "h"]);
   });
   test("productor: primero lo aprobado para adaptar; nunca sin evidencia ni con versiones en disputa", () => {
     expect(tocaA("productor", corte).map((e) => e.id)).toEqual(["d", "c", "b"]);
