@@ -29,3 +29,6 @@ export const pasoRecorrido = (hilo: string, nuevo?: number | null) => { const l 
 export const pasoRetomable = (ahora = Date.now()) => { const u = g.__vozUltimoPaso; return u && ahora - u.en < 15 * 60_000 ? u.paso : undefined; };
 export const cerrarLlamada = (hilo: string) => void llamadas.delete(hilo);
 export const _vaciarRegistro = () => { llamadas.clear(); g.__vozUltimoPaso = undefined; };
+
+/** Identidad registrada al abrir la llamada autenticada; nunca proviene del modelo. */
+export const personaDe = (hilo: string) => llamadas.get(hilo)?.persona;

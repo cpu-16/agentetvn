@@ -74,12 +74,12 @@ describe("paquete con LLM", () => {
     expect(p.modo).toBe("llm");
     expect(p.brief.map((a) => a.evidence_id)).toEqual(["a", "PAN:FP.CPI.TOTL.ZG:2023"]);
     expect(p.brief[1]).toMatchObject({ campo: "valor", alcance: "fila_indicador" });
-    expect(p.llm?.descartadas).toHaveLength(3);
+    expect(p.llm?.descartadas).toHaveLength(4);
     expect(p.llm).toMatchObject({ modelo: "claude-opus-5-5", tokens: 900, costo_usd: 0.012 });
     expect(p.titulo).toBe("Inflación de septiembre cierra en 1,2 %");
     expect(p.preguntas).toHaveLength(3);
     expect(p.verificaciones.join(" ")).toContain("Vacío señalado por la IA: Falta el comunicado oficial del INEC.");
-    expect(p.verificaciones.join(" ")).toContain("3 frase(s) de la IA descartada(s)");
+    expect(p.verificaciones.join(" ")).toContain("4 frase(s) de la IA descartada(s)");
     expect(p.verificaciones.join(" ")).not.toContain("Pedro"); // un vacío no puede colar un nombre que no está en las fuentes
     expect(p.leyenda).toContain("titular/metadatos");
   });
