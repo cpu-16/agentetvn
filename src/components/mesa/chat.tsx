@@ -14,7 +14,7 @@ import { cancelarGuia, mostrarGuia } from "./jarvis/guia";
 import type { Guia } from "@/lib/motor/consulta";
 
 interface Afirmacion { texto: string; tipo: string; evidence_id: string; campo: string; alcance: string }
-interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; guia?: Guia; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; agenda?: { uno: boolean; texto: string; encabezado?: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
+interface Respuesta { abstener: boolean; motivo?: string; faltante?: string; afirmaciones: Afirmacion[]; evidencias: { id: string; tipo: string; resumen: string; score: number }[]; contradicciones: { detalle: string }[]; modo: string; ms: number; leyenda: string; redaccion?: { frases: Afirmacion[]; vacios: string[]; llm: { modelo: string; ms: number } }; traza?: Traza; guia?: Guia; conversacion?: { motivo: string; texto: string; sugerencias: string[] }; ajuste?: { eventoId: string; cambios: string[]; descartadas: string[] }; agenda?: { uno: boolean; texto: string; encabezado?: string; items: { eventoId: string; idNoticia: string; titulo: string; medio: string; P: number; rango: string; evidencia: string; razon: string; falta: string | null; publicaciones: number }[] } }
 interface Turno { id: number; pregunta: string; ambito: string | null; respuesta: Respuesta | null; error: string | null; voz?: { quien: "persona" | "jarvis" | "sistema"; texto: string } }
 
 /** Sugerencias del panel vacío según el rol: el editor decide qué se cubre, el periodista verifica y el productor arma la pieza. */
@@ -53,7 +53,7 @@ export function ChatAgente() {
   const turnoVoz = (quien: "persona" | "jarvis" | "sistema", texto: string) => setTurnos((t) => [...t, { id: Date.now() + Math.random(), pregunta: "", ambito: null, respuesta: null, error: null, voz: { quien, texto } }]);
   const voz = useVoz({
     onTranscripcion: (quien, texto) => turnoVoz(quien, texto),
-    onMostrar: (pregunta, respuesta) => setTurnos((t) => [...t, { id: Date.now() + Math.random(), pregunta: `🎙 ${pregunta}`, ambito: null, respuesta: respuesta as Respuesta, error: null }]),
+    onMostrar: (pregunta, respuesta) => { setTurnos((t) => [...t, { id: Date.now() + Math.random(), pregunta: `🎙 ${pregunta}`, ambito: null, respuesta: respuesta as Respuesta, error: null }]); if ((respuesta as Respuesta).ajuste) useMesa.getState().refrescarFicha(); }, // por voz también puede cambiar el borrador
     onAviso: (texto) => { setAnuncio(texto); turnoVoz("sistema", texto); },
     onGuia: (g) => { setCartel({ ...g, desdeChat: false }); void mostrarGuia(g); },
   });
@@ -139,6 +139,7 @@ export function ChatAgente() {
       const respuesta = (await r.json()) as Respuesta;
       if (gen !== generacion.current) return; // llegó después de «Nueva conversación»
       setTurnos((t) => t.map((x) => (x.id === id ? { ...x, respuesta } : x)));
+      if (respuesta.ajuste) useMesa.getState().refrescarFicha(); // Jarvis cambió el borrador de la ficha abierta: que se vea
       if (respuesta.guia) { setCartel({ ...respuesta.guia, desdeChat: true }); void mostrarGuia(respuesta.guia); }
       const red = respuesta.redaccion;
       setAnuncio(respuesta.conversacion ? respuesta.conversacion.texto : respuesta.abstener ? `Sin respuesta sustentada. ${respuesta.motivo ?? ""}` : red ? `Borrador de IA. ${red.frases.map((a) => a.texto).join(" ")}${red.vacios.length ? ` Qué falta en el borrador: ${red.vacios.join("; ")}` : ""}` : `Respuesta con ${respuesta.afirmaciones.length} afirmación(es) citada(s). ${respuesta.afirmaciones.map((a) => a.texto).join(" ")}`);

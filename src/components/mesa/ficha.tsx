@@ -46,15 +46,20 @@ export function Ficha({ id }: { id: string }) {
   if (orden && orden.n !== ordenVista) { setOrdenVista(orden.n); if (orden.tipo === "pestana") setTab(orden.pestana); }
   const tabs = useRef<HTMLButtonElement[]>([]);
 
+  const ultimaCarga = useRef(0); // solo vale la respuesta de la última recarga (un «Deshacer» rápido no lo pisa una recarga vieja)
   const cargar = useCallback(() => {
+    const n = ++ultimaCarga.current;
     fetchMesa(`/api/eventos/${id}`).then(async (r) => {
       if (!r.ok) throw new Error(r.status === 404 ? "Ese tema no está en el corte de hoy." : "No se pudo cargar la ficha. Avisa al equipo técnico.");
       const detalle = (await r.json()) as Detalle;
+      if (n !== ultimaCarga.current) return;
       setD(detalle);
       actualizarEstadoEvento(id, detalle.revision.estado);
     }).catch((e) => setError(e instanceof TypeError ? "No hubo conexión. Revisa la red e intenta otra vez." : e.message));
   }, [id, actualizarEstadoEvento]);
   useEffect(cargar, [cargar]);
+  const versionFicha = useMesa((s) => s.versionFicha); // el chat le pidió a Jarvis un cambio en este borrador
+  useEffect(() => { if (versionFicha) cargar(); }, [versionFicha, cargar]);
   const teclaTab = (e: React.KeyboardEvent, i: number) => {
     const orden = ["evidencia", "paquete"] as const;
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {

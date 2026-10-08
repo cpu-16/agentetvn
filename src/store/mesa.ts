@@ -42,6 +42,9 @@ interface Mesa {
   pedirAlChat: (q: string | null) => void;
   cargarAgenda: (forzar?: boolean) => Promise<AgendaDatos | null>;
   actualizarEstadoEvento: (id: string, estado: string) => void;
+  /** Sube cuando el chat le cambió el borrador a la ficha abierta (Jarvis ajustó el paquete): la ficha se recarga. */
+  versionFicha: number;
+  refrescarFicha: () => void;
 }
 
 export const useMesa = create<Mesa>()(
@@ -85,6 +88,8 @@ export const useMesa = create<Mesa>()(
           return null;
         }
       },
+      versionFicha: 0,
+      refrescarFicha: () => set((s) => ({ versionFicha: s.versionFicha + 1 })),
       actualizarEstadoEvento: (id, estado) =>
         set((s) => (s.agenda ? { agenda: { ...s.agenda, eventos: s.agenda.eventos.map((e) => (e.id === id ? { ...e, estado_revision: estado } : e)), cinco: s.agenda.cinco.map((c) => (c.evento.id === id ? { ...c, evento: { ...c.evento, estado_revision: estado } } : c)) } } : {})),
     }),

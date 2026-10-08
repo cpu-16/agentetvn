@@ -193,7 +193,8 @@ export function validarPaquete(base: Paquete, fuentes: Fuente[], j: Record<strin
     copy: copy.length ? copy : base.copy,
     preguntas: preguntas.length === 3 ? preguntas : base.preguntas,
     verificaciones: [
-      ...base.verificaciones.filter((v) => !v.startsWith("Guion incompleto")),
+      // al ajustar, la base ya trae las líneas de la IA de la vuelta anterior: no se repiten (revisión de Cursor)
+      ...base.verificaciones.filter((v) => !v.startsWith("Guion incompleto") && !v.startsWith("Vacío señalado por la IA") && !/^\d+ frase\(s\) de la IA descartada/.test(v)),
       ...(pg < 110 ? [`Guion incompleto (${pg} palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.`] : []),
       ...vacios.map((v) => `Vacío señalado por la IA: ${v}`),
       ...(descartadas.length ? [`${descartadas.length} frase(s) de la IA descartada(s) por no sostenerse en su fuente.`] : []),

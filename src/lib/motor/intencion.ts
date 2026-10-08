@@ -64,7 +64,7 @@ const RELLENO = new Set("dame muestrame ensename listame me te nos mi tu yo le l
 export function intencion(q: string, opts: { contexto?: ContextoPantalla | null; tokens?: string[] } = {}): Intencion {
   const t = norm(q);
   // Imperativo al inicio + objeto editorial: una consulta sobre noticias no modifica nada.
-  const orden = /^(?:(?:oye|jarvis|por favor|porfa) )*(?:cambia|quita|elimina|borra|agrega|anade|reemplaza|acorta|hazlo|no digas)\b/;
+  const orden = /^(?:(?:oye|jarvis|por favor|porfa) )*(?:cambia|quita|elimina|borra|agrega|anade|reemplaza|acorta|hazlo|no digas|haz (?:el|la|los|las) (?:titulo|titular|guion|copy|brief|resumen|borrador|paquete))\b/; // «haz el guion más corto» sí; «haz un resumen de…» sigue siendo consulta
   const objeto = /\b(titulo|titular|guion|copy|brief|resumen|borrador|paquete|frase)\b/;
   if (opts.contexto?.eventoId && orden.test(t) && objeto.test(t)) return { tipo: "ajustar" };
   const toks = opts.tokens ?? t.split(" ");

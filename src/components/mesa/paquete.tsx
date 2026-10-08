@@ -114,6 +114,9 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
   const reducir = useReducedMotion();
   const [p, setP] = useState<Paquete | null>(paquete);
   const [editando, setEditando] = useState(false);
+  // si el borrador guardado cambió por fuera (Jarvis desde el chat, otra persona), se muestra el nuevo; lo que se está editando no se pisa
+  const [version, setVersion] = useState(paquete?.updatedAt);
+  if (paquete?.updatedAt !== version && !editando) { setVersion(paquete?.updatedAt); setP(paquete); }
   const [motivo, setMotivo] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
@@ -121,6 +124,27 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
   const [abierta, setAbierta] = useState({ decidir: rol !== "productor", produccion: rol === "productor" });
   const irA = useMesa((s) => s.irA);
   const nombre = persona.trim();
+  const [pedido, setPedido] = useState("");
+  const [ajuste, setAjuste] = useState<{ cambios: string[]; descartadas: string[]; previo: Paquete } | null>(null);
+  // Pedirle a Jarvis un cambio en el borrador: la IA reescribe y el mismo validador de citas decide qué queda; se guarda como edición y se puede deshacer
+  const pedirCambio = async () => {
+    if (!p || !pedido.trim()) return;
+    setOcupado(true); setMsg(null);
+    try {
+      const r = await fetchMesa(`/api/eventos/${eventoId}/paquete/ajustar`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ instruccion: pedido.trim() }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) return setMsg(j.error ?? "Jarvis no pudo ajustar el borrador. Intenta otra vez o edítalo a mano.");
+      setAjuste({ cambios: j.cambios ?? [], descartadas: j.descartadas ?? [], previo: p }); setP(j.paquete); setPedido(""); setEditando(false); onCambio();
+    } catch { setMsg(sinRed); } finally { setOcupado(false); }
+  };
+  const deshacer = async () => {
+    if (!ajuste) return;
+    setOcupado(true);
+    try {
+      const r = await fetchMesa(`/api/eventos/${eventoId}/paquete`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ paquete: ajuste.previo }) });
+      if (r.ok) { setP(ajuste.previo); setAjuste(null); setMsg("Se deshizo el cambio de Jarvis."); onCambio(); } else setMsg("No se pudo deshacer. Avisa al equipo técnico.");
+    } catch { setMsg(sinRed); } finally { setOcupado(false); }
+  };
   const editar = () => { setEditando(true); setAbierta({ decidir: true, produccion: true }); }; // lo que se edita tiene que verse
   const actualizarEstadoEvento = useMesa((s) => s.actualizarEstadoEvento);
   const sinRed = "No hubo conexión. Revisa la red e intenta otra vez.";
@@ -174,6 +198,22 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
                 <Button size="sm" variant="ghost" onClick={() => generar(true)} disabled={ocupado}>Regenerar</Button>
               </span>
             </div>
+            <form className="rounded-sm border border-azul/40 bg-[#eef6fc] p-3" onSubmit={(e) => { e.preventDefault(); void pedirCambio(); }}>
+              <label htmlFor={`pedido-${eventoId}`} className="text-sm font-medium text-tinta">Pídele a Jarvis un cambio en el borrador</label>
+              <div className="mt-1.5 flex flex-wrap gap-2">
+                <input id={`pedido-${eventoId}`} value={pedido} onChange={(e) => setPedido(e.target.value)} maxLength={500} disabled={ocupado} placeholder="Ej.: «quita la mención a Crítica del copy», «haz el guion más corto»" className="h-9 min-w-0 flex-1 rounded-sm border border-border bg-white px-2 text-sm" />
+                <Button type="submit" size="sm" className="presionable" disabled={ocupado || !pedido.trim()}>{ocupado ? "Ajustando…" : "Pedir cambio"}</Button>
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">Cada frase nueva se comprueba contra sus fuentes: lo que no esté en ellas no entra. Queda guardado con tu nombre y lo puedes deshacer. También lo puedes pedir en el chat con la ficha abierta.</p>
+              {ajuste && (
+                <div role="status" className="mt-2 rounded-sm bg-white p-2 text-xs">
+                  <p className="font-medium text-tinta">✓ Jarvis ajustó el borrador</p>
+                  {ajuste.cambios.length > 0 && <ul className="mt-1 list-disc pl-4">{ajuste.cambios.map((c, i) => <li key={i}>{c}</li>)}</ul>}
+                  {ajuste.descartadas.length > 0 && <><p className="mt-1 font-medium text-senal">No se aplicó (no está en las fuentes):</p><ul className="list-disc pl-4 text-muted-foreground">{ajuste.descartadas.map((c, i) => <li key={i}>{c}</li>)}</ul></>}
+                  <Button type="button" size="sm" variant="ghost" className="mt-1 h-7 px-2 text-xs" disabled={ocupado} onClick={deshacer}>Deshacer</Button>
+                </div>
+              )}
+            </form>
             <div>
               <h3 className="text-sm text-muted-foreground">Título propuesto</h3>
               {editando ? <input value={p.titulo} onChange={(e) => setP({ ...p, titulo: e.target.value })} className="w-full rounded-sm border border-border bg-white p-2 text-lg" /> : <p className="titular text-xl font-semibold">{p.titulo}</p>}
