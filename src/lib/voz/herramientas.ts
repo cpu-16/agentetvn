@@ -1,8 +1,8 @@
 // Las 3 herramientas de Jarvis-TVN. Corren en Next con el motor de siempre: la voz nunca consulta datos por su cuenta.
 import { consulta, estadoDe, respuestaGuia, snapshot } from "../motor/servicio";
 import { tokenizar } from "../motor/bm25";
-import { explicacionFija, PLATAFORMA_CORTA, queHaceRol, type VistaVoz } from "./catalogo";
-import { buscarParte, parte, RECORRIDO_GUIA } from "./guia";
+import { CAPACIDADES, explicacionFija, PLATAFORMA_CORTA, queHaceRol, type VistaVoz } from "./catalogo";
+import { buscarParte, RECORRIDO_GUIA } from "./guia";
 import { personaDe, contextoDe, encolar, guardarContexto, momentoPaso, pasoRecorrido, pasoRetomable, sinPreguntar } from "./registro";
 
 const DESTINOS: VistaVoz[] = ["portada", "agenda", "tablero", "control", "ficha"];
@@ -38,8 +38,9 @@ function mostrarParte(hilo: string, id: string, recorrido = false): string {
 // de la voz llamando en bucle dentro de un mismo turno. Se repite el paso que todavía no se leyó (prueba de Gilberto, 8-oct).
 const MISMO_TURNO_MS = 2500;
 const textoGuia = (id: string) => respuestaGuia({ tipo: "guia", parte: id, recorrido: true }, "embeddings").conversacion!.texto.replace(" Ese fue el recorrido.", "");
-/** El paso con su número y su título, para que la voz lo lea tal cual y no arme su propio recorrido. */
-const paso = (i: number, texto: string) => `Paso ${i + 1} de ${RECORRIDO_GUIA.length} · ${parte(RECORRIDO_GUIA[i])?.titulo ?? ""}: ${texto}`;
+// El paso va solo con su texto (el número y el título los muestra el cartel): leído en voz alta «Paso 6 de 13 · La ficha:»
+// sonaba a máquina. Los cierres rotan para que no sea siempre «¿Seguimos?» (prueba de Gilberto, 8-oct).
+const CIERRES = ["¿Seguimos?", "¿Vamos con lo que sigue?", "¿Te muestro lo siguiente?", "¿Dale, seguimos?", "¿Pasamos a lo próximo?"];
 
 export function navegar(hilo: string, args: { destino?: string; consulta?: string; eventoId?: string }, ahora = Date.now()): string {
   const pedido = String(args.destino ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -52,12 +53,13 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
     if (pedido !== "siguiente") sinPreguntar(hilo, pedido === "seguido");
     const enEsta = pasoRecorrido(hilo), previo = enEsta ?? pasoRetomable(); // la llamada anterior se cortó a mitad: se retoma
     if (pedido !== "recorrido" && previo === undefined) return "No estamos en un recorrido. ¿Quieres que te muestre la plataforma parte por parte?";
-    const pregunta = (i: number) => (i + 1 >= RECORRIDO_GUIA.length ? " Ese fue el recorrido." : sinPreguntar(hilo) ? "" : " ¿Seguimos?");
-    if (pedido !== "recorrido" && enEsta !== undefined && ahora - (momentoPaso(hilo) ?? 0) < MISMO_TURNO_MS) return `${paso(enEsta, textoGuia(RECORRIDO_GUIA[enEsta]))}${pregunta(enEsta)}`;
+    const pregunta = (i: number) => (i + 1 >= RECORRIDO_GUIA.length ? " Ese fue el recorrido. ¿Abro alguna sección o te cuento la noticia del día?" : sinPreguntar(hilo) ? "" : ` ${CIERRES[i % CIERRES.length]}`);
+    const entrada = (i: number, retoma: boolean) => (i === 0 ? `Empecemos: son ${RECORRIDO_GUIA.length} partes cortas. ` : retoma ? "Seguimos donde quedamos. " : "");
+    if (pedido !== "recorrido" && enEsta !== undefined && ahora - (momentoPaso(hilo) ?? 0) < MISMO_TURNO_MS) return `${entrada(enEsta, false)}${textoGuia(RECORRIDO_GUIA[enEsta])}${pregunta(enEsta)}`;
     const i = pedido === "recorrido" ? 0 : previo! + 1;
     if (i >= RECORRIDO_GUIA.length) { pasoRecorrido(hilo, null); return "Ese fue el recorrido completo. Si quieres, te digo la noticia del día o abro la ficha de un tema."; }
     pasoRecorrido(hilo, i); momentoPaso(hilo, ahora);
-    return `${i === 0 ? "Empecemos. " : enEsta === undefined ? "Seguimos donde quedamos. " : ""}${paso(i, mostrarParte(hilo, RECORRIDO_GUIA[i], true))}${pregunta(i)}`;
+    return `${entrada(i, enEsta === undefined)}${mostrarParte(hilo, RECORRIDO_GUIA[i], true)}${pregunta(i)}`;
   }
   const destino = pedido as VistaVoz;
   if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema, subir o bajar la página y volver atrás.`;
@@ -93,6 +95,7 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
 export async function explicarPantalla(hilo: string, args: { sobre?: string } = {}): Promise<string> {
   const sobre = String(args.sobre ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (sobre.startsWith("plataforma")) return PLATAFORMA_CORTA;
+  if (sobre.startsWith("capacidades") || /que (se puede|puedes|puedo) hacer|que haces tu|para que sirves/.test(sobre)) return CAPACIDADES;
   const rol = queHaceRol(sobre); // «yo entro como periodista, ¿qué hago?»
   if (rol) return rol;
   const p = args.sobre ? buscarParte(args.sobre, contextoDe(hilo)?.vista) : null; // «explícame la gráfica de medios»: la muestra y la explica

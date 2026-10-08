@@ -98,7 +98,7 @@ Por sentido se usan las publicaciones que superan el umbral de coseno (0,80) **y
 
 <img src="docs/img/traza.webp" alt="Traza de una consulta: vector de la pregunta, histograma de similitud con el umbral 0,80 y las dos noticias usadas" width="360" align="right">
 
-**Muestra y demuestra.** Jarvis conoce cada parte de la plataforma: al explicar una gráfica o una sección, la página navega, baja hasta esa parte, la resalta y hace la demostración (abre el borrador, filtra el tablero por un tema o por TVN). Hay un recorrido guiado de 12 partes, por voz («hagamos un recorrido», «sí, sigue») o por chat (botón «Siguiente»), y «Nueva conversación» para empezar de cero (D17).
+**Muestra y demuestra.** Jarvis conoce cada parte de la plataforma: al explicar una gráfica o una sección, la página navega, baja hasta esa parte, la resalta y hace la demostración (abre el borrador, filtra el tablero por un tema o por TVN). Hay un recorrido guiado de 10 partes, por voz («hagamos un recorrido», «sí, sigue») o por chat (botón «Siguiente»), y «Nueva conversación» para empezar de cero (D17).
 
 **Antes de buscar, un enrutador.** Un saludo, un «gracias», «¿quién eres?», «¿qué puedes hacer?» o «¿de qué trata esto?» se contestan con texto fijo (la pantalla abierta, sin gastar tokens). Si el tema de la pregunta no aparece en ninguna publicación (por ejemplo, un nombre mal oído por la voz), Jarvis se abstiene y lo dice, en vez de devolver lo que «suena parecido». Los títulos que no son noticias (el de la página, Wikipedia, una columna que se repite) no entran como evidencia (D15).
 

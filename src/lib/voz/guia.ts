@@ -11,7 +11,7 @@ export const GUIA: Parte[] = [
   { id: "portada-mesa", vista: "portada", ancla: "portada-mesa", titulo: "Tu mesa", claves: ["tu mesa", "mi mesa", "mesa del rol", "cola de decision", "que falta verificar en la portada", "listos para armar"],
     texto: "Esta es tu mesa: lo que le toca hoy a tu rol. El editor ve su cola de decisión, el periodista lo que falta verificar, el productor lo que está listo para armar y el analista bancario las señales económicas. Cada fila trae su acción." },
   { id: "portada-cinco", vista: "portada", ancla: "portada-cinco", titulo: "Cinco para hoy", claves: ["cinco para hoy", "cinco temas", "tarjetas", "portada", "prioridad"],
-    texto: "Estos son los cinco temas que más merecen revisión hoy, como máximo dos por tema. El número grande es su lugar en la lista; debajo van el puntaje de atención de 0 a 100 y la etiqueta que dice si la evidencia alcanza para escribir." },
+    texto: "Estos son los cinco temas que más merecen revisión hoy, como máximo dos de un mismo tema. El número grande es su lugar en la lista; debajo van el puntaje de atención de 0 a 100 y la etiqueta que dice si la evidencia alcanza para escribir." },
   { id: "agenda-lista", vista: "agenda", ancla: "agenda-lista", titulo: "La agenda del día", claves: ["agenda", "lista", "todos los temas", "puntaje", "componentes", "barra"],
     texto: "Aquí están todos los temas del corte ordenados por puntaje. La barra de cada fila se parte en sus cinco componentes: relevancia, impacto, urgencia, novedad y evidencia." },
   { id: "agenda-filtros", vista: "agenda", ancla: "agenda-filtros", titulo: "Los filtros de la agenda", claves: ["filtros", "filtrar", "buscar", "buscador", "estado", "tema"],
@@ -40,14 +40,19 @@ export const GUIA: Parte[] = [
     texto: "Control dice de dónde salen los datos: cada archivo del corte con su huella SHA-256, para que cualquiera pueda comprobar que no cambió." },
   { id: "control-reglas", vista: "control", ancla: "control-reglas", titulo: "Reglas del puntaje", claves: ["reglas", "formula", "pesos", "como se calcula el puntaje"],
     texto: "Aquí están las reglas del puntaje con sus pesos: treinta por ciento relevancia, veinticinco impacto, veinte urgencia, quince novedad y diez evidencia." },
+  // Solo para el recorrido (claves vacías: «explícame esa gráfica» sigue yendo a la parte de cada gráfica). Filtro TVN y no
+  // Economía: con un tema el mapa pasa a mostrar los eventos de ese tema y la explicación general deja de cuadrar (revisión de Codex).
+  { id: "tablero-resumen", vista: "tablero", ancla: "tablero-dias", titulo: "El tablero de señales", claves: [], demo: { tipo: "filtroTablero", medio: "TVN" },
+    texto: "Este es el tablero: la línea de tiempo cuenta las publicaciones por día, el mapa las reparte por tema y las barras dicen qué medios publicaron más. En la gráfica de puntos, a la derecha va lo más relevante y arriba lo que tiene más evidencia; lo que queda abajo a la derecha es importante pero hay que verificarlo. Para mostrarte, filtré solo TVN, y con Limpiar vuelves a todo el corte." },
   { id: "control-ia", vista: "control", ancla: "control-ia", titulo: "La IA frente al método simple", claves: ["benchmark", "comparacion", "ia frente", "baseline", "metodo simple", "embeddings", "por sentido"],
-    texto: "Esta es la prueba de la IA: la búsqueda por sentido contra la búsqueda por palabras sobre las mismas consultas. La IA acierta igual, no se calla cuando sí hay respuesta y resiste los ataques." },
+    texto: "Aquí está la prueba de la IA: la búsqueda por sentido frente a la búsqueda por palabras, con las mismas consultas, incluidas las de ataque, y lo que acertó cada una." },
   { id: "control-pruebas", vista: "control", ancla: "control-pruebas", titulo: "Pruebas del reto", claves: ["pruebas", "t01", "t10", "matriz", "aceptacion"],
     texto: "Y estas son las diez pruebas de aceptación del reto, de T01 a T10, con su resultado. Todas pasan, también sin internet." },
 ];
 
 /** El recorrido guiado: baja por cada pantalla, resalta cada parte y hace las demostraciones. */
-export const RECORRIDO_GUIA = ["portada-cifras", "portada-mesa", "portada-cinco", "agenda-lista", "agenda-filtros", "ficha-evidencia", "ficha-paquete", "tablero-dias", "tablero-temas", "tablero-medios", "tablero-relevancia", "control-ia", "control-pruebas"];
+// El tablero va en un solo paso (pedido de Gilberto, 8-oct): sus partes sueltas siguen para «explícame esa gráfica».
+export const RECORRIDO_GUIA = ["portada-cifras", "portada-mesa", "portada-cinco", "agenda-lista", "agenda-filtros", "ficha-evidencia", "ficha-paquete", "tablero-resumen", "control-ia", "control-pruebas"];
 
 export const parte = (id: string) => GUIA.find((p) => p.id === id);
 const norm = (t: string) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9ñ ]/g, " ").replace(/\s+/g, " ").trim();

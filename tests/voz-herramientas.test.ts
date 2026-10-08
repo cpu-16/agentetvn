@@ -67,34 +67,45 @@ describe("herramientas", () => {
     const acciones = sacarAcciones("h1") as unknown as { tipo: string; parte?: string; demo?: { tipo: string } }[];
     expect(acciones[0]).toMatchObject({ tipo: "guia", parte: "portada-cifras" });
     expect(acciones.some((a) => a.parte === "ficha-paquete" && a.demo?.tipo === "pestana")).toBe(true);
-    expect(acciones.some((a) => a.parte === "tablero-temas" && a.demo?.tipo === "filtroTablero")).toBe(true);
+    const partes = acciones.filter((a) => a.tipo === "guia").map((a) => a.parte);
+    expect(partes).toEqual(["portada-cifras", "portada-mesa", "portada-cinco", "agenda-lista", "agenda-filtros", "ficha-evidencia", "ficha-paquete", "tablero-resumen", "control-ia", "control-pruebas"]);
+    expect(acciones.find((a) => a.parte === "tablero-resumen")?.demo).toMatchObject({ tipo: "filtroTablero", medio: "TVN" }); // el tablero, una sola explicación
   });
-  test("cada paso dice su número y su título; un «siguiente» en el mismo instante no salta pasos (prueba de Gilberto, 8-oct)", () => {
+  test("los pasos se leen sin «Paso N de 13 ·», con cierres que varían; un «siguiente» del mismo turno no salta pasos (prueba de Gilberto, 8-oct)", () => {
     const t0 = 1_000_000;
-    expect(h.navegar("h1", { destino: "recorrido" }, t0)).toContain("Paso 1 de 13 · Las cifras del corte");
-    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 9000)).toContain("Paso 2 de 13 · Tu mesa");
+    const r1 = h.navegar("h1", { destino: "recorrido" }, t0);
+    expect(r1).toStartWith("Empecemos: son 10 partes cortas. Arriba ves el corte"); expect(r1).toEndWith("¿Seguimos?");
+    const r2 = h.navegar("h1", { destino: "siguiente" }, t0 + 9000);
+    expect(r2).toStartWith("Esta es tu mesa"); expect(r2).not.toMatch(/Paso \d|·/); expect(r2).toEndWith("¿Vamos con lo que sigue?");
     // el cerebro de la voz llamó «siguiente» diez veces en el mismo turno: la pantalla voló y solo se leyó el último
-    for (let i = 0; i < 10; i++) expect(h.navegar("h1", { destino: "siguiente" }, t0 + 9100 + i * 10)).toContain("Paso 2 de 13 · Tu mesa");
-    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 20000)).toContain("Paso 3 de 13");
+    for (let i = 0; i < 10; i++) expect(h.navegar("h1", { destino: "siguiente" }, t0 + 9100 + i * 10)).toBe(r2);
+    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 9000 + 2499)).toBe(r2); // límite: a 2499 ms repite…
+    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 9000 + 2500)).toContain("cinco temas"); // …a 2500 ms avanza
     const partes = (sacarAcciones("h1") as unknown as { parte?: string }[]).map((a) => a.parte);
     expect(partes).toEqual(["portada-cifras", "portada-mesa", "portada-cinco"]); // la pantalla no avanzó con los repetidos
   });
   test("«sigue hasta el final, no me preguntes» avanza un paso y desde ahí sin «¿Seguimos?»", () => {
     const t0 = 2_000_000;
     expect(h.navegar("h1", { destino: "recorrido" }, t0)).toContain("¿Seguimos?");
+    const sinCierre = (x: string) => !/¿(Seguimos|Vamos con lo que sigue|Te muestro lo siguiente|Dale, seguimos|Pasamos a lo próximo)\?/.test(x);
     const r = h.navegar("h1", { destino: "seguido" }, t0 + 9000);
-    expect(r).toContain("Paso 2 de 13"); expect(r).not.toContain("¿Seguimos?");
-    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 18000)).not.toContain("¿Seguimos?");
+    expect(r).toContain("Esta es tu mesa"); expect(sinCierre(r)).toBe(true);
+    expect(sinCierre(h.navegar("h1", { destino: "siguiente" }, t0 + 18000))).toBe(true);
   });
   test("el tope de minutos corta a mitad del recorrido: «sigue» en la llamada nueva retoma donde iba (prueba de Gilberto, 6-oct)", () => {
     let t = 4_000_000;
     h.navegar("h1", { destino: "recorrido" }, t);
-    for (let i = 0; i < 9; i++) h.navegar("h1", { destino: "siguiente" }, (t += 9000)); // va por tablero-medios (paso 10 de 13)
+    for (let i = 0; i < 7; i++) h.navegar("h1", { destino: "siguiente" }, (t += 9000)); // va por el tablero (parte 8 de 10)
     abrirLlamada("h2", "Ana", "2026-10-06T10:00:00Z"); sacarAcciones("h1");
     const r = h.navegar("h2", { destino: "siguiente" }, (t += 9000));
-    expect(r).toStartWith("Seguimos donde quedamos. Paso 11 de 13"); expect(r).toContain("Cada punto es un tema");
-    expect(sacarAcciones("h2")).toMatchObject([{ tipo: "guia", parte: "tablero-relevancia" }]);
+    expect(r).toStartWith("Seguimos donde quedamos. Aquí está la prueba de la IA");
+    expect(sacarAcciones("h2")).toMatchObject([{ tipo: "guia", parte: "control-ia" }]);
     expect(h.navegar("h2", { destino: "siguiente" }, (t += 9000))).not.toContain("Seguimos donde quedamos");
+  });
+  test("«¿qué puedes hacer?» dice lo que hace Jarvis y ofrece el recorrido, sin mover la pantalla (prueba de Gilberto, 8-oct)", async () => {
+    sacarAcciones("h1");
+    for (const sobre of ["capacidades", "qué puedes hacer", "que se puede hacer aqui"]) expect(await h.explicarPantalla("h1", { sobre })).toContain("recorrido corto");
+    expect(sacarAcciones("h1")).toHaveLength(0);
   });
   test("«explícame la parte de Control» abre Control; los roles y «dónde están los borradores» (prueba de Gilberto, 6-oct)", async () => {
     sacarAcciones("h1");

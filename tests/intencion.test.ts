@@ -54,7 +54,7 @@ describe("enrutador del chat", () => {
     expect(tipo("muéstrame los filtros de la agenda")).toBe("guia:agenda-filtros");
     expect(tipo("enséñame el borrador")).toBe("guia:ficha-paquete");
     expect(tipo("hazme un recorrido por la plataforma")).toBe("guia:portada-cifras");
-    expect(tipo("__guia:tablero-medios")).toBe("guia:tablero-medios");
+    expect(tipo("__guia:tablero-resumen")).toBe("guia:tablero-resumen"); // el botón «Siguiente» del chat: el tablero es una sola parte
     expect(tipo("filtra el tablero por economía")).toBe('filtro:{"tipo":"filtroTablero","temas":["economia"]}');
     expect(tipo("muéstrame solo TVN")).toBe('filtro:{"tipo":"filtroTablero","medio":"TVN"}');
     expect(tipo("quita el filtro")).toBe('filtro:{"tipo":"filtroTablero","limpiar":true}');
