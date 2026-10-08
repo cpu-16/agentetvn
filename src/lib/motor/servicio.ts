@@ -191,8 +191,10 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
   const guardado = await paqueteGuardado(e.id, snap);
   let texto: string;
   if (i.tipo === "verificar") {
-    // lo vigente del motor más lo que una persona o la IA dejó pendiente en el paquete guardado
-    const falta = [...new Set([...extractivo.verificaciones, ...(guardado?.verificaciones ?? [])])].filter((v) => !v.startsWith("Leer la nota completa") && !v.startsWith("Guion incompleto") && !v.startsWith("Redacción con IA")).slice(0, 3);
+    // primero la línea de evidencia vigente, luego lo que una persona o la IA dejó pendiente en el paquete guardado, al final el resto automático
+    const auto = extractivo.verificaciones;
+    const propias = (guardado?.verificaciones ?? []).filter((v) => !auto.includes(v));
+    const falta = [...new Set([...auto.slice(0, 1), ...propias, ...auto.slice(1)])].filter((v) => !v.startsWith("Leer la nota completa") && !v.startsWith("Guion incompleto") && !v.startsWith("Redacción con IA")).slice(0, 3);
     const preguntas = (guardado?.preguntas.length ? guardado.preguntas : extractivo.preguntas).slice(0, 3);
     texto = `${deNombre[0].toUpperCase()}${deNombre.slice(1)}, «${titulo}»: evidencia ${e.estado_evidencia} y ${Math.round(e.P)} de 100. ${falta.length ? `Falta verificar: ${falta.join(" ")}` : "No hay vacíos marcados, pero todo se basa en titulares y metadatos: leer la nota completa."} Para investigar: ${preguntas.join(" ")}`;
   } else {

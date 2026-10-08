@@ -16,7 +16,8 @@ function vigente(value: string, id: string) {
     if (!result.ok) return null;
     // la línea automática de evidencia se recalcula con la regla vigente; lo escrito por una persona se conserva
     const b = result.boletin;
-    return { ...b, faltantes: [...faltaPorEvidencia(ev), ...b.faltantes.filter((f) => !esPlantillaEvidencia(f))].slice(0, 3) };
+    // nunca se recorta lo escrito por una persona: el esquema admite hasta seis faltantes
+    return { ...b, faltantes: [...faltaPorEvidencia(ev), ...b.faltantes.filter((f) => !esPlantillaEvidencia(f))].slice(0, 6) };
   } catch { return null; }
 }
 export async function detalleBancario(id: string) {
