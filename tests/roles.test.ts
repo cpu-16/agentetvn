@@ -26,7 +26,7 @@ describe("mesa por rol", () => {
   });
   test("analista bancario: solo temas económicos, por puntaje, nunca descartados ni sintéticos", () => {
     const eco = [ev("x", 60, "parcial", "nuevo", { tema: "economia" }), ev("y", 90, "insuficiente", "aprobado_borrador", { tema: "logistica_canal" }),
-      ev("z", 99, "suficiente", "nuevo", { tema: "deportes" }), ev("w", 95, "suficiente", "descartado", { tema: "economia" }), ev("v", 97, "suficiente", "nuevo", { tema: "regulacion", sintetica: true })];
+      ev("z", 99, "suficiente", "nuevo", { tema: "deportes" }), ev("w", 95, "suficiente", "descartado", { tema: "economia" }), ev("v", 97, "suficiente", "nuevo", { tema: "regulacion", sintetica: true }), ev("u", 98, "suficiente", "nuevo", { tema: "logistica_canal", por_revisar: true })];
     expect(tocaA("analista", eco).map((e) => e.id)).toEqual(["y", "x"]);
     expect(cuentasMesa("analista", eco).map((c) => c.n)).toEqual([3, 2, 1]);
   });

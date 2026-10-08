@@ -6,7 +6,7 @@ export type RolMesa = "editor" | "periodista" | "productor" | "analista";
 
 /** Lo que el filtro necesita de un evento de la agenda (el resumen de /api/agenda lo trae completo). */
 export interface EventoMesa {
-  id: string; titulo: string; P: number; rango: string; estado_evidencia: string; estado_revision: string; tema?: string;
+  id: string; titulo: string; P: number; rango: string; estado_evidencia: string; estado_revision: string; tema?: string; por_revisar?: boolean;
   contradicciones: unknown[]; no_confiable: boolean; sintetica?: boolean; revisable?: boolean; // revisable: la regla de «Cinco para hoy»
 }
 
@@ -42,7 +42,7 @@ export function tocaA(rol: RolMesa, eventos: EventoMesa[], max = 5): EventoMesa[
     if (e.sintetica || e.no_confiable || e.revisable === false || !(e.estado_revision in orden)) return false;
     if (rol === "periodista") return e.estado_revision === "requiere_evidencia" || e.estado_evidencia !== "suficiente" || e.contradicciones.length > 0;
     if (rol === "productor") return e.estado_evidencia !== "insuficiente" && !e.contradicciones.length; // con qué escribir y sin versiones en disputa
-    if (rol === "analista") return TEMAS_BANCA.includes(e.tema ?? "");
+    if (rol === "analista") return TEMAS_BANCA.includes(e.tema ?? "") && !e.por_revisar; // tema dudoso del clasificador: no entra a la banca
     return true;
   };
   return eventos.filter(entra).sort((a, b) => orden[a.estado_revision] - orden[b.estado_revision] || b.P - a.P).slice(0, max);
@@ -54,7 +54,7 @@ export function cuentasMesa(rol: RolMesa, eventos: EventoMesa[]): { n: number; e
   const c = (f: (e: EventoMesa) => boolean) => reales.filter(f).length;
   if (rol === "editor") return [{ n: c((e) => e.estado_revision === "nuevo" && e.rango === "alto"), etiqueta: "de prioridad alta sin decidir" }, { n: c((e) => e.estado_revision === "en_revision"), etiqueta: "esperan tu aprobación" }, { n: c((e) => e.estado_revision === "aprobado_borrador"), etiqueta: "aprobados como borrador" }];
   if (rol === "periodista") return [{ n: c((e) => e.rango === "alto" && e.estado_evidencia !== "suficiente"), etiqueta: "de prioridad alta sin evidencia suficiente" }, { n: c((e) => e.contradicciones.length > 0), etiqueta: "con versiones que no coinciden" }, { n: c((e) => e.estado_revision === "requiere_evidencia"), etiqueta: "te pidió evidencia el editor" }];
-  if (rol === "analista") { const eco = (e: EventoMesa) => TEMAS_BANCA.includes(e.tema ?? ""); return [{ n: c(eco), etiqueta: "temas económicos en el corte" }, { n: c((e) => eco(e) && e.rango === "alto"), etiqueta: "de prioridad alta" }, { n: c((e) => eco(e) && e.estado_evidencia === "suficiente"), etiqueta: "con evidencia suficiente" }]; }
+  if (rol === "analista") { const eco = (e: EventoMesa) => TEMAS_BANCA.includes(e.tema ?? "") && !e.por_revisar; return [{ n: c(eco), etiqueta: "temas económicos en el corte" }, { n: c((e) => eco(e) && e.rango === "alto"), etiqueta: "de prioridad alta" }, { n: c((e) => eco(e) && e.estado_evidencia === "suficiente"), etiqueta: "con evidencia suficiente" }]; }
   return [{ n: c((e) => e.estado_evidencia === "suficiente"), etiqueta: "con evidencia suficiente" }, { n: c((e) => e.estado_revision === "aprobado_borrador"), etiqueta: "aprobados, por armar" }, { n: c((e) => e.estado_revision === "pieza_lista"), etiqueta: "piezas listas" }];
 }
 

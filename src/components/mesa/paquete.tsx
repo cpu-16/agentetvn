@@ -261,7 +261,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
           ) : (
             <p className="mt-3 rounded-sm bg-papel px-3 py-2 text-xs">{revision.estado === "pieza_lista" ? "Pieza lista. Publicar se hace fuera de AgenteTVN; el editor puede reabrirla." : revision.estado === "descartado" ? "Descartado. Solo el editor puede reabrirlo." : revision.estado === "aprobado_borrador" && rol !== "productor" ? "Aprobado como borrador: ahora lo arma el productor digital." : ESPERA[rol] ?? `Ahora le toca a ${nombreRol(turnoDe(revision.estado) ?? "editor")}.`}</p>
           )}
-          <p className="mt-3 text-xs font-medium text-senal">Aprobar como borrador no publica nada.</p>
+          <p className="mt-3 text-xs font-medium text-senal">{rol === "productor" ? "Marcar pieza lista tampoco publica: eso lo hace una persona fuera de AgenteTVN." : "Aprobar como borrador no publica nada."}</p>
         </div>
         {historial.length > 0 && (
           <div className="rounded-sm border border-border bg-white p-4 text-sm">

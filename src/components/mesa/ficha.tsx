@@ -9,6 +9,7 @@ import { PaqueteYRevision, type Afirmacion, type Paquete, type Revision, type Re
 import { ESTADO_LABEL, SPRING, fetchMesa, horaPanama, useMesa, useRol } from "@/store/mesa";
 import { BancaYRevision } from "./banca";
 import { Recorrido } from "./recorrido";
+import { nombreMedio } from "@/lib/medios";
 import { MESA } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
@@ -89,7 +90,7 @@ export function Ficha({ id }: { id: string }) {
         </span>
       </div>
       <h1 className="titular text-2xl font-semibold leading-tight sm:text-3xl">{rep?.titulo}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">{rep?.medio}, {e.fecha_original ? `publicado ${horaPanama(e.fecha_original)}` : "sin fecha de publicación (solo detección)"}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{rep ? nombreMedio(rep.medio) : ""}, {e.fecha_original ? `publicado ${horaPanama(e.fecha_original)}` : "sin fecha de publicación (solo detección)"}</p>
       <div className="mt-2"><Chips e={resumen} /></div>
       <Recorrido estado={d.revision.estado} rol={rol} />
 
@@ -125,7 +126,7 @@ export function Ficha({ id }: { id: string }) {
                 <ul className="space-y-2">
                   {e.procedencias.map((p) => (
                     <li key={p.id} className={cn("rounded-sm bg-white p-3 text-sm", p.tipo === "no_verificada" && "border border-ambar")}>
-                      <p className="font-medium">{p.tipo === "agencia" ? `Agencia ${p.nombre}` : p.tipo === "no_verificada" ? "Independencia no verificada" : p.tipo === "primaria" ? `Fuente primaria ${p.nombre}` : `Medio ${p.nombre}`} <span className="text-muted-foreground">({p.ids_noticia.length})</span></p>
+                      <p className="font-medium">{p.tipo === "agencia" ? `Agencia ${p.nombre}` : p.tipo === "no_verificada" ? "Independencia no verificada" : p.tipo === "primaria" ? `Fuente primaria ${p.nombre}` : `Medio ${nombreMedio(p.nombre) === p.nombre ? p.nombre : `${nombreMedio(p.nombre)} (${p.nombre})`}`} <span className="text-muted-foreground">({p.ids_noticia.length})</span></p>
                       <ul className="mt-1 space-y-1 text-xs">
                         {p.ids_noticia.map((nid) => {
                           const n = porId.get(nid);
