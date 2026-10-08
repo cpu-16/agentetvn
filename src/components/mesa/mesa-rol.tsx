@@ -31,8 +31,8 @@ export function MesaRol({ data }: { data: AgendaDatos }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-2xl">
           <p className="rotulo rotulo-tinta mb-2 inline-block">Tu mesa · {ROLES.find((r) => r.id === rol)?.label}</p>
-          <h2 id="mesa-rol-titulo" className="titular text-2xl font-semibold">{m.titulo}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{m.bajada}</p>
+          <h2 id="mesa-rol-titulo" className="titular text-2xl font-semibold">Tu lista de hoy</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Los temas que te tocan a ti, en el orden en que conviene atenderlos. «{m.accion}» abre la ficha donde haces tu parte.</p>
         </div>
         <dl className="grid grid-cols-3 gap-4 text-center">
           {cuentasMesa(rol, data.eventos).map((c) => (

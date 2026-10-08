@@ -57,7 +57,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
             {corteUTC && <span className="hidden md:inline">Datos al {horaPanama(corteUTC)}{version ? ` (${version})` : ""}</span>}
             {sesion && (
               <span className="flex items-center gap-2">
-                <span className="hidden sm:inline">{sesion.nombre}, {ROLES.find((r) => r.id === sesion.rol)?.label.toLowerCase()}</span>
+                <span className="hidden sm:inline">{sesion.nombre}</span>
+                <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-tinta" title="Tu rol en la mesa">{ROLES.find((r) => r.id === sesion.rol)?.label}</span>
                 <button onClick={salir} className="presionable rounded-sm border border-white/25 px-2 py-1 text-white hover:bg-white/10">Salir</button>
               </span>
             )}

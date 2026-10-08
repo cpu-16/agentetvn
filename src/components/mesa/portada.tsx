@@ -5,7 +5,8 @@ import { Medidor } from "./medidor";
 import { MesaRol } from "./mesa-rol";
 import { Chips } from "./agenda";
 import { itemEscalonado } from "./motion";
-import { SPRING, horaPanama, useMesa } from "@/store/mesa";
+import { ROLES, SPRING, horaPanama, useMesa, useRol } from "@/store/mesa";
+import { MESA } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 
 function Reloj() {
@@ -54,6 +55,8 @@ export function Portada() {
   const irA = useMesa((s) => s.irA);
   const setChatAbierto = useMesa((s) => s.setChatAbierto);
   const reducir = useReducedMotion();
+  const rol = useRol();
+  const m = MESA[rol]; // la portada abre con la mesa de quien entró: cada rol ve su trabajo primero
 
   useEffect(() => { void cargarAgenda(); }, [cargarAgenda]);
 
@@ -73,9 +76,9 @@ export function Portada() {
         <div className="mx-auto max-w-[1336px]">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div>
-              <span className="al-aire text-white/90">Al aire</span>
-              <h1 className="titular mt-3 text-4xl font-bold leading-[0.95] tracking-[-0.02em] sm:text-6xl">La mesa de la mañana</h1>
-              <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">Las señales del día ordenadas por puntaje de atención, con la evidencia que las respalda y lo que todavía falta comprobar. {data && <span>Datos al {horaPanama(data.corteUTC)} (corte congelado del reto).</span>}</p>
+              <span className="al-aire text-white/90">La mesa de la mañana · {ROLES.find((r) => r.id === rol)?.label}</span>
+              <h1 className="titular mt-3 text-4xl font-bold leading-[0.95] tracking-[-0.02em] sm:text-6xl">{m.titulo}</h1>
+              <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">{m.bajada} {data && <span>Datos al {horaPanama(data.corteUTC)} (corte congelado del reto).</span>}</p>
             </div>
             <Reloj />
           </div>

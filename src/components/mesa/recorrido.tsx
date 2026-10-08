@@ -12,6 +12,14 @@ const PASOS = [
 // pedir evidencia es un desvío del paso «En revisión»: vuelve al editor cuando el periodista termina
 const PASO_DE: Record<string, number> = { nuevo: 0, en_revision: 1, requiere_evidencia: 1, aprobado_borrador: 2, pieza_lista: 3 };
 
+// Qué hace quien tiene el turno, en palabras de la mesa (la línea de abajo del recorrido)
+const ACCION: Record<string, string> = {
+  nuevo: "tomarlo en revisión o descartarlo, en «Paquete y revisión».",
+  en_revision: "aprobarlo como borrador, pedirle evidencia al periodista o descartarlo, en «Paquete y revisión».",
+  requiere_evidencia: "buscar lo que falta y devolvérselo al editor con lo verificado, en «Paquete y revisión».",
+  aprobado_borrador: "elegir titular, revisar guion y copy, y marcar «Pieza lista», en «Paquete y revisión».",
+};
+
 /** A quién le toca el tema en ese estado (null: nadie, el flujo terminó o se descartó). */
 export const turnoDe = (estado: string): string | null =>
   estado === "requiere_evidencia" ? "periodista" : estado === "descartado" || estado === "pieza_lista" ? null : estado === "aprobado_borrador" ? "productor" : "editor";
@@ -21,9 +29,11 @@ export function Recorrido({ estado, rol }: { estado: string; rol: string }) {
   const actual = PASO_DE[estado] ?? -1;
   const turno = turnoDe(estado);
   const nota = estado === "descartado" ? "Descartado: salió del flujo. El editor puede reabrirlo."
-    : estado === "requiere_evidencia" ? `El editor pidió evidencia: ${turno === rol ? "te toca buscarla y devolvérsela" : "la busca el periodista y se la devuelve"}.`
     : estado === "pieza_lista" ? "Pieza armada. Publicar se hace fuera de AgenteTVN, por una persona."
-    : turno === rol ? "Te toca a ti." : `Le toca a: ${nombreRol(turno ?? "")}.`;
+    : rol === "analista" ? "Tu parte es el boletín de entorno: en «Paquete y revisión», modalidad «Análisis bancario»."
+    : turno === rol ? `Te toca a ti: ${ACCION[estado]}`
+    : rol === "periodista" && estado === "nuevo" ? "Lo decide el editor. Si falta evidencia, verifícala y pásaselo con tu nota (en «Paquete y revisión»)."
+    : `Le toca a: ${nombreRol(turno ?? "")}.${rol === "productor" ? " Cuando el editor lo apruebe, te toca armar la pieza." : ""}`;
   return (
     <nav aria-label="Recorrido del tema en la mesa" data-guia="ficha-recorrido" className="mt-4 rounded-sm border border-border bg-white px-3 py-2.5">
       <ol className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
