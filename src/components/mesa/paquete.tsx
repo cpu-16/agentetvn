@@ -254,7 +254,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
                 </div>
               )}
               <div>
-                <h3 className="mb-1 text-sm text-muted-foreground">Guion para leer al aire, 45 a 60 segundos ({palabras(p.guion)} palabras)</h3>
+                <h3 className="mb-1 text-sm text-muted-foreground">Guion para leer al aire, 45 a 60 segundos {palabras(p.guion) < 110 ? <span className="font-medium text-[#7a5600]">(incompleto: {palabras(p.guion)} de ~110 palabras; no se rellena sin cita)</span> : `(${palabras(p.guion)} palabras)`}</h3>
                 <Afirmaciones lista={p.guion} onCita={onCita} editable={editando} onCambio={cambiarLista("guion")} />
               </div>
               <div>
@@ -275,7 +275,7 @@ export function PaqueteYRevision({ eventoId, paquete, revision, historial, onCit
             </AnimatePresence>
             {revision.persona && <span className="text-muted-foreground">({revision.persona}, {horaPanama(revision.createdAt)})</span>}
           </p>
-          <p className="mt-3 text-xs text-muted-foreground">Responsable: <span className="font-medium text-foreground">{nombre}</span> (de tu sesión)</p>
+          <p className="mt-3 text-xs text-muted-foreground">Tu sesión: <span className="font-medium text-foreground">{nombre}</span>. Lo que decidas queda con tu nombre.</p>
           {hecho ? (
             <div role="status" className="mt-3 rounded-sm border border-azul bg-[#eef6fc] p-3 text-sm">
               <p className="font-semibold text-tinta">✓ {ESTADO_LABEL[hecho]}</p>
