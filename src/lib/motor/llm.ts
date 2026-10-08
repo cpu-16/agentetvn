@@ -149,10 +149,11 @@ Tarea: redacta el paquete editorial con estas partes:
 - "titulo": título propuesto, máximo 15 palabras.
 - "titulos": 3 propuestas de titular distintas para web y redes (máximo 12 palabras cada una), con un ángulo distinto cada una, solo con lo que dicen las fuentes.
 - "brief": 4 a 8 frases, máximo 250 palabras en total: qué se sabe, quién lo reporta, el contexto oficial si hay y qué no coincide.
-- "guion": guion para leer al aire en 45 a 60 segundos (110 a 150 palabras), frases cortas.
-- "copy": texto para redes, máximo 80 palabras.
+- "guion": texto listo para que un presentador de TVN lo lea al aire en 45 a 60 segundos (110 a 150 palabras), frases cortas en voz de TVN; si faltan hechos, hazlo más corto, sin relleno.
+- "copy": texto listo para publicar en las redes de TVN, máximo 80 palabras, en voz de TVN.
 - "preguntas": exactamente 3 preguntas de investigación para el periodista.
 - "vacios": lo que falta verificar antes de publicar.
+Voz de emisión (SOLO en "guion" y "copy"): TVN es quien habla. Cuenta directamente lo que reporta TVN; nunca escribas "TVN reporta" ni "TVN informa". No uses "titular", "extracto", "metadatos", "fuente", "bloque" ni "nota completa". Atribuye lo que reporten otros medios por su nombre editorial indicado en su bloque (por ejemplo, "según el diario Crítica"), nunca por su dominio; si no hay nombre editorial disponible, deja ese dato para el brief. Conserva "supuesto" y "presunto": una aprehensión no es una condena. Los vacíos van en "vacios"; solo si la evidencia lo sostiene, puedes expresarlos al aire en lenguaje de noticiero, por ejemplo "Hasta el momento no se ha precisado qué autoridad ejecutó la aprehensión". La ausencia de un dato en el material disponible no demuestra que nadie lo haya precisado o confirmado: no inventes "no se ha confirmado" como hecho del mundo. El brief y las verificaciones mantienen su lenguaje para la mesa.
 Formato: {"titulo": "...", "titulos": ["...", "...", "..."], "brief": [{"texto": "...", "tipo": "...", "evidence_id": "..."}], "guion": [mismo formato], "copy": [mismo formato], "preguntas": ["...", "...", "..."], "vacios": ["..."]}
 
 ${fuentes.map((f) => bloqueFuente(f.id, f.campo, f.texto)).join("\n\n")}`;

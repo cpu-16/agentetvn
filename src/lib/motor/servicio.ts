@@ -7,7 +7,7 @@ import { intencion, type Intencion } from "./intencion";
 import { NOMBRE_TEMA, parte, RECORRIDO_GUIA } from "../voz/guia";
 import { tokenizar } from "./bm25";
 import type { ContextoPantalla } from "../voz/catalogo";
-import { generarPaquete } from "./paquete";
+import { fuentesPaquete, generarPaquete } from "./paquete";
 import { conEvidenciaVigente, faltaPorEvidencia } from "./evidencia";
 import { resumenCorte } from "./tablero";
 import { MESA, accionSugerida, tocaA, type RolMesa } from "../roles";
@@ -89,7 +89,7 @@ async function componerPaquete(id: string, persona: string, forzar: boolean): Pr
   const base = generarPaquete(e, snap.noticias, snap.indicadores);
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const contexto = `Tema: ${e.tema}. Prioridad P ${e.P} (${e.rango}). Estado de la evidencia: ${e.estado_evidencia}. ${e.ids_noticia.length} publicación(es); procedencias: ${e.procedencias.map((x) => `${x.nombre} (${x.tipo})`).join(", ")}.${e.contradicciones.length ? ` Contradicciones abiertas: ${e.contradicciones.map((c) => c.detalle).join("; ")}.` : ""}`;
-  const p = await redactarOExtractivo(base, fuentesDe([...base.brief, ...base.guion, ...base.copy], porId), contexto, snap.huella);
+  const p = await redactarOExtractivo(base, fuentesPaquete(base, porId), contexto, snap.huella);
   const ahora = await db.paqueteEditado.findUnique({ where: { eventoId: id } });
   if (ahora && ahora.updatedAt > t0) // alguien guardó una edición mientras la IA redactaba (~40 s): no se pisa
     return { ...p, verificaciones: [...p.verificaciones, `No se guardó: ${ahora.persona} editó este paquete mientras se redactaba. Recarga para ver su versión.`] };
