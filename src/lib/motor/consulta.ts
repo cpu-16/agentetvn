@@ -11,6 +11,7 @@ import type { Snapshot } from "./cargar";
 
 export interface Evidencia { id: string; tipo: "noticia" | "indicador" | "sismo"; resumen: string; score: number }
 export interface Respuesta {
+  ajuste?: { eventoId: string; cambios: string[]; descartadas: string[] };
   abstener: boolean;
   motivo?: string;
   faltante?: string;

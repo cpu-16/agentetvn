@@ -3,7 +3,7 @@ import { consulta, estadoDe, respuestaGuia, snapshot } from "../motor/servicio";
 import { tokenizar } from "../motor/bm25";
 import { explicacionFija, PLATAFORMA_CORTA, queHaceRol, type VistaVoz } from "./catalogo";
 import { buscarParte, RECORRIDO_GUIA } from "./guia";
-import { contextoDe, encolar, guardarContexto, pasoRecorrido, pasoRetomable } from "./registro";
+import { personaDe, contextoDe, encolar, guardarContexto, pasoRecorrido, pasoRetomable } from "./registro";
 
 const DESTINOS: VistaVoz[] = ["portada", "agenda", "tablero", "control", "ficha"];
 const NOMBRE: Record<VistaVoz, string> = { portada: "la portada", agenda: "la agenda", tablero: "el tablero", control: "Control", ficha: "la ficha" };
@@ -66,7 +66,7 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   if (args.eventoId && !snapshot().eventos.some((e) => e.id === args.eventoId)) return "Ese tema no está en el corte de hoy, así que no puedo responder sobre él.";
   // VOZ_RESPUESTA=extractiva (plan B si la latencia pasa de 15 s): la voz usa el motor sin la redacción de Claude
   // VOZ_RESPUESTA=extractiva solo apaga la redacción con LLM; el enrutador (agenda, plataforma) sigue igual (revisión de Codex)
-  const r = await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo));
+  const r = await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo), personaDe(hilo));
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
   // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
   if (r.guia) { encolar(hilo, { tipo: "guia", ...r.guia }); const t = r.conversacion?.texto ?? ""; return r.conversacion?.motivo === "verificar" ? `${palabras(t, 40)} El detalle quedó en la ficha.` : t; }

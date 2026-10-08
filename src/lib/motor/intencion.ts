@@ -4,7 +4,7 @@
 import { explicacionFija, PLATAFORMA, queHaceRol, type ContextoPantalla } from "../voz/catalogo";
 import { buscarParte, pedidoFiltro, RECORRIDO_GUIA, type Demo } from "../voz/guia";
 
-export type Intencion = { tipo: "consulta" } | { tipo: "agenda"; uno: boolean } | { tipo: "mesa" } | { tipo: "verificar" | "titulares"; n: number | null } | { tipo: "guia"; parte: string; recorrido?: boolean } | { tipo: "filtro"; demo: Demo } | { tipo: "conversacion"; motivo: "saludo" | "gracias" | "identidad" | "ayuda" | "pantalla" | "plataforma"; texto: string; sugerencias: string[] };
+export type Intencion = { tipo: "ajustar" } | { tipo: "consulta" } | { tipo: "agenda"; uno: boolean } | { tipo: "mesa" } | { tipo: "verificar" | "titulares"; n: number | null } | { tipo: "guia"; parte: string; recorrido?: boolean } | { tipo: "filtro"; demo: Demo } | { tipo: "conversacion"; motivo: "saludo" | "gracias" | "identidad" | "ayuda" | "pantalla" | "plataforma"; texto: string; sugerencias: string[] };
 
 const norm = (t: string) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[¿?¡!.,;:()"«»]/g, " ").replace(/\s+/g, " ").trim();
 const SUGERENCIAS = ["¿Qué cinco temas merecen revisión hoy?", "¿Qué se sabe de la aprehensión de Enrique Lau?", "¿Cuál fue la inflación de Panamá en 2024?"];
@@ -63,6 +63,10 @@ const RELLENO = new Set("dame muestrame ensename listame me te nos mi tu yo le l
 
 export function intencion(q: string, opts: { contexto?: ContextoPantalla | null; tokens?: string[] } = {}): Intencion {
   const t = norm(q);
+  // Imperativo al inicio + objeto editorial: una consulta sobre noticias no modifica nada.
+  const orden = /^(?:(?:oye|jarvis|por favor|porfa) )*(?:cambia|quita|elimina|borra|agrega|anade|reemplaza|acorta|hazlo|no digas)\b/;
+  const objeto = /\b(titulo|titular|guion|copy|brief|resumen|borrador|paquete|frase)\b/;
+  if (opts.contexto?.eventoId && orden.test(t) && objeto.test(t)) return { tipo: "ajustar" };
   const toks = opts.tokens ?? t.split(" ");
   const soloCon = (extra: Set<string>) => toks.every((x) => RELLENO.has(x) || DE_PREGUNTA.has(x) || extra.has(x)); // ¿trae un tema propio?
   const sinTema = soloCon(new Set());

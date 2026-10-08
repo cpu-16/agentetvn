@@ -11,7 +11,7 @@ import { fuentesPaquete, generarPaquete } from "./paquete";
 import { conEvidenciaVigente, faltaPorEvidencia } from "./evidencia";
 import { resumenCorte } from "./tablero";
 import { MESA, accionSugerida, tocaA, type RolMesa } from "../roles";
-import { fuentesDe, llmActivo, redactarOExtractivo, redactarRespuesta } from "./llm";
+import { ajustarConLLM, fuentesDe, llmActivo, redactarOExtractivo, redactarRespuesta } from "./llm";
 import { validarTransicion } from "./revision";
 import { leerScoring } from "./config";
 import type { EstadoRevision, Evento, Paquete } from "./contrato";
@@ -97,7 +97,36 @@ async function componerPaquete(id: string, persona: string, forzar: boolean): Pr
   return p;
 }
 
-export async function guardarPaquete(id: string, p: Paquete, persona: string) {
+export class ErrorAjuste extends Error {
+  constructor(message: string, public status: number) { super(message); }
+}
+
+export async function ajustarPaquete(eventoId: string, instruccion: string, persona: string) {
+  if (!instruccion.trim() || instruccion.length > 500) throw new ErrorAjuste("La instrucción debe tener entre 1 y 500 caracteres.", 400);
+  if (!persona.trim()) throw new ErrorAjuste("persona responsable obligatoria", 401);
+  const snap = snapshot();
+  const e = snap.eventos.find((x) => x.id === eventoId);
+  if (!e) throw new ErrorAjuste("evento no existe", 404);
+  const guardado = await db.paqueteEditado.findUnique({ where: { eventoId } });
+  const base = guardado ? JSON.parse(guardado.contenido) as Paquete : null;
+  if (!base || !vigente(base, snap)) throw new ErrorAjuste("Primero hay que generar el paquete vigente del tema.", 409);
+  if (!llmActivo()) throw new ErrorAjuste("Pedir cambios a Jarvis necesita la IA en línea; edita a mano con Editar", 503);
+  // Nunca convertir texto de una edición humana en evidencia del evento.
+  const fuentes = fuentesPaquete(generarPaquete(e, snap.noticias, snap.indicadores), new Map(snap.noticias.map((n) => [n.id_noticia, n])));
+  let resultado: Awaited<ReturnType<typeof ajustarConLLM>>;
+  try { resultado = await ajustarConLLM(conEvidenciaVigente(base, e), fuentes, instruccion, snap.huella); }
+  catch (error) { throw new ErrorAjuste(error instanceof Error ? error.message : "No se pudo ajustar el paquete.", 502); }
+  if (snapshot().huella !== snap.huella) throw new ErrorAjuste("Cambió la evidencia del tema. Recarga y vuelve a pedir el ajuste.", 409);
+  await guardarPaquete(eventoId, resultado.paquete, `${persona} (con Jarvis)`, guardado!);
+  return resultado;
+}
+
+export async function guardarPaquete(id: string, p: Paquete, persona: string, esperado?: { contenido: string; updatedAt: Date }) {
+  if (esperado) {
+    const r = await db.paqueteEditado.updateMany({ where: { eventoId: id, contenido: esperado.contenido, updatedAt: esperado.updatedAt }, data: { contenido: JSON.stringify(p), modo: p.modo, persona } });
+    if (!r.count) throw new ErrorAjuste("El paquete cambió mientras Jarvis lo ajustaba. Recarga y vuelve a intentarlo.", 409);
+    return p;
+  }
   await db.paqueteEditado.upsert({ where: { eventoId: id }, create: { eventoId: id, contenido: JSON.stringify(p), modo: p.modo, persona }, update: { contenido: JSON.stringify(p), modo: p.modo, persona } });
   return p;
 }
@@ -231,10 +260,23 @@ export function respuestaGuia(i: Extract<Intencion, { tipo: "guia" | "filtro" }>
     traza: { modo, comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: "Guía de la plataforma: muestra la pantalla, sin búsqueda." } } as Awaited<ReturnType<typeof consultar>>;
 }
 
-async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
+async function respuestaAjuste(q: string, eventoId: string, persona: string | undefined, modo: "embeddings" | "bm25"): Promise<R> {
+  const base = { afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: 0, leyenda: LEYENDA };
+  try {
+    if (!persona) throw new ErrorAjuste("Entra a la mesa para pedir cambios a Jarvis.", 401);
+    const { cambios, descartadas } = await ajustarPaquete(eventoId, q, persona);
+    return { ...base, abstener: false, conversacion: { motivo: "ajuste", texto: cambios.join("\n"), sugerencias: [] }, ajuste: { eventoId, cambios, descartadas } };
+  } catch (error) {
+    const texto = error instanceof Error ? error.message : "No se pudo ajustar el paquete.";
+    return { ...base, abstener: true, motivo: texto, conversacion: { motivo: "ajuste", texto, sugerencias: [] } };
+  }
+}
+
+async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null, persona?: string) {
   const t0 = Date.now();
   const i = intencion(q, { contexto, tokens: tokenizar(q) });
-  const r = (i.tipo === "guia" || i.tipo === "filtro") ? respuestaGuia(i, modo ?? "embeddings", t0)
+  const r = i.tipo === "ajustar" ? await respuestaAjuste(q, contexto!.eventoId!, persona, modo ?? "embeddings")
+    : (i.tipo === "guia" || i.tipo === "filtro") ? respuestaGuia(i, modo ?? "embeddings", t0)
     : i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
     : i.tipo === "mesa" ? await mesaDelRol(contexto?.rol ?? "editor", modo ?? "embeddings", t0)
     : i.tipo === "verificar" || i.tipo === "titulares" ? await trabajoDelTema(i, contexto, eventoId, modo ?? "embeddings", t0)
@@ -247,8 +289,8 @@ async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: 
 }
 
 
-export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null) {
-  return conTraza("consulta", { modalidad: "tvn", origen }, () => consultaImpl(q, modo, eventoId, origen, contexto));
+export async function consulta(q: string, modo?: "embeddings" | "bm25", eventoId?: string, origen: "texto" | "voz" = "texto", contexto?: ContextoPantalla | null, persona?: string) {
+  return conTraza("consulta", { modalidad: "tvn", origen }, () => consultaImpl(q, modo, eventoId, origen, contexto, persona));
 }
 
 async function consultaSinRegistro(q: string, modo?: "embeddings" | "bm25", eventoId?: string, sinLLM = false) {
