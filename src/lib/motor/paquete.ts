@@ -1,6 +1,7 @@
 // Paquete editorial TVN (T09) · composición extractiva: cada frase sale de una afirmación con cita. Sin LLM no hay invención posible.
 import type { Afirmacion, Evento, Indicador, Noticia, Paquete } from "./contrato";
 import { leerTemas } from "./config";
+import { faltaPorEvidencia } from "./evidencia";
 import { afirmacionesExtracto, afirmacionIndicador, afirmacionNoticia, LEYENDA } from "./consulta";
 import { INDICADORES } from "../ingesta/bancomundial";
 
@@ -59,7 +60,7 @@ export function generarPaquete(ev: Evento, noticias: Noticia[], indicadores: Ind
   while (palabras(brief) > 250 && brief.length > 1) brief = brief.slice(0, -1);
   if (palabras(brief) > 250) brief = [{ ...brief[0], texto: brief[0].texto.split(/\s+/).slice(0, 245).join(" ") + "…" }];
   const verificaciones = [
-    ...(ev.estado_evidencia !== "suficiente" ? [`Evidencia ${ev.estado_evidencia}: conseguir fuente primaria antes de afirmar el hecho.`] : []),
+    ...faltaPorEvidencia(ev),
     ...procedencias.filter((p) => p.tipo === "no_verificada").map((p) => `${p.ids_noticia.length} publicación(es) con titular copiado sin agencia: confirmar independencia.`),
     ...contradicciones.map((c) => `Contradicción: ${c.detalle}.`),
     ...(ev.ids_noticia.length > pubs.length ? [`${ev.ids_noticia.length - pubs.length} publicación(es) excluida(s) por contenido no confiable.`] : []),

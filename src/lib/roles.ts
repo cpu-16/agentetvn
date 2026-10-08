@@ -47,7 +47,7 @@ export function cuentasMesa(rol: RolMesa, eventos: EventoMesa[]): { n: number; e
   const reales = eventos.filter((e) => !e.sintetica && !e.no_confiable);
   const c = (f: (e: EventoMesa) => boolean) => reales.filter(f).length;
   if (rol === "editor") return [{ n: c((e) => e.estado_revision === "nuevo" && e.rango === "alto"), etiqueta: "de prioridad alta sin decidir" }, { n: c((e) => e.estado_revision === "en_revision"), etiqueta: "esperan tu aprobación" }, { n: c((e) => e.estado_revision === "aprobado_borrador"), etiqueta: "aprobados como borrador" }];
-  if (rol === "periodista") return [{ n: c((e) => e.rango === "alto" && e.estado_evidencia === "insuficiente"), etiqueta: "de prioridad alta sin evidencia suficiente" }, { n: c((e) => e.contradicciones.length > 0), etiqueta: "con versiones que no coinciden" }, { n: c((e) => e.estado_revision === "requiere_evidencia"), etiqueta: "te pidió evidencia el editor" }];
+  if (rol === "periodista") return [{ n: c((e) => e.rango === "alto" && e.estado_evidencia !== "suficiente"), etiqueta: "de prioridad alta sin evidencia suficiente" }, { n: c((e) => e.contradicciones.length > 0), etiqueta: "con versiones que no coinciden" }, { n: c((e) => e.estado_revision === "requiere_evidencia"), etiqueta: "te pidió evidencia el editor" }];
   return [{ n: c((e) => e.estado_evidencia === "suficiente"), etiqueta: "con evidencia suficiente" }, { n: c((e) => e.estado_revision === "en_revision"), etiqueta: "en revisión" }, { n: c((e) => e.estado_revision === "aprobado_borrador"), etiqueta: "aprobados como borrador" }];
 }
 

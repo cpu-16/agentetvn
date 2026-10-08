@@ -43,7 +43,7 @@ export function EvidenciaPorTema({ evidencia }: { evidencia: Agregados["evidenci
   return (
     <Grafica
       titulo="Estado de evidencia por tema"
-      nota="Porcentaje dentro de cada tema, sobre los eventos del filtro (sin casos de prueba). Insuficiente casi siempre es una sola fuente sin fuente primaria: una pista para reportear, no una noticia descartada."
+      nota="Porcentaje dentro de cada tema, sobre los eventos del filtro (sin casos de prueba). Verde: fuente primaria o dos procedencias independientes. Ámbar: una procedencia con extracto (borrador atribuido) o versiones que no coinciden. Rojo: solo un titular, una pista para reportear."
       aria={`Barras apiladas del estado de evidencia en ${filas.length} temas`}
       opcion={opcion}
       alto={Math.max(220, 40 + filas.length * 34)}

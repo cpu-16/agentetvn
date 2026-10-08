@@ -1,6 +1,7 @@
 import { db } from "../db";
 import { snapshot } from "./servicio";
 import { generarBoletin, validarBoletin } from "./banca";
+import { esPlantillaEvidencia, faltaPorEvidencia } from "./evidencia";
 import { sha256, type BoletinBancario, type EstadoRevision } from "./contrato";
 import { validarTransicion } from "./revision";
 import { actualizarTraza, conTraza } from "./tracing";
@@ -12,7 +13,10 @@ function vigente(value: string, id: string) {
     const snap = snapshot(), ev = snap.eventos.find((e) => e.id === id);
     if (!ev) return null;
     const result = validarBoletin(JSON.parse(value), ev, snap.noticias, snap.indicadores, snap.huella);
-    return result.ok ? result.boletin : null;
+    if (!result.ok) return null;
+    // la línea automática de evidencia se recalcula con la regla vigente; lo escrito por una persona se conserva
+    const b = result.boletin;
+    return { ...b, faltantes: [...faltaPorEvidencia(ev), ...b.faltantes.filter((f) => !esPlantillaEvidencia(f))].slice(0, 3) };
   } catch { return null; }
 }
 export async function detalleBancario(id: string) {

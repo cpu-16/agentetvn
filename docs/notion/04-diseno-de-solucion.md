@@ -23,7 +23,7 @@ Contrato de la §7 del reto: `noticias.csv` (id_noticia, titulo, url, medio, idi
 - Fecha original = mínima fecha de publicación; la detección de GDELT nunca rejuvenece.
 - R = 0.55·tema + 0.45·geo · I = 0.4·prior editorial + 0.3·alcance explícito + 0.3·magnitud del dato oficial · U por edad de la publicación más reciente (<24 h 1, <72 h 0.7, <7 d 0.4, <30 d 0.15, más 0.05; sin fecha 0.2) · N = 1 primera aparición / 0.3 segunda ola / 0 repetición · E = 0.45·primaria + 0.35·min(1, procedencias/2) + 0.20·identificable.
 - P = 30R + 25I + 20U + 15N + 10E; rangos [0,40) [40,70) [70,100]; empate U desc, id asc.
-- Estado de evidencia (aparte): insuficiente si E < 0.40 o (una procedencia y sin primaria); parcial si hay contradicción abierta o falta primaria; suficiente en otro caso. Suficiente no autoriza publicar.
+- Estado de evidencia (aparte, regla v2 del 7-oct, D20): **suficiente para el borrador** con fuente primaria del hecho o ≥ 2 procedencias independientes, todas con URL y fecha, sin contradicción; **parcial** con una procedencia cuyo extracto aporta algo más que el titular (borrador atribuido), con versiones en disputa que tienen respaldo o con respaldo sin URL/fecha; **insuficiente** con solo el titular de una procedencia, copias sin agencia o disputa sin respaldo. Cada estado trae su «qué falta verificar». Suficiente no autoriza publicar.
 - Contexto oficial solo con señal explícita (tema economía + concepto del indicador; sismo solo si hay evento USGS ≤ 7 días en Panamá). Si no, «sin relación sustentada».
 
 ## Modelos

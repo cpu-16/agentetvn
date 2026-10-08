@@ -12,9 +12,9 @@ import { MESA } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
 interface Evento extends Omit<EventoResumen, "titulo" | "medio" | "publicaciones" | "estado_revision"> {
-  representante: string; ids_noticia: string[]; tema_confianza: number; contexto: { indicadores: string[]; sismos: string[] }; contradicciones: { a: string; b: string; campo: string; detalle: string }[]; componentes: Componentes;
+  representante: string; ids_noticia: string[]; tema_confianza: number; contexto: { indicadores: string[]; sismos: string[] }; contradicciones: { a: string; b: string; campo: string; detalle: string }[]; componentes: Componentes; primaria?: boolean;
 }
-interface Detalle { evento: Evento; publicaciones: Publicacion[]; indicadores: Indicador[]; sismos: Sismo[]; revision: Revision; historial: RevisionHist[]; paquete: Paquete | null }
+interface Detalle { evento: Evento; falta_evidencia?: string[]; publicaciones: Publicacion[]; indicadores: Indicador[]; sismos: Sismo[]; revision: Revision; historial: RevisionHist[]; paquete: Paquete | null }
 
 function accionRecomendada(e: Evento): string {
   if (e.no_confiable) return "Tratar el contenido marcado como no confiable: no se usa en el borrador ni en la consulta.";
@@ -69,11 +69,11 @@ export function Ficha({ id }: { id: string }) {
   const rep = pubs.find((p) => p.id_noticia === e.representante) ?? pubs[0];
   const porId = new Map(pubs.map((p) => [p.id_noticia, p]));
   const resumen: EventoResumen = { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", publicaciones: pubs.length, estado_revision: d.revision.estado };
-  const faltas: string[] = [];
+  const faltas: string[] = [...(d.falta_evidencia ?? [])]; // la misma línea que el paquete y la voz (regla de evidencia v2)
   if (e.contradicciones.length) faltas.push(...e.contradicciones.map((c) => `Contradicción: ${c.detalle}. Verificación pendiente.`));
   for (const p of e.procedencias.filter((p) => p.tipo === "no_verificada")) faltas.push(`${p.ids_noticia.length} publicación(es) con titular copiado y sin agencia: independencia no verificada.`);
   if (pubs.every((p) => !p.fecha_publicacion)) faltas.push("Ninguna publicación trae fecha de publicación; solo hay fecha de detección.");
-  if (!d.indicadores.length && !d.sismos.length) faltas.push("Sin dato oficial ligado: conseguir fuente primaria.");
+  if (!d.indicadores.length && !d.sismos.length && !e.primaria) faltas.push("Sin dato oficial ligado (Banco Mundial o USGS).");
   faltas.push("Todo se basa únicamente en titular/metadatos: leer la nota completa.");
 
   return (

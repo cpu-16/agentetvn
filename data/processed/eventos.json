@@ -50,7 +50,8 @@
     },
     "P": 84.5,
     "rango": "alto",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_0cac53f44744",
@@ -94,7 +95,8 @@
     },
     "P": 75,
     "rango": "alto",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_097341de4cbe",
@@ -138,7 +140,8 @@
     },
     "P": 74.63,
     "rango": "alto",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ce443344c63b",
@@ -182,7 +185,8 @@
     },
     "P": 74.5,
     "rango": "alto",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_e924c2c6d166",
@@ -247,7 +251,8 @@
     },
     "P": 74,
     "rango": "alto",
-    "estado_evidencia": "suficiente"
+    "estado_evidencia": "suficiente",
+    "primaria": true
   },
   {
     "id": "ev_28c703061c3a",
@@ -299,7 +304,8 @@
     },
     "P": 73.13,
     "rango": "alto",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_4dbc153b7bf1",
@@ -343,7 +349,8 @@
     },
     "P": 72.63,
     "rango": "alto",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_f9d24d4be1b1",
@@ -387,7 +394,8 @@
     },
     "P": 72,
     "rango": "alto",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_691ced7c04b3",
@@ -447,7 +455,8 @@
     },
     "P": 72,
     "rango": "alto",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_26a635f019b8",
@@ -500,7 +509,8 @@
     },
     "P": 70.5,
     "rango": "alto",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_e3f159403e0f",
@@ -553,7 +563,8 @@
     },
     "P": 70.5,
     "rango": "alto",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_84a15c7a2297",
@@ -597,7 +608,8 @@
     },
     "P": 69.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_a00942e7cd60",
@@ -641,7 +653,8 @@
     },
     "P": 69.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ccfb30161637",
@@ -685,7 +698,8 @@
     },
     "P": 69.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_e4244def9c5a",
@@ -738,7 +752,8 @@
     },
     "P": 69,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_617919f9dcab",
@@ -782,7 +797,8 @@
     },
     "P": 68.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_79658a38c016",
@@ -826,7 +842,8 @@
     },
     "P": 68.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_a6c8c51fa207",
@@ -870,7 +887,8 @@
     },
     "P": 68.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_f6a8a581d5df",
@@ -914,7 +932,8 @@
     },
     "P": 68.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5ee43004dedb",
@@ -958,7 +977,8 @@
     },
     "P": 68.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_ff61f9adc7ea",
@@ -1033,7 +1053,8 @@
     },
     "P": 68,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_a1c129f0271b",
@@ -1079,7 +1100,8 @@
     },
     "P": 67.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b53e79eee74d",
@@ -1125,7 +1147,8 @@
     },
     "P": 67.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_505b14a34e21",
@@ -1169,7 +1192,8 @@
     },
     "P": 67.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_981e46bd6d90",
@@ -1213,7 +1237,8 @@
     },
     "P": 66.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bf127913dcdf",
@@ -1257,7 +1282,8 @@
     },
     "P": 66.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d5caa8113a86",
@@ -1301,7 +1327,8 @@
     },
     "P": 66.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9f17006804cb",
@@ -1345,7 +1372,8 @@
     },
     "P": 66.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_bc92d38a4c8d",
@@ -1389,7 +1417,8 @@
     },
     "P": 65.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c2a3d2194ae5",
@@ -1433,7 +1462,8 @@
     },
     "P": 65.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_44f8ce26b64d",
@@ -1477,7 +1507,8 @@
     },
     "P": 65.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_0e00ebbe586f",
@@ -1539,7 +1570,8 @@
     },
     "P": 65.25,
     "rango": "medio",
-    "estado_evidencia": "suficiente"
+    "estado_evidencia": "suficiente",
+    "primaria": true
   },
   {
     "id": "ev_e333c6659516",
@@ -1583,7 +1615,8 @@
     },
     "P": 64.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e9a0a2e64b1d",
@@ -1636,7 +1669,8 @@
     },
     "P": 64.88,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_329f6a9bf549",
@@ -1680,7 +1714,8 @@
     },
     "P": 64.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_16e3add04cc0",
@@ -1753,7 +1788,8 @@
     },
     "P": 64.5,
     "rango": "medio",
-    "estado_evidencia": "suficiente"
+    "estado_evidencia": "suficiente",
+    "primaria": true
   },
   {
     "id": "ev_8ff7daad1aef",
@@ -1797,7 +1833,8 @@
     },
     "P": 64.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_8ea5e9f9d828",
@@ -1841,7 +1878,8 @@
     },
     "P": 63.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_ba63f618a0ce",
@@ -1894,7 +1932,8 @@
     },
     "P": 63.38,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_c9ded3749d25",
@@ -1956,7 +1995,8 @@
     },
     "P": 63.38,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_18de834c4e00",
@@ -2000,7 +2040,8 @@
     },
     "P": 63.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a2170d4f27fd",
@@ -2044,7 +2085,8 @@
     },
     "P": 63.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bf55aaf7afa4",
@@ -2088,7 +2130,8 @@
     },
     "P": 63.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6faf2bff68e8",
@@ -2132,7 +2175,8 @@
     },
     "P": 63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_4c7577043fe6",
@@ -2176,7 +2220,8 @@
     },
     "P": 62.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_58727f537dcf",
@@ -2220,7 +2265,8 @@
     },
     "P": 62.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_f3d679d286f4",
@@ -2268,7 +2314,8 @@
     },
     "P": 62.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_659f73627195",
@@ -2321,7 +2368,8 @@
     },
     "P": 62.4,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_aab008f905bb",
@@ -2383,7 +2431,8 @@
     },
     "P": 62.4,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_1ba0a0e9d91b",
@@ -2427,7 +2476,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_24df92ea8176",
@@ -2471,7 +2521,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3ca586f25f1f",
@@ -2515,7 +2566,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5ac4850fb044",
@@ -2559,7 +2611,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5e08a4c68e5e",
@@ -2603,7 +2656,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_811f78823982",
@@ -2647,7 +2701,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_963daaeccb2c",
@@ -2691,7 +2746,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9cd988e09c3c",
@@ -2735,7 +2791,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_aaa936440687",
@@ -2779,7 +2836,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d6ad7ee3227e",
@@ -2823,7 +2881,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e83f5e06178b",
@@ -2867,7 +2926,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f9be44e1b54b",
@@ -2911,7 +2971,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_feec8e04d315",
@@ -2955,7 +3016,8 @@
     },
     "P": 61.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fd4c53c3afca",
@@ -3008,7 +3070,8 @@
     },
     "P": 61.4,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_adfc51a71e82",
@@ -3052,7 +3115,8 @@
     },
     "P": 61,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_5af4adfe5aed",
@@ -3096,7 +3160,8 @@
     },
     "P": 60.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1266440a9637",
@@ -3140,7 +3205,8 @@
     },
     "P": 60.65,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c694abddd5ec",
@@ -3184,7 +3250,8 @@
     },
     "P": 60.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cdbf23d2e27e",
@@ -3228,7 +3295,8 @@
     },
     "P": 60.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_c88d65a1ab7d",
@@ -3272,7 +3340,8 @@
     },
     "P": 60.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4141cfd6a1f0",
@@ -3316,7 +3385,8 @@
     },
     "P": 60.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_6e6e2b8f3815",
@@ -3369,7 +3439,8 @@
     },
     "P": 60.38,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_aa0b6b06403d",
@@ -3431,7 +3502,8 @@
     },
     "P": 60,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_41e006f11cbc",
@@ -3477,7 +3549,8 @@
     },
     "P": 59.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_00f541fda615",
@@ -3521,7 +3594,8 @@
     },
     "P": 59.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_38968d9edc16",
@@ -3574,7 +3648,8 @@
     },
     "P": 59.75,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_18e9033d1bd8",
@@ -3618,7 +3693,8 @@
     },
     "P": 59.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_40d350f2a9d6",
@@ -3664,7 +3740,8 @@
     },
     "P": 59.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_d51156394c1d",
@@ -3726,7 +3803,8 @@
     },
     "P": 59.4,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_f4805747b334",
@@ -3779,7 +3857,8 @@
     },
     "P": 59.03,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_7e92119a9ee3",
@@ -3823,7 +3902,8 @@
     },
     "P": 59,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0324ef8050dc",
@@ -3867,7 +3947,8 @@
     },
     "P": 59,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_1b78adf77f8f",
@@ -3911,7 +3992,8 @@
     },
     "P": 59,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_7655da278715",
@@ -3955,7 +4037,8 @@
     },
     "P": 59,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_7bbe4d9c4b76",
@@ -3999,7 +4082,8 @@
     },
     "P": 58.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d66b6469c300",
@@ -4043,7 +4127,8 @@
     },
     "P": 58.65,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7adba080838e",
@@ -4087,7 +4172,8 @@
     },
     "P": 58.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f0fef5d22a50",
@@ -4131,7 +4217,8 @@
     },
     "P": 58.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_3f28a1863a82",
@@ -4175,7 +4262,8 @@
     },
     "P": 58.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_13d7e3d977e8",
@@ -4219,7 +4307,8 @@
     },
     "P": 58.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_257c2462fbb2",
@@ -4263,7 +4352,8 @@
     },
     "P": 58.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2934924b16e0",
@@ -4307,7 +4397,8 @@
     },
     "P": 58.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_89ad1c18a66e",
@@ -4351,7 +4442,8 @@
     },
     "P": 58.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_77e408c51c28",
@@ -4395,7 +4487,8 @@
     },
     "P": 57.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_a2c305a79cc7",
@@ -4439,7 +4532,8 @@
     },
     "P": 57.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_1abd97baa53a",
@@ -4485,7 +4579,8 @@
     },
     "P": 57.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c3cef532eb96",
@@ -4531,7 +4626,8 @@
     },
     "P": 57.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2db16c5bd59f",
@@ -4581,7 +4677,8 @@
     },
     "P": 57.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_2ec84cdf7a89",
@@ -4625,7 +4722,8 @@
     },
     "P": 57.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8dfcd92658f0",
@@ -4669,7 +4767,8 @@
     },
     "P": 57.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3f9e3bc280bf",
@@ -4713,7 +4812,8 @@
     },
     "P": 56.9,
     "rango": "medio",
-    "estado_evidencia": "suficiente"
+    "estado_evidencia": "suficiente",
+    "primaria": true
   },
   {
     "id": "ev_ff171edb4c0b",
@@ -4766,7 +4866,8 @@
     },
     "P": 56.78,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_616ddf8b9542",
@@ -4810,7 +4911,8 @@
     },
     "P": 56.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_651675f0e6b9",
@@ -4863,7 +4965,8 @@
     },
     "P": 56.63,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_cd235d5e917d",
@@ -4907,7 +5010,8 @@
     },
     "P": 56,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_9d68e6ea53ee",
@@ -4960,7 +5064,8 @@
     },
     "P": 55.88,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_994ccea56974",
@@ -5024,7 +5129,8 @@
     },
     "P": 55.78,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_9baa9b78f33e",
@@ -5068,7 +5174,8 @@
     },
     "P": 55.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6c5a07c5e0bc",
@@ -5112,7 +5219,8 @@
     },
     "P": 55.4,
     "rango": "medio",
-    "estado_evidencia": "suficiente"
+    "estado_evidencia": "suficiente",
+    "primaria": true
   },
   {
     "id": "ev_e264691b9706",
@@ -5156,7 +5264,8 @@
     },
     "P": 55.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9e4a8e41095a",
@@ -5218,7 +5327,8 @@
     },
     "P": 55.13,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_0caae9e8d6b9",
@@ -5262,7 +5372,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_121b1f251203",
@@ -5306,7 +5417,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_16d955b607c3",
@@ -5350,7 +5462,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_22a5e3e480d7",
@@ -5394,7 +5507,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_25c346b432a9",
@@ -5438,7 +5552,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_411290b06272",
@@ -5482,7 +5597,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6b9170c687c0",
@@ -5526,7 +5642,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7920f5febf31",
@@ -5570,7 +5687,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_81f4897f028d",
@@ -5614,7 +5732,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_97eeebee65de",
@@ -5658,7 +5777,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_afd37fcedf57",
@@ -5702,7 +5822,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bf7bbfd994ff",
@@ -5746,7 +5867,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c6536a8959ca",
@@ -5790,7 +5912,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f46254316b6a",
@@ -5834,7 +5957,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_facf026674d0",
@@ -5878,7 +6002,8 @@
     },
     "P": 55.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_30e3c785dc5b",
@@ -5922,7 +6047,8 @@
     },
     "P": 54.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8489382d9ed8",
@@ -5966,7 +6092,8 @@
     },
     "P": 54.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_94c4c45fa39e",
@@ -6019,7 +6146,8 @@
     },
     "P": 54.78,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_1791cd5a1bcf",
@@ -6063,7 +6191,8 @@
     },
     "P": 54.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_275d65fc2529",
@@ -6116,7 +6245,8 @@
     },
     "P": 54.28,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_5cf21b31854e",
@@ -6169,7 +6299,8 @@
     },
     "P": 54.28,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_60ea9f71e6b4",
@@ -6259,7 +6390,8 @@
     },
     "P": 54.28,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_c82df4c12323",
@@ -6312,7 +6444,8 @@
     },
     "P": 54.28,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_d4025d585f5b",
@@ -6356,7 +6489,8 @@
     },
     "P": 54.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_f4bd166a1604",
@@ -6400,7 +6534,8 @@
     },
     "P": 54.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_15e8045efdec",
@@ -6453,7 +6588,8 @@
     },
     "P": 54.15,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_32368e8ac899",
@@ -6497,7 +6633,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_6f8e8a263d91",
@@ -6547,7 +6684,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_71808f047b1d",
@@ -6591,7 +6729,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_884823713c82",
@@ -6635,7 +6774,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_895fd6e7ab8b",
@@ -6679,7 +6819,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_e030070f1420",
@@ -6723,7 +6864,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e9cabe341946",
@@ -6767,7 +6909,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_eab9805790ca",
@@ -6811,7 +6954,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_fbd177b68243",
@@ -6857,7 +7001,8 @@
     },
     "P": 54.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_8aae506a2abe",
@@ -6901,7 +7046,8 @@
     },
     "P": 54.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f46ae3b71357",
@@ -6945,7 +7091,8 @@
     },
     "P": 54.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3079bd4c6308",
@@ -6989,7 +7136,8 @@
     },
     "P": 53.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3f42ee101621",
@@ -7033,7 +7181,8 @@
     },
     "P": 53.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7f5f29406fa5",
@@ -7077,7 +7226,8 @@
     },
     "P": 53.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8035ac1574dd",
@@ -7121,7 +7271,8 @@
     },
     "P": 53.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9ebfa2ad1777",
@@ -7165,7 +7316,8 @@
     },
     "P": 53.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c58bb2c5e6c4",
@@ -7209,7 +7361,8 @@
     },
     "P": 53.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_02b297c30c08",
@@ -7253,7 +7406,8 @@
     },
     "P": 53.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7613f1d2968a",
@@ -7297,7 +7451,8 @@
     },
     "P": 53.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bfc9b18f26d9",
@@ -7341,7 +7496,8 @@
     },
     "P": 53.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cb0987a9916e",
@@ -7385,7 +7541,8 @@
     },
     "P": 53.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f56be45e10cd",
@@ -7429,7 +7586,8 @@
     },
     "P": 53.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_22508587930a",
@@ -7482,7 +7640,8 @@
     },
     "P": 53.15,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_ecee2dec4675",
@@ -7555,7 +7714,8 @@
     },
     "P": 53.15,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_0ab88f79b638",
@@ -7599,7 +7759,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2ffde9ceb585",
@@ -7643,7 +7804,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_330af2fed751",
@@ -7687,7 +7849,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_59ef96ef85bc",
@@ -7731,7 +7894,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_75c1f55804f0",
@@ -7775,7 +7939,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_99bb8e0b11e4",
@@ -7819,7 +7984,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a74061500ed1",
@@ -7863,7 +8029,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b133d222160e",
@@ -7907,7 +8074,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ebab158f921b",
@@ -7951,7 +8119,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fcb8da4c08d3",
@@ -7995,7 +8164,8 @@
     },
     "P": 53.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ad1f27d8eb71",
@@ -8039,7 +8209,8 @@
     },
     "P": 53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4882cff83dce",
@@ -8085,7 +8256,8 @@
     },
     "P": 53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_2284320d769f",
@@ -8138,7 +8310,8 @@
     },
     "P": 52.88,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_3a3cb3ed440a",
@@ -8191,7 +8364,8 @@
     },
     "P": 52.88,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_35669fb57334",
@@ -8235,7 +8409,8 @@
     },
     "P": 52.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0ac732ab6dbe",
@@ -8279,7 +8454,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2ff316bf9e4f",
@@ -8323,7 +8499,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_38a673b40a8a",
@@ -8367,7 +8544,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_548b3bbcd31a",
@@ -8411,7 +8589,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_56b7b7c13d08",
@@ -8455,7 +8634,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_58ed1dba3104",
@@ -8499,7 +8679,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_66b0f6a68791",
@@ -8543,7 +8724,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8739abd9a6fb",
@@ -8587,7 +8769,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8c5634dab543",
@@ -8631,7 +8814,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8c57d83abf75",
@@ -8675,7 +8859,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9f38c5c0be06",
@@ -8719,7 +8904,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a11d7dea7273",
@@ -8763,7 +8949,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c24cc38419cc",
@@ -8807,7 +8994,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e75901b6d587",
@@ -8851,7 +9039,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f922f4377bf8",
@@ -8895,7 +9084,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ff1ca0ae73dc",
@@ -8939,7 +9129,8 @@
     },
     "P": 52.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2060c1564d17",
@@ -8983,7 +9174,8 @@
     },
     "P": 52.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3e4497df4542",
@@ -9027,7 +9219,8 @@
     },
     "P": 52.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a383b235ed5e",
@@ -9071,7 +9264,8 @@
     },
     "P": 52.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bc3b64b29280",
@@ -9115,7 +9309,8 @@
     },
     "P": 52.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_afc60a8aa9ab",
@@ -9159,7 +9354,8 @@
     },
     "P": 52.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_73233c646065",
@@ -9212,7 +9408,8 @@
     },
     "P": 52.15,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_01022adbcdfe",
@@ -9256,7 +9453,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_18818f83b009",
@@ -9300,7 +9498,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1a1ccc1b7058",
@@ -9344,7 +9543,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_34129a0b0679",
@@ -9388,7 +9588,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4dcf8702b753",
@@ -9432,7 +9633,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_55eb3babab97",
@@ -9476,7 +9678,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_77479ef8d0ac",
@@ -9520,7 +9723,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7ac33d693e22",
@@ -9564,7 +9768,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8344ec0193bf",
@@ -9608,7 +9813,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8ce851c55237",
@@ -9652,7 +9858,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_976fa7ea7570",
@@ -9696,7 +9903,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_977c49400749",
@@ -9740,7 +9948,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bf6f4d684d71",
@@ -9784,7 +9993,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c592ad1ac4c1",
@@ -9828,7 +10038,8 @@
     },
     "P": 52.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ba76269f7cf2",
@@ -9872,7 +10083,8 @@
     },
     "P": 51.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_88db16270f49",
@@ -9925,7 +10137,8 @@
     },
     "P": 51.65,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_897ffc7cd45e",
@@ -9969,7 +10182,8 @@
     },
     "P": 51.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b73c1f0ae6fa",
@@ -10013,7 +10227,8 @@
     },
     "P": 51.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1b75dd9ef316",
@@ -10057,7 +10272,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_870c0c9416bd",
@@ -10101,7 +10317,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_88fe4a514579",
@@ -10145,7 +10362,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a6b3427c7b51",
@@ -10189,7 +10407,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ab8312cbe645",
@@ -10233,7 +10452,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b24be9de093b",
@@ -10277,7 +10497,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cbee90f82cc8",
@@ -10321,7 +10542,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ccfee0258ed2",
@@ -10365,7 +10587,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ef25850c4be7",
@@ -10409,7 +10632,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f55a51d7101b",
@@ -10453,7 +10677,8 @@
     },
     "P": 51.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_055aa5a11e5f",
@@ -10515,7 +10740,8 @@
     },
     "P": 50.9,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_a6fa5359fb05",
@@ -10559,7 +10785,8 @@
     },
     "P": 50.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_7f9a761f541c",
@@ -10621,7 +10848,8 @@
     },
     "P": 50.78,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_0b90fb3c7c13",
@@ -10667,7 +10895,8 @@
     },
     "P": 50.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_c0abb9e5b86b",
@@ -10711,7 +10940,8 @@
     },
     "P": 50.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c2b8c7de14cd",
@@ -10755,7 +10985,8 @@
     },
     "P": 50.4,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1920cadadab0",
@@ -10799,7 +11030,8 @@
     },
     "P": 50.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_61a5f4b8aa01",
@@ -10852,7 +11084,8 @@
     },
     "P": 50.28,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_5c90f02fdebf",
@@ -10896,7 +11129,8 @@
     },
     "P": 50.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7269094854fe",
@@ -10940,7 +11174,8 @@
     },
     "P": 50.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_91972ce9cbe1",
@@ -10984,7 +11219,8 @@
     },
     "P": 50,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_19fce450c3fa",
@@ -11028,7 +11264,8 @@
     },
     "P": 49.9,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_32c44a330ef1",
@@ -11072,7 +11309,8 @@
     },
     "P": 49.9,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8cfef22338c5",
@@ -11116,7 +11354,8 @@
     },
     "P": 49.9,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_acdf1836cd9a",
@@ -11160,7 +11399,8 @@
     },
     "P": 49.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_50633416f012",
@@ -11215,7 +11455,8 @@
     },
     "P": 49.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7f66d2d96c04",
@@ -11259,7 +11500,8 @@
     },
     "P": 49.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d930313751a4",
@@ -11303,7 +11545,8 @@
     },
     "P": 49.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e6eca33d7d09",
@@ -11347,7 +11590,8 @@
     },
     "P": 49.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_04bc92347169",
@@ -11391,7 +11635,8 @@
     },
     "P": 49.15,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1ca182459457",
@@ -11435,7 +11680,8 @@
     },
     "P": 49.15,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b48900a221b0",
@@ -11479,7 +11725,8 @@
     },
     "P": 49.15,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1f0389098601",
@@ -11523,7 +11770,8 @@
     },
     "P": 48.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d3175b6cc960",
@@ -11587,7 +11835,8 @@
     },
     "P": 48.53,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_1511bbffed67",
@@ -11633,7 +11882,8 @@
     },
     "P": 48.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_659152fa9a52",
@@ -11677,7 +11927,8 @@
     },
     "P": 48.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3e6dcff40d56",
@@ -11721,7 +11972,8 @@
     },
     "P": 48.25,
     "rango": "medio",
-    "estado_evidencia": "suficiente"
+    "estado_evidencia": "suficiente",
+    "primaria": true
   },
   {
     "id": "ev_a5b3be3bef6b",
@@ -11765,7 +12017,8 @@
     },
     "P": 48.15,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3d489909fb58",
@@ -11809,7 +12062,8 @@
     },
     "P": 48.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_a54777ece5f3",
@@ -11853,7 +12107,8 @@
     },
     "P": 48.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d216c740eb3c",
@@ -11897,7 +12152,8 @@
     },
     "P": 48.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e57d737c60df",
@@ -11941,7 +12197,8 @@
     },
     "P": 48.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ea1514a6fdd4",
@@ -11985,7 +12242,8 @@
     },
     "P": 48.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_96d2b9670811",
@@ -12029,7 +12287,8 @@
     },
     "P": 48.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_200fa7c808ae",
@@ -12073,7 +12332,8 @@
     },
     "P": 47.65,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4b3ddfe78a8a",
@@ -12126,7 +12386,8 @@
     },
     "P": 47.53,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_c5057624f2a7",
@@ -12170,7 +12431,8 @@
     },
     "P": 47.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_528b0aa49c05",
@@ -12216,7 +12478,8 @@
     },
     "P": 47.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8581d3df61f8",
@@ -12260,7 +12523,8 @@
     },
     "P": 47.25,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cc884c5d5b22",
@@ -12304,7 +12568,8 @@
     },
     "P": 47.15,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b44f6e16b366",
@@ -12348,7 +12613,8 @@
     },
     "P": 47.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1729082cd131",
@@ -12403,7 +12669,8 @@
     },
     "P": 47.03,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_23067db3203f",
@@ -12453,7 +12720,8 @@
     },
     "P": 47,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0cc1cb73997c",
@@ -12497,7 +12765,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2a0c2b5e088d",
@@ -12541,7 +12810,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2d53f328f599",
@@ -12585,7 +12855,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3dc31480bbc3",
@@ -12629,7 +12900,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_41e59870c552",
@@ -12673,7 +12945,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4529881763a0",
@@ -12717,7 +12990,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_46362424ef08",
@@ -12763,7 +13037,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_56b5d2bbe175",
@@ -12807,7 +13082,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_607f39167064",
@@ -12851,7 +13127,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_61ce9fba4d04",
@@ -12895,7 +13172,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8284817d71b8",
@@ -12939,7 +13217,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8297afabb3d4",
@@ -12983,7 +13262,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_88b7237920af",
@@ -13027,7 +13307,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b140026c70e9",
@@ -13071,7 +13352,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b32081a4e2a3",
@@ -13115,7 +13397,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fb7fa79ac3d4",
@@ -13159,7 +13442,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fd399dc7639b",
@@ -13203,7 +13487,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fd8052609f9c",
@@ -13247,7 +13532,8 @@
     },
     "P": 46.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0d7223f4153a",
@@ -13291,7 +13577,8 @@
     },
     "P": 46.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ac678311fcf1",
@@ -13335,7 +13622,8 @@
     },
     "P": 46.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e623510d9258",
@@ -13379,7 +13667,8 @@
     },
     "P": 46.63,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fbd7d3724125",
@@ -13432,7 +13721,8 @@
     },
     "P": 46.53,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_7b6ea82c3429",
@@ -13476,7 +13766,8 @@
     },
     "P": 46.15,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1201043d541c",
@@ -13529,7 +13820,8 @@
     },
     "P": 46.13,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_a918bcb3288f",
@@ -13573,7 +13865,8 @@
     },
     "P": 46.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_12a80e847173",
@@ -13623,7 +13916,8 @@
     },
     "P": 46.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_dc865a7f06ba",
@@ -13667,7 +13961,8 @@
     },
     "P": 46.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0791a383b93a",
@@ -13711,7 +14006,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0b38fedb35b0",
@@ -13755,7 +14051,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_58833b728730",
@@ -13799,7 +14096,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6fc25efa8790",
@@ -13843,7 +14141,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_759a666b2306",
@@ -13887,7 +14186,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_793edfc6dbdf",
@@ -13931,7 +14231,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d1e3313c7272",
@@ -13975,7 +14276,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_de0251fe0732",
@@ -14019,7 +14321,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_df563cccab78",
@@ -14063,7 +14366,8 @@
     },
     "P": 45.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4e5318cfb3ce",
@@ -14167,7 +14471,8 @@
     },
     "P": 45.75,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_84119ed1235c",
@@ -14211,7 +14516,8 @@
     },
     "P": 45.65,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8ec7f7f491ba",
@@ -14264,7 +14570,8 @@
     },
     "P": 45.53,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_42f6ead6d461",
@@ -14308,7 +14615,8 @@
     },
     "P": 45.5,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0e118fc3b32c",
@@ -14352,7 +14660,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_14d8f9a636e0",
@@ -14396,7 +14705,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_17b8a41fb212",
@@ -14440,7 +14750,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2d7810aab8a2",
@@ -14484,7 +14795,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3ee280c0eb9e",
@@ -14528,7 +14840,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_50e7f280ca36",
@@ -14572,7 +14885,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_594f76e19474",
@@ -14616,7 +14930,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_84e24305fa20",
@@ -14660,7 +14975,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9e84b654f16a",
@@ -14704,7 +15020,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a0ec77afacf7",
@@ -14748,7 +15065,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b5726ae014a4",
@@ -14792,7 +15110,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d575b8ddb323",
@@ -14836,7 +15155,8 @@
     },
     "P": 45.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_eab2be772691",
@@ -14880,7 +15200,8 @@
     },
     "P": 45.13,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2c6173c41e1c",
@@ -14924,7 +15245,8 @@
     },
     "P": 44.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3e032eca046b",
@@ -14968,7 +15290,8 @@
     },
     "P": 44.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8741c14f78d8",
@@ -15012,7 +15335,8 @@
     },
     "P": 44.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_dbfb4cfaaafd",
@@ -15056,7 +15380,8 @@
     },
     "P": 44.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_58f92ccc1b4e",
@@ -15100,7 +15425,8 @@
     },
     "P": 44.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ff9add671ea7",
@@ -15144,7 +15470,8 @@
     },
     "P": 44.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_066c9ca3e248",
@@ -15199,7 +15526,8 @@
     },
     "P": 44.63,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_5ea8607372b5",
@@ -15243,7 +15571,8 @@
     },
     "P": 44.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_98457e79a2d0",
@@ -15287,7 +15616,8 @@
     },
     "P": 44.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_99a25cc9dae1",
@@ -15331,7 +15661,8 @@
     },
     "P": 44.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9edd04dcf2ab",
@@ -15375,7 +15706,8 @@
     },
     "P": 44.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a37457113a15",
@@ -15421,7 +15753,8 @@
     },
     "P": 44.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b4b838bca8f3",
@@ -15465,7 +15798,8 @@
     },
     "P": 44.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_037b7a66e6f9",
@@ -15509,7 +15843,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0d20752ef24e",
@@ -15553,7 +15888,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0d78f9bc818a",
@@ -15597,7 +15933,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0dcc2e9b3a84",
@@ -15641,7 +15978,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0ebef79d0730",
@@ -15685,7 +16023,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_258de34979d3",
@@ -15729,7 +16068,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2b59f6265b96",
@@ -15773,7 +16113,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_58c566635298",
@@ -15817,7 +16158,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8d93678ad0a8",
@@ -15861,7 +16203,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_91360bb5ab12",
@@ -15905,7 +16248,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_afe6ad5a0223",
@@ -15949,7 +16293,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b527e60b540b",
@@ -15993,7 +16338,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c244578915db",
@@ -16037,7 +16383,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d103972d2b81",
@@ -16081,7 +16428,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d51198594150",
@@ -16125,7 +16473,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d6ea92d4667e",
@@ -16169,7 +16518,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_db461d153f93",
@@ -16213,7 +16563,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_efff5e233067",
@@ -16257,7 +16608,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fb1490bb8529",
@@ -16301,7 +16653,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fe15865f4153",
@@ -16345,7 +16698,8 @@
     },
     "P": 44.28,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_330594de0e4f",
@@ -16389,7 +16743,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4b6e392bf0b7",
@@ -16433,7 +16788,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4fee7e3d148d",
@@ -16477,7 +16833,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_76cb9aebf25d",
@@ -16521,7 +16878,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8708a096e458",
@@ -16565,7 +16923,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b01d3b9f059f",
@@ -16609,7 +16968,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b4f2068cf865",
@@ -16653,7 +17013,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cfc82c69cf1e",
@@ -16697,7 +17058,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d3289e4e7025",
@@ -16741,7 +17103,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ed55b95b8c43",
@@ -16785,7 +17148,8 @@
     },
     "P": 43.78,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_99862a7b64ae",
@@ -16847,7 +17211,8 @@
     },
     "P": 43.28,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_1f40c209b192",
@@ -16891,7 +17256,8 @@
     },
     "P": 43.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ac3d355707d6",
@@ -16935,7 +17301,8 @@
     },
     "P": 43.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_258337159610",
@@ -16979,7 +17346,8 @@
     },
     "P": 42.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_78615d929499",
@@ -17023,7 +17391,8 @@
     },
     "P": 42.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a1c153d236de",
@@ -17067,7 +17436,8 @@
     },
     "P": 42.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a943f8516d6c",
@@ -17111,7 +17481,8 @@
     },
     "P": 42.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_be4387f9ced1",
@@ -17155,7 +17526,8 @@
     },
     "P": 42.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_75f5ce9bd981",
@@ -17199,7 +17571,8 @@
     },
     "P": 42.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_742009331695",
@@ -17243,7 +17616,8 @@
     },
     "P": 42.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_94bcef689912",
@@ -17287,7 +17661,8 @@
     },
     "P": 42.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f7e7ffce8385",
@@ -17331,7 +17706,8 @@
     },
     "P": 42.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_006262b3388a",
@@ -17375,7 +17751,8 @@
     },
     "P": 42.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_03ce8e16417f",
@@ -17419,7 +17796,8 @@
     },
     "P": 42.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_07e0923bbc1f",
@@ -17463,7 +17841,8 @@
     },
     "P": 42.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8daf02149f4a",
@@ -17507,7 +17886,8 @@
     },
     "P": 42.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ce042379f5ba",
@@ -17551,7 +17931,8 @@
     },
     "P": 42.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e3d4c26d435f",
@@ -17595,7 +17976,8 @@
     },
     "P": 41.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f0e4d0c9bdb7",
@@ -17639,7 +18021,8 @@
     },
     "P": 41.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f7cdb52caf2b",
@@ -17683,7 +18066,8 @@
     },
     "P": 41.88,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f1ad3934b4ff",
@@ -17727,7 +18111,8 @@
     },
     "P": 41.75,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e426b1834e10",
@@ -17780,7 +18165,8 @@
     },
     "P": 41.63,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_39a38ce57551",
@@ -17824,7 +18210,8 @@
     },
     "P": 41.53,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_56097222a976",
@@ -17868,7 +18255,8 @@
     },
     "P": 41.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d03c8ebee77a",
@@ -17912,7 +18300,8 @@
     },
     "P": 41.38,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f025c834c019",
@@ -17965,7 +18354,8 @@
     },
     "P": 41.15,
     "rango": "medio",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_28ad1ea405d8",
@@ -18009,7 +18399,8 @@
     },
     "P": 40.9,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3ff9ac8c6bc2",
@@ -18053,7 +18444,8 @@
     },
     "P": 40.9,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a759f0c5e168",
@@ -18097,7 +18489,8 @@
     },
     "P": 40.9,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b6c4a2fff66e",
@@ -18141,7 +18534,8 @@
     },
     "P": 40.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e92b49c5b42a",
@@ -18185,7 +18579,8 @@
     },
     "P": 40.03,
     "rango": "medio",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_25f0cffbe464",
@@ -18238,7 +18633,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_3f8615e5fd97",
@@ -18381,7 +18777,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_5c4f1cb149c2",
@@ -18434,7 +18831,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_6418420489d2",
@@ -18489,7 +18887,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_6438bec02793",
@@ -18542,7 +18941,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_771bdad4e9df",
@@ -18595,7 +18995,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_8cd874f012fa",
@@ -18666,7 +19067,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_9972f537e0a3",
@@ -18728,7 +19130,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_aeca49a89379",
@@ -18808,7 +19211,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_f3e019e45a00",
@@ -18861,7 +19265,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_f5812c046e74",
@@ -18941,7 +19346,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_f8c0978640d0",
@@ -18985,7 +19391,8 @@
     },
     "P": 39.88,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7aba26b834a0",
@@ -19038,7 +19445,8 @@
     },
     "P": 39.75,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_e80816e1c4fd",
@@ -19082,7 +19490,8 @@
     },
     "P": 39.5,
     "rango": "bajo",
-    "estado_evidencia": "suficiente"
+    "estado_evidencia": "suficiente",
+    "primaria": true
   },
   {
     "id": "ev_5cbc7c30288c",
@@ -19126,7 +19535,8 @@
     },
     "P": 39.4,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1a7af96d7207",
@@ -19179,7 +19589,8 @@
     },
     "P": 39.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_961f54cf7460",
@@ -19223,7 +19634,8 @@
     },
     "P": 39.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0161e21eb547",
@@ -19267,7 +19679,8 @@
     },
     "P": 38.9,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5ba6dae76a15",
@@ -19311,7 +19724,8 @@
     },
     "P": 38.9,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_052393881234",
@@ -19355,7 +19769,8 @@
     },
     "P": 38.88,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_36a08c087c41",
@@ -19399,7 +19814,8 @@
     },
     "P": 38.88,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_857668bf0587",
@@ -19452,7 +19868,8 @@
     },
     "P": 38.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_0e8d3398e6be",
@@ -19496,7 +19913,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_14565a5afa13",
@@ -19540,7 +19958,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3a895167359a",
@@ -19584,7 +20003,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_48eec094db0b",
@@ -19628,7 +20048,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5f8f7e9802e9",
@@ -19672,7 +20093,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6a725065ee1e",
@@ -19716,7 +20138,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_98bac35e2776",
@@ -19760,7 +20183,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cf6f96725f58",
@@ -19804,7 +20228,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e2096c910c5d",
@@ -19848,7 +20273,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e8ce9b122bc0",
@@ -19892,7 +20318,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e9d172a7d6fa",
@@ -19936,7 +20363,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fbc8137acb92",
@@ -19980,7 +20408,8 @@
     },
     "P": 38.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7ca2eaf6bca5",
@@ -20024,7 +20453,8 @@
     },
     "P": 37.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_b0543d34ac59",
@@ -20068,7 +20498,8 @@
     },
     "P": 37.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a41a9b13e0cb",
@@ -20112,7 +20543,8 @@
     },
     "P": 37.5,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_61e127a0bff4",
@@ -20174,7 +20606,8 @@
     },
     "P": 37.4,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_e4ceedeeaeaa",
@@ -20236,7 +20669,8 @@
     },
     "P": 37.4,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_917c336f8126",
@@ -20345,7 +20779,8 @@
     },
     "P": 37.25,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_b946acecbefc",
@@ -20501,7 +20936,8 @@
     },
     "P": 37.25,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_33f4285e4829",
@@ -20547,7 +20983,8 @@
     },
     "P": 37.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0b12b76f9730",
@@ -20591,7 +21028,8 @@
     },
     "P": 37.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_828f473759a0",
@@ -20635,7 +21073,8 @@
     },
     "P": 37.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_8705fe599959",
@@ -20679,7 +21118,8 @@
     },
     "P": 37.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_9f522a4a6e98",
@@ -20723,7 +21163,8 @@
     },
     "P": 37.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_b5bc868e5871",
@@ -20767,7 +21208,8 @@
     },
     "P": 37.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_f5f0e584dd6b",
@@ -20811,7 +21253,8 @@
     },
     "P": 37.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_9fe415d249da",
@@ -20864,7 +21307,8 @@
     },
     "P": 37.03,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_a58e09d12e56",
@@ -20917,7 +21361,8 @@
     },
     "P": 36.75,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_388a90f318be",
@@ -20961,7 +21406,8 @@
     },
     "P": 36.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_502abd07c5d4",
@@ -21005,7 +21451,8 @@
     },
     "P": 36.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_52986c32d820",
@@ -21049,7 +21496,8 @@
     },
     "P": 36.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6ade1df75250",
@@ -21093,7 +21541,8 @@
     },
     "P": 36.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_78ce8d4c8543",
@@ -21137,7 +21586,8 @@
     },
     "P": 36.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f71052f405eb",
@@ -21181,7 +21631,8 @@
     },
     "P": 36.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_914fdd0d61eb",
@@ -21225,7 +21676,8 @@
     },
     "P": 36.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3e612088dddf",
@@ -21300,7 +21752,8 @@
     },
     "P": 35.75,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_2d5949ec5328",
@@ -21344,7 +21797,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_480508acf60e",
@@ -21388,7 +21842,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_58834fb87c2b",
@@ -21432,7 +21887,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_74ace16e6288",
@@ -21476,7 +21932,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_85b4f47fce20",
@@ -21520,7 +21977,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8aa6933691b3",
@@ -21564,7 +22022,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8f04249475fb",
@@ -21610,7 +22069,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9090e680720e",
@@ -21654,7 +22114,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9344b291bae2",
@@ -21698,7 +22159,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b5e2ab5a5c78",
@@ -21742,7 +22204,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cee9e8a34820",
@@ -21786,7 +22249,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fbfc0bc874d4",
@@ -21830,7 +22294,8 @@
     },
     "P": 35.65,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e0bac78a4045",
@@ -21892,7 +22357,8 @@
     },
     "P": 35.53,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_fa0d1b8a5d8a",
@@ -21936,7 +22402,8 @@
     },
     "P": 35.5,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_093b36b67c00",
@@ -21980,7 +22447,8 @@
     },
     "P": 35.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1c7787bb3d9e",
@@ -22024,7 +22492,8 @@
     },
     "P": 35.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_595b84a16c81",
@@ -22068,7 +22537,8 @@
     },
     "P": 35.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_026cf5448833",
@@ -22112,7 +22582,8 @@
     },
     "P": 35.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_141bcdfeaa67",
@@ -22156,7 +22627,8 @@
     },
     "P": 35.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_314924eec195",
@@ -22200,7 +22672,8 @@
     },
     "P": 35.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_a82782945024",
@@ -22244,7 +22717,8 @@
     },
     "P": 35.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_db1169761926",
@@ -22288,7 +22762,8 @@
     },
     "P": 35.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_ecd0c26c63a7",
@@ -22332,7 +22807,8 @@
     },
     "P": 35.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_5933b5228c18",
@@ -22376,7 +22852,8 @@
     },
     "P": 34.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5cdc40188511",
@@ -22420,7 +22897,8 @@
     },
     "P": 34.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8544d2c4f8f0",
@@ -22464,7 +22942,8 @@
     },
     "P": 34.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9abd7ba537b8",
@@ -22508,7 +22987,8 @@
     },
     "P": 34.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0d1f1252435f",
@@ -22552,7 +23032,8 @@
     },
     "P": 34.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6df686aa9ce5",
@@ -22596,7 +23077,8 @@
     },
     "P": 34.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bccc42f8aa3f",
@@ -22640,7 +23122,8 @@
     },
     "P": 34.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c26120f755cc",
@@ -22684,7 +23167,8 @@
     },
     "P": 34.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c35106dfd636",
@@ -22728,7 +23212,8 @@
     },
     "P": 34.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f55c9d0290ea",
@@ -22772,7 +23257,8 @@
     },
     "P": 34.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9ea70747db91",
@@ -22820,7 +23306,8 @@
     },
     "P": 33.9,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_000a33cdb7e4",
@@ -22864,7 +23351,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_18f9e302b55e",
@@ -22908,7 +23396,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_64fef4ad1b30",
@@ -22952,7 +23441,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6cc1b524d52f",
@@ -22996,7 +23486,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6d38ea05607a",
@@ -23040,7 +23531,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_85d7933f0d07",
@@ -23084,7 +23576,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b350e25d6c59",
@@ -23128,7 +23621,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b9bccf44e28d",
@@ -23172,7 +23666,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e69b7019cda6",
@@ -23229,7 +23724,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f87a6e9f9bea",
@@ -23273,7 +23769,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fe2d825ad2f6",
@@ -23317,7 +23814,8 @@
     },
     "P": 33.78,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_44d0bbbc14e2",
@@ -23361,7 +23859,8 @@
     },
     "P": 33.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_82fa17f65b76",
@@ -23461,7 +23960,8 @@
     },
     "P": 32.63,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_28662e901d18",
@@ -23659,7 +24159,8 @@
     },
     "P": 32,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_77cb810d5c8e",
@@ -23712,7 +24213,8 @@
     },
     "P": 32,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_925aef53f4f7",
@@ -23783,7 +24285,8 @@
     },
     "P": 32,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_d182214dc007",
@@ -23836,7 +24339,8 @@
     },
     "P": 32,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_74e25f853729",
@@ -23880,7 +24384,8 @@
     },
     "P": 31.9,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_056b79601443",
@@ -23933,7 +24438,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_14bdd87cf08b",
@@ -23986,7 +24492,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_47f684abcc30",
@@ -24048,7 +24555,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_71f61a1bc48d",
@@ -24101,7 +24609,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_86c04e7d1ac6",
@@ -24154,7 +24663,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_ad49c3361956",
@@ -24218,7 +24728,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_b3db0188c015",
@@ -24271,7 +24782,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_b7e85760c650",
@@ -24326,7 +24838,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_f958ec7d4930",
@@ -24386,7 +24899,8 @@
     },
     "P": 31.78,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "parcial",
+    "primaria": false
   },
   {
     "id": "ev_7de359bc98c1",
@@ -24430,7 +24944,8 @@
     },
     "P": 31.38,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6f404baac5d2",
@@ -24474,7 +24989,8 @@
     },
     "P": 30.4,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6884e05e0b35",
@@ -24518,7 +25034,8 @@
     },
     "P": 30.25,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9e0ef6130b9b",
@@ -24562,7 +25079,8 @@
     },
     "P": 30.25,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f6f7a7f332d5",
@@ -24606,7 +25124,8 @@
     },
     "P": 30.25,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3865b50727fc",
@@ -24670,7 +25189,8 @@
     },
     "P": 30.13,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_00e8208d7be2",
@@ -24714,7 +25234,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0194dd6f3490",
@@ -24758,7 +25279,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0222bc561911",
@@ -24802,7 +25324,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0242d39a099e",
@@ -24846,7 +25369,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_029ba7f0bcb4",
@@ -24890,7 +25414,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_04939472635f",
@@ -24934,7 +25459,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_054fc6e98a07",
@@ -24978,7 +25504,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_06976108362c",
@@ -25022,7 +25549,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_088575e5bfa7",
@@ -25066,7 +25594,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0a3514b0c100",
@@ -25110,7 +25639,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0dd7ad421404",
@@ -25154,7 +25684,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0df300885593",
@@ -25198,7 +25729,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1291855eda61",
@@ -25242,7 +25774,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_15020f662563",
@@ -25286,7 +25819,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_15d65c0dc85c",
@@ -25330,7 +25864,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1646387cfd9c",
@@ -25374,7 +25909,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1713f55ddb85",
@@ -25418,7 +25954,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1aca5bb6e7f7",
@@ -25462,7 +25999,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1d06d6425d5a",
@@ -25508,7 +26046,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1e19fd163726",
@@ -25552,7 +26091,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2061a821457d",
@@ -25596,7 +26136,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_21a54524526a",
@@ -25640,7 +26181,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_244473e45e96",
@@ -25684,7 +26226,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2623ae70e86c",
@@ -25728,7 +26271,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2644f36089ae",
@@ -25772,7 +26316,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2652e4cae518",
@@ -25816,7 +26361,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2ce7647adf82",
@@ -25860,7 +26406,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_30f760c8a4c5",
@@ -25904,7 +26451,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_31cffaa53dd0",
@@ -25948,7 +26496,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_333207a28018",
@@ -25992,7 +26541,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_34c419a62c91",
@@ -26036,7 +26586,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3686bceeef71",
@@ -26080,7 +26631,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3694223ee89f",
@@ -26124,7 +26676,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3954bc6e0293",
@@ -26168,7 +26721,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3b7197e86564",
@@ -26212,7 +26766,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3d388ccd1f6a",
@@ -26256,7 +26811,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3d7d4ce07384",
@@ -26300,7 +26856,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3e1b62b19e28",
@@ -26344,7 +26901,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3f8cc0a4c12d",
@@ -26388,7 +26946,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_49afca070e9a",
@@ -26432,7 +26991,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4e520b084f87",
@@ -26476,7 +27036,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4fd3a30461f2",
@@ -26520,7 +27081,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_51989a3b95e1",
@@ -26564,7 +27126,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_52e03767bc16",
@@ -26608,7 +27171,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_53de579bdb35",
@@ -26652,7 +27216,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5470c6b3fcfe",
@@ -26696,7 +27261,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5597808adb82",
@@ -26740,7 +27306,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6017fe774789",
@@ -26784,7 +27351,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_601cfbfae131",
@@ -26828,7 +27396,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_60ad6f35492d",
@@ -26872,7 +27441,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_617ccf360626",
@@ -26916,7 +27486,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_72b4d18bdc9c",
@@ -26960,7 +27531,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_76f7efc9184d",
@@ -27004,7 +27576,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_77a2f5dcd582",
@@ -27050,7 +27623,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_77a82d417056",
@@ -27094,7 +27668,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_794ea6386972",
@@ -27138,7 +27713,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_79b55e20f2db",
@@ -27182,7 +27758,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_79e28a46b855",
@@ -27226,7 +27803,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7c60c403aab1",
@@ -27270,7 +27848,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7cc5b2455ed2",
@@ -27314,7 +27893,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7d8e8d636fd2",
@@ -27358,7 +27938,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_81ea2046da18",
@@ -27402,7 +27983,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_82d60280e511",
@@ -27446,7 +28028,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_82da0de0448e",
@@ -27490,7 +28073,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_834dc1f50e80",
@@ -27534,7 +28118,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_83e639b1d6bd",
@@ -27578,7 +28163,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_846d08468040",
@@ -27622,7 +28208,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_895be6f98cc3",
@@ -27666,7 +28253,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_89b2fe2cf92c",
@@ -27710,7 +28298,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8cd16d01b7e6",
@@ -27754,7 +28343,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8d4f57e31cfa",
@@ -27798,7 +28388,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8d5ad94ac992",
@@ -27842,7 +28433,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8dfdff870c21",
@@ -27886,7 +28478,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_90bd3f9c0869",
@@ -27930,7 +28523,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9108cb299fd6",
@@ -27974,7 +28568,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9171c4ee1530",
@@ -28033,7 +28628,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_954e7b8e040c",
@@ -28077,7 +28673,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_96c0020f673c",
@@ -28121,7 +28718,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_98693d4aa9eb",
@@ -28165,7 +28763,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9a599051beb9",
@@ -28209,7 +28808,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9ad526ca84e6",
@@ -28253,7 +28853,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9ae35ed7849a",
@@ -28297,7 +28898,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9b24a96e25d0",
@@ -28341,7 +28943,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9dcd0c16fa25",
@@ -28385,7 +28988,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9f8003f4ee09",
@@ -28429,7 +29033,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a639cb27da65",
@@ -28473,7 +29078,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a69df8b74004",
@@ -28517,7 +29123,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a79110b1aed2",
@@ -28561,7 +29168,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a956d2942e9d",
@@ -28605,7 +29213,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_aa00e7fa2653",
@@ -28649,7 +29258,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ac231a7a92c9",
@@ -28693,7 +29303,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ad84825b3f64",
@@ -28737,7 +29348,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_adfdb7c8b5b8",
@@ -28781,7 +29393,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ae35ead6c909",
@@ -28825,7 +29438,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b0a37a2adfd6",
@@ -28869,7 +29483,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b5c4fbe15dfd",
@@ -28913,7 +29528,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b60a60d57ae6",
@@ -28957,7 +29573,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b71d677a670e",
@@ -29001,7 +29618,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b9c2adad5673",
@@ -29045,7 +29663,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bf134f4f6ee6",
@@ -29089,7 +29708,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c01d0f7823e2",
@@ -29133,7 +29753,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c1648fff95cb",
@@ -29177,7 +29798,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c21a558b5567",
@@ -29221,7 +29843,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ca5937f8a1e2",
@@ -29265,7 +29888,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cb439e74eebf",
@@ -29309,7 +29933,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ccb6b6c493bc",
@@ -29353,7 +29978,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cffd24dc6939",
@@ -29397,7 +30023,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d18e43ba7b60",
@@ -29441,7 +30068,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d2a8d6cbd3db",
@@ -29485,7 +30113,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d3bed37b2282",
@@ -29529,7 +30158,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d471d468adc4",
@@ -29573,7 +30203,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d5e736c37a5f",
@@ -29617,7 +30248,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d6c1ce7f91ee",
@@ -29661,7 +30293,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d9a2fe8f51cd",
@@ -29705,7 +30338,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_da21d090bf1d",
@@ -29749,7 +30383,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_dd73be08a7e1",
@@ -29793,7 +30428,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_dd88cdfa5121",
@@ -29837,7 +30473,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_dda8c893868f",
@@ -29881,7 +30518,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_df04d249c308",
@@ -29925,7 +30563,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e05eac6bd7ee",
@@ -29969,7 +30608,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e3ce139fbc64",
@@ -30013,7 +30653,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e519140819ef",
@@ -30057,7 +30698,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e604530132c8",
@@ -30101,7 +30743,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e7227a9c8ee7",
@@ -30145,7 +30788,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e7915b9bfa7a",
@@ -30189,7 +30833,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ea7f94d1a819",
@@ -30233,7 +30878,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ea8e396a4186",
@@ -30277,7 +30923,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_edca1120f9c8",
@@ -30321,7 +30968,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ef2d9033bc77",
@@ -30365,7 +31013,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f39ee681bf50",
@@ -30409,7 +31058,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f3a6bfbf81fd",
@@ -30453,7 +31103,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f510f359dbf6",
@@ -30497,7 +31148,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f847dc00ae92",
@@ -30541,7 +31193,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_faddc5a4463c",
@@ -30585,7 +31238,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fbb143517c80",
@@ -30629,7 +31283,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fc9da6af9728",
@@ -30673,7 +31328,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fdddbaf1ffa6",
@@ -30717,7 +31373,8 @@
     },
     "P": 30.03,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9acd9a1572fb",
@@ -30761,7 +31418,8 @@
     },
     "P": 29.88,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_11019a611fe6",
@@ -30814,7 +31472,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_2d729595bb7e",
@@ -30867,7 +31526,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_3e5c992803ce",
@@ -30920,7 +31580,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_4054796e5bee",
@@ -30964,7 +31625,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_40fe1734baff",
@@ -31017,7 +31679,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_6cf395c8bc84",
@@ -31070,7 +31733,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_abf489c63318",
@@ -31123,7 +31787,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_c3af32dfdfbf",
@@ -31167,7 +31832,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e74db688187a",
@@ -31231,7 +31897,8 @@
     },
     "P": 29.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_060243552972",
@@ -31275,7 +31942,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2a1814d6ec88",
@@ -31319,7 +31987,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3010c5dfda04",
@@ -31363,7 +32032,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_540dfd519af9",
@@ -31407,7 +32077,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5492ab6d1380",
@@ -31451,7 +32122,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_87f439daede4",
@@ -31495,7 +32167,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_92701c1bc5a1",
@@ -31539,7 +32212,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9ec6afb15436",
@@ -31583,7 +32257,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b1daf0456fd7",
@@ -31627,7 +32302,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b94a00824343",
@@ -31671,7 +32347,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bea78492c0b6",
@@ -31715,7 +32392,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c976bebb54f6",
@@ -31759,7 +32437,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e5550b457ab9",
@@ -31803,7 +32482,8 @@
     },
     "P": 27.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9549e76b03a9",
@@ -31856,7 +32536,8 @@
     },
     "P": 26.9,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_e8cab41d16a8",
@@ -31927,7 +32608,8 @@
     },
     "P": 26.75,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_2dc8abd73362",
@@ -31980,7 +32662,8 @@
     },
     "P": 26.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_449598a24290",
@@ -32033,7 +32716,8 @@
     },
     "P": 26.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_55129b24c904",
@@ -32086,7 +32770,8 @@
     },
     "P": 26.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_5dd6a30c6938",
@@ -32148,7 +32833,8 @@
     },
     "P": 26.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_6c4af2ac373a",
@@ -32210,7 +32896,8 @@
     },
     "P": 26.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_847f9f07b7b2",
@@ -32265,7 +32952,8 @@
     },
     "P": 26.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_f1234b81d944",
@@ -32327,7 +33015,8 @@
     },
     "P": 26.38,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_cd63ed4e0df8",
@@ -32371,7 +33060,8 @@
     },
     "P": 25,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0dd671f11fd5",
@@ -32415,7 +33105,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_12d4bded7b44",
@@ -32459,7 +33150,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3022c0e0a733",
@@ -32503,7 +33195,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3e6c09d9030f",
@@ -32547,7 +33240,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_423f2dabda44",
@@ -32591,7 +33285,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_550c8122d3c7",
@@ -32635,7 +33330,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5990007f8dff",
@@ -32679,7 +33375,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_67ed3595871c",
@@ -32723,7 +33420,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_6e9d81ba055e",
@@ -32767,7 +33465,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_752711eb2c11",
@@ -32811,7 +33510,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7b13a36a2142",
@@ -32855,7 +33555,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7d7dd3715f78",
@@ -32899,7 +33600,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8052b2b7e4f5",
@@ -32943,7 +33645,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_80966b14fc2b",
@@ -32987,7 +33690,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8582162311e2",
@@ -33031,7 +33735,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8f0a2e81dbb5",
@@ -33075,7 +33780,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_90d7b86905c8",
@@ -33119,7 +33825,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_931fc28e424a",
@@ -33163,7 +33870,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9de1ebfc972a",
@@ -33207,7 +33915,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_a85301adafbb",
@@ -33251,7 +33960,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b6d38af3151e",
@@ -33295,7 +34005,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bd420f868704",
@@ -33339,7 +34050,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bf558aa560ae",
@@ -33383,7 +34095,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c4b63c68e5e4",
@@ -33427,7 +34140,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c5bde3b13fc6",
@@ -33471,7 +34185,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ccdfbd9bd226",
@@ -33515,7 +34230,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_cd263ddebf18",
@@ -33559,7 +34275,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d082a573caea",
@@ -33603,7 +34320,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d66e4a90e112",
@@ -33647,7 +34365,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_de93dcd90a10",
@@ -33691,7 +34410,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e1dbc0350b3f",
@@ -33735,7 +34455,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e384bd08e098",
@@ -33779,7 +34500,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f23ca1180385",
@@ -33823,7 +34545,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f80ed20a8739",
@@ -33867,7 +34590,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ff304b469c4b",
@@ -33911,7 +34635,8 @@
     },
     "P": 24.63,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_77e60c78bac0",
@@ -33955,7 +34680,8 @@
     },
     "P": 23.28,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_099e836cd97c",
@@ -34091,7 +34817,8 @@
     },
     "P": 21.5,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_07e19d85c03d",
@@ -34164,7 +34891,8 @@
     },
     "P": 21.28,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_83bb870c4f99",
@@ -34217,7 +34945,8 @@
     },
     "P": 21.28,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_3399eda19a02",
@@ -34261,7 +34990,8 @@
     },
     "P": 19.75,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_056fa1b760fb",
@@ -34305,7 +35035,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_131079e696ea",
@@ -34351,7 +35082,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1799f3847b4d",
@@ -34395,7 +35127,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1f75a240c7cf",
@@ -34439,7 +35172,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_23a347d20a2b",
@@ -34483,7 +35217,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2a26d6235fc3",
@@ -34527,7 +35262,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2fa644a64e38",
@@ -34571,7 +35307,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_3fabac8bba70",
@@ -34615,7 +35352,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_4686829947c0",
@@ -34659,7 +35397,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_48f49414e78c",
@@ -34703,7 +35442,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_49d7e7ca40cb",
@@ -34747,7 +35487,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_7369cf0380a3",
@@ -34791,7 +35532,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_80da2cef2f83",
@@ -34835,7 +35577,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8a5d63bb2122",
@@ -34879,7 +35622,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8e3d0f026433",
@@ -34923,7 +35667,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_92da4065b219",
@@ -34967,7 +35712,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_96e85ccf39ec",
@@ -35011,7 +35757,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_9d917ed3b424",
@@ -35057,7 +35804,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_abf1c8c863b1",
@@ -35101,7 +35849,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_adb0da9aea10",
@@ -35145,7 +35894,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b0de83958d40",
@@ -35189,7 +35939,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b31875d54b23",
@@ -35233,7 +35984,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b4d1c25665c2",
@@ -35281,7 +36033,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_bf9d7476efb8",
@@ -35325,7 +36078,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_c83edcbf1280",
@@ -35369,7 +36123,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_d0e39d948061",
@@ -35413,7 +36168,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_da26b238e2e8",
@@ -35457,7 +36213,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e12523da20e1",
@@ -35501,7 +36258,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_e66e4785c1ec",
@@ -35545,7 +36303,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ebe33e0c3a87",
@@ -35589,7 +36348,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_fb1187a93603",
@@ -35633,7 +36393,8 @@
     },
     "P": 19.52,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_ef1ba33c836c",
@@ -35679,7 +36440,8 @@
     },
     "P": 17.77,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5c15ec5e3a28",
@@ -35732,7 +36494,8 @@
     },
     "P": 15.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_8df73b159281",
@@ -35794,7 +36557,8 @@
     },
     "P": 15.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_a9f877580ba6",
@@ -35847,7 +36611,8 @@
     },
     "P": 15.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_bad06ecbb8fe",
@@ -35902,7 +36667,8 @@
     },
     "P": 15.88,
     "rango": "bajo",
-    "estado_evidencia": "parcial"
+    "estado_evidencia": "suficiente",
+    "primaria": false
   },
   {
     "id": "ev_03566c0b8f50",
@@ -35946,7 +36712,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_0fe022c95e28",
@@ -35990,7 +36757,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_1dd5f5911cb6",
@@ -36034,7 +36802,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_2cb6af7f1303",
@@ -36078,7 +36847,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_478a3a64a41c",
@@ -36122,7 +36892,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_5e8f7b1cb207",
@@ -36166,7 +36937,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_82ae1b23b3f0",
@@ -36210,7 +36982,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_8c7a336b9b42",
@@ -36254,7 +37027,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_b5070fbc4d15",
@@ -36298,7 +37072,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_dbd2c323c230",
@@ -36342,7 +37117,8 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   },
   {
     "id": "ev_f432fb6148bf",
@@ -36386,6 +37162,7 @@
     },
     "P": 14.13,
     "rango": "bajo",
-    "estado_evidencia": "insuficiente"
+    "estado_evidencia": "insuficiente",
+    "primaria": false
   }
 ]

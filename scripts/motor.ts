@@ -9,7 +9,7 @@ import { aLista, coseno, embeber, MODELO, modeloDisponible } from "../src/lib/mo
 import { clasificarKnn, clasificarTema, etiquetasConVector, SECCION_A_TEMA, temaPorPalabras, vectoresTemas } from "../src/lib/motor/temas";
 import { agruparEventos } from "../src/lib/motor/eventos";
 import { vincularContexto } from "../src/lib/motor/contexto";
-import { detectarContradicciones, estadoEvidencia } from "../src/lib/motor/evidencia";
+import { aportaExtracto, detectarContradicciones, estadoEvidencia } from "../src/lib/motor/evidencia";
 import { ordenar, puntuar } from "../src/lib/motor/puntaje";
 import { esNoConfiable } from "../src/lib/motor/inyeccion";
 import { jaccard } from "../src/lib/motor/bm25";
@@ -110,7 +110,10 @@ const eventos: Evento[] = bases.map((b) => {
   const contradicciones = detectarContradicciones(pubs);
   const r = puntuar({ publicaciones: pubs, procedencias: b.procedencias, tema: t.tema, por_revisar: t.por_revisar, contexto, contradicciones, novedad: novedadDe(b), fecha_original: b.fecha_original, corteUTC: corte, indicadores: snap.indicadores, sismos: snap.sismos }, cfg);
   const { P, rango, primaria, ...componentes } = r;
-  return { ...b, tema: t.tema, tema_confianza: t.confianza, por_revisar: t.por_revisar, contexto, contradicciones, componentes, P, rango, estado_evidencia: estadoEvidencia(r.E, b.procedencias, primaria, contradicciones, pubs.some((p) => p.descripcion.length > 20), cfg.E) };
+  // extracto atribuible: bajada propia de una procedencia identificada (no de una copia sin agencia ni de contenido no confiable)
+  const identificadas = new Set(b.procedencias.filter((p) => p.tipo !== "no_verificada").flatMap((p) => p.ids_noticia));
+  const hayExtracto = pubs.some((p) => identificadas.has(p.id_noticia) && !p.no_confiable && aportaExtracto(p.titulo, p.descripcion));
+  return { ...b, tema: t.tema, tema_confianza: t.confianza, por_revisar: t.por_revisar, contexto, contradicciones, componentes, P, rango, estado_evidencia: estadoEvidencia(r.E, b.procedencias, primaria, contradicciones, hayExtracto, cfg.E, pubs.every((p) => p.url && (p.fecha_publicacion || p.fecha_deteccion))), primaria };
 });
 const ordenados = ordenar(eventos);
 escribirJson(`${OUT}/eventos.json`, ordenados);

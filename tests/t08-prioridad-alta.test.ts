@@ -17,8 +17,11 @@ describe("T08 prioridad alta", () => {
       expect(r[k]).toBeLessThanOrEqual(1);
       expect(r.explicacion[k].length).toBeGreaterThan(5);
     }
-    // alto en P pero sin fuente primaria y una sola procedencia → evidencia insuficiente
-    expect(estadoEvidencia(r.E, [{ id: "medio:TVN", tipo: "medio", nombre: "TVN", ids_noticia: ["a"] }], r.primaria, [], true)).toBe("insuficiente");
+    // alto en P pero solo el titular de una procedencia y sin fuente primaria → evidencia insuficiente (investigar, no publicar)
+    const una = [{ id: "medio:TVN", tipo: "medio" as const, nombre: "TVN", ids_noticia: ["a"] }];
+    expect(estadoEvidencia(r.E, una, r.primaria, [], false)).toBe("insuficiente");
+    // con extracto propio sube a parcial (borrador atribuido), nunca a suficiente: la prioridad no compra evidencia
+    expect(estadoEvidencia(r.E, una, r.primaria, [], true)).toBe("parcial");
   });
   test("deportes queda fuera de la agenda (R sin tema) y GDELT sin fecha tiene U baja", () => {
     const r = puntuar({ publicaciones: [n({ titulo: "Panamá gana 2-0 a Honduras en la eliminatoria", fecha_publicacion: null, fecha_deteccion: "2026-10-06T08:00:00.000Z" })], procedencias: [], tema: "deportes", por_revisar: false, contexto: { indicadores: [], sismos: [] }, contradicciones: [], novedad: "primera", fecha_original: null, corteUTC: corte, indicadores: [], sismos: [] });

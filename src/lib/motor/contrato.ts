@@ -106,6 +106,7 @@ export interface Evento {
   P: number;
   rango: Rango;
   estado_evidencia: EstadoEvidencia;
+  primaria?: boolean; // fuente primaria del hecho (gob.pa o sismo USGS vinculado); la usa «qué falta verificar»
   no_confiable: boolean; // alguna publicación marcada por inyección
 }
 

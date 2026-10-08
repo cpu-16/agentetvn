@@ -1,29 +1,29 @@
 # Casos y evidencias · AgenteTVN (snapshot v1, corte 2026-10-06T16:39:20.671Z)
 
-Cada ficha: ID, fuentes, puntaje desglosado, estado de evidencia, borrador (extractivo, o redactado por IA y validado frase por frase) y persona revisora (se registra en la app; aquí el estado inicial).
+Cada ficha: ID, fuentes, puntaje desglosado, estado de evidencia (regla v2 del 7-oct, D20), borrador (extractivo, o redactado por IA y validado frase por frase) y persona revisora (se registra en la app; aquí el estado inicial).
 
 ## ev_40d350f2a9d6 · Producto Interno Bruto de Panamá crece 6.4% en el segundo trimestre de 2026
 
 - Tema: economia · Rango: medio · **P = 59.5** = 30×1 + 25×0.64 + 20×0.15 + 15×0.3 + 10×0.6
 - R: menciona Panamá o un lugar panameño; tema economia de la agenda · I: prior editorial del tema economia = 0.7; alcance sectorial = 0.75; variación 2023→2024 de NY.GDP.MKTP.KD.ZG (PAN) = 4.418 vs p90 regional 9.827 · U: publicación original hace 452 h (< 720 h) · N: segunda ola de un evento ya agrupado antes · E: sin fuente primaria del hecho; con contexto oficial histórico (cuenta la mitad); 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha
-- Estado de evidencia: **insuficiente** · Revisión: nuevo · Persona revisora: (pendiente)
+- Estado de evidencia: **parcial** · Revisión: nuevo · Persona revisora: (pendiente)
 - Fuentes (1): n_40d350f2a9d6 [TVN] https://tvn-2.com/economia/economia-panamena/producto-interno-bruto-pib-panama-crece-economia_1_2261484.html
 - Procedencias: TVN (1)
 - Contexto oficial: PAN:NY.GDP.MKTP.KD.ZG:2024 (Banco Mundial, contexto histórico)
 - Fecha original: 17 sept 2026, 4:06 p. m.
 - Borrador (brief, 6 afirmaciones): [hecho_reportado → n_40d350f2a9d6:titulo] El titular de TVN (17 sept 2026, 4:06 p. m.) reporta: «Producto Interno Bruto de Panamá crece 6.4% en el segundo trimestre de 2026». [hecho_reportado → n_40d350f2a9d6:descripcion] Según el extracto de TVN: La economía panameña generó $20,069.2 millones entre abril y junio, un incremento interanual de $1,204.3 millones. [hecho_reportado → n_40d350f2a9d6:descripcion] Según el extracto de TVN: El comercio, el transporte y la logística, además de la recuperación del sector agropecuario, estuvieron entre los principales motores. [hecho_reportado → PAN:NY.GDP.MKTP.KD.ZG:2024:valor] Crecimiento del PIB (anual) de PAN en 2024: 2.75 % anual (Banco Mundial; contexto histórico). [inferencia → PAN:NY.GDP.MKTP.KD.ZG:2024:anio] Esa cifra es anual (2024) y sirve de contexto; no describe la situación de hoy. [inferencia → n_40d350f2a9d6:medio] Procedencias identificadas: TVN (1); 1 publicación(es) confiables.
-- Verificaciones pendientes: Evidencia insuficiente: conseguir fuente primaria antes de afirmar el hecho. Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (91 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
+- Verificaciones pendientes: Evidencia parcial: solo TVN, con extracto; atribuirle cada dato y buscar otra fuente. Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (91 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
 
 ## ev_28c703061c3a · Panamá y Singapur firman seis acuerdos de cooperación marítima y logística · **caso sintético (prueba)**
 
 - Tema: logistica_canal · Rango: alto · **P = 73.13** = 30×1 + 25×0.415 + 20×0.7 + 15×1 + 10×0.375
 - R: menciona Panamá o un lugar panameño; tema logistica_canal de la agenda · I: prior editorial del tema logistica_canal = 0.85; alcance desconocido = 0.25; sin dato oficial ligado · U: publicación original hace 51 h (< 72 h); 4 publicación(es) posterior(es) no rejuvenecen · N: primera aparición del evento en el snapshot · E: sin fuente primaria; 1 procedencia(s) identificada(s); todas las publicaciones con URL y fecha
-- Estado de evidencia: **insuficiente** · Revisión: nuevo · Persona revisora: (pendiente)
+- Estado de evidencia: **parcial** · Revisión: nuevo · Persona revisora: (pendiente)
 - Fuentes (5): n_28c703061c3a [medio-a.test] https://sintetica.agentetvn.test/replica-1; n_e9e9c95bf1c5 [medio-b.test] https://sintetica.agentetvn.test/replica-2; n_aa379b222edb [medio-c.test] https://sintetica.agentetvn.test/replica-3; n_b6cf9c148638 [medio-d.test] https://sintetica.agentetvn.test/replica-4; n_fd41fbd0bf08 [medio-e.test] https://sintetica.agentetvn.test/replica-5
 - Procedencias: EFE (5)
 - Fecha original: 4 oct 2026, 9:00 a. m.
 - Borrador (brief, 6 afirmaciones): [hecho_reportado → n_28c703061c3a:titulo] El titular de medio-a.test (4 oct 2026, 9:00 a. m.) reporta: «Panamá y Singapur firman seis acuerdos de cooperación marítima y logística». [hecho_reportado → n_e9e9c95bf1c5:titulo] El titular de medio-b.test (4 oct 2026, 9:20 a. m.) reporta: «Panamá y Singapur firman seis acuerdos de cooperación marítima y logística». [hecho_reportado → n_aa379b222edb:titulo] El titular de medio-c.test (4 oct 2026, 10:00 a. m.) reporta: «Panamá y Singapur firman seis acuerdos de cooperación marítima y logística». [hecho_reportado → n_28c703061c3a:descripcion] Según el extracto de medio-a.test: Caso sintético de cinco réplicas de una misma agencia (CU-03). [hecho_reportado → n_e9e9c95bf1c5:descripcion] Según el extracto de medio-b.test: (EFE) Caso sintético CU-03. [inferencia → n_28c703061c3a:medio] Procedencias identificadas: EFE (5); 5 publicación(es) confiables.
-- Verificaciones pendientes: Evidencia insuficiente: conseguir fuente primaria antes de afirmar el hecho. Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (97 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
+- Verificaciones pendientes: Evidencia parcial: solo EFE, con extracto; atribuirle cada dato y buscar otra fuente. Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (97 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
 
 ## ev_0cac53f44744 · Mulino refuerza alianza marítima con Vietnam y anuncia oficina de Panamá
 
@@ -36,7 +36,7 @@ Cada ficha: ID, fuentes, puntaje desglosado, estado de evidencia, borrador (extr
 - Borrador (brief, 3 afirmaciones): [hecho_reportado → n_0cac53f44744:titulo] El titular de critica.com.pa (6 oct 2026, 6:35 a. m.) reporta: «Mulino refuerza alianza marítima con Vietnam y anuncia oficina de Panamá». [hecho_reportado → n_0cac53f44744:descripcion] Según el extracto de critica.com.pa: Mulino refuerza alianza marítima con Vietnam y anuncia oficina de Panamá 
 mmontenegro
 Mar, 06/10/2026 - 06:35. [inferencia → n_0cac53f44744:medio] Procedencias identificadas: critica.com.pa (1); 1 publicación(es) confiables.
-- Verificaciones pendientes: Evidencia insuficiente: conseguir fuente primaria antes de afirmar el hecho. Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (50 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
+- Verificaciones pendientes: Evidencia insuficiente: solo el titular de critica.com.pa; falta otra fuente independiente o la primaria. Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (50 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
 
 ## ev_691ced7c04b3 · Deslizamiento en Colón deja 3 muertos, según Sinaproc · **caso sintético (prueba)**
 
@@ -48,7 +48,7 @@ Mar, 06/10/2026 - 06:35. [inferencia → n_0cac53f44744:medio] Procedencias iden
 - Contradicciones: «3 muertos» (medio-a.test, titulo) vs «5 muertos» (medio-b.test, titulo)
 - Fecha original: 3 oct 2026, 4:00 a. m.
 - Borrador (brief, 7 afirmaciones): [hecho_reportado → n_691ced7c04b3:titulo] El titular de medio-a.test (3 oct 2026, 4:00 a. m.) reporta: «Deslizamiento en Colón deja 3 muertos, según Sinaproc». [hecho_reportado → n_f3f2246adb4f:titulo] El titular de medio-b.test (3 oct 2026, 6:00 a. m.) reporta: «Deslizamiento en Colón deja 5 muertos, según autoridades». [hecho_reportado → n_691ced7c04b3:descripcion] Según el extracto de medio-a.test: Caso sintético para T05 (dos cifras incompatibles). [hecho_reportado → n_f3f2246adb4f:descripcion] Según el extracto de medio-b.test: Caso sintético para T05 (dos cifras incompatibles). [inferencia → n_691ced7c04b3:medio] Procedencias identificadas: medio-a.test (1), medio-b.test (1); 2 publicación(es) confiables. [hipotesis → n_691ced7c04b3:titulo] Las versiones no coinciden: «3 muertos» (medio-a.test, titulo) vs «5 muertos» (medio-b.test, titulo). Verificación pendiente. [hipotesis → n_f3f2246adb4f:titulo] Segunda versión citada: medio-b.test.
-- Verificaciones pendientes: Evidencia parcial: conseguir fuente primaria antes de afirmar el hecho. Contradicción: «3 muertos» (medio-a.test, titulo) vs «5 muertos» (medio-b.test, titulo). Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (86 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
+- Verificaciones pendientes: Evidencia parcial: las versiones no coinciden; mostrar ambas y verificar con la primaria. Contradicción: «3 muertos» (medio-a.test, titulo) vs «5 muertos» (medio-b.test, titulo). Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos. Guion incompleto (86 palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.
 
 ## ev_e924c2c6d166 · Preview - Asamblea de Panamá
 

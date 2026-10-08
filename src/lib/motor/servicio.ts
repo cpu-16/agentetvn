@@ -8,6 +8,7 @@ import { NOMBRE_TEMA, parte, RECORRIDO_GUIA } from "../voz/guia";
 import { tokenizar } from "./bm25";
 import type { ContextoPantalla } from "../voz/catalogo";
 import { generarPaquete } from "./paquete";
+import { conEvidenciaVigente, faltaPorEvidencia } from "./evidencia";
 import { resumenCorte } from "./tablero";
 import { MESA, accionSugerida, tocaA, type RolMesa } from "../roles";
 import { fuentesDe, llmActivo, redactarOExtractivo, redactarRespuesta } from "./llm";
@@ -53,7 +54,7 @@ export async function evento(id: string) {
   const historial = await db.revision.findMany({ where: { eventoId: id }, orderBy: { createdAt: "asc" } });
   const guardado = await db.paqueteEditado.findUnique({ where: { eventoId: id } });
   const p = guardado ? (JSON.parse(guardado.contenido) as Paquete) : null;
-  return { evento: e, publicaciones: e.ids_noticia.map((i) => porId.get(i)).filter(Boolean), indicadores, sismos, revision, historial, paquete: p && vigente(p, snap) ? { ...p, modo: guardado!.modo, persona: guardado!.persona, updatedAt: guardado!.updatedAt } : null };
+  return { evento: e, falta_evidencia: faltaPorEvidencia(e), publicaciones: e.ids_noticia.map((i) => porId.get(i)).filter(Boolean), indicadores, sismos, revision, historial, paquete: p && vigente(p, snap) ? { ...conEvidenciaVigente(p, e), modo: guardado!.modo, persona: guardado!.persona, updatedAt: guardado!.updatedAt } : null };
 }
 
 /** Un paquete guardado sigue valiendo si no cita fuentes marcadas después como no confiables y, si lo redactó la IA, es del mismo snapshot. */
@@ -82,7 +83,7 @@ async function componerPaquete(id: string, persona: string, forzar: boolean): Pr
   const existente = forzar ? null : await db.paqueteEditado.findUnique({ where: { eventoId: id } });
   if (existente) {
     const p = JSON.parse(existente.contenido) as Paquete;
-    if (vigente(p, snap)) { actualizarTraza({ cache: "hit", snapshot: snap.huella }); return p; } // si cita una fuente marcada después como no confiable o es de otro snapshot, se regenera
+    if (vigente(p, snap)) { actualizarTraza({ cache: "hit", snapshot: snap.huella }); return conEvidenciaVigente(p, e); } // si cita una fuente marcada después como no confiable o es de otro snapshot, se regenera
   }
   actualizarTraza({ cache: "miss", snapshot: snap.huella });
   const base = generarPaquete(e, snap.noticias, snap.indicadores);
@@ -170,7 +171,8 @@ async function paqueteGuardado(id: string, snap: Snapshot): Promise<Paquete | nu
   const g = await db.paqueteEditado.findUnique({ where: { eventoId: id } });
   if (!g) return null;
   const p = JSON.parse(g.contenido) as Paquete;
-  return vigente(p, snap) ? p : null;
+  const e = snap.eventos.find((x) => x.id === id);
+  return vigente(p, snap) ? (e ? conEvidenciaVigente(p, e) : p) : null;
 }
 
 /** «¿Qué falta verificar del tema uno?» y «prepárame los titulares»: responde desde el paquete del tema y lo muestra en su ficha. */
@@ -189,7 +191,8 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
   const guardado = await paqueteGuardado(e.id, snap);
   let texto: string;
   if (i.tipo === "verificar") {
-    const falta = extractivo.verificaciones.filter((v) => !v.startsWith("Leer la nota completa") && !v.startsWith("Guion incompleto")).slice(0, 3);
+    // lo vigente del motor más lo que una persona o la IA dejó pendiente en el paquete guardado
+    const falta = [...new Set([...extractivo.verificaciones, ...(guardado?.verificaciones ?? [])])].filter((v) => !v.startsWith("Leer la nota completa") && !v.startsWith("Guion incompleto") && !v.startsWith("Redacción con IA")).slice(0, 3);
     const preguntas = (guardado?.preguntas.length ? guardado.preguntas : extractivo.preguntas).slice(0, 3);
     texto = `${deNombre[0].toUpperCase()}${deNombre.slice(1)}, «${titulo}»: evidencia ${e.estado_evidencia} y ${Math.round(e.P)} de 100. ${falta.length ? `Falta verificar: ${falta.join(" ")}` : "No hay vacíos marcados, pero todo se basa en titulares y metadatos: leer la nota completa."} Para investigar: ${preguntas.join(" ")}`;
   } else {
