@@ -4,6 +4,33 @@ import { leerTemas } from "./config";
 import { faltaPorEvidencia } from "./evidencia";
 import { afirmacionesExtracto, afirmacionIndicador, afirmacionNoticia, LEYENDA } from "./consulta";
 import { INDICADORES } from "../ingesta/bancomundial";
+import { nombreMedio } from "../medios";
+import { fuentesDe } from "./llm";
+
+/** El alias se incorpora a la evidencia del paquete; chat y banca conservan sus bloques. */
+export function fuentesPaquete(base: Paquete, noticias: Map<string, Noticia>) {
+  return fuentesDe([...base.brief, ...base.guion, ...base.copy], noticias).map((f) => {
+    const n = noticias.get(f.id);
+    return n ? { ...f, texto: `${f.texto}\nnombre del medio: ${nombreMedio(n.medio)}` } : f;
+  });
+}
+
+// Sin alias no convertimos un dominio en un nombre inventado ni quitamos la atribución.
+const nombreParaEmision = (n: Noticia) => {
+  const nombre = nombreMedio(n.medio);
+  return /\.[a-z]{2,}(?:\b|\/)/i.test(nombre) ? null : nombre;
+};
+const LENGUAJE_MESA = /\b(titular(?:es)?|extractos?|metadatos|fuentes?|bloques?)\b|nota completa|TVN\s+(reporta|informa)/i;
+function afirmacionesEmision(n: Noticia, campo: "titulo" | "descripcion"): Afirmacion[] {
+  const medio = nombreParaEmision(n);
+  if (!medio) return [];
+  const oraciones = campo === "titulo" ? [n.titulo] : (n.descripcion || "").split(/(?<=[.!?])\s+/).map((o) => o.trim()).filter((o) => o.length > 25).slice(0, 3);
+  return oraciones.filter((o) => o.trim() && !LENGUAJE_MESA.test(o)).map((o) => ({
+    texto: `${medio === "TVN" ? "" : `Según ${medio === "Crítica" ? "el diario Crítica" : medio}, `}${/[.!?]$/.test(o) ? o : o + "."}`,
+    tipo: campo === "descripcion" && /\b(dijo|explicó|aseguró|afirmó|señaló|indicó|sostuvo|según)\b/i.test(o) ? "declaracion" : "hecho_reportado",
+    evidence_id: n.id_noticia, campo, alcance: "titular_metadatos",
+  }));
+}
 
 const palabras = (afs: Afirmacion[]) => afs.reduce((s, a) => s + a.texto.split(/\s+/).length, 0);
 const ENFOQUE: Record<string, string> = {
@@ -67,15 +94,16 @@ export function generarPaquete(ev: Evento, noticias: Noticia[], indicadores: Ind
     "Leer la nota completa: todo lo anterior se basa únicamente en titular/metadatos.",
   ];
   // guion de 45–60 s ≈ 110–150 palabras leídas: se llena con hechos citados hasta el tope, nunca con relleno
-  let guion: Afirmacion[] = [];
-  for (const a of [...hechos, ...contexto.slice(0, 1), ...(hipotesis[0] ? [hipotesis[0]] : []), procedencia]) {
-    if (palabras([...guion, a]) > 150) break;
+  const hechosEmision = [...pubs.slice(0, 3).flatMap((n) => afirmacionesEmision(n, "titulo")), ...pubs.slice(0, 2).flatMap((n) => afirmacionesEmision(n, "descripcion"))];
+  const guion: Afirmacion[] = [];
+  for (const a of [...hechosEmision, ...contexto.slice(0, 1)]) {
+    if (palabras([...guion, a]) > 150) continue;
     guion.push(a);
   }
-  if (!guion.length) guion = hechos.slice(0, 1);
   if (palabras(guion) < 110) verificaciones.push(`Guion incompleto (${palabras(guion)} palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.`);
-  const tituloCopy = rep.titulo.split(/\s+/).length > 60 ? rep.titulo.split(/\s+/).slice(0, 60).join(" ") + "…" : rep.titulo;
-  const copy: Afirmacion[] = [{ texto: `${tituloCopy}. ${contexto.length ? "Con el dato oficial, en la nota." : "Qué se sabe y qué falta confirmar, en la nota."}`, tipo: "hecho_reportado", evidence_id: rep.id_noticia, campo: "titulo", alcance: "titular_metadatos" }];
+  const copy = afirmacionesEmision(rep, "titulo").filter((a) => palabras([a]) <= 80);
+  if (!copy.length) verificaciones.push("Copy pendiente de redacción para emisión: revisar el nombre editorial y el texto antes de publicar.");
+  if (pubs.some((n) => !nombreParaEmision(n))) verificaciones.push("Confirmar el nombre editorial de los medios sin alias antes de atribuir sus datos al aire o en redes.");
   return {
     titulo: rep.titulo,
     enfoque: `Interés público (${tema?.nombre ?? ev.tema}): ${ENFOQUE[ev.tema] ?? "qué se sabe, quién lo dice y qué falta confirmar"}.`,
