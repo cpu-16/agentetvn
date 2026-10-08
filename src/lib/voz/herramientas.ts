@@ -2,8 +2,8 @@
 import { consulta, estadoDe, respuestaGuia, snapshot } from "../motor/servicio";
 import { tokenizar } from "../motor/bm25";
 import { explicacionFija, PLATAFORMA_CORTA, queHaceRol, type VistaVoz } from "./catalogo";
-import { buscarParte, RECORRIDO_GUIA } from "./guia";
-import { personaDe, contextoDe, encolar, guardarContexto, pasoRecorrido, pasoRetomable } from "./registro";
+import { buscarParte, parte, RECORRIDO_GUIA } from "./guia";
+import { personaDe, contextoDe, encolar, guardarContexto, momentoPaso, pasoRecorrido, pasoRetomable, sinPreguntar } from "./registro";
 
 const DESTINOS: VistaVoz[] = ["portada", "agenda", "tablero", "control", "ficha"];
 const NOMBRE: Record<VistaVoz, string> = { portada: "la portada", agenda: "la agenda", tablero: "el tablero", control: "Control", ficha: "la ficha" };
@@ -34,19 +34,30 @@ function mostrarParte(hilo: string, id: string, recorrido = false): string {
   return r.conversacion!.texto.replace(" Ese fue el recorrido.", "");
 }
 
-export function navegar(hilo: string, args: { destino?: string; consulta?: string; eventoId?: string }): string {
+// Un «siguiente» que llega antes de esto desde el paso anterior no viene de la persona (nadie contesta tan rápido): es el cerebro
+// de la voz llamando en bucle dentro de un mismo turno. Se repite el paso que todavía no se leyó (prueba de Gilberto, 8-oct).
+const MISMO_TURNO_MS = 2500;
+const textoGuia = (id: string) => respuestaGuia({ tipo: "guia", parte: id, recorrido: true }, "embeddings").conversacion!.texto.replace(" Ese fue el recorrido.", "");
+/** El paso con su número y su título, para que la voz lo lea tal cual y no arme su propio recorrido. */
+const paso = (i: number, texto: string) => `Paso ${i + 1} de ${RECORRIDO_GUIA.length} · ${parte(RECORRIDO_GUIA[i])?.titulo ?? ""}: ${texto}`;
+
+export function navegar(hilo: string, args: { destino?: string; consulta?: string; eventoId?: string }, ahora = Date.now()): string {
   const pedido = String(args.destino ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
   if (Object.hasOwn(MOVER, pedido)) { encolar(hilo, { tipo: "desplazar", direccion: pedido as keyof typeof MOVER }); return MOVER[pedido as keyof typeof MOVER]; }
   if (pedido === "atras") { encolar(hilo, { tipo: "atras" }); return "Listo, volví a la pantalla anterior."; }
   // Recorrido guiado: «recorrido» empieza; «siguiente» pasa a la próxima parte: la página navega, baja hasta esa parte,
   // la resalta y hace la demostración (cambiar de pestaña, filtrar el tablero). El paso se guarda en la llamada.
-  if (pedido === "recorrido" || pedido === "siguiente") {
+  // «seguido»: la persona pidió seguir hasta el final sin que le pregunten; avanza un paso y desde ahí no se pregunta
+  if (pedido === "recorrido" || pedido === "siguiente" || pedido === "seguido") {
+    if (pedido !== "siguiente") sinPreguntar(hilo, pedido === "seguido");
     const enEsta = pasoRecorrido(hilo), previo = enEsta ?? pasoRetomable(); // la llamada anterior se cortó a mitad: se retoma
-    if (pedido === "siguiente" && previo === undefined) return "No estamos en un recorrido. ¿Quieres que te muestre la plataforma parte por parte?";
+    if (pedido !== "recorrido" && previo === undefined) return "No estamos en un recorrido. ¿Quieres que te muestre la plataforma parte por parte?";
+    const pregunta = (i: number) => (i + 1 >= RECORRIDO_GUIA.length ? " Ese fue el recorrido." : sinPreguntar(hilo) ? "" : " ¿Seguimos?");
+    if (pedido !== "recorrido" && enEsta !== undefined && ahora - (momentoPaso(hilo) ?? 0) < MISMO_TURNO_MS) return `${paso(enEsta, textoGuia(RECORRIDO_GUIA[enEsta]))}${pregunta(enEsta)}`;
     const i = pedido === "recorrido" ? 0 : previo! + 1;
     if (i >= RECORRIDO_GUIA.length) { pasoRecorrido(hilo, null); return "Ese fue el recorrido completo. Si quieres, te digo la noticia del día o abro la ficha de un tema."; }
-    pasoRecorrido(hilo, i);
-    return `${i === 0 ? "Empecemos. " : enEsta === undefined ? "Seguimos donde quedamos. " : ""}${mostrarParte(hilo, RECORRIDO_GUIA[i], true)}${i + 1 < RECORRIDO_GUIA.length ? " ¿Seguimos?" : " Ese fue el recorrido."}`;
+    pasoRecorrido(hilo, i); momentoPaso(hilo, ahora);
+    return `${i === 0 ? "Empecemos. " : enEsta === undefined ? "Seguimos donde quedamos. " : ""}${paso(i, mostrarParte(hilo, RECORRIDO_GUIA[i], true))}${pregunta(i)}`;
   }
   const destino = pedido as VistaVoz;
   if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema, subir o bajar la página y volver atrás.`;

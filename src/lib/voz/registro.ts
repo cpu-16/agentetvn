@@ -3,7 +3,7 @@
 import type { ContextoPantalla, VistaVoz } from "./catalogo";
 
 export type Accion = { tipo: "navegar"; vista: VistaVoz; eventoId?: string } | { tipo: "desplazar"; direccion: "arriba" | "abajo" | "inicio" | "final" } | { tipo: "atras" } | ({ tipo: "guia" } & import("../motor/consulta").Guia) | { tipo: "mostrar"; pregunta: string; respuesta: unknown } | { tipo: "colgada"; motivo: string };
-interface Llamada { persona: string; desde: string; rol?: ContextoPantalla["rol"]; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number; sondeo: number; turnos?: number; recorrido?: number }
+interface Llamada { persona: string; desde: string; rol?: ContextoPantalla["rol"]; contexto: ContextoPantalla | null; acciones: Accion[]; inicio: number; sondeo: number; turnos?: number; recorrido?: number; pasoEn?: number; sinPreguntar?: boolean }
 const g = globalThis as unknown as { __vozLlamadas?: Map<string, Llamada>; __vozUltimoPaso?: { paso: number; en: number } };
 const llamadas = (g.__vozLlamadas ??= new Map<string, Llamada>());
 
@@ -27,6 +27,10 @@ export const pasoRecorrido = (hilo: string, nuevo?: number | null) => { const l 
 /** Paso del último recorrido de cualquier llamada, si fue hace menos de 15 min: si el tope de minutos cortó la llamada a mitad
  *  del recorrido, «sigue donde ibas» en la llamada nueva lo retoma. ponytail: uno solo global (la voz es una llamada a la vez). */
 export const pasoRetomable = (ahora = Date.now()) => { const u = g.__vozUltimoPaso; return u && ahora - u.en < 15 * 60_000 ? u.paso : undefined; };
+/** Cuándo se entregó el paso actual del recorrido (para no saltar pasos que la voz no leyó). */
+export const momentoPaso = (hilo: string, en?: number) => { const l = llamadas.get(hilo); if (l && en !== undefined) l.pasoEn = en; return l?.pasoEn; };
+/** La persona pidió seguir el recorrido sin que le pregunten «¿Seguimos?» en cada paso. */
+export const sinPreguntar = (hilo: string, v?: boolean) => { const l = llamadas.get(hilo); if (l && v !== undefined) l.sinPreguntar = v; return !!l?.sinPreguntar; };
 export const cerrarLlamada = (hilo: string) => void llamadas.delete(hilo);
 export const _vaciarRegistro = () => { llamadas.clear(); g.__vozUltimoPaso = undefined; };
 

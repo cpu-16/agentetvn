@@ -59,22 +59,42 @@ describe("herramientas", () => {
     expect(contextoDe("h1")?.filtrosAgenda).toBe("tema economía");
   });
   test("recorrido guiado: cada «siguiente» muestra una parte (navega, resalta, demuestra) hasta terminar", () => {
-    expect(h.navegar("h1", { destino: "recorrido" })).toContain("Empecemos. Arriba ves el corte");
-    expect(h.navegar("h1", { destino: "siguiente" })).toContain("Esta es tu mesa");
-    expect(h.navegar("h1", { destino: "siguiente" })).toContain("cinco temas");
-    for (let i = 0; i < 20; i++) if (h.navegar("h1", { destino: "siguiente" }).includes("recorrido completo")) break;
+    let t = 3_000_000; const sig = () => h.navegar("h1", { destino: "siguiente" }, (t += 9000));
+    expect(h.navegar("h1", { destino: "recorrido" }, t)).toContain("Arriba ves el corte");
+    expect(sig()).toContain("Esta es tu mesa");
+    expect(sig()).toContain("cinco temas");
+    for (let i = 0; i < 20; i++) if (sig().includes("recorrido completo")) break;
     const acciones = sacarAcciones("h1") as unknown as { tipo: string; parte?: string; demo?: { tipo: string } }[];
     expect(acciones[0]).toMatchObject({ tipo: "guia", parte: "portada-cifras" });
     expect(acciones.some((a) => a.parte === "ficha-paquete" && a.demo?.tipo === "pestana")).toBe(true);
     expect(acciones.some((a) => a.parte === "tablero-temas" && a.demo?.tipo === "filtroTablero")).toBe(true);
   });
+  test("cada paso dice su número y su título; un «siguiente» en el mismo instante no salta pasos (prueba de Gilberto, 8-oct)", () => {
+    const t0 = 1_000_000;
+    expect(h.navegar("h1", { destino: "recorrido" }, t0)).toContain("Paso 1 de 13 · Las cifras del corte");
+    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 9000)).toContain("Paso 2 de 13 · Tu mesa");
+    // el cerebro de la voz llamó «siguiente» diez veces en el mismo turno: la pantalla voló y solo se leyó el último
+    for (let i = 0; i < 10; i++) expect(h.navegar("h1", { destino: "siguiente" }, t0 + 9100 + i * 10)).toContain("Paso 2 de 13 · Tu mesa");
+    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 20000)).toContain("Paso 3 de 13");
+    const partes = (sacarAcciones("h1") as unknown as { parte?: string }[]).map((a) => a.parte);
+    expect(partes).toEqual(["portada-cifras", "portada-mesa", "portada-cinco"]); // la pantalla no avanzó con los repetidos
+  });
+  test("«sigue hasta el final, no me preguntes» avanza un paso y desde ahí sin «¿Seguimos?»", () => {
+    const t0 = 2_000_000;
+    expect(h.navegar("h1", { destino: "recorrido" }, t0)).toContain("¿Seguimos?");
+    const r = h.navegar("h1", { destino: "seguido" }, t0 + 9000);
+    expect(r).toContain("Paso 2 de 13"); expect(r).not.toContain("¿Seguimos?");
+    expect(h.navegar("h1", { destino: "siguiente" }, t0 + 18000)).not.toContain("¿Seguimos?");
+  });
   test("el tope de minutos corta a mitad del recorrido: «sigue» en la llamada nueva retoma donde iba (prueba de Gilberto, 6-oct)", () => {
-    h.navegar("h1", { destino: "recorrido" });
-    for (let i = 0; i < 9; i++) h.navegar("h1", { destino: "siguiente" }); // va por tablero-medios (paso 10 de 13)
+    let t = 4_000_000;
+    h.navegar("h1", { destino: "recorrido" }, t);
+    for (let i = 0; i < 9; i++) h.navegar("h1", { destino: "siguiente" }, (t += 9000)); // va por tablero-medios (paso 10 de 13)
     abrirLlamada("h2", "Ana", "2026-10-06T10:00:00Z"); sacarAcciones("h1");
-    expect(h.navegar("h2", { destino: "siguiente" })).toStartWith("Seguimos donde quedamos. Cada punto es un tema");
+    const r = h.navegar("h2", { destino: "siguiente" }, (t += 9000));
+    expect(r).toStartWith("Seguimos donde quedamos. Paso 11 de 13"); expect(r).toContain("Cada punto es un tema");
     expect(sacarAcciones("h2")).toMatchObject([{ tipo: "guia", parte: "tablero-relevancia" }]);
-    expect(h.navegar("h2", { destino: "siguiente" })).not.toContain("Seguimos donde quedamos");
+    expect(h.navegar("h2", { destino: "siguiente" }, (t += 9000))).not.toContain("Seguimos donde quedamos");
   });
   test("«explícame la parte de Control» abre Control; los roles y «dónde están los borradores» (prueba de Gilberto, 6-oct)", async () => {
     sacarAcciones("h1");
