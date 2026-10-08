@@ -106,6 +106,8 @@ describe("herramientas", () => {
     sacarAcciones("h1");
     for (const sobre of ["capacidades", "qué puedes hacer", "que se puede hacer aqui"]) expect(await h.explicarPantalla("h1", { sobre })).toContain("recorrido corto");
     expect(sacarAcciones("h1")).toHaveLength(0);
+    expect(await h.explicarPantalla("h1", { sobre: "¿qué puedo hacer como periodista?" })).toContain("Como periodista"); // el rol va primero
+    expect(await h.explicarPantalla("h1", { sobre: "qué se puede hacer con los filtros de la agenda" })).not.toContain("recorrido corto"); // es de esa parte
   });
   test("«explícame la parte de Control» abre Control; los roles y «dónde están los borradores» (prueba de Gilberto, 6-oct)", async () => {
     sacarAcciones("h1");

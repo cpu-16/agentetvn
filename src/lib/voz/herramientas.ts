@@ -53,7 +53,7 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
     if (pedido !== "siguiente") sinPreguntar(hilo, pedido === "seguido");
     const enEsta = pasoRecorrido(hilo), previo = enEsta ?? pasoRetomable(); // la llamada anterior se cortó a mitad: se retoma
     if (pedido !== "recorrido" && previo === undefined) return "No estamos en un recorrido. ¿Quieres que te muestre la plataforma parte por parte?";
-    const pregunta = (i: number) => (i + 1 >= RECORRIDO_GUIA.length ? " Ese fue el recorrido. ¿Abro alguna sección o te cuento la noticia del día?" : sinPreguntar(hilo) ? "" : ` ${CIERRES[i % CIERRES.length]}`);
+    const pregunta = (i: number) => (i + 1 >= RECORRIDO_GUIA.length ? " Ese fue el recorrido." : sinPreguntar(hilo) ? "" : ` ${CIERRES[i % CIERRES.length]}`);
     const entrada = (i: number, retoma: boolean) => (i === 0 ? `Empecemos: son ${RECORRIDO_GUIA.length} partes cortas. ` : retoma ? "Seguimos donde quedamos. " : "");
     if (pedido !== "recorrido" && enEsta !== undefined && ahora - (momentoPaso(hilo) ?? 0) < MISMO_TURNO_MS) return `${entrada(enEsta, false)}${textoGuia(RECORRIDO_GUIA[enEsta])}${pregunta(enEsta)}`;
     const i = pedido === "recorrido" ? 0 : previo! + 1;
@@ -95,9 +95,10 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
 export async function explicarPantalla(hilo: string, args: { sobre?: string } = {}): Promise<string> {
   const sobre = String(args.sobre ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (sobre.startsWith("plataforma")) return PLATAFORMA_CORTA;
-  if (sobre.startsWith("capacidades") || /que (se puede|puedes|puedo) hacer|que haces tu|para que sirves/.test(sobre)) return CAPACIDADES;
-  const rol = queHaceRol(sobre); // «yo entro como periodista, ¿qué hago?»
+  const rol = queHaceRol(sobre); // «yo entro como periodista, ¿qué hago?» (va antes: «¿qué puedo hacer como periodista?» es del rol)
   if (rol) return rol;
+  // solo la pregunta entera: «¿qué se puede hacer con los filtros?» es de esa parte, no de las capacidades (revisión de Codex y Cursor)
+  if (/^(capacidades|que (se puede|puedes|puedo) hacer( aqui| tu| conmigo)?|que haces( tu)?|para que sirves)$/.test(sobre.replace(/[^a-zñ ]/g, "").replace(/\s+/g, " ").trim())) return CAPACIDADES;
   const p = args.sobre ? buscarParte(args.sobre, contextoDe(hilo)?.vista) : null; // «explícame la gráfica de medios»: la muestra y la explica
   if (p) return mostrarParte(hilo, p.id);
   // «explícame la parte de Control»: una sección entera sin parte propia → la abre y la explica
