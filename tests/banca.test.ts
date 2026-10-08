@@ -183,7 +183,7 @@ describe("API bancaria real con sesión", () => {
     expect((await revision.POST(req("POST", {}, false), ctx)).status).toBe(401);
     for (const value of [null, [], { regenerar: "true" }]) expect((await ruta.POST(req("POST", value), ctx)).status).toBe(400);
     for (const value of [null, [], { boletin: {}, version: 1 }]) expect((await ruta.PUT(req("PUT", value), ctx)).status).toBe(400);
-    for (const value of [null, [], { estado: "en_revision", motivo: {} }, { estado: "publicado" }])
+    for (const value of [null, [], { estado: "en_revision", motivo: {} }, { estado: "publicado" }, { estado: "pieza_lista" }])
       expect((await revision.POST(req("POST", value), ctx)).status).toBe(400);
   });
   test("generar, editar, recargar y aprobar conserva la versión exacta y rechaza revisión obsoleta", async () => {

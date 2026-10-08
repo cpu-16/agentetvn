@@ -10,6 +10,10 @@ describe("revisión", () => {
     expect(validarTransicion("en_revision", "descartado", "sin fuente primaria").ok).toBe(true);
     expect(validarTransicion("en_revision", "requiere_evidencia", "falta comunicado").ok).toBe(true);
     expect(validarTransicion("aprobado_borrador", "en_revision").ok).toBe(true);
+    // el productor deja la pieza armada; solo se puede reabrir, y nunca se salta la aprobación
+    expect(validarTransicion("aprobado_borrador", "pieza_lista").ok).toBe(true);
+    expect(validarTransicion("pieza_lista", "en_revision").ok).toBe(true);
+    expect(validarTransicion("en_revision", "pieza_lista")).toMatchObject({ ok: false, status: 409 });
     expect(validarTransicion("nuevo", "publicado" as never)).toMatchObject({ ok: false, status: 400 });
   });
 });

@@ -63,7 +63,7 @@ export function Entrada() {
           </label>
           <fieldset className="mt-4">
             <legend className="text-sm text-muted-foreground">Rol en la mesa</legend>
-            <div className="mt-1 grid grid-cols-3 gap-2">
+            <div className="mt-1 grid grid-cols-2 gap-2">
               {ROLES.map((r) => (
                 <button type="button" key={r.id} onClick={() => setRol(r.id)} className={cn("presionable rounded-sm border px-2 py-2 text-sm", rol === r.id ? "border-tinta bg-tinta text-white" : "border-border bg-white hover:border-tinta/50")} aria-pressed={rol === r.id}>
                   {r.label}

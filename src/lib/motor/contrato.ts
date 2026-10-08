@@ -68,8 +68,9 @@ export interface Componentes {
 }
 
 export type EstadoEvidencia = "insuficiente" | "parcial" | "suficiente";
-export type EstadoRevision = "nuevo" | "en_revision" | "requiere_evidencia" | "aprobado_borrador" | "descartado";
-export const ESTADOS_REVISION: EstadoRevision[] = ["nuevo", "en_revision", "requiere_evidencia", "aprobado_borrador", "descartado"];
+// pieza_lista: el productor digital dejó armados titular, guion y copy. Tampoco publica: eso lo hace una persona fuera del sistema.
+export type EstadoRevision = "nuevo" | "en_revision" | "requiere_evidencia" | "aprobado_borrador" | "pieza_lista" | "descartado";
+export const ESTADOS_REVISION: EstadoRevision[] = ["nuevo", "en_revision", "requiere_evidencia", "aprobado_borrador", "pieza_lista", "descartado"];
 export type Rango = "bajo" | "medio" | "alto";
 
 export interface Procedencia {

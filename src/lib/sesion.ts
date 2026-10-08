@@ -2,9 +2,9 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
 
-export type Rol = "editor" | "periodista" | "productor";
+export type Rol = "editor" | "periodista" | "productor" | "analista";
 export interface Sesion { nombre: string; rol: Rol; desde: string }
-export const ROLES: Rol[] = ["editor", "periodista", "productor"];
+export const ROLES: Rol[] = ["editor", "periodista", "productor", "analista"];
 const COOKIE = "mesa";
 const DOCE_HORAS = 12 * 3600;
 const PIN_RESPALDO = "tvn2026";

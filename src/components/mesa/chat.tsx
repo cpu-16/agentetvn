@@ -22,8 +22,9 @@ const SUGERIDAS: Record<string, { q: string }[]> = {
   editor: [{ q: "¿Qué me toca hoy?" }, { q: "¿Cuál es la noticia del día?" }, { q: "Hazme un recorrido por la plataforma" }],
   periodista: [{ q: "¿Qué me toca hoy?" }, { q: "¿Qué falta verificar del tema uno?" }, { q: "¿Qué se sabe de la aprehensión de Enrique Lau?" }],
   productor: [{ q: "¿Qué me toca hoy?" }, { q: "Prepárame los titulares del tema uno" }, { q: "Enséñame el borrador del tema número uno" }],
+  analista: [{ q: "¿Qué me toca hoy?" }, { q: "¿Qué dice el Banco Mundial del PIB de Panamá?" }, { q: "¿Qué se sabe del Canal de Panamá?" }],
 };
-const QUE_HACE: Record<string, string> = { editor: "Como editor/a: decides qué se cubre hoy y apruebas borradores.", periodista: "Como periodista: verificas qué dice cada fuente y qué falta.", productor: "Como productor/a: preparas el paquete para TV, web y redes." };
+const QUE_HACE: Record<string, string> = { editor: "Como editor/a: decides qué se cubre hoy y apruebas borradores.", periodista: "Como periodista: verificas qué dice cada fuente y qué falta.", productor: "Como productor/a: preparas el paquete para TV, web y redes.", analista: "Como analista bancario/a: armas el boletín de entorno de los temas económicos." };
 
 export function ChatAgente() {
   const chatAbierto = useMesa((s) => s.chatAbierto);
@@ -187,7 +188,7 @@ export function ChatAgente() {
         </button>
         <button ref={boton} type="button" className="jarvis-escribir presionable" aria-expanded={chatAbierto} aria-controls="chat-agente" aria-haspopup="dialog" aria-label={chatAbierto ? "Cerrar el chat de Jarvis" : "Escribirle a Jarvis"} onClick={() => setChatAbierto(!chatAbierto)}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-          <span className="jarvis-texto">Escribir</span>
+          <span className="jarvis-texto">Escribirle a Jarvis</span>
         </button>
       </div>
       <p className="solo-lector" aria-live="polite" aria-atomic="true">{anuncio}</p>

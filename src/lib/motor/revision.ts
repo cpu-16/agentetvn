@@ -5,7 +5,8 @@ export const TRANSICIONES: Record<EstadoRevision, EstadoRevision[]> = {
   nuevo: ["en_revision", "descartado"],
   en_revision: ["requiere_evidencia", "aprobado_borrador", "descartado"],
   requiere_evidencia: ["en_revision", "descartado"],
-  aprobado_borrador: ["en_revision"], // reabrir
+  aprobado_borrador: ["en_revision", "pieza_lista"], // reabrir o el productor deja la pieza armada
+  pieza_lista: ["en_revision"], // reabrir
   descartado: ["en_revision"], // reabrir
 };
 export const EXIGE_MOTIVO: EstadoRevision[] = ["requiere_evidencia", "descartado"];

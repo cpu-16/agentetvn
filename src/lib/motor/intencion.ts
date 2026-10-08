@@ -22,7 +22,7 @@ const PANTALLA = new RegExp(`${PRE}(esto |esta pantalla |esta seccion |esta pagi
 // «Estoy aquí, ¿qué se hace?» (sin tema): es la pantalla que tiene abierta.
 const QUE_HAGO_AQUI = new RegExp(`${PRE}(ya )?(estoy (aqui|aca) )?(y )?(que se hace|que hago|que tengo que hacer|que debo hacer)( (aqui|aca))?$`);
 // «¿Qué hace un periodista?», «yo entro como productor, ¿qué hago?»: el rol que se elige al entrar.
-const PAL_ROL = new Set("editor editora periodista productor productora editores periodistas productores rol mi como soy entro entre yo un una que hace hago hacer debo tengo funcion sirve para creo es lo".split(" "));
+const PAL_ROL = new Set("editor editora periodista productor productora editores periodistas productores analista analistas bancario bancaria rol mi como soy entro entre yo un una que hace hago hacer debo tengo funcion sirve para creo es lo".split(" "));
 
 // La mesa del rol: «¿qué me toca hoy?», «mis pendientes», «¿por dónde empiezo?».
 const MESA_RE = /\b(que me toca|que (tengo|hay) (pendiente|por hacer)|mis pendientes|mi mesa|mi cola|que hago hoy|por donde (empiezo|arranco)|que debo hacer hoy|que tengo que hacer hoy)\b/;

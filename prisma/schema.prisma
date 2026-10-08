@@ -13,7 +13,7 @@ datasource db {
 model Revision {
   id                 String   @id @default(cuid())
   eventoId           String
-  estado             String // nuevo | en_revision | requiere_evidencia | aprobado_borrador | descartado
+  estado             String // nuevo | en_revision | requiere_evidencia | aprobado_borrador | pieza_lista | descartado
   persona            String
   motivo             String?
   evidenciaPendiente String?

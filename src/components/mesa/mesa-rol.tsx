@@ -12,6 +12,7 @@ const PREGUNTAS: Record<string, string[]> = {
   editor: ["¿Qué me toca hoy?", "¿Cuál es la noticia del día?"],
   periodista: ["¿Qué me toca hoy?", "¿Qué falta verificar del tema uno?"],
   productor: ["¿Qué me toca hoy?", "Prepárame los titulares del tema uno"],
+  analista: ["¿Qué me toca hoy?", "¿Qué se sabe del Canal de Panamá?"],
 };
 
 export function MesaRol({ data }: { data: AgendaDatos }) {
@@ -59,7 +60,7 @@ export function MesaRol({ data }: { data: AgendaDatos }) {
                     <Chips e={r} compacto />
                   </div>
                   <p className="mt-1.5 text-xs text-muted-foreground">
-                    {rol === "periodista" && falta.get(e.id) ? `Falta: ${falta.get(e.id)}` : rol === "productor" ? "Propuestas de titular, resumen web, guion y copy con su cita; sujetos a revisión." : `Sugerencia: ${accionSugerida(e)}`}
+                    {rol === "periodista" && falta.get(e.id) ? `Falta: ${falta.get(e.id)}` : rol === "productor" ? "Propuestas de titular, resumen web, guion y copy con su cita; sujetos a revisión." : rol === "analista" ? "Boletín de entorno: sectores, horizonte y preguntas de seguimiento, cada frase con su cita." : `Sugerencia: ${accionSugerida(e)}`}
                   </p>
                 </div>
                 <Button size="sm" className="presionable justify-self-start bg-azul text-white hover:bg-[#005fa3] sm:justify-self-end" onClick={() => abrir(e.id)}>{m.accion}</Button>

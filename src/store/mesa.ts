@@ -4,11 +4,12 @@ import { persist } from "zustand/middleware";
 import type { AgendaDatos } from "@/components/mesa/tipos";
 
 export type Vista = "portada" | "agenda" | "tablero" | "ficha" | "control";
-export type Rol = "editor" | "periodista" | "productor";
+export type Rol = "editor" | "periodista" | "productor" | "analista";
 export const ROLES: { id: Rol; label: string }[] = [
   { id: "editor", label: "Editor/a" },
   { id: "periodista", label: "Periodista" },
   { id: "productor", label: "Productor/a digital" },
+  { id: "analista", label: "Analista bancario/a" },
 ];
 export interface Sesion { nombre: string; rol: Rol }
 
@@ -122,6 +123,7 @@ export const ESTADO_LABEL: Record<string, string> = {
   en_revision: "En revisión",
   requiere_evidencia: "Requiere evidencia",
   aprobado_borrador: "Aprobado como borrador",
+  pieza_lista: "Pieza lista",
   descartado: "Descartado",
 };
 export const EVIDENCIA_LABEL: Record<string, string> = { insuficiente: "Evidencia insuficiente", parcial: "Evidencia parcial", suficiente: "Suficiente para el borrador" };

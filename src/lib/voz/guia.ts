@@ -9,7 +9,7 @@ export const GUIA: Parte[] = [
   { id: "portada-cifras", vista: "portada", ancla: "portada-cifras", titulo: "Las cifras del corte", claves: ["cifras", "numeros", "cifras del corte", "temas agrupados", "reloj"],
     texto: "Arriba ves el corte de datos: cuántas publicaciones entraron, en cuántos temas se agruparon y de cuántos medios vienen. Una noticia repetida por varios medios cuenta como un solo tema." },
   { id: "portada-mesa", vista: "portada", ancla: "portada-mesa", titulo: "Tu mesa", claves: ["tu mesa", "mi mesa", "mesa del rol", "cola de decision", "que falta verificar en la portada", "listos para armar"],
-    texto: "Esta es tu mesa: lo que le toca hoy a tu rol. El editor ve su cola de decisión, el periodista lo que falta verificar y el productor lo que está listo para armar. Cada fila trae su acción." },
+    texto: "Esta es tu mesa: lo que le toca hoy a tu rol. El editor ve su cola de decisión, el periodista lo que falta verificar, el productor lo que está listo para armar y el analista bancario las señales económicas. Cada fila trae su acción." },
   { id: "portada-cinco", vista: "portada", ancla: "portada-cinco", titulo: "Cinco para hoy", claves: ["cinco para hoy", "cinco temas", "tarjetas", "portada", "prioridad"],
     texto: "Estos son los cinco temas que más merecen revisión hoy, como máximo dos por tema. El número grande es su lugar en la lista; debajo van el puntaje de atención de 0 a 100 y la etiqueta que dice si la evidencia alcanza para escribir." },
   { id: "agenda-lista", vista: "agenda", ancla: "agenda-lista", titulo: "La agenda del día", claves: ["agenda", "lista", "todos los temas", "puntaje", "componentes", "barra"],

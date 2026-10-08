@@ -8,6 +8,7 @@ import { BotonCita, Citas, type Indicador, type Publicacion, type Sismo } from "
 import { PaqueteYRevision, type Afirmacion, type Paquete, type Revision, type RevisionHist } from "./paquete";
 import { ESTADO_LABEL, SPRING, fetchMesa, horaPanama, useMesa, useRol } from "@/store/mesa";
 import { BancaYRevision } from "./banca";
+import { Recorrido } from "./recorrido";
 import { MESA } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
@@ -25,16 +26,16 @@ function accionRecomendada(e: Evento): string {
 }
 
 export function Ficha({ id }: { id: string }) {
-  const [modalidad, setModalidad] = useState<"tvn" | "banca">("tvn");
+  const rol = useRol();
+  const [modalidad, setModalidad] = useState<"tvn" | "banca">(rol === "analista" ? "banca" : "tvn"); // el analista arma el boletín
   const [d, setD] = useState<Detalle | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cita, setCita] = useState<string | null>(null);
   const irA = useMesa((s) => s.irA);
   const setChatAbierto = useMesa((s) => s.setChatAbierto);
   const actualizarEstadoEvento = useMesa((s) => s.actualizarEstadoEvento);
-  const rol = useRol();
   const reducir = useReducedMotion();
-  const [tab, setTab] = useState<"evidencia" | "paquete">(MESA[rol].pestana); // editor decide y productor arma en el paquete; periodista verifica
+  const [tab, setTab] = useState<"evidencia" | "paquete">(MESA[rol].pestana); // editor y periodista revisan la evidencia; productor y analista arman en el paquete
   const setPantalla = useMesa((s) => s.setPantalla);
   useEffect(() => setPantalla({ pestana: tab }), [tab, setPantalla]);
   // Jarvis puede cambiar de pestaña para mostrar el borrador o la evidencia (guía y recorrido)
@@ -90,6 +91,7 @@ export function Ficha({ id }: { id: string }) {
       <h1 className="titular text-2xl font-semibold leading-tight sm:text-3xl">{rep?.titulo}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{rep?.medio}, {e.fecha_original ? `publicado ${horaPanama(e.fecha_original)}` : "sin fecha de publicación (solo detección)"}</p>
       <div className="mt-2"><Chips e={resumen} /></div>
+      <Recorrido estado={d.revision.estado} rol={rol} />
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <div data-guia="ficha-pestanas" data-evento={id} role="tablist" aria-label="Secciones de la ficha" className="relative inline-flex h-9 rounded-sm border border-border bg-white p-0.5">
@@ -100,7 +102,7 @@ export function Ficha({ id }: { id: string }) {
             </button>
           ))}
         </div>
-        <Button size="sm" variant={rol === "periodista" ? "default" : "outline"} className="presionable" onClick={() => setChatAbierto(true)}>Preguntar sobre este tema</Button>
+        <Button size="sm" variant={rol === "periodista" ? "default" : "outline"} className="presionable" onClick={() => setChatAbierto(true)}>Preguntarle a Jarvis sobre este tema</Button>
       </div>
       <AnimatePresence mode="wait" initial={false}>
       <motion.div key={tab} id={`panel-${tab}`} data-guia={`ficha-${tab}`} role="tabpanel" aria-labelledby={`tab-${tab}`} className="mt-4" initial={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(4px)" }} animate={{ opacity: 1, transform: "translateY(0px)" }} exit={reducir ? { opacity: 0 } : { opacity: 0, transform: "translateY(-2px)" }} transition={{ duration: 0.18 }}>
@@ -160,10 +162,9 @@ export function Ficha({ id }: { id: string }) {
               <div className="rounded-sm border border-border bg-white p-4 text-sm">
                 <p className="titular text-lg font-semibold">Qué hacer con este tema</p>
                 <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted-foreground">
-                  <li>Abrir cada cita y confirmar que el campo respalda la afirmación.</li>
-                  <li>Preguntar al agente por la cifra o el dato que falte; si se abstiene, buscar la fuente primaria.</li>
-                  <li>Generar el paquete y registrar la decisión con tu nombre.</li>
+                  {PASOS_ROL[rol].map((x) => <li key={x}>{x}</li>)}
                 </ol>
+                <Button size="sm" variant="outline" className="presionable mt-3" onClick={() => setTab("paquete")}>Ir a Paquete y revisión</Button>
               </div>
             </aside>
           </div>
@@ -184,6 +185,14 @@ export function Ficha({ id }: { id: string }) {
     </div>
   );
 }
+
+// Qué hace cada rol con el tema, en el orden del flujo (lo pidió el editor del equipo: que cada uno sepa su siguiente paso)
+const PASOS_ROL: Record<string, string[]> = {
+  editor: ["Revisa el puntaje, quién lo reporta y qué falta comprobar.", "Abre las citas que sostienen lo que se reporta.", "En «Paquete y revisión»: tómalo, pide evidencia al periodista, descártalo o apruébalo como borrador."],
+  periodista: ["Abre cada cita y confirma que respalda la afirmación.", "Busca lo que falta fuera del sistema (fuente primaria, segunda procedencia) y pregúntale a Jarvis por la cifra.", "En «Paquete y revisión», anota qué verificaste y devuélvelo al editor."],
+  productor: ["Confirma que el editor ya lo aprobó como borrador.", "En «Paquete y revisión», elige un titular y revisa el guion y el copy con sus citas.", "Guarda tu edición y marca «Pieza lista»."],
+  analista: ["Revisa la evidencia y el dato oficial ligado (Banco Mundial).", "En «Paquete y revisión», modalidad «Análisis bancario», genera el boletín de entorno.", "Confirma sus citas y apruébalo como borrador: no se publica."],
+};
 
 function Bloque({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (

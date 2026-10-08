@@ -3,7 +3,8 @@ import { revisarBoletinBancario } from "@/lib/motor/banca-servicio";
 import { leerSesion, sinSesion } from "@/lib/sesion";
 import { z } from "zod";
 import { ESTADOS_REVISION } from "@/lib/motor/contrato";
-const esquema = z.object({ estado: z.enum(ESTADOS_REVISION), motivo: z.string().max(2000).nullable().optional(),
+// «Pieza lista» es del paquete editorial (productor digital); el boletín bancario cierra en «Aprobado como borrador»
+const esquema = z.object({ estado: z.enum(ESTADOS_REVISION).exclude(["pieza_lista"]), motivo: z.string().max(2000).nullable().optional(),
   version: z.iso.datetime().optional(), revisionId: z.string().nullable().optional(), fuentesRevisadas: z.boolean().optional() }).strict();
 export const dynamic = "force-dynamic";
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {

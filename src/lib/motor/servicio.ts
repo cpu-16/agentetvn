@@ -156,7 +156,7 @@ async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number)
   const items = tocaA(rol, a.eventos).map((e) => {
     const ev = a.eventos.find((x) => x.id === e.id)!;
     const n = ev.ids_noticia.map((i) => porId.get(i)).find((x) => x?.medio === "TVN") ?? porId.get(ev.representante)!;
-    const razon = rol === "periodista" ? (falta.get(e.id) ? `Falta: ${falta.get(e.id)}` : accionSugerida(e)) : rol === "productor" ? "Listo para armar: titulares, resumen web, guion y copy con su cita." : accionSugerida(e);
+    const razon = rol === "periodista" ? (falta.get(e.id) ? `Falta: ${falta.get(e.id)}` : accionSugerida(e)) : rol === "productor" ? "Listo para armar: titulares, resumen web, guion y copy con su cita." : rol === "analista" ? "Señal para el boletín de entorno: sectores, horizonte y preguntas de seguimiento con su cita." : accionSugerida(e);
     return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: Math.round(e.P), rango: e.rango, evidencia: e.estado_evidencia, razon, falta: falta.get(e.id) ?? null, publicaciones: ev.ids_noticia.length };
   });
   const m = MESA[rol], [x, y, z] = items;
