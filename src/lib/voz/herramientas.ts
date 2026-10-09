@@ -44,6 +44,8 @@ const textoGuia = (id: string) => respuestaGuia({ tipo: "guia", parte: id, recor
 // sonaba a máquina. Los cierres rotan para que no sea siempre «¿Seguimos?» (prueba de Gilberto, 8-oct).
 const CIERRES = ["¿Seguimos?", "¿Vamos con lo que sigue?", "¿Te muestro lo siguiente?", "¿Dale, seguimos?", "¿Pasamos a lo próximo?"];
 
+// Lo que se puede hacer en la ficha, dicho completo: si el texto deja un hueco, la voz lo rellena inventando (llamada 9e9c9a).
+const EN_LA_FICHA = "Aquí ves la evidencia: qué publicaciones lo reportan y de dónde vienen. En Paquete y revisión está el borrador; si quieres, te lo explico o le hago un cambio, por ejemplo acortar el guion.";
 const NUM_TEMA: Record<string, number> = { uno: 0, "1": 0, primero: 0, primer: 0, primera: 0, dos: 1, "2": 1, segundo: 1, segunda: 1, tres: 2, "3": 2, tercero: 2, tercer: 2, tercera: 2, cuatro: 3, "4": 3, cuarto: 3, cuarta: 3, cinco: 4, "5": 4, quinto: 4, quinta: 4 };
 /** «tema número cinco», «la noticia 2», «el tercer tema» → índice en «Cinco para hoy»; null si no nombra un número. */
 function numeroDeTema(consulta: string): number | null {
@@ -82,13 +84,13 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
     const c = cincoTemas(snap)[n];
     if (!c) return "Hoy hay menos temas en «Cinco para hoy». Dime cuál abro.";
     encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: c.evento.id });
-    return `Abrí la ficha del tema ${n + 1}: «${palabras(snap.noticias.find((x) => x.id_noticia === c.evento.representante)?.titulo ?? "", 14)}».`;
+    return `Abrí la ficha del tema ${n + 1}: «${palabras(snap.noticias.find((x) => x.id_noticia === c.evento.representante)?.titulo ?? "", 14)}». ${EN_LA_FICHA}`;
   }
   const r = buscarEventos(args.consulta ?? "");
   if (!r.length) return "No encontré un tema con ese nombre en la agenda de hoy. Dime otras palabras del titular.";
   if (r.length > 1 && r[0].score === r[1].score) return `Encontré varios temas parecidos: ${r.map((x, i) => `${i + 1}, ${palabras(x.titulo, 12)}`).join("; ")}. ¿Cuál abro?`;
   encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: r[0].id });
-  return `Abrí la ficha de «${palabras(r[0].titulo, 14)}».`;
+  return `Abrí la ficha de «${palabras(r[0].titulo, 14)}». ${EN_LA_FICHA}`;
 }
 
 const CAMBIOS_RECIENTES = new Map<string, { t: number; texto: string }>();
