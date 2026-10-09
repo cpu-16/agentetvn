@@ -53,6 +53,18 @@ describe("herramientas", () => {
   });
   test("«siguiente» sin recorrido no abre nada; navegar a la sección abierta no borra sus filtros (revisión de Codex)", () => {
     expect(h.navegar("h1", { destino: "siguiente" })).toContain("No estamos en un recorrido");
+  });
+  test("«abre la ficha del tema número cinco»: el número es el de «Cinco para hoy» (prueba hablada de Gilberto, 8-oct)", async () => {
+    const { cincoTemas } = await import("../src/lib/motor/consulta");
+    const cinco = cincoTemas(servicio.snapshot());
+    for (const [consulta, i] of [["tema número cinco", 4], ["el tercer tema", 2], ["tema 1", 0]] as const) {
+      sacarAcciones("h1");
+      expect(h.navegar("h1", { destino: "ficha", consulta })).toContain(`tema ${i + 1}`);
+      expect(sacarAcciones("h1")).toContainEqual(expect.objectContaining({ tipo: "navegar", vista: "ficha", eventoId: cinco[i].evento.id }));
+    }
+  });
+  test("«haz el guion más corto» sin ficha abierta pide abrir el tema en vez de buscar noticias", async () => {
+    expect(await h.preguntarCorpus("h1", { pregunta: "haz el guion más corto" })).toContain("primero abro la ficha");
     expect(sacarAcciones("h1")).toHaveLength(0);
     guardarContexto("h1", { vista: "agenda", filtrosAgenda: "tema economía" });
     h.navegar("h1", { destino: "agenda" }); sacarAcciones("h1");

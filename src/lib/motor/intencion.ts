@@ -64,12 +64,15 @@ const PAL_PLATAFORMA = new Set("agentetvn agente tvn plataforma app aplicacion h
 const PAL_AGENDA = new Set("panama noticia noticias dia hoy tema temas titulares titulos importante importantes principal principales destacado destacada destacados destacadas cinco merecen merece revision atencion agenda habla hablando lo mas nuevo tenemos top".split(" "));
 const RELLENO = new Set("dame muestrame ensename listame me te nos mi tu yo le les usted porfa porfavor necesito quiero puedes podrias explicar expliques explicame explica trata tratan esto aqui aca pantalla seccion pagina vale bueno pero entonces significa muestra veo viendo estoy hecho dime cuentame sobre favor oye jarvis ok bien mira".split(" "));
 
+// Imperativo al inicio + objeto editorial: una consulta sobre noticias no modifica nada.
+const ORDEN = /^(?:(?:oye|jarvis|por favor|porfa) )*(?:cambia|quita|elimina|borra|agrega|anade|reemplaza|acorta|hazlo|no digas|haz (?:el|la|los|las) (?:titulo|titular|guion|copy|brief|resumen|borrador|paquete))\b/; // «haz el guion más corto» sí; «haz un resumen de…» sigue siendo consulta
+const OBJETO = /\b(titulo|titular|guion|copy|brief|resumen|borrador|paquete|frase)\b/;
+/** «haz el guion más corto», «quita la mención a Crítica del copy»: una orden de cambio al borrador (sirve con la ficha abierta). */
+export const esOrdenDeCambio = (q: string) => { const t = norm(q); return ORDEN.test(t) && OBJETO.test(t); };
+
 export function intencion(q: string, opts: { contexto?: ContextoPantalla | null; tokens?: string[] } = {}): Intencion {
   const t = norm(q);
-  // Imperativo al inicio + objeto editorial: una consulta sobre noticias no modifica nada.
-  const orden = /^(?:(?:oye|jarvis|por favor|porfa) )*(?:cambia|quita|elimina|borra|agrega|anade|reemplaza|acorta|hazlo|no digas|haz (?:el|la|los|las) (?:titulo|titular|guion|copy|brief|resumen|borrador|paquete))\b/; // «haz el guion más corto» sí; «haz un resumen de…» sigue siendo consulta
-  const objeto = /\b(titulo|titular|guion|copy|brief|resumen|borrador|paquete|frase)\b/;
-  if (opts.contexto?.eventoId && orden.test(t) && objeto.test(t)) return { tipo: "ajustar" };
+  if (opts.contexto?.eventoId && esOrdenDeCambio(q)) return { tipo: "ajustar" };
   const toks = opts.tokens ?? t.split(" ");
   const soloCon = (extra: Set<string>) => toks.every((x) => RELLENO.has(x) || DE_PREGUNTA.has(x) || extra.has(x)); // ¿trae un tema propio?
   const sinTema = soloCon(new Set());

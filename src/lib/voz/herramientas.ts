@@ -1,5 +1,7 @@
 // Las 3 herramientas de Jarvis-TVN. Corren en Next con el motor de siempre: la voz nunca consulta datos por su cuenta.
 import { consulta, estadoDe, respuestaGuia, snapshot } from "../motor/servicio";
+import { cincoTemas } from "../motor/consulta";
+import { esOrdenDeCambio } from "../motor/intencion";
 import { tokenizar } from "../motor/bm25";
 import { CAPACIDADES, explicacionFija, PLATAFORMA_CORTA, queHaceRol, type VistaVoz } from "./catalogo";
 import { buscarParte, RECORRIDO_GUIA } from "./guia";
@@ -42,6 +44,14 @@ const textoGuia = (id: string) => respuestaGuia({ tipo: "guia", parte: id, recor
 // sonaba a máquina. Los cierres rotan para que no sea siempre «¿Seguimos?» (prueba de Gilberto, 8-oct).
 const CIERRES = ["¿Seguimos?", "¿Vamos con lo que sigue?", "¿Te muestro lo siguiente?", "¿Dale, seguimos?", "¿Pasamos a lo próximo?"];
 
+const NUM_TEMA: Record<string, number> = { uno: 0, "1": 0, primero: 0, primer: 0, primera: 0, dos: 1, "2": 1, segundo: 1, segunda: 1, tres: 2, "3": 2, tercero: 2, tercer: 2, tercera: 2, cuatro: 3, "4": 3, cuarto: 3, cuarta: 3, cinco: 4, "5": 4, quinto: 4, quinta: 4 };
+/** «tema número cinco», «la noticia 2», «el tercer tema» → índice en «Cinco para hoy»; null si no nombra un número. */
+function numeroDeTema(consulta: string): number | null {
+  const t = consulta.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9ñ ]/g, " ").replace(/\s+/g, " ");
+  const m = /\b(?:tema|noticia)(?: numero| n)? (\S+)/.exec(t) ?? /\b(\S+) (?:tema|noticia)\b/.exec(t);
+  return m && Object.hasOwn(NUM_TEMA, m[1]) ? NUM_TEMA[m[1]] : null;
+}
+
 export function navegar(hilo: string, args: { destino?: string; consulta?: string; eventoId?: string }, ahora = Date.now()): string {
   const pedido = String(args.destino ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
   if (Object.hasOwn(MOVER, pedido)) { encolar(hilo, { tipo: "desplazar", direccion: pedido as keyof typeof MOVER }); return MOVER[pedido as keyof typeof MOVER]; }
@@ -66,6 +76,14 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
   if (destino !== "ficha") { encolar(hilo, { tipo: "navegar", vista: destino }); if (contextoDe(hilo)?.vista !== destino) guardarContexto(hilo, { vista: destino }); return `Listo, abrí ${NOMBRE[destino]}. ${dosFrases(explicacionFija({ vista: destino }))}`; }
   const snap = snapshot();
   if (args.eventoId && snap.eventos.some((e) => e.id === args.eventoId)) { encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: args.eventoId }); return "Listo, abrí la ficha."; }
+  // «el tema número cinco», «el tercer tema»: el número es el de «Cinco para hoy» (antes buscaba esas palabras en los titulares)
+  const n = numeroDeTema(args.consulta ?? "");
+  if (n !== null) {
+    const c = cincoTemas(snap)[n];
+    if (!c) return "Hoy hay menos temas en «Cinco para hoy». Dime cuál abro.";
+    encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: c.evento.id });
+    return `Abrí la ficha del tema ${n + 1}: «${palabras(snap.noticias.find((x) => x.id_noticia === c.evento.representante)?.titulo ?? "", 14)}».`;
+  }
   const r = buscarEventos(args.consulta ?? "");
   if (!r.length) return "No encontré un tema con ese nombre en la agenda de hoy. Dime otras palabras del titular.";
   if (r.length > 1 && r[0].score === r[1].score) return `Encontré varios temas parecidos: ${r.map((x, i) => `${i + 1}, ${palabras(x.titulo, 12)}`).join("; ")}. ¿Cuál abro?`;
@@ -77,6 +95,8 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   const pregunta = String(args.pregunta ?? "").slice(0, 500).trim();
   if (!pregunta) return "No escuché la pregunta. ¿Me la repites?";
   if (args.eventoId && !snapshot().eventos.some((e) => e.id === args.eventoId)) return "Ese tema no está en el corte de hoy, así que no puedo responder sobre él.";
+  // sin ficha abierta, «haz el guion más corto» no es una consulta: se pide abrir el tema (antes buscaba noticias al azar)
+  if (!args.eventoId && !contextoDe(hilo)?.eventoId && esOrdenDeCambio(pregunta)) return "Para cambiar un borrador, primero abro la ficha del tema. Dime cuál: por ejemplo, el tema uno.";
   // VOZ_RESPUESTA=extractiva (plan B si la latencia pasa de 15 s): la voz usa el motor sin la redacción de Claude
   // VOZ_RESPUESTA=extractiva solo apaga la redacción con LLM; el enrutador (agenda, plataforma) sigue igual (revisión de Codex)
   const r = await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo), personaDe(hilo));
