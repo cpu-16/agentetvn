@@ -1,6 +1,6 @@
 # Experimento A/B de embeddings · 6-oct-2026
 
-Rama `exp/embeddings-ab` (código del perfil y scripts `calibrar-embeddings.ts`/`medir-embeddings.ts`; no se fusionó porque se queda el e5). Plan: `hackiathon/encargos/cursor-embeddings-ab.out.md` (Cursor). El modelo entra como **perfil** (`AGENTETVN_EMB_MODELO`); el defecto sigue siendo `e5` (`Xenova/multilingual-e5-small`, q8, 384) con las cadenas y los umbrales de `config/scoring-v1.json`. El split **reservado** del benchmark no se abre ni se usa para elegir.
+Rama `exp/embeddings-ab` (código del perfil y scripts `calibrar-embeddings.ts`/`medir-embeddings.ts`; no se fusionó porque se queda el e5). El modelo entra como **perfil** (`AGENTETVN_EMB_MODELO`); el defecto sigue siendo `e5` (`Xenova/multilingual-e5-small`, q8, 384) con las cadenas y los umbrales de `config/scoring-v1.json`. El split **reservado** del benchmark no se abre ni se usa para elegir.
 
 ## 1. Hipótesis (escrita antes de embeber con cualquier candidato)
 

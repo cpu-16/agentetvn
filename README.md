@@ -122,7 +122,7 @@ Lo que no pasa se descarta y se cuenta. Si el LLM falla, tarda o no deja nada v�
 | Paquete editorial | 34 | 0 | 32,6 s / 42,4 s | US$0,084 |
 | Respuesta del chat | 2 | 0 | 7,2 s / 7,5 s | US$0,025 |
 
-<sub>* Costo equivalente a la tarifa de API que reporta el CLI. La demo corre sobre una suscripción. Los 11 eventos de prioridad alta quedan redactados de antemano (`bun run redactar`) para que el pitch los muestre aunque no haya red.</sub>
+<sub>* Costo equivalente a la tarifa de API. Los 11 eventos de prioridad alta quedan redactados de antemano (`bun run redactar`) para que el pitch los muestre aunque no haya red.</sub>
 
 ## Jarvis-TVN: la mesa por voz
 
@@ -133,7 +133,7 @@ Lo que no pasa se descarta y se cuenta. Si el LLM falla, tarda o no deja nada v�
 
 Un orbe azul TVN: **un toque abre la conversación y otro la cuelga**; mientras tanto Jarvis escucha y responde por turnos, sin mantener nada presionado. Habla poco (una o dos frases) y **solo con lo que devuelve el motor**: las noticias con su medio, o se abstiene; el detalle con las citas y la traza queda en el panel. También explica la pantalla que tienes abierta y la mueve: abre secciones o fichas («abre el tablero», «llévame a la ficha de Enrique Lau»; si hay varias coincidencias, pregunta), baja, sube y vuelve atrás. No dice qué modelo ni qué empresa hay detrás, no sale de la mesa editorial y no revela sus instrucciones. Al lado del orbe, «Escribir» abre el chat de texto, que redacta con Claude Opus 5.5 (D11). El panel se mueve y se agranda, y en el celular es una hoja inferior. Si la voz no está disponible, el chat de texto funciona igual.
 
-Por dentro: el audio va directo navegador ⇄ OpenAI (realtime de Codex). Un puente de voz aparte (`voz/puente.py`) atiende las llamadas con topes estrictos (una a la vez, 3 min, 20 min por hora; cuelga tras un minuto sin conversación o 45 s sin respuesta) y se conecta a la mesa como puente inverso, solo de salida y con token. Decisiones D12 y D13; diseño en `docs/superpowers/specs/2026-10-06-jarvis-tvn-design.md`. Se activa con `AGENTETVN_VOZ=on` y el puente desplegado (`deploy/desplegar-voz.sh`).
+Por dentro: el audio va directo navegador ⇄ OpenAI (voz en tiempo real de ChatGPT). Un puente de voz aparte (`voz/puente.py`) atiende las llamadas con topes estrictos (una a la vez, 3 min, 20 min por hora; cuelga tras un minuto sin conversación o 45 s sin respuesta) y se conecta a la mesa como puente inverso, solo de salida y con token. Decisiones D12 y D13. Se activa con `AGENTETVN_VOZ=on` y el puente desplegado (`deploy/desplegar-voz.sh`).
 
 ## Para el jurado: correr en 5 minutos (sin internet)
 

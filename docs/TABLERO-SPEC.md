@@ -1,4 +1,4 @@
-# Tablero · especificación para Codex (construcción) y Cursor (revisión)
+# Tablero · especificación
 
 Repo: este worktree (`feat/tablero`, base `main`). App Next.js 16 + React 19 + shadcn + framer-motion, un solo runtime (bun), demo sin internet (nada de CDN: ECharts ya está instalado por npm, `echarts@5`). Español de Panamá en toda la UI. No tocar `src/lib/motor/**`, `scripts/**`, `tests/**`, `data/**` salvo lo indicado.
 

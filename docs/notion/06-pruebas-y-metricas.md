@@ -30,7 +30,7 @@ Snapshot v1 (corte 2026-10-06 15:28 UTC), reglas v1, `bun run benchmark --split 
 
 ## Redacción con IA (D11, modo online): costo y latencia medidos
 
-Registro por intento en `db/llm-intentos.jsonl` del servidor de la demo (6-oct-2026, 19:25–19:55 UTC; incluye pruebas y tres pasadas de precarga de los 11 eventos de prioridad alta). Modelo `claude-opus-5-5` vía `claude -p` 2.1.291. El costo es el que reporta el CLI (equivalente a la tarifa de API); la demo corre sobre una suscripción, así que no es facturación real.
+Registro por intento en `db/llm-intentos.jsonl` del servidor de la demo (6-oct-2026, 19:25–19:55 UTC; incluye pruebas y tres pasadas de precarga de los 11 eventos de prioridad alta). Modelo Claude Opus 5.5. Costo equivalente a la tarifa de API.
 
 | Tarea | Intentos | Fallos | Latencia mediana / p95 | Tokens (mediana) | Costo mediano | Costo total |
 |---|---|---|---|---|---|---|
@@ -41,7 +41,7 @@ Validación sobre la última precarga (11 paquetes, 11 de 11 en modo IA): 5 fras
 
 ## Ronda de mejoras tras la prueba de Gilberto (D15, 6-oct noche)
 
-Registro real (`db/consultas.jsonl`): «hols» y «esto de qué trata?» respondían con noticias sin relación. Ahora: saludo y explicación de la pantalla sin buscar ni gastar tokens; «¿Qué pasó con el Nickelau?» → «No encontré "nickelau" en las noticias del corte» con qué falta. Recorrido en el Samsung A22 de Gilberto (Chrome 154, por USB y CDP) con capturas de la pantalla real; prueba hablada con voz sintética: saludo, explicación de la pantalla en dos frases, «Listo, el tablero», respuesta sobre Lau con su fuente y «A la orden». La conexión de voz con OpenAI se cortó una vez a mitad de una llamada («Connection reset»): el puente ahora cuelga y avisa al instante (control positivo en `voz:check`). Codex revisó la ronda en dos vueltas (3 P1 y 2 P2 cerrados); Cursor revisó la experiencia (panel vacío sin el arnés de pruebas, respuesta antes que la traza).
+Registro real (`db/consultas.jsonl`): «hols» y «esto de qué trata?» respondían con noticias sin relación. Ahora: saludo y explicación de la pantalla sin buscar ni gastar tokens; «¿Qué pasó con el Nickelau?» → «No encontré "nickelau" en las noticias del corte» con qué falta. Recorrido en el Samsung A22 de Gilberto (Chrome 154, por USB y CDP) con capturas de la pantalla real; prueba hablada con voz sintética: saludo, explicación de la pantalla en dos frases, «Listo, el tablero», respuesta sobre Lau con su fuente y «A la orden». La conexión de voz con OpenAI se cortó una vez a mitad de una llamada («Connection reset»): el puente ahora cuelga y avisa al instante (control positivo en `voz:check`). GPT-6 Astra revisó la ronda en dos vueltas (3 P1 y 2 P2 cerrados) y una segunda revisión independiente cubrió la experiencia (panel vacío sin el arnés de pruebas, respuesta antes que la traza).
 
 ## Comparación de modelos de embeddings (D14)
 

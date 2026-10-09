@@ -1,4 +1,4 @@
-**Informe para `docs/CODEX-REVISION-MOTOR.md`**
+**Revisión externa del motor (GPT-6 Astra, 6 de octubre)**
 
 Revisión de solo lectura contra las secciones 3, 4, 7, 8 y 9 del reto. No se modificaron archivos.
 
