@@ -44,6 +44,10 @@ describe("enrutador del chat", () => {
     for (const q of ["¿Cuál es la noticia del día?", "cual es la noticia del dia?", "¿Qué es lo más importante hoy?"]) expect(motivo(q)).toBe("agenda:1");
     for (const q of ["Dame los 5 temas de hoy", "¿Qué cinco temas merecen revisión hoy?", "¿Qué temas hay hoy?", "¿De qué se habla hoy?", "noticias de hoy"]) expect(motivo(q)).toBe("agenda");
   });
+  test("CU-01 del reto: «…y por qué?» al final pide justificar el orden, no causas (lo encontró el recorrido del agente)", () => {
+    for (const q of ["¿Qué cinco temas merecen revisión para la agenda de Panamá y por qué?", "¿Qué cinco temas merecen revisión y por qué?"]) expect(motivo(q)).toBe("agenda");
+    for (const q of ["¿Por qué la noticia del día merece atención?", "¿Qué cinco temas merecen revisión y por qué cayó Lau?", "¿Qué pasó hoy y por qué?", "¿Qué pasó hoy en Panamá y por qué?"]) expect(motivo(q)).toBe("consulta");
+  });
   test("con tema propio siguen siendo consultas aunque se parezcan", () => {
     for (const q of ["¿Por qué la noticia del día merece atención?", "La noticia del día de ayer", "¿Cuál fue la noticia del día en 2025?", "La noticia del día del 3 de octubre"]) expect(motivo(q)).toBe("consulta"); // causalidad y otros días: al motor
     for (const q of ["Noticias de hoy sobre el Canal de Panamá", "¿Qué es la plataforma de vacunación del Minsa?", "Explícame la aprehensión de Enrique Lau", "¿Qué pasó hoy con el agua en Changuinola?"]) expect(motivo(q)).toBe("consulta");

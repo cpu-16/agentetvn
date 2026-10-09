@@ -50,6 +50,9 @@ const QUE_ES = /\b(de que (se )?trata|que es|para que sirve|como funciona|que ha
 const AGENDA = /\b(noticias? (del dia|de hoy|principal(es)?|mas importantes?|destacadas?)|(temas|titulares|titulos) (del dia|de hoy|principales|mas importantes|destacados)|(lo mas importante|lo principal|lo destacado)( de| del)? ?(hoy|dia)?|cinco temas|5 temas|que (temas|noticias) (hay|tenemos|merecen)|que merece(n)? (revision|atencion)|agenda (del dia|de hoy)|(de que|que) se (habla|esta hablando) hoy|que (paso|pasa) hoy|que hay (hoy|de nuevo))\b/;
 // «¿Por qué…?» va a la regla de causalidad del motor y «la de ayer» no es la agenda de hoy (revisión de Codex).
 const CAUSA_U_OTRO_DIA = /\b(por que|porque|causa|culpa|ayer|anoche|antier|antes de ayer|semana|mes|ano|pasad[oa]s?|anterior|manana)\b|\b(19|20)\d{2}\b|\b\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\b|\b\d{1,2}\/\d{1,2}\b/; // años y fechas, no cantidades («5 temas»)
+// «¿Qué cinco temas merecen revisión… y por qué?» (CU-01 del reto): el «por qué» final pide justificar el orden, y la agenda ya da la razón de cada puntaje.
+const Y_POR_QUE = / y por que$/;
+const ELEGIR = /\b(merecen?|cinco temas|5 temas|prioriza\w*|prioridad(es)?)\b/; // solo al pedir elegir temas: «¿qué pasó hoy y por qué?» sigue en la regla de causalidad (revisión de Codex)
 const UNA = /\b(la noticia|el tema|lo mas importante|lo principal)\b/;
 // «Explícame esto» dicho a su manera: habla de lo que tiene delante y no trae un tema propio.
 const DELANTE = /\b(esto|aqui|aca|esta pantalla|esta seccion|esta pagina|lo que veo|lo que estoy viendo)\b/;
@@ -58,7 +61,7 @@ const PAL_RECORRIDO = new Set("recorrido tour paseo guiame guia ensename muestra
 const EXPLICAR = /\b(explica|explicame|explicar|muestra|muestrame|ensename|que es|que son|que significa|que muestra|como (leo|se lee|funciona)|para que sirve|donde (esta|veo)|llevame|abre|ver)\b/;
 const PAL_PARTE = new Set("tema numero uno primero primera principal del de portada agenda tablero control ficha pagina grafica grafico graficas parte seccion pantalla tabla barra boton cuadro panel la el los las esa ese esta este".split(" "));
 const PAL_PLATAFORMA = new Set("agentetvn agente tvn plataforma app aplicacion herramienta sistema mesa editorial funciona sirve hace consiste va".split(" "));
-const PAL_AGENDA = new Set("noticia noticias dia hoy tema temas titulares titulos importante importantes principal principales destacado destacada destacados destacadas cinco merecen merece revision atencion agenda habla hablando lo mas nuevo tenemos top".split(" "));
+const PAL_AGENDA = new Set("panama noticia noticias dia hoy tema temas titulares titulos importante importantes principal principales destacado destacada destacados destacadas cinco merecen merece revision atencion agenda habla hablando lo mas nuevo tenemos top".split(" "));
 const RELLENO = new Set("dame muestrame ensename listame me te nos mi tu yo le les usted porfa porfavor necesito quiero puedes podrias explicar expliques explicame explica trata tratan esto aqui aca pantalla seccion pagina vale bueno pero entonces significa muestra veo viendo estoy hecho dime cuentame sobre favor oye jarvis ok bien mira".split(" "));
 
 export function intencion(q: string, opts: { contexto?: ContextoPantalla | null; tokens?: string[] } = {}): Intencion {
@@ -92,7 +95,7 @@ export function intencion(q: string, opts: { contexto?: ContextoPantalla | null;
   if (QUE_HAGO_AQUI.test(t)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), ["Hazme un recorrido por la plataforma"]);
   if (PANTALLA.test(t) || (DELANTE.test(t) && QUE_ES.test(t) && sinTema)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), SUGERENCIAS.slice(0, 1));
   if (PLATAFORMA_RE.test(t) && (QUE_ES.test(t) || toks.length <= 3) && soloCon(PAL_PLATAFORMA)) return charla("plataforma", PLATAFORMA, ["¿Qué cinco temas merecen revisión hoy?", "¿Cuál es la noticia del día?"]);
-  if (AGENDA.test(t) && soloCon(PAL_AGENDA) && !CAUSA_U_OTRO_DIA.test(t)) return { tipo: "agenda", uno: UNA.test(t) && !/cinco|5 |temas|noticias/.test(t) };
+  if (AGENDA.test(t) && soloCon(PAL_AGENDA) && !CAUSA_U_OTRO_DIA.test(ELEGIR.test(t) ? t.replace(Y_POR_QUE, "") : t)) return { tipo: "agenda", uno: UNA.test(t) && !/cinco|5 |temas|noticias/.test(t) };
   return { tipo: "consulta" };
 }
 
