@@ -265,7 +265,8 @@ async function respuestaAjuste(q: string, eventoId: string, persona: string | un
   try {
     if (!persona) throw new ErrorAjuste("Entra a la mesa para pedir cambios a Jarvis.", 401);
     const { cambios, descartadas } = await ajustarPaquete(eventoId, q, persona);
-    return { ...base, abstener: false, conversacion: { motivo: "ajuste", texto: cambios.join("\n"), sugerencias: [] }, ajuste: { eventoId, cambios, descartadas } };
+    const texto = cambios.join("\n") + (cambios.some((c) => c.startsWith("Cambié")) ? "\nSi no te gusta, lo puedes deshacer en la ficha." : "");
+    return { ...base, abstener: false, conversacion: { motivo: "ajuste", texto, sugerencias: [] }, ajuste: { eventoId, cambios, descartadas } };
   } catch (error) {
     const texto = error instanceof Error ? error.message : "No se pudo ajustar el paquete.";
     return { ...base, abstener: true, motivo: texto, conversacion: { motivo: "ajuste", texto, sugerencias: [] } };

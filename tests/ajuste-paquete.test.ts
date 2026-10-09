@@ -118,7 +118,7 @@ test("chat conserva ficha y autoría de sesión y devuelve ajuste solo al guarda
   const r = await POST(new Request("http://localhost/api/consulta", { method: "POST", headers: { cookie }, body: JSON.stringify({ q: "Cambia el título", contexto: { ...ficha, eventoId: id } }) }));
   const j = await r.json();
   expect(j.ajuste).toMatchObject({ eventoId: id, cambios: expect.any(Array), descartadas: expect.any(Array) });
-  expect(j.conversacion.texto).toContain("Se ajustó titulo");
+  expect(j.conversacion.texto).toContain("Cambié el titular");
   expect((await db.paqueteEditado.findUnique({ where: { eventoId: id } }))!.persona).toBe("Gilberto (con Jarvis)");
   const error = await servicio.consulta("Acorta el guion", "bm25", undefined, "texto", { ...ficha, eventoId: id });
   expect(error.ajuste).toBeUndefined();
@@ -139,9 +139,12 @@ test("voz usa identidad registrada y encola el contrato ajuste", async () => {
   abrirLlamada(hilo, "Gilberto", new Date().toISOString());
   guardarContexto(hilo, { ...ficha, eventoId: id });
   try {
-    expect(await preguntarCorpus(hilo, { pregunta: "Cambia el título" })).toContain("Se ajustó titulo");
+    expect(await preguntarCorpus(hilo, { pregunta: "Cambia el título" })).toContain("Cambié el titular");
     expect(sacarAcciones(hilo)).toContainEqual(expect.objectContaining({ tipo: "mostrar", respuesta: expect.objectContaining({ ajuste: expect.objectContaining({ eventoId: id }) }) }));
     expect((await db.paqueteEditado.findUnique({ where: { eventoId: id } }))!.persona).toBe("Gilberto (con Jarvis)");
+    // la misma orden repetida enseguida (el cerebro la mandó dos veces en una prueba hablada) no se vuelve a aplicar
+    expect(await preguntarCorpus(hilo, { pregunta: "Cambia el título" })).toContain("Cambié el titular");
+    expect(sacarAcciones(hilo)).toEqual([]);
   } finally { cerrarLlamada(hilo); }
 });
 test("un invento en el borrador manual no se convierte en fuente para Jarvis", async () => {

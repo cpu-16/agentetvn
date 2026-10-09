@@ -91,6 +91,8 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
   return `Abrí la ficha de «${palabras(r[0].titulo, 14)}».`;
 }
 
+const CAMBIOS_RECIENTES = new Map<string, { t: number; texto: string }>();
+
 export async function preguntarCorpus(hilo: string, args: { pregunta?: string; eventoId?: string }): Promise<string> {
   const pregunta = String(args.pregunta ?? "").slice(0, 500).trim();
   if (!pregunta) return "No escuché la pregunta. ¿Me la repites?";
@@ -99,10 +101,15 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   if (!args.eventoId && !contextoDe(hilo)?.eventoId && esOrdenDeCambio(pregunta)) return "Para cambiar un borrador, primero abro la ficha del tema. Dime cuál: por ejemplo, el tema uno.";
   // VOZ_RESPUESTA=extractiva (plan B si la latencia pasa de 15 s): la voz usa el motor sin la redacción de Claude
   // VOZ_RESPUESTA=extractiva solo apaga la redacción con LLM; el enrutador (agenda, plataforma) sigue igual (revisión de Codex)
+  // la misma orden de cambio repetida en 30 s (el cerebro la mandó dos veces en la prueba c5f47f) no se aplica dos veces
+  const clave = esOrdenDeCambio(pregunta) ? `${hilo}|${args.eventoId || contextoDe(hilo)?.eventoId || ""}|${tokenizar(pregunta).join(" ")}` : "";
+  const previa = clave ? CAMBIOS_RECIENTES.get(clave) : undefined;
+  if (previa && Date.now() - previa.t < 30_000) return previa.texto;
   const r = await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo), personaDe(hilo));
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
   // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
   if (r.guia) { encolar(hilo, { tipo: "guia", ...r.guia }); const t = r.conversacion?.texto ?? ""; return r.conversacion?.motivo === "verificar" ? `${palabras(t, 40)} El detalle quedó en la ficha.` : t; }
+  if (clave && r.conversacion?.motivo === "ajuste") CAMBIOS_RECIENTES.set(clave, { t: Date.now(), texto: r.conversacion.texto });
   if (r.conversacion) return r.conversacion.motivo === "plataforma" ? PLATAFORMA_CORTA : r.conversacion.texto;
   if (r.agenda) return r.agenda.encabezado ? `${palabras(r.agenda.texto, 30)} La lista quedó en el panel.` : r.agenda.texto; // la mesa del rol, corta para la voz
   if (r.abstener) return `No tengo evidencia para responder eso. ${r.motivo ?? ""}`.trim();

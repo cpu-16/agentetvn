@@ -218,7 +218,8 @@ ${bloqueFuente("instruccion", "texto", instruccion)}`;
   const descartadas = paquete.llm!.descartadas;
   // El resumen nunca anuncia como aplicado algo que el filtro rechazó.
   const campos = ["titulo", "titulos", "brief", "guion", "copy", "preguntas"] as const;
-  const cambios = campos.filter((k) => JSON.stringify(base[k]) !== JSON.stringify(paquete[k])).map((k) => `Se ajustó ${k}.`);
+  const NOMBRE = { titulo: "el titular", titulos: "las propuestas de titular", brief: "el resumen", guion: "el guion", copy: "el copy", preguntas: "las preguntas" } as const; // lo lee la voz: sin nombres internos
+  const cambios = campos.filter((k) => JSON.stringify(base[k]) !== JSON.stringify(paquete[k])).map((k) => `Cambié ${NOMBRE[k]}.`);
   for (const d of descartadas) cambios.push(`No se agregó: ${d}; no está respaldado por las fuentes del tema.`);
   const rechazos = Array.isArray(j.cambios) ? j.cambios.filter((c): c is string => typeof c === "string" && c.startsWith("No se agregó:") && !esNoConfiable(c).no_confiable).map((c) => c.slice(0, 500)) : [];
   cambios.push(...rechazos);
