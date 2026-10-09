@@ -44,6 +44,11 @@ describe("enrutador del chat", () => {
     for (const q of ["¿Cuál es la noticia del día?", "cual es la noticia del dia?", "¿Qué es lo más importante hoy?"]) expect(motivo(q)).toBe("agenda:1");
     for (const q of ["Dame los 5 temas de hoy", "¿Qué cinco temas merecen revisión hoy?", "¿Qué temas hay hoy?", "¿De qué se habla hoy?", "noticias de hoy"]) expect(motivo(q)).toBe("agenda");
   });
+  test("«explícame más»: sin tema abierto explica la pantalla; con la ficha abierta va al motor sobre ese tema", () => {
+    const m = (q: string, eventoId?: string) => { const r = intencion(q, { tokens: tokenizar(q), contexto: { vista: eventoId ? "ficha" : "tablero", eventoId } }); return r.tipo === "conversacion" ? r.motivo : r.tipo; };
+    for (const q of ["explicame mas", "Explícame más", "dime más", "cuéntame más detalles"]) { expect(m(q)).toBe("pantalla"); expect(m(q, "ev_x")).toBe("consulta"); }
+    expect(m("explícame más sobre Enrique Lau")).toBe("consulta"); // con tema propio sigue siendo consulta
+  });
   test("CU-01 del reto: «…y por qué?» al final pide justificar el orden, no causas (lo encontró el recorrido del agente)", () => {
     for (const q of ["¿Qué cinco temas merecen revisión para la agenda de Panamá y por qué?", "¿Qué cinco temas merecen revisión y por qué?"]) expect(motivo(q)).toBe("agenda");
     for (const q of ["¿Por qué la noticia del día merece atención?", "¿Qué cinco temas merecen revisión y por qué cayó Lau?", "¿Qué pasó hoy y por qué?", "¿Qué pasó hoy en Panamá y por qué?"]) expect(motivo(q)).toBe("consulta");
@@ -54,6 +59,11 @@ describe("enrutador del chat", () => {
   });
   test("guía: explicar o mostrar una parte, recorrido y filtros del tablero; con tema propio sigue siendo consulta", () => {
     const tipo = (q: string) => { const r = intencion(q, { tokens: tokenizar(q) }); return r.tipo === "guia" ? `guia:${r.parte}` : r.tipo === "filtro" ? `filtro:${JSON.stringify(r.demo)}` : r.tipo; };
+    // prueba de Gilberto por chat (8-oct 22:30): «explicam esta parte de tablero» se iba a buscar noticias y «explícame las gráficas» repetía lo general
+    const enTablero = (q: string) => { const r = intencion(q, { tokens: tokenizar(q), contexto: { vista: "tablero" } }); return r.tipo === "guia" ? `guia:${r.parte}` : r.tipo; };
+    expect(enTablero("explicam esta parte de tablero")).toBe("guia:tablero-resumen");
+    expect(enTablero("explícame las gráficas")).toBe("guia:tablero-resumen");
+    expect(tipo("explícame esa gráfica de publicaciones por tema")).toBe("guia:tablero-temas");
     expect(tipo("explícame esa gráfica de publicaciones por tema")).toBe("guia:tablero-temas");
     expect(tipo("muéstrame los filtros de la agenda")).toBe("guia:agenda-filtros");
     expect(tipo("enséñame el borrador")).toBe("guia:ficha-paquete");

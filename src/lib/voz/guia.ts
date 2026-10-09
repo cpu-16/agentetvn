@@ -42,7 +42,7 @@ export const GUIA: Parte[] = [
     texto: "Aquí están las reglas del puntaje con sus pesos: treinta por ciento relevancia, veinticinco impacto, veinte urgencia, quince novedad y diez evidencia." },
   // Solo para el recorrido (claves vacías: «explícame esa gráfica» sigue yendo a la parte de cada gráfica). Filtro TVN y no
   // Economía: con un tema el mapa pasa a mostrar los eventos de ese tema y la explicación general deja de cuadrar (revisión de Codex).
-  { id: "tablero-resumen", vista: "tablero", ancla: "tablero-dias", titulo: "El tablero de señales", claves: [], demo: { tipo: "filtroTablero", medio: "TVN" },
+  { id: "tablero-resumen", vista: "tablero", ancla: "tablero-dias", titulo: "El tablero de señales", claves: ["graficas", "las graficas", "tablero", "el tablero", "tablero de senales"], demo: { tipo: "filtroTablero", medio: "TVN" },
     texto: "Este es el tablero: la línea de tiempo cuenta las publicaciones por día, el mapa las reparte por tema y las barras dicen qué medios publicaron más. En la gráfica de puntos, a la derecha va lo más relevante y arriba lo que tiene más evidencia; lo que queda abajo a la derecha es importante pero hay que verificarlo. Para mostrarte, filtré solo TVN, y con Limpiar vuelves a todo el corte." },
   { id: "control-ia", vista: "control", ancla: "control-ia", titulo: "La IA frente al método simple", claves: ["benchmark", "comparacion", "ia frente", "baseline", "metodo simple", "embeddings", "por sentido"],
     texto: "Aquí está la prueba de la IA: la búsqueda por sentido frente a la búsqueda por palabras, con las mismas consultas, incluidas las de ataque, y lo que acertó cada una." },

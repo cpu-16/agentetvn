@@ -53,6 +53,8 @@ const CAUSA_U_OTRO_DIA = /\b(por que|porque|causa|culpa|ayer|anoche|antier|antes
 // «¿Qué cinco temas merecen revisión… y por qué?» (CU-01 del reto): el «por qué» final pide justificar el orden, y la agenda ya da la razón de cada puntaje.
 const Y_POR_QUE = / y por que$/;
 const ELEGIR = /\b(merecen?|cinco temas|5 temas|prioriza\w*|prioridad(es)?)\b/; // solo al pedir elegir temas: «¿qué pasó hoy y por qué?» sigue en la regla de causalidad (revisión de Codex)
+const EXPLIC = /\bexplic\w*/g;
+const MAS = new RegExp(`${PRE}(explicame|dime|cuentame|dame)( un poco)? mas( detalles?| sobre (esto|eso)| de (esto|eso))?$|^mas detalles?$`);
 const UNA = /\b(la noticia|el tema|lo mas importante|lo principal)\b/;
 // «Explícame esto» dicho a su manera: habla de lo que tiene delante y no trae un tema propio.
 const DELANTE = /\b(esto|aqui|aca|esta pantalla|esta seccion|esta pagina|lo que veo|lo que estoy viendo)\b/;
@@ -71,9 +73,9 @@ const OBJETO = /\b(titulo|titular|guion|copy|brief|resumen|borrador|paquete|fras
 export const esOrdenDeCambio = (q: string) => { const t = norm(q); return ORDEN.test(t) && OBJETO.test(t); };
 
 export function intencion(q: string, opts: { contexto?: ContextoPantalla | null; tokens?: string[] } = {}): Intencion {
-  const t = norm(q);
+  const t = norm(q).replace(EXPLIC, "explicame"); // «explicam», «explicar», «explicacion»: el mismo pedido (prueba de Gilberto, 8-oct)
   if (opts.contexto?.eventoId && esOrdenDeCambio(q)) return { tipo: "ajustar" };
-  const toks = opts.tokens ?? t.split(" ");
+  const toks = (opts.tokens ?? t.split(" ")).map((x) => (/^explic/.test(x) ? "explicame" : x));
   const soloCon = (extra: Set<string>) => toks.every((x) => RELLENO.has(x) || DE_PREGUNTA.has(x) || extra.has(x)); // ¿trae un tema propio?
   const sinTema = soloCon(new Set());
   const charla = (motivo: Extract<Intencion, { tipo: "conversacion" }>["motivo"], texto: string, sugerencias = SUGERENCIAS): Intencion => ({ tipo: "conversacion", motivo, texto, sugerencias });
@@ -85,6 +87,8 @@ export function intencion(q: string, opts: { contexto?: ContextoPantalla | null;
   if (filtro) return { tipo: "filtro", demo: filtro };
   const p = buscarParte(q, opts.contexto?.vista);
   if (p && EXPLICAR.test(t) && soloCon(new Set([...PAL_PARTE, ...p.claves.flatMap((c) => c.split(" "))]))) return { tipo: "guia", parte: p.id };
+  // «explícame más»: con una ficha abierta va al motor sobre ese tema (Opus redacta con sus citas); si no, explica la pantalla entera
+  if (MAS.test(t)) return opts.contexto?.eventoId ? { tipo: "consulta" } : charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), SUGERENCIAS.slice(0, 1));
   if (/^(explicame|explica|ayudame|ayuda me)$/.test(t)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), ["Hazme un recorrido por la plataforma", "¿Cuál es la noticia del día?"]);
   if (SALUDO.test(t)) return charla("saludo", "¡Hola! Soy Jarvis, el agente de la mesa. ¿Sobre qué tema quieres saber?");
   if (GRACIAS.test(t)) return charla("gracias", "Con gusto. Si quieres, pregúntame por otro tema del corte.");
