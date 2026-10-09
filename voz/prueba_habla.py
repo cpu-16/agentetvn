@@ -23,6 +23,11 @@ tool("t3", "d"); fin("t3", "interrupted")                     # interrumpido: no
 P.plan_b.__defaults__ = (0.5,); tool("t4", "e"); time.sleep(1.2)  # sin turn/completed: plan B
 fin("t1", "completed")                                        # cierre repetido: no repite
 fin("t6", "completed")                                        # turno sin herramientas: frase fija, nunca la del cerebro
+TEXTOS.update({"p1": "Paso uno.", "p2": "Paso dos."})
+P.a_next = lambda ruta, cuerpo=None, timeout=60: (200, {"texto": TEXTOS[cuerpo["args"].get("k") or cuerpo["args"]["destino"]]})
+def nav(turno, destino, k): P.herramienta(1, {"tool": "navegar", "arguments": {"destino": destino, "k": k}, "threadId": "H", "turnId": turno})
+nav("t7", "siguiente", "p1"); nav("t7", "siguiente", "p2"); fin("t7", "completed")   # dos «siguiente» en un turno: solo el primero
+nav("t8", "seguido", "p1"); nav("t8", "siguiente", "p2"); fin("t8", "completed")     # «seguido»: encadena
 time.sleep(0.3)
-assert dichos == ["Texto A.", "Parte uno. Parte dos.", "Sin cierre.", P.NO_LLEGO], dichos
+assert dichos == ["Texto A.", "Parte uno. Parte dos.", "Sin cierre.", P.NO_LLEGO, "Paso uno.", "Paso uno. Paso dos."], dichos
 print("prueba_habla: OK")

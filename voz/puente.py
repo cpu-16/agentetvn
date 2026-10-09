@@ -125,6 +125,16 @@ def herramienta(rid, p):
     nombre, args, hilo, turno = p.get("tool"), p.get("arguments") or {}, p.get("threadId", ""), p.get("turnId")
     a = estado["activa"]
     mio = bool(a and a["hilo"] == hilo)
+    destino = str(args.get("destino", "")).strip().lower() if nombre == "navegar" else ""
+    if mio and destino in ("recorrido", "siguiente", "seguido"):
+        # un paso del recorrido por turno (prueba 75c0b4: avanzó dos y la voz leyó las dos con la pregunta en medio), salvo «seguido»
+        with lock:
+            t = turno_de(a, turno); repetido = destino == "siguiente" and t.get("paso") and not t.get("seguido")
+            t["paso"] = True; t["seguido"] = t.get("seguido") or destino == "seguido"
+        if repetido:
+            with lock:
+                app.stdin.write(json.dumps({"jsonrpc": "2.0", "id": rid, "result": {"contentItems": [{"type": "inputText", "text": "Ya se mostró la siguiente parte en este turno: espera a que la persona hable."}], "success": True}}) + "\n"); app.stdin.flush()
+            return
     if mio:
         with lock: turno_de(a, turno)["pendientes"] += 1
     if nombre in HERRAMIENTAS:
