@@ -40,6 +40,7 @@ describe("enrutador del chat", () => {
   });
   test("lo que pidió Gilberto por voz: explicar «esto» a su manera, la plataforma y la agenda del día", () => {
     for (const q of ["Necesito que me expliques sobre esto, de qué trata", "Pero esto aquí, ¿de qué trata?", "explícame esto por favor"]) expect(motivo(q)).toBe("pantalla");
+    for (const q of ["esta parte qué dice?", "¿qué dice aquí?"]) expect(motivo(q)).toBe("pantalla");
     for (const q of ["¿De qué trata AgenteTVN?", "Vale, sobre esto, Agente TVN, ¿de qué trata?", "¿Para qué sirve esta plataforma?", "¿Cómo funciona la plataforma?"]) expect(motivo(q)).toBe("plataforma");
     for (const q of ["¿Cuál es la noticia del día?", "cual es la noticia del dia?", "¿Qué es lo más importante hoy?"]) expect(motivo(q)).toBe("agenda:1");
     for (const q of ["Dame los 5 temas de hoy", "¿Qué cinco temas merecen revisión hoy?", "¿Qué temas hay hoy?", "¿De qué se habla hoy?", "noticias de hoy"]) expect(motivo(q)).toBe("agenda");
@@ -64,6 +65,11 @@ describe("enrutador del chat", () => {
     expect(enTablero("explicam esta parte de tablero")).toBe("guia:tablero-resumen");
     expect(enTablero("explícame las gráficas")).toBe("guia:tablero-resumen");
     expect(tipo("explícame esa gráfica de publicaciones por tema")).toBe("guia:tablero-temas");
+    // segunda prueba de Gilberto por chat (8-oct 22:41): se abstenían o buscaban noticias
+    for (const q of ["pero explicame la grafica", "explicame la grafica que toque"]) expect(enTablero(q)).toBe("guia:tablero-resumen");
+    expect(tipo("la seccion de control")).toBe("guia:control-datos");
+    expect(tipo("explícame la agenda")).toBe("guia:agenda-lista");
+    expect(tipo("¿Qué es el control de precios de Mulino?")).toBe("consulta"); // con tema propio no es la sección
     expect(tipo("explícame esa gráfica de publicaciones por tema")).toBe("guia:tablero-temas");
     expect(tipo("muéstrame los filtros de la agenda")).toBe("guia:agenda-filtros");
     expect(tipo("enséñame el borrador")).toBe("guia:ficha-paquete");

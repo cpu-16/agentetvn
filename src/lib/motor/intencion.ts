@@ -45,7 +45,7 @@ const DE_PREGUNTA = new Set("son es fue fueron paso pasa ocurrio ocurre sabe sab
 
 // La plataforma: «¿de qué trata AgenteTVN?», «¿para qué sirve esta plataforma?», «¿cómo funciona esto?».
 const PLATAFORMA_RE = /\b(agente ?tvn|agentetvn|esta plataforma|la plataforma|esta app|la app|esta aplicacion|la aplicacion|esta herramienta|este sistema|la mesa editorial|esta mesa)\b/;
-const QUE_ES = /\b(de que (se )?trata|que es|para que sirve|como funciona|que hace|explica|explicame|cuentame|de que va|en que consiste)\b/;
+const QUE_ES = /\b(de que (se )?trata|que es|que dice|para que sirve|como funciona|que hace|explica|explicame|cuentame|de que va|en que consiste)\b/;
 // La agenda del día: «¿cuál es la noticia del día?», «¿qué temas hay hoy?», «¿qué es lo más importante?», «los cinco temas».
 const AGENDA = /\b(noticias? (del dia|de hoy|principal(es)?|mas importantes?|destacadas?)|(temas|titulares|titulos) (del dia|de hoy|principales|mas importantes|destacados)|(lo mas importante|lo principal|lo destacado)( de| del)? ?(hoy|dia)?|cinco temas|5 temas|que (temas|noticias) (hay|tenemos|merecen)|que merece(n)? (revision|atencion)|agenda (del dia|de hoy)|(de que|que) se (habla|esta hablando) hoy|que (paso|pasa) hoy|que hay (hoy|de nuevo))\b/;
 // «¿Por qué…?» va a la regla de causalidad del motor y «la de ayer» no es la agenda de hoy (revisión de Codex).
@@ -54,17 +54,20 @@ const CAUSA_U_OTRO_DIA = /\b(por que|porque|causa|culpa|ayer|anoche|antier|antes
 const Y_POR_QUE = / y por que$/;
 const ELEGIR = /\b(merecen?|cinco temas|5 temas|prioriza\w*|prioridad(es)?)\b/; // solo al pedir elegir temas: «¿qué pasó hoy y por qué?» sigue en la regla de causalidad (revisión de Codex)
 const EXPLIC = /\bexplic\w*/g;
+const SECCION = /\b(portada|agenda|tablero|control)\b/;
+const PRIMERA_PARTE: Record<string, string> = { portada: "portada-cifras", agenda: "agenda-lista", tablero: "tablero-resumen", control: "control-datos" };
+const PAL_SECCION = new Set("portada agenda tablero control explicame muestrame ensename abre abreme ve vete ir llevame que es hay dice seccion parte pantalla la el los las del de en esa ese esta este".split(" "));
 const MAS = new RegExp(`${PRE}(explicame|dime|cuentame|dame)( un poco)? mas( detalles?| sobre (esto|eso)| de (esto|eso))?$|^mas detalles?$`);
 const UNA = /\b(la noticia|el tema|lo mas importante|lo principal)\b/;
 // «Explícame esto» dicho a su manera: habla de lo que tiene delante y no trae un tema propio.
-const DELANTE = /\b(esto|aqui|aca|esta pantalla|esta seccion|esta pagina|lo que veo|lo que estoy viendo)\b/;
+const DELANTE = /\b(esto|aqui|aca|esta pantalla|esta seccion|esta pagina|esta parte|lo que veo|lo que estoy viendo)\b/;
 const RECORRIDO = /\b(recorrido|tour|paseo|guiame|guia me|ensename la plataforma|muestrame la plataforma|muestrame todo|ensename todo|como se usa)\b/;
 const PAL_RECORRIDO = new Set("recorrido tour paseo guiame guia ensename muestrame todo plataforma hazme hacer haz hagamos dame un una por toda completo app aplicacion se usa usa".split(" "));
 const EXPLICAR = /\b(explica|explicame|explicar|muestra|muestrame|ensename|que es|que son|que significa|que muestra|como (leo|se lee|funciona)|para que sirve|donde (esta|veo)|llevame|abre|ver)\b/;
 const PAL_PARTE = new Set("tema numero uno primero primera principal del de portada agenda tablero control ficha pagina grafica grafico graficas parte seccion pantalla tabla barra boton cuadro panel la el los las esa ese esta este".split(" "));
 const PAL_PLATAFORMA = new Set("agentetvn agente tvn plataforma app aplicacion herramienta sistema mesa editorial funciona sirve hace consiste va".split(" "));
 const PAL_AGENDA = new Set("panama noticia noticias dia hoy tema temas titulares titulos importante importantes principal principales destacado destacada destacados destacadas cinco merecen merece revision atencion agenda habla hablando lo mas nuevo tenemos top".split(" "));
-const RELLENO = new Set("dame muestrame ensename listame me te nos mi tu yo le les usted porfa porfavor necesito quiero puedes podrias explicar expliques explicame explica trata tratan esto aqui aca pantalla seccion pagina vale bueno pero entonces significa muestra veo viendo estoy hecho dime cuentame sobre favor oye jarvis ok bien mira".split(" "));
+const RELLENO = new Set("dame muestrame ensename listame me te nos mi tu yo le les usted porfa porfavor necesito quiero puedes podrias explicar expliques explicame explica trata tratan esto aqui aca pantalla seccion pagina parte vale bueno pero entonces significa muestra veo viendo estoy hecho dime cuentame sobre favor oye jarvis ok bien mira toque toco marque seleccione elegi escogi".split(" "));
 
 // Imperativo al inicio + objeto editorial: una consulta sobre noticias no modifica nada.
 const ORDEN = /^(?:(?:oye|jarvis|por favor|porfa) )*(?:cambia|quita|elimina|borra|agrega|anade|reemplaza|acorta|hazlo|no digas|haz (?:el|la|los|las) (?:titulo|titular|guion|copy|brief|resumen|borrador|paquete))\b/; // «haz el guion más corto» sí; «haz un resumen de…» sigue siendo consulta
@@ -103,6 +106,9 @@ export function intencion(q: string, opts: { contexto?: ContextoPantalla | null;
   if (PANTALLA.test(t) || (DELANTE.test(t) && QUE_ES.test(t) && sinTema)) return charla("pantalla", explicacionFija(opts.contexto ?? { vista: "portada" }), SUGERENCIAS.slice(0, 1));
   if (PLATAFORMA_RE.test(t) && (QUE_ES.test(t) || toks.length <= 3) && soloCon(PAL_PLATAFORMA)) return charla("plataforma", PLATAFORMA, ["¿Qué cinco temas merecen revisión hoy?", "¿Cuál es la noticia del día?"]);
   if (AGENDA.test(t) && soloCon(PAL_AGENDA) && !CAUSA_U_OTRO_DIA.test(ELEGIR.test(t) ? t.replace(Y_POR_QUE, "") : t)) return { tipo: "agenda", uno: UNA.test(t) && !/cinco|5 |temas|noticias/.test(t) };
+  // «la sección de control», «explícame la agenda»: nombrar una sección sin tema propio la muestra desde su primera parte (prueba de Gilberto, 8-oct)
+  const sec = SECCION.exec(t);
+  if (sec && soloCon(PAL_SECCION)) return { tipo: "guia", parte: PRIMERA_PARTE[sec[1]] };
   return { tipo: "consulta" };
 }
 

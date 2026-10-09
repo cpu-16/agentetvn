@@ -148,7 +148,8 @@ function registrar(origen: "texto" | "voz", q: string, r: Awaited<ReturnType<typ
   try {
     const archivo = process.env.AGENTETVN_REGISTRO ?? (process.env.NODE_ENV === "test" ? "/dev/null" : "db/consultas.jsonl"); // como db/llm-intentos.jsonl; las pruebas no ensucian el registro
     mkdirSync(dirname(archivo), { recursive: true });
-    appendFileSync(archivo, JSON.stringify({ fecha: new Date().toISOString(), origen, q, modo: r.modo, abstener: r.abstener, motivo: r.motivo, regla: r.traza?.regla, evidencias: r.evidencias.map((e) => [e.id, e.score]), sobre_umbral: r.traza?.sobreUmbral, pasos: r.traza?.pasos, ms: r.ms, llm: r.redaccion ? { ...r.redaccion.llm, descartadas: r.redaccion.llm.descartadas?.length ?? 0 } : null }) + "\n");
+    const respuesta = (r.conversacion?.texto || r.agenda?.texto || (r.redaccion?.frases ?? r.afirmaciones).map((x) => x.texto).join(" ") || "").slice(0, 600); // para verificar después qué se le dijo a la persona
+    appendFileSync(archivo, JSON.stringify({ fecha: new Date().toISOString(), origen, q, respuesta, modo: r.modo, abstener: r.abstener, motivo: r.motivo, regla: r.traza?.regla, evidencias: r.evidencias.map((e) => [e.id, e.score]), sobre_umbral: r.traza?.sobreUmbral, pasos: r.traza?.pasos, ms: r.ms, llm: r.redaccion ? { ...r.redaccion.llm, descartadas: r.redaccion.llm.descartadas?.length ?? 0 } : null }) + "\n");
   } catch { /* el registro nunca tumba una respuesta */ }
 }
 
