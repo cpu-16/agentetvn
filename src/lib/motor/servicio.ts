@@ -3,6 +3,7 @@ import { actualizarTraza, conTraza } from "./tracing";
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
 import { afirmacionNoticia, cincoTemas, consultar, idsGenericos, LEYENDA } from "./consulta";
+import { explicarConversado } from "./explicar";
 import { intencion, type Intencion } from "./intencion";
 import { NOMBRE_TEMA, parte, RECORRIDO_GUIA } from "../voz/guia";
 import { tokenizar } from "./bm25";
@@ -284,6 +285,13 @@ async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: 
     : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
     : await consultaSinRegistro(q, modo, eventoId, origen === "voz" && process.env.VOZ_RESPUESTA === "extractiva"); // plan B de latencia de la voz
+  // Chat escrito: la pantalla, la plataforma o una parte de la guía (no el recorrido) se dicen conversando con Opus a partir
+  // del texto fijo, validado (sin cifras, nombres ni funciones que no estén en él). La voz sigue con el texto fijo (latencia).
+  const conversable = r.conversacion && (["pantalla", "plataforma", "ayuda"].includes(r.conversacion.motivo) || (i.tipo === "guia" && !i.recorrido));
+  if (origen === "texto" && conversable && r.conversacion) {
+    const c = await explicarConversado(q, r.conversacion.texto);
+    if (c) { r.conversacion = { ...r.conversacion, texto: c }; if (r.traza) r.traza = { ...r.traza, regla: `${r.traza.regla ?? ""} La IA lo dijo conversando a partir del texto fijo, sin agregar datos (validado).`.trim() }; }
+  }
   r.ms = Date.now() - t0; // full turn, including generation/validation
   registrar(origen, q, r);
   return r;
