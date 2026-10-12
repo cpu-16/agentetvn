@@ -204,7 +204,7 @@ def leer(proc):
         elif metodo == "thread/realtime/sdp": respuestas.get(p.get("threadId"), queue.Queue()).put(p["sdp"])
         elif metodo in ("thread/realtime/closed", "thread/realtime/error") and (a := estado["activa"]) and a["hilo"] == p.get("threadId") and a["hilo"]:
             # la voz se cayó (p. ej. «Connection reset» con OpenAI). Conectada: colgar ya y avisar, sin esperar el silencio.
-            # En la negociación: se anota y atender_oferta cuelga al terminarla (revisión de Codex).
+            # En la negociación: se anota y atender_oferta cuelga al terminarla.
             print(f"[{a['hilo'][-6:]}] realtime {metodo.rsplit('/', 1)[1]}: {p.get('message', '')}", flush=True)
             with lock:
                 conectada = a.get("conectada")
