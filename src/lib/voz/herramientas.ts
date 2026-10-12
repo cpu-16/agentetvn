@@ -102,7 +102,7 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   // sin ficha abierta, «haz el guion más corto» no es una consulta: se pide abrir el tema (antes buscaba noticias al azar)
   if (!args.eventoId && !contextoDe(hilo)?.eventoId && esOrdenDeCambio(pregunta)) return "Para cambiar un borrador, primero abro la ficha del tema. Dime cuál: por ejemplo, el tema uno.";
   // VOZ_RESPUESTA=extractiva (plan B si la latencia pasa de 15 s): la voz usa el motor sin la redacción de Claude
-  // VOZ_RESPUESTA=extractiva solo apaga la redacción con LLM; el enrutador (agenda, plataforma) sigue igual (revisión de Codex)
+  // VOZ_RESPUESTA=extractiva solo apaga la redacción con LLM; el enrutador (agenda, plataforma) sigue igual
   // la misma orden de cambio repetida en 30 s (el cerebro la mandó dos veces en la prueba c5f47f) no se aplica dos veces
   const clave = esOrdenDeCambio(pregunta) ? `${hilo}|${args.eventoId || contextoDe(hilo)?.eventoId || ""}|${tokenizar(pregunta).join(" ")}` : "";
   const previa = clave ? CAMBIOS_RECIENTES.get(clave) : undefined;
@@ -126,7 +126,7 @@ export async function explicarPantalla(hilo: string, args: { sobre?: string } = 
   if (sobre.startsWith("plataforma")) return PLATAFORMA_CORTA;
   const rol = queHaceRol(sobre); // «yo entro como periodista, ¿qué hago?» (va antes: «¿qué puedo hacer como periodista?» es del rol)
   if (rol) return rol;
-  // solo la pregunta entera: «¿qué se puede hacer con los filtros?» es de esa parte, no de las capacidades (revisión de Codex y Cursor)
+  // solo la pregunta entera: «¿qué se puede hacer con los filtros?» es de esa parte, no de las capacidades
   if (/^(capacidades|que (se puede|puedes|puedo) hacer( aqui| tu| conmigo)?|que haces( tu)?|para que sirves)$/.test(sobre.replace(/[^a-zñ ]/g, "").replace(/\s+/g, " ").trim())) return CAPACIDADES;
   const p = args.sobre ? buscarParte(args.sobre, contextoDe(hilo)?.vista) : null; // «explícame la gráfica de medios»: la muestra y la explica
   if (p) return mostrarParte(hilo, p.id);

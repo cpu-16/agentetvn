@@ -41,7 +41,7 @@ export const GUIA: Parte[] = [
   { id: "control-reglas", vista: "control", ancla: "control-reglas", titulo: "Reglas del puntaje", claves: ["reglas", "formula", "pesos", "como se calcula el puntaje"],
     texto: "Aquí están las reglas del puntaje con sus pesos: treinta por ciento relevancia, veinticinco impacto, veinte urgencia, quince novedad y diez evidencia." },
   // Solo para el recorrido (claves vacías: «explícame esa gráfica» sigue yendo a la parte de cada gráfica). Filtro TVN y no
-  // Economía: con un tema el mapa pasa a mostrar los eventos de ese tema y la explicación general deja de cuadrar (revisión de Codex).
+  // Economía: con un tema el mapa pasa a mostrar los eventos de ese tema y la explicación general deja de cuadrar.
   { id: "tablero-resumen", vista: "tablero", ancla: "tablero-dias", titulo: "El tablero de señales", claves: ["grafica", "la grafica", "graficas", "las graficas", "tablero", "el tablero", "tablero de senales"], demo: { tipo: "filtroTablero", medio: "TVN" },
     texto: "Este es el tablero: la línea de tiempo cuenta las publicaciones por día, el mapa las reparte por tema y las barras dicen qué medios publicaron más. En la gráfica de puntos, a la derecha va lo más relevante y arriba lo que tiene más evidencia; lo que queda abajo a la derecha es importante pero hay que verificarlo. Para mostrarte, filtré solo TVN, y con Limpiar vuelves a todo el corte." },
   { id: "control-ia", vista: "control", ancla: "control-ia", titulo: "La IA frente al método simple", claves: ["benchmark", "comparacion", "ia frente", "baseline", "metodo simple", "embeddings", "por sentido"],
@@ -78,7 +78,7 @@ const TEMAS_FILTRO: Record<string, string[]> = {
 };
 export const NOMBRE_TEMA: Record<string, string> = { economia: "Economía", logistica_canal: "Logística y Canal", turismo: "Turismo", servicios_publicos: "Servicios públicos", eventos_naturales: "Eventos naturales", regulacion: "Regulación", deportes: "Deportes" };
 /** «filtra el tablero por economía» → demo de filtro; «quita el filtro» → limpiar; null si no es un pedido de filtro. */
-// Solo órdenes completas: «¿cómo se filtra el agua?» o «solo las noticias de TVN sobre Enrique Lau» son consultas (revisión de Codex)
+// Solo órdenes completas: «¿cómo se filtra el agua?» o «solo las noticias de TVN sobre Enrique Lau» son consultas
 const ORDEN_FILTRO = /^(?:(?:por favor|jarvis|oye|ahora|a ver|y) )*(filtra|filtrar|filtrame|filtralo|muestrame solo|ensename solo|deja solo|pon|ponme|cambia)\b/;
 const RELLENO_FILTRO = new Set("filtra filtrar filtrame filtralo muestrame ensename deja pon ponme cambia solo el la los las lo por de del con en al a tablero graficas grafica las noticias publicaciones tema temas medio por favor jarvis oye ahora ver y que sea sean".split(" "));
 export function pedidoFiltro(texto: string): Demo | null {

@@ -137,7 +137,7 @@ export function useVoz(opts: Opts = {}) {
     const t = window.setInterval(async () => {
       const c = r.current; const hilo = c.con.hilo;
       if (!hilo) return;
-      // los plazos se evalúan cada segundo aunque una consulta de acciones siga pendiente (revisión de Codex)
+      // los plazos se evalúan cada segundo aunque una consulta de acciones siga pendiente
       const motivo = debeColgar({ oculta: document.visibilityState === "hidden", sesionVencida: !useMesa.getState().sesion, msSinActividad: Date.now() - c.ultima, enCurso: c.estado === "pensando" || c.estado === "hablando" });
       if (motivo) { colgar(motivo); optsRef.current.onAviso?.(`Colgué porque ${motivo}. Toca el orbe para hablar otra vez.`); return; }
       if (c.sondeando) return;

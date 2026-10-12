@@ -11,7 +11,7 @@ const SUGERENCIAS = ["¿Qué cinco temas merecen revisión hoy?", "¿Qué se sab
 const QUE_HAGO = "Busco en las noticias y los datos oficiales del corte de hoy y te respondo con citas, o te digo que no hay evidencia y qué falta.";
 
 // Frases completas (ancladas): una pregunta con tema propio («¿qué modelo económico propone Mulino?», «la aprehensión de
-// Enrique Lau, ¿de qué trata?») no se intercepta (revisión de Codex).
+// Enrique Lau, ¿de qué trata?») no se intercepta.
 const PRE = "^(?:(?:oye|jarvis|bueno|y|a ver) )*";
 const SALUDO = new RegExp(`${PRE}(hola|holi|hols|ola|buenas|buenos dias|buenas tardes|buenas noches|hey|ey|que tal|que xopa|xopa|saludos|hello|hi)( (jarvis|que tal|como estas|como vas))*$`);
 const GRACIAS = new RegExp(`${PRE}(gracias|muchas gracias|mil gracias|ok|okay|okey|vale|listo|perfecto|genial|excelente|bien|chevere|dale|entendido)( (jarvis|gracias))*$`);
@@ -48,11 +48,11 @@ const PLATAFORMA_RE = /\b(agente ?tvn|agentetvn|esta plataforma|la plataforma|es
 const QUE_ES = /\b(de que (se )?trata|que es|que dice|para que sirve|como funciona|que hace|explica|explicame|cuentame|de que va|en que consiste)\b/;
 // La agenda del día: «¿cuál es la noticia del día?», «¿qué temas hay hoy?», «¿qué es lo más importante?», «los cinco temas».
 const AGENDA = /\b(noticias? (del dia|de hoy|principal(es)?|mas importantes?|destacadas?)|(temas|titulares|titulos) (del dia|de hoy|principales|mas importantes|destacados)|(lo mas importante|lo principal|lo destacado)( de| del)? ?(hoy|dia)?|cinco temas|5 temas|que (temas|noticias) (hay|tenemos|merecen)|que merece(n)? (revision|atencion)|agenda (del dia|de hoy)|(de que|que) se (habla|esta hablando) hoy|que (paso|pasa) hoy|que hay (hoy|de nuevo))\b/;
-// «¿Por qué…?» va a la regla de causalidad del motor y «la de ayer» no es la agenda de hoy (revisión de Codex).
+// «¿Por qué…?» va a la regla de causalidad del motor y «la de ayer» no es la agenda de hoy.
 const CAUSA_U_OTRO_DIA = /\b(por que|porque|causa|culpa|ayer|anoche|antier|antes de ayer|semana|mes|ano|pasad[oa]s?|anterior|manana)\b|\b(19|20)\d{2}\b|\b\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\b|\b\d{1,2}\/\d{1,2}\b/; // años y fechas, no cantidades («5 temas»)
 // «¿Qué cinco temas merecen revisión… y por qué?» (CU-01 del reto): el «por qué» final pide justificar el orden, y la agenda ya da la razón de cada puntaje.
 const Y_POR_QUE = / y por que$/;
-const ELEGIR = /\b(merecen?|cinco temas|5 temas|prioriza\w*|prioridad(es)?)\b/; // solo al pedir elegir temas: «¿qué pasó hoy y por qué?» sigue en la regla de causalidad (revisión de Codex)
+const ELEGIR = /\b(merecen?|cinco temas|5 temas|prioriza\w*|prioridad(es)?)\b/; // solo al pedir elegir temas: «¿qué pasó hoy y por qué?» sigue en la regla de causalidad
 const EXPLIC = /\bexplic\w*/g;
 const SECCION = /\b(portada|agenda|tablero|control)\b/;
 const PRIMERA_PARTE: Record<string, string> = { portada: "portada-cifras", agenda: "agenda-lista", tablero: "tablero-resumen", control: "control-datos" };

@@ -66,7 +66,7 @@ test("cada consulta deja su traza en el registro (origen, pasos, evidencias), si
   } finally { delete process.env.AGENTETVN_REGISTRO; rmSync(archivo, { force: true }); }
 });
 
-test("tema que no aparece en ninguna noticia → abstención con qué falta; un indicador sin noticias sí responde (revisión de Codex)", async () => {
+test("tema que no aparece en ninguna noticia → abstención con qué falta; un indicador sin noticias sí responde", async () => {
   const { consultar } = await import("../src/lib/motor/consulta");
   const { snapshot } = await import("../src/lib/motor/servicio");
   const r = await consultar("¿Qué pasó con el Nickelau?", snapshot(), { modo: "bm25" });

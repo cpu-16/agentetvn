@@ -44,5 +44,11 @@ const NOMBRES: Record<string, string> = {
 };
 
 export function nombreMedio(medio: string): string {
+  const prueba = /^medio-([a-z])\.test$/i.exec(medio); // dominios ficticios de los casos sintéticos
+  if (prueba) return `medio de prueba ${prueba[1].toUpperCase()}`;
+  if (medio === "sintetica.agentetvn.test") return "fuente de prueba";
   return Object.hasOwn(NOMBRES, medio) ? NOMBRES[medio] : medio;
 }
+
+/** Cambia en un texto los dominios ficticios de los casos sintéticos por su nombre de caso de prueba. No usar sobre URLs. */
+export const sinDominiosDePrueba = (t: string) => t.replace(/\bmedio-[a-z]\.test\b|\bsintetica\.agentetvn\.test\b/gi, (d) => nombreMedio(d));

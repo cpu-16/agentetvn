@@ -23,6 +23,7 @@ export function Chips({ e, compacto = false }: { e: EventoResumen; compacto?: bo
       {noVer && <span className="chip ambar">{noVer.ids_noticia.length} sin independencia verificada</span>}
       {e.contradicciones.length > 0 && <span className="chip rojo">{e.contradicciones.length} contradicción{e.contradicciones.length > 1 ? "es" : ""}</span>}
       {e.sintetica && <span className="chip tinta">Caso sintético</span>}
+      {e.pagado && <span className="chip ambar">Contenido pagado</span>}
       {e.no_confiable && <span className="chip rojo">Contenido no confiable</span>}
     </div>
   );

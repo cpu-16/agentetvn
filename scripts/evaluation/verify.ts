@@ -17,7 +17,7 @@ export function expectedStages(caseId: string) {
   editorial: ["paquete", "validacion-evidencia"],
   figure: c.expected.contextRequired ? [] : ["indicador", "validacion-evidencia"],
   replicas: ["agrupacion", "agrupacion"],
-  abstention: ["consulta", "validacion-evidencia"], injection: ["consulta", "recuperacion", "validacion-evidencia"],
+  abstention: ["consulta", "validacion-evidencia"], injection: ["consulta", "validacion-evidencia"], // desde el 12-oct una orden en la pregunta se rechaza antes de buscar
   lexical: ["consulta", "recuperacion", "validacion-evidencia"], "existing-test": ["pruebas-desarrollo"],
  };
  if (!specific[c.operation]) throw new Error("No automatic stage contract for this case");

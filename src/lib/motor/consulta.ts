@@ -4,6 +4,8 @@ import { coseno, DIM, embeber, MODELO, modeloDisponible } from "./embeddings";
 import { buscarBM25, indexarBM25, tokenizar, type BM25 } from "./bm25";
 import { CONCEPTO_INDICADOR, idIndicador } from "./contexto";
 import { temaDesconocido } from "./intencion";
+import { esOrdenEnPregunta } from "./inyeccion";
+import { nombreMedio, sinDominiosDePrueba } from "../medios";
 import { leerScoring } from "./config";
 import { INDICADORES, PAISES } from "../ingesta/bancomundial";
 import type { Afirmacion, Contradiccion, Evento, Indicador, MetaLLM, Noticia } from "./contrato";
@@ -126,7 +128,11 @@ function responderCifra(q: string, snap: Snapshot, t0: number, modo: Respuesta["
 const fmtValor = (v: number | null, unidad: string) => (v === null ? "nulo" : unidad === "personas" ? Math.round(v).toLocaleString("es-PA") : (Math.round(v * 100) / 100).toLocaleString("es-PA", { maximumFractionDigits: 2 }));
 export const afirmacionIndicador = (i: Indicador): Afirmacion => ({ texto: `${nombreIndicador(i.indicador_id)} de ${i.pais_iso3} en ${i.anio}: ${fmtValor(i.valor, i.unidad)} ${i.unidad} (Banco Mundial; contexto histórico).`, tipo: "hecho_reportado", evidence_id: idIndicador(i), campo: "valor", alcance: "fila_indicador" });
 export const evidenciaIndicador = (i: Indicador): Evidencia => ({ id: idIndicador(i), tipo: "indicador", resumen: `${i.pais_iso3}, ${i.indicador_id}, ${i.anio}: ${fmtValor(i.valor, i.unidad)} ${i.unidad} (${i.licencia})`, score: 1 });
-export const afirmacionNoticia = (n: Noticia): Afirmacion => ({ texto: `El titular de ${n.medio} (${hora(n.fecha_publicacion ?? n.fecha_deteccion)}${n.fecha_publicacion ? "" : ", fecha de detección"}) reporta: «${n.titulo}».`, tipo: "hecho_reportado", evidence_id: n.id_noticia, campo: "titulo", alcance: "titular_metadatos" });
+/** Los casos sintéticos llevan dominios ficticios (medio-a.test): al citarlos se dice que son casos de prueba. */
+export const medioDe = (n: Noticia) => (n.sintetica ? nombreMedio(n.medio) : n.medio);
+/** Publirreportaje: contenido pagado del medio, no nota informativa (no entra a «Cinco para hoy» ni a las mesas). */
+export const esPagado = (n?: Noticia) => !!n && /\/publirreportajes?\//i.test(n.url);
+export const afirmacionNoticia = (n: Noticia): Afirmacion => ({ texto: `${esPagado(n) ? "El publirreportaje (contenido pagado)" : "El titular"} de ${medioDe(n)} (${hora(n.fecha_publicacion ?? n.fecha_deteccion)}${n.fecha_publicacion ? "" : ", fecha de detección"}) reporta: «${n.titulo}».`, tipo: "hecho_reportado", evidence_id: n.id_noticia, campo: "titulo", alcance: "titular_metadatos" });
 /** Oraciones del extracto del RSS como hechos reportados (campo descripcion); una declaración atribuida («X dijo/explicó») se marca como declaración. */
 export const afirmacionesExtracto = (n: Noticia, max = 3): Afirmacion[] =>
   (n.descripcion || "")
@@ -134,7 +140,7 @@ export const afirmacionesExtracto = (n: Noticia, max = 3): Afirmacion[] =>
     .map((o) => o.trim())
     .filter((o) => o.length > 25)
     .slice(0, max)
-    .map((o) => ({ texto: `Según el extracto de ${n.medio}: ${o.endsWith(".") ? o : o + "."}`, tipo: /\b(dijo|explicó|aseguró|afirmó|señaló|indicó|sostuvo|según)\b/i.test(o) ? ("declaracion" as const) : ("hecho_reportado" as const), evidence_id: n.id_noticia, campo: "descripcion", alcance: "titular_metadatos" as const }));
+    .map((o) => ({ texto: `Según el extracto de ${medioDe(n)}: ${o.endsWith(".") ? o : o + "."}`, tipo: /\b(dijo|explicó|aseguró|afirmó|señaló|indicó|sostuvo|según)\b/i.test(o) ? ("declaracion" as const) : ("hecho_reportado" as const), evidence_id: n.id_noticia, campo: "descripcion", alcance: "titular_metadatos" as const }));
 
 async function consultarImpl(q: string, snap: Snapshot, opts: { modo?: "embeddings" | "bm25"; k?: number; soloIds?: string[] } = {}): Promise<Respuesta> {
   const t0 = Date.now();
@@ -142,12 +148,15 @@ async function consultarImpl(q: string, snap: Snapshot, opts: { modo?: "embeddin
   const k = opts.k ?? cfg.k;
   const usarEmb = opts.modo !== "bm25" && snap.embeddings && (await modeloDisponible());
   const modo: Respuesta["modo"] = usarEmb ? "embeddings" : "bm25";
+  // T07 en la pregunta: una orden para saltarse las reglas o sacar el prompt/las claves no se obedece ni se busca
+  if (esOrdenEnPregunta(q))
+    return { abstener: true, motivo: "No sigo órdenes para cambiar mis reglas, ni muestro mis instrucciones internas ni claves. Respondo solo con lo que dicen las noticias y los indicadores del corte.", faltante: "nada: esa orden no se cumple", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA, traza: porRegla(modo, k, "Orden para saltarse las reglas: no se obedece ni se busca.") };
   // causalidad/culpa/pérdidas: abstención ANTES de cualquier otra rama (también si menciona un indicador)
   // \b no funciona tras una vocal acentuada («qué»): se usan límites Unicode
   if (/(?<![\p{L}])(por qu[eé]|caus[oó]|culpa|culpable|p[eé]rdidas?|quebr|impago|fraude)/iu.test(q))
     return { abstener: true, motivo: "El corpus (titulares y metadatos) no permite establecer causas, culpas ni pérdidas.", faltante: "cobertura con fuentes primarias y lectura completa de los artículos", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA, traza: porRegla(modo, k, "Pide causas, culpas o pérdidas: me abstengo antes de buscar, porque los titulares no alcanzan para eso.") };
   // fuera de alcance (§2 del reto): datos de clientes, crédito, solvencia, audiencia, expedientes, secretos
-  if (/(?<![\p{L}])(cliente|calificaci[oó]n crediticia|solvencia|riesgo de cr[eé]dito|cartera|rating|audiencia|expediente|c[eé]dula|token|contraseña|clave de)/iu.test(q))
+  if (/(?<![\p{L}])(cliente|calificaci[oó]n crediticia|solvencia|riesgo de cr[eé]dito|cartera|rating|audiencia|expediente|c[eé]dula|token|contraseña|clave de (la )?api|clave de acceso)/iu.test(q))
     return { abstener: true, motivo: "Fuera del alcance del reto: no hay datos de clientes, crédito, solvencia, audiencia ni expedientes en el corpus, y el agente no maneja secretos.", faltante: "nada: esta consulta no se responde desde este sistema", afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA, traza: porRegla(modo, k, "Fuera del alcance del reto: no se busca.") };
   const cifra = responderCifra(q, snap, t0, modo);
   if (cifra) return { ...cifra, traza: porRegla(modo, k, "Pide una cifra oficial: la leí directo de la serie del Banco Mundial, sin búsqueda por sentido.") };
@@ -163,7 +172,7 @@ async function consultarImpl(q: string, snap: Snapshot, opts: { modo?: "embeddin
   let candidatos: { id: string; score: number }[] = [];
   let modoEfectivo: Respuesta["modo"] = modo;
   let traza: Traza | undefined;
-  const mejores = (orden: { id: string; score: number }[], usadas: Set<string>) => orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })); // por pertenencia (revisión de Codex)
+  const mejores = (orden: { id: string; score: number }[], usadas: Set<string>) => orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: medioDe(porId.get(c.id)!), titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })); // por pertenencia
   if (usarEmb) {
     try {
       const t1 = Date.now();
@@ -192,21 +201,21 @@ async function consultarImpl(q: string, snap: Snapshot, opts: { modo?: "embeddin
     const orden = await conTraza("recuperacion", { snapshot: snap.huella, modo: "bm25" }, async () => buscarBM25(idx, q, k * 3).filter((c) => permitida(c.id)), "retriever");
     candidatos = orden.filter((c) => qTokens.filter((t) => tokensDe.get(c.id)?.has(t)).length >= minimo).slice(0, k);
     const usadas = new Set(candidatos.map((c) => c.id));
-    traza = { modo: "bm25", comparadas: idx.docs.length, sobreUmbral: candidatos.length, k, mejores: orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: porId.get(c.id)!.medio, titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })), pasos: [{ paso: "buscar palabras", ms: Date.now() - t1 }] };
+    traza = { modo: "bm25", comparadas: idx.docs.length, sobreUmbral: candidatos.length, k, mejores: orden.slice(0, k + 3).map((c) => ({ id: c.id, medio: medioDe(porId.get(c.id)!), titulo: porId.get(c.id)!.titulo, score: r3(c.score), usada: usadas.has(c.id) })), pasos: [{ paso: "buscar palabras", ms: Date.now() - t1 }] };
   }
   if (!candidatos.length)
     return { abstener: true, motivo: "No hay evidencia en el corte que responda la consulta.", faltante: "noticias o indicadores sobre ese tema dentro de la ventana del corte", afirmaciones: [], evidencias: [], contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA, traza };
   // si se pide una cantidad y ningún titular/extracto recuperado contiene una cifra, lo recuperado es «relacionado», no «respuesta»
   const tieneCifra = (t: string) => [...t.matchAll(/\d+(?:[.,]\d+)?/g)].some((m) => !/^(19|20)\d{2}$/.test(m[0])); // un año suelto no es una cifra
   if (pideCantidad && !candidatos.some((c) => tieneCifra(`${porId.get(c.id)!.titulo} ${porId.get(c.id)!.descripcion}`)))
-    return { abstener: true, motivo: "Las publicaciones relacionadas no contienen la cifra solicitada; no se infiere un número.", faltante: `la cifra pedida con su fuente y período; publicaciones relacionadas: ${candidatos.slice(0, 3).map((c) => porId.get(c.id)!.medio).join(", ")}`, afirmaciones: [], evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${porId.get(c.id)!.medio} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })), contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA, traza };
+    return { abstener: true, motivo: "Las publicaciones relacionadas no contienen la cifra solicitada; no se infiere un número.", faltante: `la cifra pedida con su fuente y período; publicaciones relacionadas: ${candidatos.slice(0, 3).map((c) => porId.get(c.id)!.medio).join(", ")}`, afirmaciones: [], evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${medioDe(porId.get(c.id)!)} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })), contradicciones: [], modo: modoEfectivo, ms: Date.now() - t0, leyenda: LEYENDA, traza };
   const noticias = candidatos.map((c) => porId.get(c.id)!);
   const eventos = snap.eventos.filter((e) => e.ids_noticia.some((i) => candidatos.some((c) => c.id === i)));
   return {
     abstener: false,
     afirmaciones: noticias.map(afirmacionNoticia),
-    evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${porId.get(c.id)!.medio} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })),
-    contradicciones: eventos.flatMap((e) => e.contradicciones.filter((c) => permitida(c.a) && permitida(c.b))),
+    evidencias: candidatos.map((c) => ({ id: c.id, tipo: "noticia" as const, resumen: `${medioDe(porId.get(c.id)!)} · ${porId.get(c.id)!.titulo}`, score: Math.round(c.score * 1000) / 1000 })),
+    contradicciones: eventos.flatMap((e) => e.contradicciones.filter((c) => permitida(c.a) && permitida(c.b)).map((c) => ({ ...c, detalle: sinDominiosDePrueba(c.detalle) }))),
     modo: modoEfectivo,
     ms: Date.now() - t0,
     leyenda: LEYENDA,
@@ -224,6 +233,7 @@ export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[];
   for (const e of snap.eventos) {
     if (e.no_confiable || e.tema === "deportes" || e.tema === "otro" || e.ids_noticia.some((i) => porId.get(i)?.sintetica)) continue;
     if (generico.has(e.representante)) continue; // sin titular real no se puede revisar desde la portada
+    if (e.ids_noticia.every((i) => esPagado(porId.get(i)))) continue; // publirreportaje: contenido pagado, no agenda
     if ((porTema.get(e.tema) ?? 0) >= 2) continue;
     porTema.set(e.tema, (porTema.get(e.tema) ?? 0) + 1);
     elegidos.push(e);

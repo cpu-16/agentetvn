@@ -59,7 +59,7 @@ const esquema = z.object({
   faltantes: z.array(texto).min(1).max(6), preguntas: z.tuple([texto, texto, texto]),
   abstener: z.boolean(), modo: z.literal("extractivo"), leyenda: z.literal(LEYENDA),
 });
-// El reto pide un boletín de entorno, nunca consejo de compra, venta o inversión (revisión de Cursor, 7-oct)
+// El reto pide un boletín de entorno, nunca consejo de compra, venta o inversión
 const CONSEJO = /\b(compren|comprar|vendan|vender|inviert[ae]n?|invertir|conviene (comprar|vender|invertir|entrar|salir)|recomendamos|recomiendo|recomendaci[oó]n de (compra|venta|inversi[oó]n)|sobreponderar|infraponderar|tomar ganancias)\b/i;
 export function validarBoletin(value: unknown, ev: Evento, noticias: Noticia[], indicadores: Indicador[], huella: string):
   { ok: true; boletin: BoletinBancario } | { ok: false; error: string } {

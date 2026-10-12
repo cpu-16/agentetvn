@@ -48,10 +48,10 @@ describe("herramientas", () => {
     expect(h.navegar("h1", { destino: "final" })).toContain("final");
     expect(h.navegar("h1", { destino: "atrás" })).toContain("anterior");
     expect(sacarAcciones("h1")).toEqual([{ tipo: "desplazar", direccion: "abajo" }, { tipo: "desplazar", direccion: "arriba" }, { tipo: "desplazar", direccion: "final" }, { tipo: "atras" }]);
-    for (const raro of ["constructor", "__proto__", "toString"]) expect(h.navegar("h1", { destino: raro })).toContain("No puedo abrir"); // lista cerrada (revisión de Codex)
+    for (const raro of ["constructor", "__proto__", "toString"]) expect(h.navegar("h1", { destino: raro })).toContain("No puedo abrir"); // lista cerrada
     expect(sacarAcciones("h1")).toHaveLength(0);
   });
-  test("«siguiente» sin recorrido no abre nada; navegar a la sección abierta no borra sus filtros (revisión de Codex)", () => {
+  test("«siguiente» sin recorrido no abre nada; navegar a la sección abierta no borra sus filtros", () => {
     expect(h.navegar("h1", { destino: "siguiente" })).toContain("No estamos en un recorrido");
   });
   test("«abre la ficha del tema número cinco»: el número es el de «Cinco para hoy» (prueba hablada de Gilberto, 8-oct)", async () => {

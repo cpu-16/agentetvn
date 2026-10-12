@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 voz/puente.py --check >/dev/null && echo "--check local: OK"
-TOKEN=$(ssh prox "pct exec 130 -- grep -oP '^VOZ_TOKEN=\K.+' /opt/agentetvn/.env")
+TOKEN=$(ssh pve "pct exec 132 -- grep -oP '^VOZ_TOKEN=\K.+' /opt/agentetvn/.env")
 [ ${#TOKEN} -ge 16 ] || { echo "falta VOZ_TOKEN en /opt/agentetvn/.env de AgenteTVN"; exit 1; }
 tmp=$(mktemp -d); cp voz/puente.py voz/app_server_falso.py deploy/agentetvn-voz.service deploy/instalar-voz-en-ct.sh "$tmp/"
 printf 'VOZ_TOKEN=%s\nNEXT_URL=https://agentetvn.ciberpty.com\nVOZ=maple\nMODELO=gpt-6-luna\n' "$TOKEN" > "$tmp/env"; chmod 600 "$tmp/env"

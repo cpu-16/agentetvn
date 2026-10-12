@@ -2,13 +2,14 @@ import { actualizarTraza, conTraza } from "./tracing";
 // Capa de servicio usada por las rutas API (y por las pruebas sin HTTP).
 import { db } from "../db";
 import { cargarSnapshot, type Snapshot } from "./cargar";
-import { afirmacionNoticia, cincoTemas, consultar, idsGenericos, LEYENDA } from "./consulta";
+import { afirmacionNoticia, cincoTemas, consultar, esPagado, idsGenericos, LEYENDA } from "./consulta";
 import { explicarConversado } from "./explicar";
 import { intencion, type Intencion } from "./intencion";
 import { NOMBRE_TEMA, parte, RECORRIDO_GUIA } from "../voz/guia";
 import { tokenizar } from "./bm25";
 import type { ContextoPantalla } from "../voz/catalogo";
 import { fuentesPaquete, generarPaquete } from "./paquete";
+import { sinDominiosDePrueba } from "../medios";
 import { conEvidenciaVigente, faltaPorEvidencia } from "./evidencia";
 import { resumenCorte } from "./tablero";
 import { MESA, accionSugerida, tocaA, type RolMesa } from "../roles";
@@ -36,7 +37,7 @@ export async function agenda() {
   const resumen = (e: Evento) => {
     const rep = porId.get(e.representante);
     // revisable: misma regla que «Cinco para hoy» (sin título de página como «Preview - …», ni deportes u otros): la usan las mesas por rol
-    return { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica), estado_revision: ultimo.get(e.id) ?? ("nuevo" as EstadoRevision), publicaciones: e.ids_noticia.length, revisable: !generico.has(e.representante) && e.tema !== "deportes" && e.tema !== "otro" };
+    return { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica), pagado: e.ids_noticia.every((i) => esPagado(porId.get(i))), estado_revision: ultimo.get(e.id) ?? ("nuevo" as EstadoRevision), publicaciones: e.ids_noticia.length, revisable: !generico.has(e.representante) && e.tema !== "deportes" && e.tema !== "otro" && !e.ids_noticia.every((i) => esPagado(porId.get(i))) };
   };
   return { corteUTC: snap.manifest.fecha_corte_UTC, version: snap.manifest.version, resumen: resumenCorte(snap), eventos: snap.eventos.map(resumen), cinco: cincoTemas(snap).map((c) => ({ ...c, evento: resumen(c.evento) })) };
 }
@@ -89,7 +90,7 @@ async function componerPaquete(id: string, persona: string, forzar: boolean): Pr
   actualizarTraza({ cache: "miss", snapshot: snap.huella });
   const base = generarPaquete(e, snap.noticias, snap.indicadores);
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
-  const contexto = `Tema: ${e.tema}. Prioridad P ${e.P} (${e.rango}). Estado de la evidencia: ${e.estado_evidencia}. ${e.ids_noticia.length} publicación(es); procedencias: ${e.procedencias.map((x) => `${x.nombre} (${x.tipo})`).join(", ")}.${e.contradicciones.length ? ` Contradicciones abiertas: ${e.contradicciones.map((c) => c.detalle).join("; ")}.` : ""}`;
+  const contexto = sinDominiosDePrueba(`Tema: ${e.tema}. Prioridad P ${e.P} (${e.rango}). Estado de la evidencia: ${e.estado_evidencia}. ${e.ids_noticia.length} publicación(es); procedencias: ${e.procedencias.map((x) => `${x.nombre} (${x.tipo})`).join(", ")}.${e.contradicciones.length ? ` Contradicciones abiertas: ${e.contradicciones.map((c) => c.detalle).join("; ")}.` : ""}`);
   const p = await redactarOExtractivo(base, fuentesPaquete(base, porId), contexto, snap.huella);
   const ahora = await db.paqueteEditado.findUnique({ where: { eventoId: id } });
   if (ahora && ahora.updatedAt > t0) // alguien guardó una edición mientras la IA redactaba (~40 s): no se pisa

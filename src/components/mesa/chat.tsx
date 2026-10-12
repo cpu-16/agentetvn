@@ -78,7 +78,7 @@ export function ChatAgente() {
   const enFicha = vista === "ficha" && !!eventoId;
   const ambito = enFicha && soloTema ? eventoId : null;
 
-  // Foco: entra al cuadro al abrir y vuelve al botón al cerrar. En el celular no: el teclado tapaba la hoja (revisión de Cursor).
+  // Foco: entra al cuadro al abrir y vuelve al botón al cerrar. En el celular no: el teclado tapaba la hoja.
   useEffect(() => {
     if (!chatAbierto) return;
     const t = esCelular(window.innerWidth) ? undefined : setTimeout(() => entrada.current?.focus(), 60);
@@ -193,7 +193,7 @@ export function ChatAgente() {
         </button>
       </div>
       <p className="solo-lector" aria-live="polite" aria-atomic="true">{anuncio}</p>
-      <p className="solo-lector" aria-live="polite" aria-atomic="true">{activa ? `Voz: ${ETIQUETA_ORBE[orbe]}.` : ""}</p>{/* el lector oye cada cambio de estado de la voz (revisión de Cursor) */}
+      <p className="solo-lector" aria-live="polite" aria-atomic="true">{activa ? `Voz: ${ETIQUETA_ORBE[orbe]}.` : ""}</p>{/* el lector oye cada cambio de estado de la voz */}
       <AnimatePresence>
         {chatAbierto && (
           <motion.div

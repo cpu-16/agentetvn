@@ -6,7 +6,8 @@ import { conTraza } from "./tracing";
 import { appendFileSync } from "fs";
 import type { Afirmacion, MetaLLM, Noticia, Paquete, Tipo } from "./contrato";
 import { bloqueFuente, esNoConfiable } from "./inyeccion";
-import { hora } from "./consulta";
+import { esPagado, hora } from "./consulta";
+import { nombreMedio } from "../medios";
 
 export interface Fuente { id: string; campo: string; alcance: Afirmacion["alcance"]; texto: string }
 
@@ -52,7 +53,7 @@ export const fuenteNoticia = (n: Noticia, notas: string[] = []): Fuente => ({
   id: n.id_noticia,
   campo: "titulo",
   alcance: "titular_metadatos",
-  texto: [`medio: ${n.medio}`, `fecha: ${hora(n.fecha_publicacion ?? n.fecha_deteccion)}`, `titular: ${n.titulo}`, n.descripcion ? `extracto: ${n.descripcion}` : "", ...notas].filter(Boolean).join("\n"),
+  texto: [`medio: ${n.sintetica ? `${nombreMedio(n.medio)} (caso de prueba sintético creado por el equipo, no es un medio real; dilo así)` : n.medio}`, esPagado(n) ? "tipo: publirreportaje (contenido pagado por un anunciante, no nota informativa; dilo)" : "", `fecha: ${hora(n.fecha_publicacion ?? n.fecha_deteccion)}`, `titular: ${n.titulo}`, n.descripcion ? `extracto: ${n.descripcion}` : "", ...notas].filter(Boolean).join("\n"),
 });
 
 const PAIS: Record<string, string> = { PAN: "Panamá", CRI: "Costa Rica", COL: "Colombia", DOM: "República Dominicana", MEX: "México", GTM: "Guatemala" };
@@ -193,7 +194,7 @@ export function validarPaquete(base: Paquete, fuentes: Fuente[], j: Record<strin
     copy: copy.length ? copy : base.copy,
     preguntas: preguntas.length === 3 ? preguntas : base.preguntas,
     verificaciones: [
-      // al ajustar, la base ya trae las líneas de la IA de la vuelta anterior: no se repiten (revisión de Cursor)
+      // al ajustar, la base ya trae las líneas de la IA de la vuelta anterior: no se repiten
       ...base.verificaciones.filter((v) => !v.startsWith("Guion incompleto") && !v.startsWith("Vacío señalado por la IA") && !/^\d+ frase\(s\) de la IA descartada/.test(v)),
       ...(pg < 110 ? [`Guion incompleto (${pg} palabras citadas; 45 s requieren ~110): faltan hechos con cita, no se rellena.`] : []),
       ...vacios.map((v) => `Vacío señalado por la IA: ${v}`),

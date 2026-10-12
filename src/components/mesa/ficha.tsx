@@ -180,7 +180,7 @@ export function Ficha({ id }: { id: string }) {
               <Button size="sm" variant={modalidad === "tvn" ? "default" : "outline"} aria-pressed={modalidad === "tvn"} onClick={() => setModalidad("tvn")}>Editorial TVN</Button>
               <Button size="sm" variant={modalidad === "banca" ? "default" : "outline"} aria-pressed={modalidad === "banca"} onClick={() => setModalidad("banca")}>Análisis bancario</Button>
             </div>
-            {/* oculto, no desmontado: cambiar de modalidad no borra lo que se estaba editando del paquete (revisión de Cursor) */}
+            {/* oculto, no desmontado: cambiar de modalidad no borra lo que se estaba editando del paquete */}
             <div hidden={modalidad !== "tvn"}><PaqueteYRevision eventoId={id} paquete={d.paquete} revision={d.revision} historial={d.historial} onCita={setCita} onCambio={cargar} /></div>
             {modalidad === "banca" && <BancaYRevision key={id} eventoId={id} onCita={setCita} />}
           </div>

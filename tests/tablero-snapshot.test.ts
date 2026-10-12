@@ -1,4 +1,4 @@
-// Regresión sobre el snapshot v1 real con los números recalculados por fuera (revisión de Codex del 6-oct, sin sintéticos):
+// Regresión sobre el snapshot v1 real con los números recalculados por fuera (6-oct, sin sintéticos):
 // TVN 85 publicaciones y 74 procedencias; regulación el 1-oct: 7; con TVN elegido, prensa.com sigue en 75 entre las alternativas.
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "fs";
