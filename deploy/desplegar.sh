@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Despliega el repo (commit actual) al CT 132 `agentetvn` de ciber (alias ssh pve; antes CT 130 de prox): bundle git → pct push → build → systemd. Verifica por contenido.
+# Despliega el repo (commit actual) al CT 132 `agentetvn` de prox (desde el 13-oct; si el HA lo pasó a ciber, NODO=pve): bundle git → pct push → build → systemd. Verifica por contenido.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-CT=132; NODO=pve; REF=$(git rev-parse --short HEAD)
+CT=132; NODO=prox; REF=$(git rev-parse --short HEAD)
 git bundle create /tmp/agentetvn.bundle HEAD >/dev/null 2>&1
 scp -q /tmp/agentetvn.bundle $NODO:/tmp/agentetvn.bundle
 ssh $NODO "pct push $CT /tmp/agentetvn.bundle /tmp/agentetvn.bundle >/dev/null && pct push $CT /dev/stdin /tmp/agentetvn.service >/dev/null" < deploy/agentetvn.service
