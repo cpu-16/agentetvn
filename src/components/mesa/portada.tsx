@@ -62,7 +62,7 @@ export function Portada() {
 
   const cargando = !data;
   const resumen = data?.resumen; // misma definición que el tablero (resumenCorte): sin casos sintéticos ni fuentes no confiables
-  const top = data ? data.eventos.filter((e) => !e.sintetica && !e.no_confiable).slice(0, 10) : [];
+  const top = data ? data.eventos.filter((e) => !e.sintetica && !e.no_confiable && e.revisable !== false).slice(0, 10) : []; // misma regla que «Cinco para hoy»: sin títulos de página («Preview - …») ni publirreportajes
   const item = (e: (typeof top)[number], decorativo = false) => (
     <button key={`${e.id}-${decorativo ? "copia" : "lista"}`} className="ticker-item presionable" onClick={() => irA("ficha", e.id)} aria-hidden={decorativo || undefined} tabIndex={decorativo ? -1 : 0}>
       <span className="p">P {Math.round(e.P)}</span>
