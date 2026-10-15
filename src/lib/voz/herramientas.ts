@@ -10,6 +10,8 @@ import { personaDe, contextoDe, encolar, guardarContexto, momentoPaso, pasoRecor
 const DESTINOS: VistaVoz[] = ["portada", "agenda", "tablero", "control", "ficha"];
 const NOMBRE: Record<VistaVoz, string> = { portada: "la portada", agenda: "la agenda", tablero: "el tablero", control: "Control", ficha: "la ficha" };
 const palabras = (t: string, max: number) => { const w = t.split(/\s+/); return w.length > max ? w.slice(0, max).join(" ") + "…" : t; };
+/** Como palabras, pero termina en el último punto: la voz no corta a mitad de frase. ponytail: un «. » dentro de un titular también cuenta como fin. */
+const hastaFrase = (t: string, max: number) => { const c = palabras(t, max); const i = c.endsWith("…") ? c.lastIndexOf(". ") : -1; return i > 0 ? c.slice(0, i + 1) : c; };
 
 /** Eventos cuyo titular comparte al menos la mitad de las palabras de la consulta, mejor primero. */
 export function buscarEventos(texto: string, max = 3) {
@@ -113,7 +115,7 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   if (r.guia) { encolar(hilo, { tipo: "guia", ...r.guia }); const t = r.conversacion?.texto ?? ""; return r.conversacion?.motivo === "verificar" ? `${palabras(t, 40)} El detalle quedó en la ficha.` : t; }
   if (clave && r.conversacion?.motivo === "ajuste") CAMBIOS_RECIENTES.set(clave, { t: Date.now(), texto: r.conversacion.texto });
   if (r.conversacion) return r.conversacion.motivo === "plataforma" ? PLATAFORMA_CORTA : r.conversacion.texto;
-  if (r.agenda) return r.agenda.encabezado ? `${palabras(r.agenda.texto, 30)} La lista quedó en el panel.` : r.agenda.texto; // la mesa del rol, corta para la voz
+  if (r.agenda) return r.agenda.encabezado ? `${hastaFrase(r.agenda.texto, 30)} La lista quedó en el panel.` : r.agenda.texto; // la mesa del rol, corta para la voz
   if (r.abstener) return `No tengo evidencia para responder eso. ${r.motivo ?? ""}`.trim();
   const frases = (r.redaccion?.frases ?? r.afirmaciones).map((a) => a.texto);
   return `${palabras(frases.slice(0, 2).join(" "), 45)} El detalle con las citas quedó en el panel.`;

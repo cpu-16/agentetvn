@@ -21,6 +21,8 @@ describe("enrutador del chat", () => {
   test("la mesa del rol y el trabajo de un tema no buscan; las preguntas con tema propio sí (7-oct)", () => {
     const tipo = (q: string) => { const r = intencion(q, { tokens: tokenizar(q) }); return r.tipo === "verificar" || r.tipo === "titulares" ? `${r.tipo}:${r.n}` : r.tipo; };
     for (const q of ["¿Qué me toca hoy?", "¿qué tengo pendiente?", "¿Por dónde empiezo?"]) expect(tipo(q)).toBe("mesa");
+    for (const q of ["Publícalo", "¿Lo puedes publicar?", "apruébalo ya", "publica el borrador", "Aprueba el tema uno", "¿se puede publicar?", "¿Puedes publicarlo en redes?"]) expect(tipo(q)).toBe("conversacion"); // 15-oct: leía titulares al azar
+    for (const q of ["¿Qué publicó TVN sobre Enrique Lau?", "¿qué aprobó la Asamblea?", "publicaron la ley de APP"]) expect(tipo(q)).toBe("consulta");
     expect(tipo("¿Qué falta verificar del tema uno?")).toBe("verificar:0");
     expect(tipo("qué falta verificar")).toBe("verificar:null");
     expect(tipo("Prepárame los titulares del tema número cinco")).toBe("titulares:4");

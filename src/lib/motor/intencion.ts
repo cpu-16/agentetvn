@@ -24,6 +24,9 @@ const QUE_HAGO_AQUI = new RegExp(`${PRE}(ya )?(estoy (aqui|aca) )?(y )?(que se h
 // «¿Qué hace un periodista?», «yo entro como productor, ¿qué hago?»: el rol que se elige al entrar.
 const PAL_ROL = new Set("editor editora periodista productor productora editores periodistas productores analista analistas bancario bancaria rol mi como soy entro entre yo un una que hace hago hacer debo tengo funcion sirve para creo es lo".split(" "));
 
+// «Publícalo», «¿lo puedes aprobar?»: no busca noticias (el 15-oct leía titulares al azar); «¿qué publicó TVN?» sigue siendo consulta.
+const PUBLICAR = /\b(publica\w*|publiquemos|aprueba\w*|aprobar\w*|aprobemos)\b/;
+const PAL_PUBLICAR = new Set("publica publicalo publicala publicar publicarlo publicarla publicas publiquemos aprueba apruebalo apruebala aprobar aprobarlo aprobarla apruebas aprobemos lo la ya ahora el este esta borrador paquete guion tema de una vez puede se en redes web numero uno dos tres cuatro cinco".split(" "));
 // La mesa del rol: «¿qué me toca hoy?», «mis pendientes», «¿por dónde empiezo?».
 const MESA_RE = /\b(que me toca|que (tengo|hay) (pendiente|por hacer)|mis pendientes|mi mesa|mi cola|que hago hoy|por donde (empiezo|arranco)|que debo hacer hoy|que tengo que hacer hoy)\b/;
 const PAL_MESA = new Set("que me toca toca hoy a mi tengo hay pendiente pendientes por hacer mis mesa cola hago donde empiezo arranco debo tengo que hacer y ahora".split(" "));
@@ -97,6 +100,7 @@ export function intencion(q: string, opts: { contexto?: ContextoPantalla | null;
   if (GRACIAS.test(t)) return charla("gracias", "Con gusto. Si quieres, pregúntame por otro tema del corte.");
   if (IDENTIDAD.test(t)) return charla("identidad", `Soy Jarvis, el agente de la mesa editorial de TVN. ${QUE_HAGO} No publico ni apruebo nada: eso lo decide una persona.`);
   if (AYUDA.test(t)) return charla("ayuda", `${QUE_HAGO} Puedes preguntarme por un tema, una persona, un lugar o un indicador de Panamá, y también qué significa la pantalla que tienes abierta.`);
+  if (PUBLICAR.test(t) && soloCon(PAL_PUBLICAR)) return charla("identidad", "Yo no publico ni apruebo nada: preparo el borrador con sus citas. Lo aprueba una persona con el botón de la ficha, y aprobar todavía no lo publica.", ["¿Qué me toca hoy?"]);
   if (MESA_RE.test(t) && soloCon(PAL_MESA)) return { tipo: "mesa" };
   if (VERIFICAR_RE.test(t) && soloCon(PAL_TEMA_N)) return { tipo: "verificar", n: numeroTema(t) };
   if (TITULARES_RE.test(t) && PIDE_TITULARES.test(t) && !AGENDA.test(t) && soloCon(PAL_TEMA_N)) return { tipo: "titulares", n: numeroTema(t) }; // «dame los titulares de hoy» es la agenda

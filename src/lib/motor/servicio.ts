@@ -180,7 +180,7 @@ type R = Awaited<ReturnType<typeof consultar>>;
 const NUM = ["uno", "dos", "tres", "cuatro", "cinco"];
 
 /** «¿Qué me toca hoy?»: la mesa del rol, con el mismo filtro que la portada (src/lib/roles.ts). */
-async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number): Promise<R> {
+async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number, persona?: string): Promise<R> {
   const snap = snapshot();
   const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
   const a = await agenda();
@@ -192,7 +192,9 @@ async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number)
     return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: Math.round(e.P), rango: e.rango, evidencia: e.estado_evidencia, razon, falta: falta.get(e.id) ?? null, publicaciones: ev.ids_noticia.length };
   });
   const m = MESA[rol], [x, y, z] = items;
-  const texto = !x ? m.vacio : `${m.titulo}: ${items.length} tema${items.length === 1 ? "" : "s"}. Empieza por «${x.titulo}», con ${x.P} de 100 y evidencia ${x.evidencia}. ${x.razon.replace(/\.?$/, ".")}${y ? ` Le sigue${z ? "n" : ""} «${y.titulo}»${z ? ` y «${z.titulo}»` : ""}.` : ""}`;
+  const quien = persona?.trim().split(/\s+/)[0]; // el nombre de la sesión (nunca del modelo): Jarvis saluda por el primer nombre
+  const titulo = quien ? `${quien}, ${m.titulo[0].toLowerCase()}${m.titulo.slice(1)}` : m.titulo;
+  const texto = !x ? m.vacio : `${titulo}: ${items.length} tema${items.length === 1 ? "" : "s"}. Empieza por «${x.titulo}», con ${x.P} de 100 y evidencia ${x.evidencia}. ${x.razon.replace(/\.?$/, ".")}${y ? ` Le sigue${z ? "n" : ""} «${y.titulo}»${z ? ` y «${z.titulo}»` : ""}.` : ""}`;
   return { abstener: false, agenda: { uno: false, texto, items, encabezado: m.titulo }, afirmaciones: items.map((i) => afirmacionNoticia(porId.get(i.idNoticia)!)),
     evidencias: items.map((i) => ({ id: i.idNoticia, tipo: "noticia" as const, resumen: `${i.medio} · ${i.titulo}`, score: 1 })), contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA,
     traza: { modo, comparadas: a.eventos.length, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `La mesa del rol (${rol}) sale de los estados de revisión y de la evidencia de cada tema, no de la búsqueda por sentido.` } } as R;
@@ -282,7 +284,7 @@ async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: 
   const r = i.tipo === "ajustar" ? await respuestaAjuste(q, contexto!.eventoId!, persona, modo ?? "embeddings")
     : (i.tipo === "guia" || i.tipo === "filtro") ? respuestaGuia(i, modo ?? "embeddings", t0)
     : i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
-    : i.tipo === "mesa" ? await mesaDelRol(contexto?.rol ?? "editor", modo ?? "embeddings", t0)
+    : i.tipo === "mesa" ? await mesaDelRol(contexto?.rol ?? "editor", modo ?? "embeddings", t0, persona)
     : i.tipo === "verificar" || i.tipo === "titulares" ? await trabajoDelTema(i, contexto, eventoId, modo ?? "embeddings", t0)
     : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>

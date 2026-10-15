@@ -132,9 +132,11 @@ describe("herramientas", () => {
   test("la voz responde según el rol de la sesión: «¿qué me toca hoy?» y el trabajo de un tema (7-oct)", async () => {
     const { fijarRol } = await import("../src/lib/voz/registro");
     fijarRol("h1", "periodista");
-    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Qué falta verificar:");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Ana, qué falta verificar:");
     fijarRol("h1", "productor");
-    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Listos para armar la pieza:");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Ana, listos para armar la pieza:");
+    fijarRol("h1", "editor");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toMatch(/^Ana, tu cola de decisión: [^…]+\. La lista quedó en el panel\.$/); // corta en el punto, no a mitad de frase (15-oct)
     sacarAcciones("h1");
     expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar del tema uno?" })).toContain("Para investigar:");
     expect(sacarAcciones("h1").find((a) => a.tipo === "guia")).toMatchObject({ parte: "ficha-evidencia", vista: "ficha" });
