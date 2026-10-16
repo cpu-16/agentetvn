@@ -75,6 +75,9 @@ describe("enrutador del chat", () => {
     // el flujo entre roles (15-oct, para las preguntas del jurado)
     for (const q of ["¿Cómo es el flujo?", "Explícame el flujo de trabajo", "¿Qué pasa después del editor?", "¿Quién sigue después del periodista?", "¿Cómo pasa un tema del editor al periodista y al productor?", "¿Y después de aprobar qué pasa?", "¿Por qué primero el editor?"]) expect(de(q)).toMatchObject({ tipo: "conversacion", texto: expect.stringContaining("El tema entra por el editor") });
     for (const q of ["¿Cómo es el flujo de migrantes por Darién?", "¿Qué pasa después del juicio de Lau?"]) expect(de(q).tipo).toBe("consulta");
+    // llamada de Jeff (15-oct): «¿cuál es mi agenda el día de hoy?» es su mesa; «la agenda del día», la de todos
+    for (const q of ["Hola, ¿cuál es mi agenda el día de hoy?", "¿Cuál es mi agenda?", "¿Qué tengo hoy?"]) expect(de(q).tipo).toBe("mesa");
+    for (const q of ["¿Cuál es la agenda del día?", "Dame la agenda el día de hoy"]) expect(de(q).tipo).toBe("agenda");
   });
   test("el rol que se elige al entrar se explica sin buscar; una noticia sobre un periodista sí se busca", () => {
     for (const q of ["¿Qué hace un periodista?", "yo entro como productora, ¿qué hago?", "soy editor, ¿qué hago?"]) expect(motivo(q)).toBe("ayuda");
