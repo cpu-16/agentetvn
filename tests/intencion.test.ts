@@ -72,6 +72,9 @@ describe("enrutador del chat", () => {
     // llamada de Gilberto (15-oct): «¿qué sigue?» después del borrador es el paso de la mesa, no el del caso
     for (const q of ["Vamos a continuar aquí en lo que, bueno, me habías preparado la nota de Enrique Lau. Pero, y después de ahí, ¿qué sigue", "Sí, pero me refiero al siguiente paso en edición. Si estamos editando", "¿Y ahora qué?", "¿Qué hago con el borrador?", "¿Cómo lo apruebo?", "¿Quién lo aprueba?"]) expect(de(q, true)).toMatchObject({ tipo: "conversacion", texto: expect.stringContaining("Ahora te toca revisarlo") });
     for (const q of ["¿Qué sigue para Enrique Lau?", "¿Qué sigue después de la aprehensión de Lau?", "¿Qué sigue en el acuerdo con Vietnam?"]) expect(de(q).tipo).toBe("consulta");
+    // el flujo entre roles (15-oct, para las preguntas del jurado)
+    for (const q of ["¿Cómo es el flujo?", "Explícame el flujo de trabajo", "¿Qué pasa después del editor?", "¿Quién sigue después del periodista?", "¿Cómo pasa un tema del editor al periodista y al productor?", "¿Y después de aprobar qué pasa?", "¿Por qué primero el editor?"]) expect(de(q)).toMatchObject({ tipo: "conversacion", texto: expect.stringContaining("El tema entra por el editor") });
+    for (const q of ["¿Cómo es el flujo de migrantes por Darién?", "¿Qué pasa después del juicio de Lau?"]) expect(de(q).tipo).toBe("consulta");
   });
   test("el rol que se elige al entrar se explica sin buscar; una noticia sobre un periodista sí se busca", () => {
     for (const q of ["¿Qué hace un periodista?", "yo entro como productora, ¿qué hago?", "soy editor, ¿qué hago?"]) expect(motivo(q)).toBe("ayuda");
