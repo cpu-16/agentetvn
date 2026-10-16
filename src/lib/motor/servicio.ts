@@ -165,10 +165,12 @@ function agendaDelDia(uno: boolean, modo: "embeddings" | "bm25", t0: number) {
     return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: Math.round(e.P), rango: e.rango, evidencia: e.estado_evidencia, razon: razones[0], falta: vacios[0] ?? null, publicaciones: e.ids_noticia.length };
   });
   const lista = uno ? items.slice(0, 1) : items;
-  const [a, b, c] = items;
+  const [a, ...resto] = items;
+  // los nombra todos: si decía «5 temas» y nombraba 3, la voz completaba la lista inventando (prueba hablada del 15-oct: «Bolsonaro»)
+  const siguen = resto.map((x) => `«${x.titulo}»`), ultimo = siguen.pop();
   const texto = !a ? "Hoy no hay temas con puntaje suficiente en el corte." : uno
     ? `La que más merece revisión hoy es «${a.titulo}», de ${a.medio}, con ${a.P} de 100 de atención y evidencia ${a.evidencia}.`
-    : `Hoy la mesa prioriza ${items.length} temas. El primero es «${a.titulo}», de ${a.medio}, con ${a.P} de 100${b ? `; le siguen «${b.titulo}»${c ? ` y «${c.titulo}»` : ""}` : ""}.`;
+    : `Hoy la mesa prioriza ${items.length} tema${items.length === 1 ? "" : "s"}. El primero es «${a.titulo}», de ${a.medio}, con ${a.P} de 100${ultimo ? `; le sigue${siguen.length ? "n" : ""} ${siguen.length ? `${siguen.join(", ")} y ${ultimo}` : ultimo}` : ""}.`;
   return {
     abstener: false, agenda: { uno, texto, items: lista }, afirmaciones: lista.map((x) => afirmacionNoticia(porId.get(x.idNoticia)!)),
     evidencias: lista.map((x) => ({ id: x.idNoticia, tipo: "noticia" as const, resumen: `${x.medio} · ${x.titulo}`, score: 1 })), contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA,

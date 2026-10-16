@@ -126,6 +126,10 @@ describe("herramientas", () => {
     expect(await h.explicarPantalla("h1", { sobre: "la parte de control" })).toContain("Estás en Control");
     expect(sacarAcciones("h1")).toEqual([{ tipo: "navegar", vista: "control" }]);
     expect(await h.explicarPantalla("h1", { sobre: "qué hace un periodista" })).toContain("Como periodista verificas");
+    // prueba hablada (15-oct): la agenda nombra los cinco; si nombraba tres, la voz inventaba el cuarto
+    const ag = await h.preguntarCorpus("h1", { pregunta: "Dame los temas para la agenda" });
+    for (const c of servicio.snapshot().eventos.length ? (await import("../src/lib/motor/consulta")).cincoTemas(servicio.snapshot()) : []) expect(ag).toContain(servicio.snapshot().noticias.find((n) => n.id_noticia === c.evento.representante)!.titulo.slice(0, 12));
+    sacarAcciones("h1"); // lo que encoló la agenda no es parte de lo que esta prueba mira
     // llamada de prueba (15-oct): el flujo o dos roles juntos dan el recorrido completo, no solo el primer rol
     for (const sobre of ["el flujo entre el editor, el periodista y el productor", "qué pasa después de aprobar", "qué hacen el periodista y el productor"]) expect(await h.explicarPantalla("h1", { sobre })).toStartWith("El tema entra por el editor");
     expect(await h.explicarPantalla("h1", { sobre: "los borradores" })).toContain("Paquete y revisión");
