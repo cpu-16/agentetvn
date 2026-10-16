@@ -19,10 +19,16 @@ export const pinMesa = () => {
 };
 
 /** Comparación en tiempo constante (buffers del mismo largo: se rellena para no filtrar la longitud). */
-export function pinCoincide(candidato: string): boolean {
+const igual = (candidato: string, pin: string) => {
   const a = Buffer.from(candidato.padEnd(64, "\0").slice(0, 64));
-  const b = Buffer.from(pinMesa().padEnd(64, "\0").slice(0, 64));
-  return candidato.length === pinMesa().length && timingSafeEqual(a, b);
+  const b = Buffer.from(pin.padEnd(64, "\0").slice(0, 64));
+  return candidato.length === pin.length && timingSafeEqual(a, b);
+};
+/** El PIN de la mesa o, si está definido, AGENTETVN_PIN_EXTRA (un segundo PIN para ensayar sin cambiar el del correo al jurado).
+ *  La sesión se sigue firmando con el PIN principal: agregar o quitar el extra no cierra las sesiones abiertas. */
+export function pinCoincide(candidato: string): boolean {
+  const extra = process.env.AGENTETVN_PIN_EXTRA;
+  return igual(candidato, pinMesa()) || (!!extra && igual(candidato, extra));
 }
 
 const firmar = (payload: string) => createHmac("sha256", `agentetvn:${pinMesa()}`).update(payload).digest("base64url");

@@ -35,3 +35,21 @@ describe("rutas de lectura con sesión", () => {
     expect(a.resumen.eventos).toBe(t.eventos.length);
   });
 });
+
+describe("PIN extra para ensayar (15-oct)", () => {
+  test("acepta el PIN de la mesa y el extra; sin extra, solo el de la mesa; la sesión sigue firmada con el principal", async () => {
+    const { pinCoincide, serializar: ser } = await import("../src/lib/sesion");
+    const antes = { pin: process.env.AGENTETVN_PIN, extra: process.env.AGENTETVN_PIN_EXTRA };
+    process.env.AGENTETVN_PIN = "Tvn2026***"; delete process.env.AGENTETVN_PIN_EXTRA;
+    const firmada = ser({ nombre: "Ana", rol: "editor", desde: "2026-10-15T00:00:00Z" });
+    expect(pinCoincide("0000")).toBe(false);
+    process.env.AGENTETVN_PIN_EXTRA = "0000";
+    expect(pinCoincide("0000")).toBe(true);
+    expect(pinCoincide("Tvn2026***")).toBe(true);
+    expect(pinCoincide("000")).toBe(false);
+    expect(pinCoincide("")).toBe(false);
+    expect(ser({ nombre: "Ana", rol: "editor", desde: "2026-10-15T00:00:00Z" })).toBe(firmada); // agregar el extra no cierra sesiones
+    if (antes.pin === undefined) delete process.env.AGENTETVN_PIN; else process.env.AGENTETVN_PIN = antes.pin; // asignar undefined dejaría el texto «undefined»
+    if (antes.extra === undefined) delete process.env.AGENTETVN_PIN_EXTRA; else process.env.AGENTETVN_PIN_EXTRA = antes.extra;
+  });
+});
