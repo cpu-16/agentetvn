@@ -230,7 +230,9 @@ export function cincoTemas(snap: Snapshot): { evento: Evento; razones: string[];
   const porTema = new Map<string, number>();
   const generico = idsGenericos(snap);
   const elegidos: Evento[] = [];
-  for (const e of snap.eventos) {
+  // TVN primero (pedido de Gilberto, 16-oct): los temas con cobertura de TVN por puntaje, después los de otros medios
+  const tvn = (e: Evento) => e.ids_noticia.some((i) => porId.get(i)?.medio === "TVN");
+  for (const e of [...snap.eventos.filter(tvn), ...snap.eventos.filter((e) => !tvn(e))]) {
     if (e.no_confiable || e.tema === "deportes" || e.tema === "otro" || e.ids_noticia.some((i) => porId.get(i)?.sintetica)) continue;
     if (generico.has(e.representante)) continue; // sin titular real no se puede revisar desde la portada
     if (e.ids_noticia.every((i) => esPagado(porId.get(i)))) continue; // publirreportaje: contenido pagado, no agenda

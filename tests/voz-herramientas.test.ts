@@ -158,9 +158,10 @@ describe("herramientas", () => {
     expect(servicio.snapshot().noticias.find((n) => n.id_noticia === servicio.snapshot().eventos.find((e) => e.id === g!.eventoId)?.representante)?.titulo).toContain("Enrique Lau");
     expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar sobre Zorbatronia?" })).not.toContain("Falta verificar:");
     expect(await h.preguntarCorpus("h1", { pregunta: "Quiero un borrador sobre Enrique Lau absuelto" })).not.toContain("Abrí el borrador"); // no casan todas las palabras: se busca
-    expect(await h.preguntarCorpus("h1", { pregunta: "Arma el paquete de lo de Vietnam" })).toContain("Si buscabas otro tema, también está"); // abre el de los cinco y avisa
+    // desde el 16-oct los cinco son de TVN primero: Vietnam (Crítica) ya no está en ellos y una sola palabra no basta fuera de los cinco
+    expect(await h.preguntarCorpus("h1", { pregunta: "Arma el paquete de lo de Vietnam" })).toContain("No encontré un tema con «vietnam» en la agenda de hoy");
     sacarAcciones("h1");
-    expect(await h.preguntarCorpus("h1", { pregunta: "Prepárame el borrador de lo de Panamá" })).toStartWith("Hay 2 temas con «panama»"); // varios en los cinco: pregunta
+    expect(await h.preguntarCorpus("h1", { pregunta: "Prepárame el borrador de lo de Panamá" })).toStartWith("No encontré un tema con «panama»"); // 16-oct: con TVN primero ningún titular de los cinco dice «Panamá»
     expect(sacarAcciones("h1").find((a) => a.tipo === "guia")).toBeUndefined(); // y no abre ninguno
     expect(await h.preguntarCorpus("h1", { pregunta: "Redáctame la nota sobre la inflación" })).toStartWith("No encontré un tema con «inflacion»"); // una palabra fuera de los cinco no basta
     guardarContexto("h1", { vista: "portada" });
