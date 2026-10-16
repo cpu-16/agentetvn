@@ -37,7 +37,7 @@ export async function agenda() {
   const resumen = (e: Evento) => {
     const rep = porId.get(e.representante);
     // revisable: misma regla que «Cinco para hoy» (sin título de página como «Preview - …», ni deportes u otros): la usan las mesas por rol
-    return { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica), pagado: e.ids_noticia.every((i) => esPagado(porId.get(i))), estado_revision: ultimo.get(e.id) ?? ("nuevo" as EstadoRevision), publicaciones: e.ids_noticia.length, revisable: !generico.has(e.representante) && e.tema !== "deportes" && e.tema !== "otro" && !e.ids_noticia.every((i) => esPagado(porId.get(i))) };
+    return { ...e, titulo: rep?.titulo ?? "", medio: rep?.medio ?? "", sintetica: e.ids_noticia.some((i) => porId.get(i)?.sintetica), pagado: e.ids_noticia.every((i) => esPagado(porId.get(i))), estado_revision: ultimo.get(e.id) ?? ("nuevo" as EstadoRevision), publicaciones: e.ids_noticia.length, tvn: e.ids_noticia.some((i) => porId.get(i)?.medio === "TVN"), revisable: !generico.has(e.representante) && e.tema !== "deportes" && e.tema !== "otro" && !e.ids_noticia.every((i) => esPagado(porId.get(i))) };
   };
   return { corteUTC: snap.manifest.fecha_corte_UTC, version: snap.manifest.version, resumen: resumenCorte(snap), eventos: snap.eventos.map(resumen), cinco: cincoTemas(snap).map((c) => ({ ...c, evento: resumen(c.evento) })) };
 }

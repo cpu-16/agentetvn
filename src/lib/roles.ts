@@ -8,6 +8,7 @@ export type RolMesa = "editor" | "periodista" | "productor" | "analista";
 export interface EventoMesa {
   id: string; titulo: string; P: number; rango: string; estado_evidencia: string; estado_revision: string; tema?: string; por_revisar?: boolean;
   contradicciones: unknown[]; no_confiable: boolean; sintetica?: boolean; revisable?: boolean; // revisable: la regla de «Cinco para hoy»
+  tvn?: boolean; // con cobertura de TVN: va primero en cada mesa (pedido de Gilberto, 16-oct)
 }
 
 export const MESA: Record<RolMesa, { titulo: string; bajada: string; accion: string; pestana: "evidencia" | "paquete"; vacio: string }> = {
@@ -45,7 +46,7 @@ export function tocaA(rol: RolMesa, eventos: EventoMesa[], max = 5): EventoMesa[
     if (rol === "analista") return TEMAS_BANCA.includes(e.tema ?? "") && !e.por_revisar; // tema dudoso del clasificador: no entra a la banca
     return true;
   };
-  return eventos.filter(entra).sort((a, b) => orden[a.estado_revision] - orden[b.estado_revision] || b.P - a.P).slice(0, max);
+  return eventos.filter(entra).sort((a, b) => Number(!!b.tvn) - Number(!!a.tvn) || orden[a.estado_revision] - orden[b.estado_revision] || b.P - a.P).slice(0, max);
 }
 
 /** Cifras de la mesa del rol (lo que se ve arriba del listado). */
