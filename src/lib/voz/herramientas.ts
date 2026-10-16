@@ -1,7 +1,7 @@
 // Las 3 herramientas de Jarvis-TVN. Corren en Next con el motor de siempre: la voz nunca consulta datos por su cuenta.
 import { consulta, estadoDe, respuestaGuia, snapshot } from "../motor/servicio";
 import { cincoTemas } from "../motor/consulta";
-import { esOrdenDeCambio } from "../motor/intencion";
+import { esOrdenDeCambio, esPreguntaDeFlujo, RECORRIDO_ROLES } from "../motor/intencion";
 import { tokenizar } from "../motor/bm25";
 import { CAPACIDADES, explicacionFija, PLATAFORMA_CORTA, queHaceRol, type VistaVoz } from "./catalogo";
 import { buscarParte, RECORRIDO_GUIA } from "./guia";
@@ -126,6 +126,7 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
 export async function explicarPantalla(hilo: string, args: { sobre?: string } = {}): Promise<string> {
   const sobre = String(args.sobre ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (sobre.startsWith("plataforma")) return PLATAFORMA_CORTA;
+  if (esPreguntaDeFlujo(sobre)) return RECORRIDO_ROLES; // va antes que el rol suelto: con un rol, la voz rellenaba los otros inventando
   const rol = queHaceRol(sobre); // «yo entro como periodista, ¿qué hago?» (va antes: «¿qué puedo hacer como periodista?» es del rol)
   if (rol) return rol;
   // solo la pregunta entera: «¿qué se puede hacer con los filtros?» es de esa parte, no de las capacidades

@@ -126,6 +126,8 @@ describe("herramientas", () => {
     expect(await h.explicarPantalla("h1", { sobre: "la parte de control" })).toContain("Estás en Control");
     expect(sacarAcciones("h1")).toEqual([{ tipo: "navegar", vista: "control" }]);
     expect(await h.explicarPantalla("h1", { sobre: "qué hace un periodista" })).toContain("Como periodista verificas");
+    // llamada de prueba (15-oct): el flujo o dos roles juntos dan el recorrido completo, no solo el primer rol
+    for (const sobre of ["el flujo entre el editor, el periodista y el productor", "qué pasa después de aprobar", "qué hacen el periodista y el productor"]) expect(await h.explicarPantalla("h1", { sobre })).toStartWith("El tema entra por el editor");
     expect(await h.explicarPantalla("h1", { sobre: "los borradores" })).toContain("Paquete y revisión");
     expect(sacarAcciones("h1")).toMatchObject([{ tipo: "guia", parte: "ficha-paquete" }]);
   });
