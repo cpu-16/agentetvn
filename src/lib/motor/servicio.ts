@@ -192,7 +192,8 @@ async function mesaDelRol(rol: RolMesa, modo: "embeddings" | "bm25", t0: number,
     return { eventoId: e.id, idNoticia: n.id_noticia, titulo: n.titulo, medio: n.medio, P: Math.round(e.P), rango: e.rango, evidencia: e.estado_evidencia, razon, falta: falta.get(e.id) ?? null, publicaciones: ev.ids_noticia.length };
   });
   const m = MESA[rol], [x, y, z] = items;
-  const quien = persona?.trim().split(/\s+/)[0]; // el nombre de la sesión (nunca del modelo): Jarvis saluda por el primer nombre
+  const nombre = persona?.trim().split(/\s+/)[0]; // el nombre de la sesión (nunca del modelo): Jarvis saluda por el primer nombre
+  const quien = nombre && nombre[0].toUpperCase() + nombre.slice(1); // «gilberto» → «Gilberto» (llamada del 15-oct)
   const titulo = quien ? `${quien}, ${m.titulo[0].toLowerCase()}${m.titulo.slice(1)}` : m.titulo;
   const texto = !x ? m.vacio : `${titulo}: ${items.length} tema${items.length === 1 ? "" : "s"}. Empieza por «${x.titulo}», con ${x.P} de 100 y evidencia ${x.evidencia}. ${x.razon.replace(/\.?$/, ".")}${y ? ` Le sigue${z ? "n" : ""} «${y.titulo}»${z ? ` y «${z.titulo}»` : ""}.` : ""}`;
   return { abstener: false, agenda: { uno: false, texto, items, encabezado: m.titulo }, afirmaciones: items.map((i) => afirmacionNoticia(porId.get(i.idNoticia)!)),

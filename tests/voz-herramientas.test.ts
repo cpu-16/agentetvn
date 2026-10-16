@@ -136,6 +136,8 @@ describe("herramientas", () => {
     fijarRol("h1", "productor");
     expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Ana, listos para armar la pieza:");
     fijarRol("h1", "editor");
+    abrirLlamada("h3", "gilberto ramos", "2026-10-06T10:00:00Z"); fijarRol("h3", "editor");
+    expect(await h.preguntarCorpus("h3", { pregunta: "¿Qué me toca hoy?" })).toStartWith("Gilberto, tu cola de decisión"); // entró en minúscula (15-oct)
     expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué me toca hoy?" })).toMatch(/^Ana, tu cola de decisión: [^…]+\. La lista quedó en el panel\.$/); // corta en el punto, no a mitad de frase (15-oct)
     sacarAcciones("h1");
     expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar del tema uno?" })).toContain("Para investigar:");

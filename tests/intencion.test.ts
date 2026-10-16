@@ -69,6 +69,9 @@ describe("enrutador del chat", () => {
     for (const q of ["No lo publiques", "¿Y lo publicas o no?", "A ver, sube esa nota a la web", "Jarvis, este… déjalo publicado en redes, porfa"]) expect(de(q).tipo).toBe("conversacion");
     expect(de("¿Puedes preparar el paquete de Vietnam?")).toMatchObject({ tipo: "titulares", tema: "vietnam" });
     expect(de("¿Qué titular propones para este tema de Vietnam?", true)).toMatchObject({ tipo: "titulares", tema: "vietnam" }); // el nombre gana a la ficha abierta
+    // llamada de Gilberto (15-oct): «¿qué sigue?» después del borrador es el paso de la mesa, no el del caso
+    for (const q of ["Vamos a continuar aquí en lo que, bueno, me habías preparado la nota de Enrique Lau. Pero, y después de ahí, ¿qué sigue", "Sí, pero me refiero al siguiente paso en edición. Si estamos editando", "¿Y ahora qué?", "¿Qué hago con el borrador?", "¿Cómo lo apruebo?", "¿Quién lo aprueba?"]) expect(de(q, true)).toMatchObject({ tipo: "conversacion", texto: expect.stringContaining("Ahora te toca revisarlo") });
+    for (const q of ["¿Qué sigue para Enrique Lau?", "¿Qué sigue después de la aprehensión de Lau?", "¿Qué sigue en el acuerdo con Vietnam?"]) expect(de(q).tipo).toBe("consulta");
   });
   test("el rol que se elige al entrar se explica sin buscar; una noticia sobre un periodista sí se busca", () => {
     for (const q of ["¿Qué hace un periodista?", "yo entro como productora, ¿qué hago?", "soy editor, ¿qué hago?"]) expect(motivo(q)).toBe("ayuda");
