@@ -30,7 +30,45 @@ describe("enrutador del chat", () => {
     expect(tipo("titulares del día")).toBe("agenda");
     expect(tipo("Dame los titulares de hoy")).toBe("agenda");
     expect(tipo("¿Qué falta verificar del tema 6?")).toBe("verificar:-1");
-    for (const q of ["¿Qué falta verificar sobre Enrique Lau?", "dame titulares sobre el canal", "¿Qué titulares hay hoy?", "qué me toca investigar del caso Odebrecht"]) expect(tipo(q)).toBe("consulta");
+    for (const q of ["¿Qué titulares hay hoy?", "qué me toca investigar del caso Odebrecht"]) expect(tipo(q)).toBe("consulta");
+    // 15-oct: el tema por nombre lo resuelve el servicio (si no está en el corte, se busca como siempre)
+    expect(intencion("¿Qué falta verificar sobre Enrique Lau?", { tokens: tokenizar("¿Qué falta verificar sobre Enrique Lau?") })).toMatchObject({ tipo: "verificar", n: null, tema: "enrique lau" });
+    expect(intencion("dame titulares sobre el canal", { tokens: tokenizar("dame titulares sobre el canal") })).toMatchObject({ tipo: "titulares", tema: "canal" });
+  });
+  test("lo que diría el presentador en la demo, dicho a su manera (15-oct)", () => {
+    const de = (q: string, ficha = false) => intencion(q, { tokens: tokenizar(q), contexto: ficha ? { vista: "ficha", eventoId: "ev_x", pestana: "paquete" } : { vista: "portada" } });
+    for (const q of ["Dame los temas para la agenda", "¿Qué temas hay para la agenda de hoy?", "Oye Jarvis, ¿qué hay para hoy?", "¿Qué deberíamos cubrir hoy?", "Arma la agenda de hoy", "¿Cuáles son los temas del día?"]) expect(de(q).tipo).toBe("agenda");
+    for (const q of ["¿Qué tengo que decidir hoy?", "¿Qué hay en mi cola?"]) expect(de(q).tipo).toBe("mesa");
+    for (const q of ["Quiero un borrador del tema uno", "Prepárame un borrador del primer tema"]) expect(de(q)).toMatchObject({ tipo: "titulares", n: 0, borrador: true });
+    expect(de("Hazme el borrador del tema dos")).toMatchObject({ tipo: "titulares", n: 1, borrador: true });
+    expect(de("Quiero un borrador sobre lo de Enrique Lau")).toMatchObject({ tipo: "titulares", tema: "enrique lau", borrador: true });
+    expect(de("Arma el paquete del tema de Vietnam")).toMatchObject({ tipo: "titulares", tema: "vietnam" });
+    expect(de("¿Qué no está verificado de lo de Enrique Lau?")).toMatchObject({ tipo: "verificar", tema: "enrique lau" });
+    for (const q of ["Redáctame el borrador", "Dame el borrador de este tema", "¿Cuáles son las propuestas?"]) expect(de(q, true)).toMatchObject({ tipo: "titulares", n: null });
+    expect(de("Quítale la última frase al copy", true).tipo).toBe("ajustar");
+    expect(de("Hazlo más corto", true)).toMatchObject({ tipo: "conversacion", texto: "¿Qué parte cambio: el guion, el copy, el resumen o los titulares?" }); // no cambia todo el paquete
+    for (const q of ["Mándalo a publicar", "Súbelo a redes", "envíalo"]) expect(de(q).tipo).toBe("conversacion");
+    for (const q of ["¿Qué dijo Mulino en Vietnam?", "¿Cuál es el desempleo de este mes?", "sube"]) expect(de(q).tipo).not.toBe("titulares");
+    expect(de("Jarvis, ¿qué datos del quinto tema siguen sin confirmar?")).toMatchObject({ tipo: "verificar", n: 4 }); // abría una nota de béisbol
+    expect(de("Haz el guion más corto")).toMatchObject({ tipo: "conversacion", texto: expect.stringContaining("primero abro la ficha") }); // abría «Un cortometraje…»
+    for (const q of ["A ver, cambia el titular para que se entienda más fácil", "Mira, al guion agrégale una entrada más directa", "No, no, ese titular suena muy fuerte, bájale el tono"]) expect(de(q, true).tipo).toBe("ajustar");
+    for (const q of ["Publica la nota de Enrique Lau, vamos con esa", "Dale, que salga ya ese paquete al aire", "Bueno, apruébame ese borrador"]) expect(de(q).tipo).toBe("conversacion");
+    for (const q of ["A ver, ¿qué tengo pendiente yo como editor?", "¿Qué me queda a mí por resolver hoy?"]) expect(de(q).tipo).toBe("mesa");
+    for (const q of ["Mira, ¿con qué noticias arrancamos hoy?", "A ver, dame lo más importante del día"]) expect(de(q).tipo).toBe("agenda");
+    // contraejemplos de la revisión de Codex y Cursor (15-oct): preguntas e información nunca editan, publican ni abren borradores
+    expect(de("¿Qué significa la frase “bájale el tono” en el debate?", true).tipo).toBe("consulta");
+    expect(de("Haz el resumen de lo que pasó en Colón", true).tipo).toBe("consulta");
+    for (const q of ["Dame la nota de lo que pasó en Colón", "Quiero saber de la nota del canal", "Dame el guion de lo que dijo Mulino en Vietnam", "¿Qué publica TVN en redes sobre el Canal?", "Publicaron al aire que Mulino viaja", "¿Qué nota sacó TVN de Lau?"]) expect(de(q).tipo).toBe("consulta");
+    for (const q of ["¿Cuándo lo publicas?", "Dale, que salga ya ese paquete al aire"]) expect(de(q).tipo).toBe("conversacion");
+    expect(de("Redáctame la nota de Enrique Lau")).toMatchObject({ tipo: "titulares", tema: "enrique lau", borrador: true });
+    // segunda revisión (15-oct): una pregunta o una cita nunca edita; un verbo suelto en medio pregunta en vez de editar
+    for (const q of ["¿Cambia el titular cuando llega una fuente nueva?", "¿Me explicas por qué dice bájale el tono en el guion?", "\"Cambia el titular\" fue la instrucción del editor, ¿qué significa?"]) expect(de(q, true).tipo).not.toBe("ajustar");
+    for (const q of ["Me explicas qué significa bájale el tono en el titular", "En el debate dijeron bájale el tono al guion"]) expect(de(q, true)).toMatchObject({ tipo: "conversacion", texto: expect.stringContaining("¿Quieres que cambie el borrador?") });
+    for (const q of ["Mira, al guion agrégale una entrada más directa", "No, no, ese titular suena muy fuerte, bájale el tono", "Este… ese borrador está largo, déjalo en dos párrafos", "Reemplaza esa palabra del copy, «presuntamente», por «según la fuente»"]) expect(de(q, true).tipo).toBe("ajustar");
+    for (const q of ["Quiero saber si puedo publicar en redes", "¿Por qué puede TVN publicar en redes?", "En redes, ¿qué publica TVN sobre el Canal?", "Mulino dijo que lo van a publicar al aire esta noche"]) expect(de(q).tipo).toBe("consulta");
+    for (const q of ["No lo publiques", "¿Y lo publicas o no?", "A ver, sube esa nota a la web", "Jarvis, este… déjalo publicado en redes, porfa"]) expect(de(q).tipo).toBe("conversacion");
+    expect(de("¿Puedes preparar el paquete de Vietnam?")).toMatchObject({ tipo: "titulares", tema: "vietnam" });
+    expect(de("¿Qué titular propones para este tema de Vietnam?", true)).toMatchObject({ tipo: "titulares", tema: "vietnam" }); // el nombre gana a la ficha abierta
   });
   test("el rol que se elige al entrar se explica sin buscar; una noticia sobre un periodista sí se busca", () => {
     for (const q of ["¿Qué hace un periodista?", "yo entro como productora, ¿qué hago?", "soy editor, ¿qué hago?"]) expect(motivo(q)).toBe("ayuda");

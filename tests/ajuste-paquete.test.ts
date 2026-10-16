@@ -127,7 +127,7 @@ test("chat conserva ficha y autoría de sesión y devuelve ajuste solo al guarda
 test("intención requiere ficha y orden editorial, no roba consultas", () => {
   for (const q of ["Quita la mención a Crítica del copy", "Hazlo más corto el guion", "Cambia el título por: Aprehenden a Enrique Lau", "No digas fue aprehendido en el guion", "Agrega al brief que lo condenaron a 10 años"]) {
     expect(intencion(q, { contexto: ficha }).tipo).toBe("ajustar");
-    expect(intencion(q).tipo).toBe("consulta");
+    expect(intencion(q)).toMatchObject({ tipo: "conversacion", texto: expect.stringContaining("primero abro la ficha") }); // sin ficha: lo mismo que dice la voz (15-oct)
   }
   for (const q of ["¿qué se sabe de Enrique Lau?", "¿Quién cambia el título?", "¿Qué dice el titular de Enrique Lau?", "Agrega que lo condenaron a 10 años"]) expect(intencion(q, { contexto: ficha }).tipo).toBe("consulta");
 });

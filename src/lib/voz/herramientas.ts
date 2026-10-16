@@ -79,19 +79,19 @@ export function navegar(hilo: string, args: { destino?: string; consulta?: strin
   if (!DESTINOS.includes(destino)) return `No puedo abrir «${String(args.destino)}». Puedo abrir la portada, la agenda, el tablero, Control o la ficha de un tema, subir o bajar la página y volver atrás.`;
   if (destino !== "ficha") { encolar(hilo, { tipo: "navegar", vista: destino }); if (contextoDe(hilo)?.vista !== destino) guardarContexto(hilo, { vista: destino }); return `Listo, abrí ${NOMBRE[destino]}. ${dosFrases(explicacionFija({ vista: destino }))}`; }
   const snap = snapshot();
-  if (args.eventoId && snap.eventos.some((e) => e.id === args.eventoId)) { encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: args.eventoId }); return "Listo, abrí la ficha."; }
+  if (args.eventoId && snap.eventos.some((e) => e.id === args.eventoId)) { encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: args.eventoId }); guardarContexto(hilo, { vista: "ficha", eventoId: args.eventoId }); return "Listo, abrí la ficha."; }
   // «el tema número cinco», «el tercer tema»: el número es el de «Cinco para hoy» (antes buscaba esas palabras en los titulares)
   const n = numeroDeTema(args.consulta ?? "");
   if (n !== null) {
     const c = cincoTemas(snap)[n];
     if (!c) return "Hoy hay menos temas en «Cinco para hoy». Dime cuál abro.";
-    encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: c.evento.id });
+    encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: c.evento.id }); guardarContexto(hilo, { vista: "ficha", eventoId: c.evento.id }); // el siguiente pedido («haz el guion más corto») ya va a esta ficha
     return `Abrí la ficha del tema ${n + 1}: «${palabras(snap.noticias.find((x) => x.id_noticia === c.evento.representante)?.titulo ?? "", 14)}». ${EN_LA_FICHA}`;
   }
   const r = buscarEventos(args.consulta ?? "");
   if (!r.length) return "No encontré un tema con ese nombre en la agenda de hoy. Dime otras palabras del titular.";
   if (r.length > 1 && r[0].score === r[1].score) return `Encontré varios temas parecidos: ${r.map((x, i) => `${i + 1}, ${palabras(x.titulo, 12)}`).join("; ")}. ¿Cuál abro?`;
-  encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: r[0].id });
+  encolar(hilo, { tipo: "navegar", vista: "ficha", eventoId: r[0].id }); guardarContexto(hilo, { vista: "ficha", eventoId: r[0].id });
   return `Abrí la ficha de «${palabras(r[0].titulo, 14)}». ${EN_LA_FICHA}`;
 }
 
@@ -112,7 +112,7 @@ export async function preguntarCorpus(hilo: string, args: { pregunta?: string; e
   const r = await consulta(pregunta, undefined, args.eventoId || undefined, "voz", contextoDe(hilo), personaDe(hilo));
   encolar(hilo, { tipo: "mostrar", pregunta, respuesta: r });
   // Corto para la voz: el detalle con todas las citas queda en el panel (acción «mostrar»).
-  if (r.guia) { encolar(hilo, { tipo: "guia", ...r.guia }); const t = r.conversacion?.texto ?? ""; return r.conversacion?.motivo === "verificar" ? `${palabras(t, 40)} El detalle quedó en la ficha.` : t; }
+  if (r.guia) { encolar(hilo, { tipo: "guia", ...r.guia }); if (r.guia.vista === "ficha" && r.guia.eventoId) guardarContexto(hilo, { vista: "ficha", eventoId: r.guia.eventoId, pestana: r.guia.parte === "ficha-evidencia" ? "evidencia" : "paquete" }); const t = r.conversacion?.texto ?? ""; return r.conversacion?.motivo === "verificar" ? `${palabras(t, 40)} El detalle quedó en la ficha.` : t; }
   if (clave && r.conversacion?.motivo === "ajuste") CAMBIOS_RECIENTES.set(clave, { t: Date.now(), texto: r.conversacion.texto });
   if (r.conversacion) return r.conversacion.motivo === "plataforma" ? PLATAFORMA_CORTA : r.conversacion.texto;
   if (r.agenda) return r.agenda.encabezado ? `${hastaFrase(r.agenda.texto, 30)} La lista quedó en el panel.` : r.agenda.texto; // la mesa del rol, corta para la voz

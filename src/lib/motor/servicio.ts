@@ -210,10 +210,40 @@ async function paqueteGuardado(id: string, snap: Snapshot): Promise<Paquete | nu
 }
 
 /** «¿Qué falta verificar del tema uno?» y «prepárame los titulares»: responde desde el paquete del tema y lo muestra en su ficha. */
-async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titulares" }>, contexto: ContextoPantalla | null | undefined, eventoId: string | undefined, modo: "embeddings" | "bm25", t0: number): Promise<R> {
+/** «lo de Enrique Lau», «Vietnam»: los temas cuyas publicaciones traen TODAS esas palabras, primero entre «Cinco para hoy».
+ *  Uno solo en los cinco → ese (y los parecidos de fuera, para avisar); varios → se pregunta; ninguno → búsqueda normal.
+ *  ponytail: coincidencia exacta de palabras; «Nickelau» (mal oído) no encuentra y se busca como siempre. */
+export function temaPorNombre(nombre: string, snap: Snapshot, cinco: ReturnType<typeof cincoTemas>): { id: string; otros: string[] } | { varios: string[] } | undefined {
+  const q = [...new Set(tokenizar(nombre))];
+  if (!q.length) return undefined;
+  const porId = new Map(snap.noticias.map((n) => [n.id_noticia, n]));
+  const titulo = (e: Evento) => porId.get(e.representante)?.titulo ?? "";
+  const casan = (evs: Evento[]) => evs.filter((e) => !e.no_confiable && !esPagado(porId.get(e.representante)))
+    .filter((e) => { const tk = new Set(e.ids_noticia.flatMap((i) => tokenizar(porId.get(i)?.titulo ?? ""))); return q.every((x) => tk.has(x)); })
+    .sort((a, b) => b.P - a.P);
+  const enCinco = casan(cinco.map((c) => c.evento)), todos = casan(snap.eventos);
+  const fuera = q.length >= 2 ? todos : []; // fuera de los cinco, una sola palabra («inflación») es poco: se busca como siempre
+  const elegido = enCinco.length === 1 ? enCinco[0] : enCinco.length === 0 && fuera.length === 1 ? fuera[0] : undefined;
+  if (elegido) return { id: elegido.id, otros: todos.filter((e) => e.id !== elegido.id).slice(0, 2).map(titulo) };
+  const varios = (enCinco.length ? enCinco : fuera).slice(0, 3).map(titulo);
+  return varios.length ? { varios } : undefined;
+}
+
+/** «¿Qué falta verificar del tema uno?», «prepárame los titulares», «quiero un borrador de lo de Vietnam»: responde desde el paquete
+ *  del tema y lo muestra en su ficha. null si el tema se pidió por nombre y no está en el corte: entonces se busca como siempre. */
+async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titulares" }>, contexto: ContextoPantalla | null | undefined, eventoId: string | undefined, modo: "embeddings" | "bm25", t0: number): Promise<R | null> {
   const snap = snapshot();
   const cinco = cincoTemas(snap);
-  const id = i.n !== null ? cinco[i.n]?.evento.id /* -1 o fuera de rango: no hay tema */ : (contexto?.vista === "ficha" && contexto.eventoId) || eventoId || cinco[0]?.evento.id;
+  const porNombre = i.tema ? temaPorNombre(i.tema, snap, cinco) : undefined;
+  const ficha = (contexto?.vista === "ficha" && contexto.eventoId) || eventoId;
+  const pregunta = (texto: string, regla: string) => ({ abstener: false, conversacion: { motivo: i.tipo, texto, sugerencias: [] }, afirmaciones: [], evidencias: [], contradicciones: [], modo, ms: Date.now() - t0, leyenda: LEYENDA,
+    traza: { modo, comparadas: snap.eventos.length, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla } }) as R;
+  // sin tema que reconocer: «verificar» busca como siempre; un borrador no se puede buscar, se pregunta
+  if (i.tema !== undefined && !porNombre) return i.tipo === "verificar" ? null : pregunta(`No encontré un tema con «${i.tema}» en la agenda de hoy. Dime el número, por ejemplo «el tema dos», o más palabras del titular.`, "Ningún tema trae esas palabras: se pregunta en vez de adivinar.");
+  if (i.n === null && i.tema === undefined && !ficha) return pregunta("¿De qué tema? Dime el número, por ejemplo «el tema uno», o el nombre.", "No hay ficha abierta ni tema nombrado: se pregunta en vez de tomar el primero.");
+  if (porNombre && "varios" in porNombre) // no adivina: lee las opciones y pide otra palabra del titular
+    return pregunta(`Hay ${porNombre.varios.length} temas con «${i.tema}»: ${porNombre.varios.map((t, k) => `${k + 1}, «${t}»`).join("; ")}. ¿Cuál quieres? Dime otra palabra del titular.`, "Varios temas traen esas palabras: se pregunta cuál en vez de adivinar.");
+  const id = (porNombre && "id" in porNombre ? porNombre.id : undefined) ?? (i.n !== null ? cinco[i.n]?.evento.id /* -1 o fuera de rango: no hay tema */ : ficha || undefined);
   const e = snap.eventos.find((x) => x.id === id);
   const n = cinco.findIndex((c) => c.evento.id === id);
   const nombre = n >= 0 ? `el tema ${NUM[n]}` : "este tema";
@@ -222,7 +252,7 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
   if (!e) return { ...base, guia: undefined, conversacion: { motivo: i.tipo, texto: "Ese número no está en «Cinco para hoy». Dime del uno al cinco o abre la ficha del tema.", sugerencias: [] } } as R;
   const titulo = snap.noticias.find((x) => x.id_noticia === e.representante)?.titulo ?? "";
   const extractivo = generarPaquete(e, snap.noticias, snap.indicadores);
-  const guardado = await paqueteGuardado(e.id, snap);
+  const guardado = await paqueteGuardado(e.id, snap); // ponytail: no redacta en el momento (hasta 40 s, la voz corta a 60); el botón «Generar paquete» lo hace
   let texto: string;
   if (i.tipo === "verificar") {
     // primero la línea de evidencia vigente, luego lo que una persona o la IA dejó pendiente en el paquete guardado, al final el resto automático
@@ -233,7 +263,9 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
     texto = `${deNombre[0].toUpperCase()}${deNombre.slice(1)}, «${titulo}»: evidencia ${e.estado_evidencia} y ${Math.round(e.P)} de 100. ${falta.length ? `Falta verificar: ${falta.join(" ")}` : "No hay vacíos marcados, pero todo se basa en titulares y metadatos: leer la nota completa."} Para investigar: ${preguntas.join(" ")}`;
   } else {
     const titulos = guardado?.titulos?.length ? guardado.titulos : null;
-    texto = titulos
+    texto = titulos && i.borrador
+      ? `Abrí el borrador ${deNombre}, «${titulo}». Propone tres titulares: ${titulos.map((t, k) => `${k + 1}, «${t}»`).join("; ")}. Abajo están el resumen web, el guion y el copy, cada frase con su cita; una persona lo revisa antes de usarlo.`
+      : titulos
       ? `Propuestas de titular para ${nombre}: ${titulos.map((t, k) => `${k + 1}, «${t}»`).join("; ")}. Cada una se sostiene en las fuentes del tema y pasa por revisión; el resumen web, el guion y el copy están en Paquete y revisión.`
       : guardado?.modo === "llm"
       ? `El paquete con IA ${deNombre} propone el titular «${guardado.titulo}». Se generó antes de las propuestas múltiples: «Regenerar», en Paquete y revisión, agrega tres titulares con su cita.`
@@ -241,6 +273,8 @@ async function trabajoDelTema(i: Extract<Intencion, { tipo: "verificar" | "titul
       ? `Sin internet el paquete es extractivo: el titular base ${deNombre} es «${guardado?.titulo || extractivo.titulo}». Las propuestas de titular con IA necesitan el modo en línea.`
       : `Todavía no hay paquete con IA ${deNombre}. El titular base es «${guardado?.titulo || extractivo.titulo}». En Paquete y revisión, «${guardado ? "Regenerar" : "Generar paquete"}» propone tres titulares, el resumen web, el guion y el copy, cada frase con su cita.`;
   }
+  const otros = porNombre && "otros" in porNombre ? porNombre.otros.map((t) => t.split(/\s+/).slice(0, 10).join(" ")) : [];
+  if (otros.length) texto += ` Si buscabas otro tema, también está «${otros.join("» y «")}».`; // abrió uno de los cinco, pero hay parecidos fuera
   return { ...base, guia: { ...base.guia!, eventoId: e.id, texto }, conversacion: { motivo: i.tipo, texto, sugerencias: i.tipo === "verificar" ? ["Prepárame los titulares de este tema", "¿Qué me toca hoy?"] : ["¿Qué falta verificar de este tema?", "¿Qué me toca hoy?"] },
     traza: { ...base.traza!, regla: i.tipo === "verificar" ? "Lo que falta sale de la evidencia del tema (procedencias, contradicciones, estado); las preguntas, del paquete." : "Los titulares salen del paquete del tema, validados contra sus fuentes." } } as R;
 }
@@ -285,7 +319,7 @@ async function consultaImpl(q: string, modo?: "embeddings" | "bm25", eventoId?: 
     : (i.tipo === "guia" || i.tipo === "filtro") ? respuestaGuia(i, modo ?? "embeddings", t0)
     : i.tipo === "agenda" && !eventoId ? agendaDelDia(i.uno, modo ?? "embeddings", t0)
     : i.tipo === "mesa" ? await mesaDelRol(contexto?.rol ?? "editor", modo ?? "embeddings", t0, persona)
-    : i.tipo === "verificar" || i.tipo === "titulares" ? await trabajoDelTema(i, contexto, eventoId, modo ?? "embeddings", t0)
+    : i.tipo === "verificar" || i.tipo === "titulares" ? (await trabajoDelTema(i, contexto, eventoId, modo ?? "embeddings", t0)) ?? await consultaSinRegistro(q, modo, eventoId, origen === "voz" && process.env.VOZ_RESPUESTA === "extractiva")
     : i.tipo === "conversacion"
     ? { abstener: false, conversacion: { motivo: i.motivo, texto: i.texto, sugerencias: i.sugerencias }, afirmaciones: [], evidencias: [], contradicciones: [], modo: modo ?? "embeddings", ms: Date.now() - t0, leyenda: LEYENDA, traza: { modo: modo ?? "embeddings", comparadas: 0, sobreUmbral: 0, k: 0, mejores: [], pasos: [], regla: `Conversación (${i.motivo}): se contestó sin buscar.` } } as Awaited<ReturnType<typeof consultar>>
     : await consultaSinRegistro(q, modo, eventoId, origen === "voz" && process.env.VOZ_RESPUESTA === "extractiva"); // plan B de latencia de la voz

@@ -142,6 +142,23 @@ describe("herramientas", () => {
     expect(sacarAcciones("h1").find((a) => a.tipo === "guia")).toMatchObject({ parte: "ficha-evidencia", vista: "ficha" });
     expect(await h.preguntarCorpus("h1", { pregunta: "Prepárame los titulares del tema dos" })).toContain("del tema dos");
     expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar del tema seis?" })).toContain("no está en «Cinco para hoy»");
+    // 15-oct: el tema por nombre abre SU ficha; un nombre que no está en el corte se busca como siempre
+    sacarAcciones("h1");
+    expect(await h.preguntarCorpus("h1", { pregunta: "Quiero un borrador sobre lo de Enrique Lau" })).toContain("Enrique Lau");
+    const g = sacarAcciones("h1").find((a) => a.tipo === "guia") as { eventoId?: string; parte?: string } | undefined;
+    expect(g).toMatchObject({ parte: "ficha-paquete" });
+    expect(servicio.snapshot().noticias.find((n) => n.id_noticia === servicio.snapshot().eventos.find((e) => e.id === g!.eventoId)?.representante)?.titulo).toContain("Enrique Lau");
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar sobre Zorbatronia?" })).not.toContain("Falta verificar:");
+    expect(await h.preguntarCorpus("h1", { pregunta: "Quiero un borrador sobre Enrique Lau absuelto" })).not.toContain("Abrí el borrador"); // no casan todas las palabras: se busca
+    expect(await h.preguntarCorpus("h1", { pregunta: "Arma el paquete de lo de Vietnam" })).toContain("Si buscabas otro tema, también está"); // abre el de los cinco y avisa
+    sacarAcciones("h1");
+    expect(await h.preguntarCorpus("h1", { pregunta: "Prepárame el borrador de lo de Panamá" })).toStartWith("Hay 2 temas con «panama»"); // varios en los cinco: pregunta
+    expect(sacarAcciones("h1").find((a) => a.tipo === "guia")).toBeUndefined(); // y no abre ninguno
+    expect(await h.preguntarCorpus("h1", { pregunta: "Redáctame la nota sobre la inflación" })).toStartWith("No encontré un tema con «inflacion»"); // una palabra fuera de los cinco no basta
+    guardarContexto("h1", { vista: "portada" });
+    expect(await h.preguntarCorpus("h1", { pregunta: "¿Qué falta verificar?" })).toStartWith("¿De qué tema?"); // sin ficha no toma el primero
+    expect(await h.navegar("h1", { destino: "ficha", consulta: "tema número dos" })).toContain("Abrí la ficha del tema 2");
+    expect(contextoDe("h1")).toMatchObject({ vista: "ficha" }); // el servidor ya sabe qué ficha está abierta: la orden siguiente va a esa
   });
   test("explicar_pantalla con una parte concreta la muestra en la página", async () => {
     sacarAcciones("h1");
